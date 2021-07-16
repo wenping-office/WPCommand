@@ -9,7 +9,7 @@
     "file": "LICENSE"
   },
   "authors": {
-    "Developer": "850500722@qq.com"
+    "文平": "850500722@qq.com"
   },
   "source": {
     "git": "https://github.com/MyNameWp/WPCommand.git",
@@ -18,5 +18,26 @@
   "platforms": {
     "ios": "9.0"
   },
-  "source_files": "WPCommand/Classes/**/*"
+  "source_files": "WPCommand/Classes/**/*",
+  "frameworks": [
+    "UIKit",
+    "MapKit",
+    "Photos",
+    "AssetsLibrary",
+    "MediaPlayer",
+    "CoreTelephony",
+    "CoreLocation",
+    "AVFoundation"
+  ],
+  "dependencies": {
+    "SnapKit": [
+
+    ],
+    "Kingfisher": [
+
+    ],
+    "RxSwift": [
+
+    ]
+  }
 }

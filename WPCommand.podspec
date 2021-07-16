@@ -24,7 +24,7 @@ TODO: Add long description of the pod here.
   s.homepage         = 'https://github.com/MyNameWp/WPCommand'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Developer' => '850500722@qq.com' }
+  s.author           = { '文平' => '850500722@qq.com' }
   s.source           = { :git => 'https://github.com/MyNameWp/WPCommand.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
@@ -37,6 +37,19 @@ TODO: Add long description of the pod here.
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
+  
+   s.frameworks = 'UIKit', 'MapKit', 'Photos', 'AssetsLibrary', 'MediaPlayer', 'CoreTelephony', 'CoreLocation', 'AVFoundation'
   # s.dependency 'AFNetworking', '~> 2.3'
+  
+  #   import Photos
+#   import AssetsLibrary
+#   import MediaPlayer
+#   import CoreTelephony
+#   import CoreLocation
+#   import AVFoundation
+
+     s.dependency 'SnapKit'
+     s.dependency 'Kingfisher'
+     #RxSwift系列
+     s.dependency 'RxSwift'
 end

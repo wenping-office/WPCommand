@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4E0AD2FBAD594976C0D8962011A92E44"
-               BuildableName = "WPCommand.framework"
+               BuildableName = "WPCommand"
                BlueprintName = "WPCommand"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
