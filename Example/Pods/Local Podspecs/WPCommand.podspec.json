@@ -1,0 +1,22 @@
+{
+  "name": "WPCommand",
+  "version": "0.1.0",
+  "summary": "A short description of WPCommand.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/Developer/WPCommand",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Developer": "850500722@qq.com"
+  },
+  "source": {
+    "git": "https://github.com/Developer/WPCommand.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source_files": "WPCommand/Classes/**/*"
+}

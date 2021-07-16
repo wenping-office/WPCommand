@@ -1,0 +1,16 @@
+PODS:
+  - WPCommand (0.1.0)
+
+DEPENDENCIES:
+  - WPCommand (from `../`)
+
+EXTERNAL SOURCES:
+  WPCommand:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  WPCommand: 866784c9cdea9e9a994aa76093e376a5bb529f84
+
+PODFILE CHECKSUM: c7e1af55bf269ba2410fedfa4a13a0299e7c0024
+
+COCOAPODS: 1.10.1

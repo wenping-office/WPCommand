@@ -1,0 +1,6 @@
+framework module WPCommand {
+  umbrella header "WPCommand-umbrella.h"
+
+  export *
+  module * { export * }
+}
