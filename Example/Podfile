@@ -4,8 +4,6 @@ platform :ios, '9.0'
 
 target 'WPCommand_Example' do
 #  pod 'WPCommand', :path => '../'
-#  pod 'Kingfisher'
-#  pod 'RxSwift'
 
   target 'WPCommand_Tests' do
     inherit! :search_paths
