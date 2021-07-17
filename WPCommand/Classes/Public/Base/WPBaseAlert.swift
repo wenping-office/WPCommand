@@ -29,11 +29,11 @@ open class WPBaseAlert: UIView {
     /// 蒙板
     public var grayView = UIButton()
     /// 开始动画时间
-    public var startDuration : CGFloat { return 0.3}
+    open var startDuration : CGFloat { return 0.3}
     /// 结束动画时间
-    public var endDuration : CGFloat { return 0.3}
+    open var endDuration : CGFloat { return 0.3}
     /// 蒙板颜色
-    public var maskColor = UIColor.init(0, 0, 0, 0.15)
+    open var maskColor : UIColor {return UIColor.init(0, 0, 0, 0.15)}
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,24 +46,24 @@ open class WPBaseAlert: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     /// 初始化试图
-    public func initSubView(){
+    open func initSubView(){
         grayView.backgroundColor = .clear
         addSubview(grayView)
     }
     /// 初始化视图布局
-    public func initSubViewLayout(){
+    open func initSubViewLayout(){
         grayView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
     /// 监听子控件事件
-    public func observeSubViewEvent(){
+    open func observeSubViewEvent(){
         grayView.rx.tap.subscribe(onNext: {[weak self]in
             self?.dismiss()
         }).disposed(by: disposeBag)
     }
     /// 显示弹窗
-    public final func show(){
+    final func show(){
         willShow()
         if self.rootView == nil{
             rootView = UIApplication.shared.keyWindow ?? UIView()
@@ -80,7 +80,7 @@ open class WPBaseAlert: UIView {
         })
     }
     /// 隐藏弹窗
-    public final func dismiss(completeAnimate:(()->Void)?=nil){
+    final func dismiss(completeAnimate:(()->Void)?=nil){
         willDismiss()
         dismissToLocation()
         UIView.animate(withDuration: TimeInterval(endDuration), animations: {[weak self]in
@@ -96,20 +96,20 @@ open class WPBaseAlert: UIView {
         })
     }
     /// 子类重写弹出的结束位置
-    public func showToLoacton(){}
+    open func showToLoacton(){}
     /// 子类重写收回的结束位置
-    public func dismissToLocation(){}
+    open func dismissToLocation(){}
     /// 子类重写 将要收回回掉
-    public func willDismiss(){}
+    open func willDismiss(){}
     /// 子类重写收回回掉
-    public func didDismiss(){}
+    open func didDismiss(){}
     /// 子类重写 将要显示回调
-    public func willShow(){}
+    open func willShow(){}
     /// 子类重写弹出后回掉
-    public func didShow(){}
+    open func didShow(){}
     /// 子类重写动画正在执信
-    public func showToAnimates(){}
+    open func showToAnimates(){}
     /// 子类重写动画正在执行
-    public func dismissToAnimates(){}
+    open func dismissToAnimates(){}
 }
 

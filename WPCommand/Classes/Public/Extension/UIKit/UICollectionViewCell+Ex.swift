@@ -8,11 +8,14 @@
 
 import UIKit
 
-public extension UICollectionViewCell{
+extension UICollectionViewCell{
     
-    @objc func didSetItem(item:WPCollectionItem){}
+    /// 已赋值item后调用
+    /// - Parameter item: item模型
+    @objc open func didSetItem(item:WPCollectionItem){}
 
 }
+
 var WPCollectionItemPointer = "WPCollectionItemPointer"
 
 public protocol UICollectionCellProtocol : NSObjectProtocol{}
@@ -30,7 +33,7 @@ public extension UICollectionCellProtocol{
 
 extension UICollectionViewCell:UICollectionCellProtocol{
         
-    @objc public func reloadItemInfo(info:Any?){}
+    @objc open func reloadItemInfo(info:Any?){}
 }
 
 

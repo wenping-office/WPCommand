@@ -13,7 +13,7 @@ open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
     }
     
     /// 内容group
-    let contentGroup = WPCollectionGroup()
+    public let contentGroup = WPCollectionGroup()
     
     /// 每一个itemSize的尺寸
     public var itemSize : CGSize{

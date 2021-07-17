@@ -59,7 +59,7 @@ open class WPTableItem: NSObject {
     }
 
     /// 设置完Info后调用，可在此方法手动计算Cell高度并赋值CellHeight
-    public func didSetInfo(info:Any?){}
+    open func didSetInfo(info:Any?){}
     
     /// 刷新itemModel
     public func update(){

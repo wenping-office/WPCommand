@@ -12,13 +12,13 @@ extension UICollectionReusableView : WPCollectionReusableViewProtocol{
     
     /// 扩展一个即将获得group方法
     /// - Parameter model: 模型
-    @objc public func didSetHeaderFooterModel(model: WPCollectionGroup) {}
+    @objc open func didSetHeaderFooterModel(model: WPCollectionGroup) {}
 }
 
 fileprivate var WPCollectionGroupPointer = "WPCollectionGroupPointer"
 
 /// group协议
-public protocol WPCollectionReusableViewProtocol : NSObjectProtocol{
+protocol WPCollectionReusableViewProtocol : NSObjectProtocol{
 
     /// 即将加载group
     /// - Parameter model: 模型
@@ -28,7 +28,7 @@ public protocol WPCollectionReusableViewProtocol : NSObjectProtocol{
     var group : WPCollectionGroup?{ get set}
 }
 
-public extension WPCollectionReusableViewProtocol{
+extension WPCollectionReusableViewProtocol{
     
     var group : WPCollectionGroup? {
         get{
