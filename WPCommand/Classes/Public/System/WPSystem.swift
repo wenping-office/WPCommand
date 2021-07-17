@@ -73,22 +73,22 @@ open class WPSystem: NSObject {
         super.init()
         
         // 监听键盘即将弹出通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification).skip(1).bind(to: keyboard.willShow).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification).bind(to: keyboard.willShow).disposed(by: disposeBag)
         
         // 监听键盘以及弹出通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification).skip(1).bind(to: keyboard.willShow).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification).bind(to: keyboard.didShow).disposed(by: disposeBag)
         
         // 监听键盘即将收回通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification).skip(1).bind(to: keyboard.willHide).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification).bind(to: keyboard.willHide).disposed(by: disposeBag)
         
         // 监听键盘已经收回通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification).skip(1).bind(to: keyboard.didHide).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification).bind(to: keyboard.didHide).disposed(by: disposeBag)
         
         // 键盘高度即将改变通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification).skip(1).bind(to: keyboard.willChangeFrame).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification).bind(to: keyboard.willChangeFrame).disposed(by: disposeBag)
         
         // 键盘高度已经改变通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification).skip(1).bind(to: keyboard.didChangeFrame).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification).bind(to: keyboard.didChangeFrame).disposed(by: disposeBag)
         
 
     }
