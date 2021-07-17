@@ -39,7 +39,7 @@ public var wp_isFullScreen: Bool{
 open class WPSystem: NSObject {
     
     /// 单例
-    static var share : WPSystem = {
+   public static var share : WPSystem = {
        let manager = WPSystem()
        return manager
     }()
