@@ -1,3 +1,41 @@
-PODFILE CHECKSUM: 63124cf503735ec87622ca4ac7e88be6d70e4305
+PODS:
+  - Kingfisher (4.10.1)
+  - RxCocoa (6.2.0):
+    - RxRelay (= 6.2.0)
+    - RxSwift (= 6.2.0)
+  - RxRelay (6.2.0):
+    - RxSwift (= 6.2.0)
+  - RxSwift (6.2.0)
+  - SnapKit (4.2.0)
+  - WPCommand (0.1.0):
+    - Kingfisher
+    - RxCocoa
+    - RxSwift
+    - SnapKit
+
+DEPENDENCIES:
+  - WPCommand (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - Kingfisher
+    - RxCocoa
+    - RxRelay
+    - RxSwift
+    - SnapKit
+
+EXTERNAL SOURCES:
+  WPCommand:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
+  RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
+  RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
+  RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
+  SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
+  WPCommand: 759debd308f74054955782c512255d063b865f88
+
+PODFILE CHECKSUM: c7e1af55bf269ba2410fedfa4a13a0299e7c0024
 
 COCOAPODS: 1.10.1
