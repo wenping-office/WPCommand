@@ -19,7 +19,7 @@ extension UITableViewCell:WPTableCellProtocol{
     @objc open func didSetItemInfo(info:Any?){}
 }
 
-protocol WPTableCellProtocol : NSObjectProtocol{
+public protocol WPTableCellProtocol : NSObjectProtocol{
     
     /// item模型创建时是什么item cell就会获得一个什么样的item
     var item : WPTableItem?{ get set}
@@ -27,7 +27,7 @@ protocol WPTableCellProtocol : NSObjectProtocol{
 
 extension WPTableCellProtocol{
 
-     var item : WPTableItem? {
+    public var item : WPTableItem? {
         get{
             return objc_getAssociatedObject(self, &WPitemPointer) as? WPTableItem
         }

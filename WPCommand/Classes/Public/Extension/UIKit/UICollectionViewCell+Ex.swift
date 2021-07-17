@@ -8,9 +8,9 @@
 
 import UIKit
 
-extension UICollectionViewCell{
+public extension UICollectionViewCell{
     
-    @objc open func didSetItem(item:WPCollectionItem){}
+    @objc func didSetItem(item:WPCollectionItem){}
 
 }
 var WPCollectionItemPointer = "WPCollectionItemPointer"

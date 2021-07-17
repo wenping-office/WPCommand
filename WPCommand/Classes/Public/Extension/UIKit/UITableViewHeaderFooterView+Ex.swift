@@ -14,10 +14,10 @@ extension UITableViewHeaderFooterView : WPTableHeaderFooterViewlProtocol{
 
     /// 加载group 每次显示时都会调用一次
     /// - Parameter group: 模型
-    @objc func reloadGroup(group: WPTableGroup) {}
+    @objc public func reloadGroup(group: WPTableGroup) {}
 }
 
-protocol WPTableHeaderFooterViewlProtocol : NSObjectProtocol{
+public protocol WPTableHeaderFooterViewlProtocol : NSObjectProtocol{
 
     func reloadGroup(group:WPTableGroup)
     
@@ -26,7 +26,7 @@ protocol WPTableHeaderFooterViewlProtocol : NSObjectProtocol{
 
 extension WPTableHeaderFooterViewlProtocol{
     
-    var group : WPTableGroup? {
+    public var group : WPTableGroup? {
         get{
             return objc_getAssociatedObject(self, &WPTableGroupPointer) as? WPTableGroup
         }
