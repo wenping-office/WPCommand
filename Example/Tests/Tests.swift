@@ -1,5 +1,5 @@
 import XCTest
-import WPCommand
+
 
 class Tests: XCTestCase {
     
