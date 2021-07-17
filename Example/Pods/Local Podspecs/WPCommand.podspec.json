@@ -18,7 +18,7 @@
   "platforms": {
     "ios": "9.0"
   },
-  "source_files": "WPCommand/Classes/**/*",
+  "source_files": "Example/WPCommand/Classes/**/*",
   "frameworks": [
     "UIKit",
     "MapKit",
