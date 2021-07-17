@@ -50,7 +50,7 @@ open class WPSystem: NSObject {
     }()
     
     /// 键盘相关
-    let keyboard : WPSystem.keyBoard = .init()
+   public let keyboard : WPSystem.keyBoard = .init()
 
     /// 键盘
     public struct keyBoard {
