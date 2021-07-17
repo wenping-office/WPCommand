@@ -12,6 +12,11 @@ import RxCocoa
 
 public extension UIView {
 
+    /// 在keyWindow中的位置
+     var wp_frameInWidow : CGRect{
+        return convert(bounds, to: UIApplication.shared.windows.last)
+    }
+
     ///将当前视图转为UIImage
     func wp_image() -> UIImage {
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
@@ -27,7 +32,7 @@ public extension UIView {
             backgroundColor = .wp_random
         }
     }
-    
+
     /// 绘制虚线
     /// - Parameters:
     ///   - strokeColor: 颜色

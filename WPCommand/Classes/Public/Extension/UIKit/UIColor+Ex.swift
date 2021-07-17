@@ -16,7 +16,7 @@ public extension UIColor{
     ///   - b:蓝色
     ///   - a:透明度
     convenience init(_ r:CGFloat,_ g:CGFloat,_ b:CGFloat,_ a:CGFloat) {
-        self.init(red: r/255, green: g/255, blue: b/255, alpha: a/255)
+        self.init(red: r/255.0, green: g/255.0, blue: b/255.0, alpha: a/255)
     }
 
     /// 随机色
@@ -24,7 +24,8 @@ public extension UIColor{
         let r = CGFloat(arc4random_uniform(255))
         let g = CGFloat(arc4random_uniform(255))
         let b = CGFloat(arc4random_uniform(255))
-        return .init(r, g, b, 1)
+        
+        return .init(r, g, b, 255)
     }
     
     /// 转换成图片

@@ -11,6 +11,8 @@ import AVFoundation
 import CoreLocation
 import Photos
 import CoreTelephony
+import RxCocoa
+import RxSwift
 
 /// 默认View边距
 public let wp_viewEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: -16, right: -16)
@@ -38,12 +40,58 @@ public var wp_isFullScreen: Bool{
 
 open class WPSystem: NSObject {
     
+    /// 垃圾桶
+    let disposeBag = DisposeBag()
+
     /// 单例
    public static var share : WPSystem = {
        let manager = WPSystem()
        return manager
     }()
+    
+    /// 键盘相关
+    let keyboard : WPSystem.keyBoard = .init()
 
+    /// 键盘
+    public struct keyBoard {
+        /// 键盘将要显示通知
+        public let willShow : BehaviorRelay<Notification?> = .init(value: nil)
+        /// 键盘已经显示通知
+        public let didShow : BehaviorRelay<Notification?> = .init(value: nil)
+        /// 键盘将要收回通知
+        public let willHide : BehaviorRelay<Notification?> = .init(value: nil)
+        /// 键盘已经收回通知
+        public let didHide : BehaviorRelay<Notification?> = .init(value: nil)
+        /// 键盘高度改变通知
+        public let willChangeFrame : BehaviorRelay<Notification?> = .init(value: nil)
+        /// 键盘高度已经改变通知
+        public let didChangeFrame : BehaviorRelay<Notification?> = .init(value: nil)
+    }
+
+
+    public override init() {
+        super.init()
+        
+        // 监听键盘即将弹出通知
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification).bind(to: keyboard.willShow).disposed(by: disposeBag)
+        
+        // 监听键盘以及弹出通知
+        NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification).bind(to: keyboard.willShow).disposed(by: disposeBag)
+        
+        // 监听键盘即将收回通知
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification).bind(to: keyboard.willHide).disposed(by: disposeBag)
+        
+        // 监听键盘已经收回通知
+        NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification).bind(to: keyboard.didHide).disposed(by: disposeBag)
+        
+        // 键盘高度即将改变通知
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification).bind(to: keyboard.willChangeFrame).disposed(by: disposeBag)
+        
+        // 键盘高度已经改变通知
+        NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification).bind(to: keyboard.didChangeFrame).disposed(by: disposeBag)
+        
+
+    }
 }
 
 
