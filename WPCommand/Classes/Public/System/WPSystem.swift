@@ -55,43 +55,46 @@ open class WPSystem: NSObject {
     /// 键盘
     public struct keyBoard {
         /// 键盘将要显示通知
-        public let willShow : BehaviorRelay<Notification?> = .init(value: nil)
+        public func willShow()->Observable<Notification>{
+           return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+        }
         /// 键盘已经显示通知
-        public let didShow : BehaviorRelay<Notification?> = .init(value: nil)
+        public func didShow()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification)
+        }
         /// 键盘将要收回通知
-        public let willHide : BehaviorRelay<Notification?> = .init(value: nil)
+        public func willHide()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+        }
         /// 键盘已经收回通知
-        public let didHide : BehaviorRelay<Notification?> = .init(value: nil)
+        public func didHide()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification)
+        }
         /// 键盘高度改变通知
-        public let willChangeFrame : BehaviorRelay<Notification?> = .init(value: nil)
+        public func willChangeFrame()->Observable<Notification>{
+           return NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification)
+        }
         /// 键盘高度已经改变通知
-        public let didChangeFrame : BehaviorRelay<Notification?> = .init(value: nil)
+        public func didChangeFrame()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification)
+        }
+        
+        /// 获取键盘和目标视图的Y轴差值
+        /// - Parameters:
+        ///   - keyboardInfo: 键盘通知
+        ///   - targetView: 目标view
+        /// - Returns: 返回差值
+       public func frameOffset(in keyboardInfo : Notification?,targetView:UIView) -> CGFloat {
+            guard
+                let endFrame = keyboardInfo?.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
+            else { return 0}
+        
+            let targetFrame = targetView.wp_frameInWidow
+        
+            return endFrame.origin.y - ((targetFrame.height + UIScreen.main.bounds.height) * 0.5)
+        }
     }
 
-
-    public override init() {
-        super.init()
-        
-        // 监听键盘即将弹出通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification).bind(to: keyboard.willShow).disposed(by: disposeBag)
-        
-        // 监听键盘以及弹出通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification).bind(to: keyboard.didShow).disposed(by: disposeBag)
-        
-        // 监听键盘即将收回通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification).bind(to: keyboard.willHide).disposed(by: disposeBag)
-        
-        // 监听键盘已经收回通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification).bind(to: keyboard.didHide).disposed(by: disposeBag)
-        
-        // 键盘高度即将改变通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification).bind(to: keyboard.willChangeFrame).disposed(by: disposeBag)
-        
-        // 键盘高度已经改变通知
-        NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification).bind(to: keyboard.didChangeFrame).disposed(by: disposeBag)
-        
-
-    }
 }
 
 
