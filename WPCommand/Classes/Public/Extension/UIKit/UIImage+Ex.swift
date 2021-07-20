@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension UIImage {
+public extension UIImage {
     //水印位置枚举
     enum WPWaterMarkCorner {
         case TopLeft

@@ -8,17 +8,8 @@
 
 import UIKit
 
-extension Date{
-    
-    /// 日期转本地时间字符串
-    /// - Parameter format: 日期格式
-    /// - Returns:
-    func wp_toZh_ChString(_ format:String) -> String{
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "zh_CN")
-        dateFormatter.dateFormat = format
-        return dateFormatter.string(from: self)
-    }
+public extension Date{
+
     /// 获取当前 秒级 时间戳 - 10位
     var wp_timeStamp : String {
         let timeInterval: TimeInterval = self.timeIntervalSince1970
@@ -31,5 +22,18 @@ extension Date{
         let timeInterval: TimeInterval = self.timeIntervalSince1970
         let millisecond = CLongLong(round(timeInterval*1000))
         return "\(millisecond)"
+    }
+}
+
+public extension Date{
+    
+    /// 日期转本地时间字符串
+    /// - Parameter format: 日期格式
+    /// - Returns:
+    func wp_toZh_ChString(_ format:String) -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "zh_CN")
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
     }
 }

@@ -21,7 +21,7 @@ public let wp_Screen = UIScreen.main.bounds
 /// 导航栏高度
 public var wp_navigationHeight : CGFloat =  UIApplication.shared.statusBarFrame.size.height + UINavigationController().navigationBar.frame.size.height
 /// 安全距离
-public let wp_safeAreaI = wp_isFullScreen ? UIEdgeInsets(top: 44.0, left: 0.0, bottom: 34.0, right: 0.0) : UIEdgeInsets.zero
+public let wp_safeArea = wp_isFullScreen ? UIEdgeInsets(top: 44.0, left: 0.0, bottom: 34.0, right: 0.0) : UIEdgeInsets.zero
 /// 是否是刘海屏
 public var wp_isFullScreen: Bool{
     if #available(iOS 11, *) {
@@ -50,10 +50,14 @@ open class WPSystem: NSObject {
     }()
     
     /// 键盘相关
-   public let keyboard : WPSystem.keyBoard = .init()
+    public let keyboard : WPSystem.keyBoard = .init()
+    /// app相关
+    public let app : WPSystem.app = .init()
+}
 
+public extension WPSystem{
     /// 键盘
-    public struct keyBoard {
+    struct keyBoard {
         /// 键盘将要显示通知
         public func willShow()->Observable<Notification>{
            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
@@ -95,9 +99,36 @@ open class WPSystem: NSObject {
             
         }
     }
+    
+    /// app相关
+    struct app {
+        
+        /// 将要进入前台台
+        public func willEnterForeground()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+        }
+        
+        /// 已经激活app
+        public func  didBecomeActive()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIApplication.didBecomeActiveNotification)
+        }
 
+        /// 将要挂起
+        public func willResignActive()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIApplication.willResignActiveNotification)
+        }
+        
+        /// 已经进入后台
+        public func didEnterBackground()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
+        }
+        
+        /// 将被杀死
+        public func willTerminate()->Observable<Notification>{
+            return NotificationCenter.default.rx.notification(UIApplication.willTerminateNotification)
+        }
+    }
 }
-
 
 public extension WPSystem{
     

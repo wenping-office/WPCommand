@@ -9,6 +9,15 @@
 import UIKit
 import RxCocoa
 
+public extension UIView{
+    /// 从xib加载
+    static func initWithXibName(xib: String) -> Any? {
+        guard let nibs = Bundle.main.loadNibNamed(xib, owner: nil, options: nil) else {
+            return nil
+        }
+        return nibs[0]
+    }
+}
 
 public extension UIView {
 
@@ -18,13 +27,115 @@ public extension UIView {
     }
 
     ///将当前视图转为UIImage
-    func wp_image() -> UIImage {
+    var wp_image : UIImage{
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
         return renderer.image { rendererContext in
             layer.render(in: rendererContext.cgContext)
         }
     }
+}
+
+public extension UIView{
+    var wp_x: CGFloat {
+        get { return frame.origin.x }
+        set { frame.origin.x = newValue }
+    }
+
+    var wp_y: CGFloat {
+        get { return frame.origin.y }
+        set { frame.origin.y = newValue }
+    }
+
+    var wp_width: CGFloat {
+        get { return frame.size.width }
+        set { frame.size.width = newValue }
+    }
+
+    var wp_height: CGFloat {
+        get { return frame.size.height }
+        set { frame.size.height = newValue }
+    }
+
+    var wp_maxX: CGFloat {
+        get { return wp_x + wp_width }
+        set { wp_x = newValue - wp_width }
+    }
+
+    var wp_maxY: CGFloat {
+        get { return wp_y + wp_height }
+        set { wp_y = newValue - wp_height }
+    }
+
+    var wp_centerX: CGFloat {
+        get { return center.x }
+        set { center.x = newValue }
+    }
+
+    var wp_centerY: CGFloat {
+        get { return center.y }
+        set { center.y = newValue }
+    }
+
+    var wp_midX: CGFloat {
+        return wp_width * 0.5
+    }
+
+    var wp_midY: CGFloat {
+        return wp_height * 0.5
+    }
+    
+    /// 选择性圆角处理，需要设置frame后调用，如果是约束需要layout后调用才能生效
+    func wp_corner(corners: UIRectCorner, radius: CGFloat) {
+        let maskPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let maskLayer = CAShapeLayer()
+        maskLayer.frame = bounds
+        maskLayer.path = maskPath.cgPath
+        layer.mask = maskLayer
+    }
+    
+    /// 设置边框
+    func wp_boardLine(color: UIColor, top: Bool, right: Bool, bottom: Bool, left: Bool, width: CGFloat) {
+        let nameKey = "setBoardLine"
+        layer.sublayers?.forEach { if $0.name == nameKey { $0.removeFromSuperlayer() } }
         
+        let boolList = [top, right, bottom, left]
+        let rectList = [CGRect(x: 0, y: 0, width: self.wp_width, height: wp_width),
+                        CGRect(x: wp_width - width, y: 0, width: width, height: wp_height),
+                        CGRect(x: 0, y: wp_height - width, width: self.wp_width, height: wp_width),
+                        CGRect(x: 0, y: 0, width: width, height: wp_height)]
+
+        for (idx, bo) in boolList.enumerated() {
+            if bo {
+                let layer: CALayer = CALayer()
+                layer.name = nameKey
+                layer.frame = rectList[idx]
+                layer.backgroundColor = color.cgColor
+                self.layer.addSublayer(layer)
+            }
+        }
+    }
+    
+    ///设置渐变背景色，需在设置frame或约束后调用
+    func wp_layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor]) {
+        let layer = CAGradientLayer()
+        let sKey = "c-p-p"
+        layer.name = sKey
+        layer.frame = bounds
+        layer.colors = colors
+        layer.endPoint = endPoint
+        layer.startPoint = startPoint
+        layer.cornerRadius = self.layer.cornerRadius
+        for oldLayer in self.layer.sublayers ?? [] {
+            if oldLayer.name == sKey {
+                self.layer.replaceSublayer(oldLayer, with: layer)
+                return
+            }
+        }
+        self.layer.insertSublayer(layer, at: 0)
+    }
+}
+
+public extension UIView {
     /// 子试图随机色
     func wp_subViewRandomColor(){
         subviews.forEach { subView in
@@ -73,7 +184,7 @@ public extension UIView {
                             config:(WPPlaceholderView)->Void){
         let tag = 10086
         var contetnView : UIView?
-        // 先查询是否有占位符
+        // 先查询是否有占位视图
         subviews.forEach { elmt in
             if elmt.tag == tag{
                 contetnView = elmt
@@ -90,6 +201,7 @@ public extension UIView {
         })
         
         let placeholderView = WPPlaceholderView()
+        config(placeholderView)
         contetnView?.addSubview(placeholderView)
         placeholderView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()

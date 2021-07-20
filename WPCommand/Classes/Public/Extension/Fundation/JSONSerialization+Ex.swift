@@ -8,9 +8,7 @@
 
 import UIKit
 
-extension JSONSerialization{
-
-    
+public extension JSONSerialization{
     /// json 转 模型
     /// - Parameters:
     ///   - json: 字典
