@@ -79,19 +79,20 @@ open class WPSystem: NSObject {
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification)
         }
         
-        /// 获取键盘和目标视图的Y轴差值
+        /// 基于window中心Y获取键盘和目标视图的Y轴差值
         /// - Parameters:
-        ///   - keyboardInfo: 键盘通知
         ///   - targetView: 目标view
         /// - Returns: 返回差值
-       public func frameOffset(in keyboardInfo : Notification?,targetView:UIView) -> CGFloat {
-            guard
-                let endFrame = keyboardInfo?.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
-            else { return 0}
-        
-            let targetFrame = targetView.wp_frameInWidow
-        
-            return endFrame.origin.y - ((targetFrame.height + UIScreen.main.bounds.height) * 0.5)
+        public func frameOffset(in targetView:UIView) -> Observable<CGFloat> {
+            return  WPSystem.share.keyboard.didChangeFrame().map { value in
+                guard
+                    let endFrame = value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
+                else { return 0}
+            
+                let targetFrame = targetView.wp_frameInWidow
+                return endFrame.origin.y - ((targetFrame.height + UIScreen.main.bounds.height) * 0.5)
+            }
+            
         }
     }
 

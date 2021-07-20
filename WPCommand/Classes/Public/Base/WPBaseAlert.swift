@@ -35,7 +35,7 @@ open class WPBaseAlert: UIView {
     /// 蒙板颜色
     open var maskColor : UIColor {return UIColor.init(0, 0, 0, 0.15)}
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         initSubView()
         initSubViewLayout()
@@ -63,7 +63,7 @@ open class WPBaseAlert: UIView {
         }).disposed(by: disposeBag)
     }
     /// 显示弹窗
-    final func show(){
+    public func show(){
         willShow()
         if self.rootView == nil{
             rootView = UIApplication.shared.keyWindow ?? UIView()
@@ -80,7 +80,7 @@ open class WPBaseAlert: UIView {
         })
     }
     /// 隐藏弹窗
-    final func dismiss(completeAnimate:(()->Void)?=nil){
+    public func dismiss(completeAnimate:(()->Void)?=nil){
         willDismiss()
         dismissToLocation()
         UIView.animate(withDuration: TimeInterval(endDuration), animations: {[weak self]in
