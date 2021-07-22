@@ -11,7 +11,7 @@ import RxCocoa
 
 public extension UIView{
     /// 从xib加载
-    static func initWithXibName(xib: String) -> Any? {
+    static func wp_initWithXibName(xib: String) -> Any? {
         guard let nibs = Bundle.main.loadNibNamed(xib, owner: nil, options: nil) else {
             return nil
         }
@@ -33,6 +33,14 @@ public extension UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
+    
+    /// copy一个视图
+    var wp_copy : Self{
+        let data = NSKeyedArchiver.archivedData(withRootObject: Self.self)
+        return NSKeyedUnarchiver.unarchiveObject(with: data) as! Self
+    }
+
+    
 }
 
 public extension UIView{
@@ -83,13 +91,30 @@ public extension UIView{
     var wp_midY: CGFloat {
         return wp_height * 0.5
     }
-    
+
     /// 选择性圆角处理，需要设置frame后调用，如果是约束需要layout后调用才能生效
-    func wp_corner(corners: UIRectCorner, radius: CGFloat) {
-        let maskPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        let maskLayer = CAShapeLayer()
-        maskLayer.frame = bounds
-        maskLayer.path = maskPath.cgPath
+    /// - Parameters:
+    ///   - corners: 原角点
+    ///   - radius: 圆角弧度
+    ///   - force: 是否强制 true的话在自身宽高都等于0的时候会调用一次layoutIfNeed
+    func wp_corner(_ corners: [UIRectCorner], radius: CGFloat,force:Bool = false) {
+        if corners.count <= 0 { return }
+        var value : UInt = 0
+        corners.forEach { elmt in
+            value += elmt.rawValue
+        }
+
+        if force && bounds.size == .zero {
+            layoutIfNeeded()
+        }
+
+        let maskPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: UIRectCorner(rawValue: value), cornerRadii: CGSize(width: radius, height: radius))
+        var maskLayer = layer.mask
+        if layer.mask == nil {
+            maskLayer = CAShapeLayer()
+        }
+        maskLayer!.frame = bounds
+        (maskLayer as? CAShapeLayer)?.path = maskPath.cgPath
         layer.mask = maskLayer
     }
     
@@ -181,81 +206,132 @@ public extension UIView {
     ///   - offSetY: 偏移量
     ///   - config: 配置项
     func wp_showPlaceholder(offSetY:CGFloat=0,
-                            config:(WPPlaceholderView)->Void){
-        let tag = 10086
-        var contetnView : UIView?
-        // 先查询是否有占位视图
-        subviews.forEach { elmt in
-            if elmt.tag == tag{
-                contetnView = elmt
+                            config:@escaping (WPPlaceholderView)->Void){
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let tag = 10086
+            var contetnView : UIView?
+            // 先查询是否有占位视图
+            self.subviews.forEach { elmt in
+                if elmt.tag == tag{
+                    contetnView = elmt
+                }
             }
-        }
-        if contetnView == nil {
-            contetnView = UIView()
-        }
-        contetnView?.tag = tag
-        addSubview(contetnView!)
-        
-        contetnView?.snp.remakeConstraints({ make in
-            make.edges.equalToSuperview()
-        })
-        
-        let placeholderView = WPPlaceholderView()
-        config(placeholderView)
-        contetnView?.addSubview(placeholderView)
-        placeholderView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(offSetY)
+            if contetnView == nil {
+                contetnView = UIView()
+            }
+            contetnView?.tag = tag
+            self.addSubview(contetnView!)
+            
+            contetnView?.snp.remakeConstraints({ make in
+                make.edges.equalToSuperview()
+            })
+            
+            let placeholderView = WPPlaceholderView()
+            config(placeholderView)
+            contetnView?.addSubview(placeholderView)
+            placeholderView.snp.makeConstraints { make in
+                make.centerX.equalToSuperview()
+                make.centerY.equalToSuperview().offset(offSetY)
+            }
         }
     }
     
     /// 移除占位视图
     func wp_removePlaceholder(){
+        DispatchQueue.main.async {
         let tag = 10086
         var contetnView : UIView?
-        subviews.forEach { elmt in
+            self.subviews.forEach { elmt in
             if elmt.tag == tag{
                 contetnView = elmt
             }
         }
-        contetnView?.removeFromSuperview()
+            contetnView?.removeFromSuperview()
+        }
     }
     
     /// 显示加载小菊花
     /// - Parameter show: 是否显示
-    func loading(is show:Bool) {
+    func wp_loading(is show: Bool,offSetY: CGFloat = 0) {
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
         let tag = 10087
         var resualt = false
-        for subView in subviews {
+            for subView in self.subviews {
             if subView.tag == tag {
                 resualt = true
             }
         }
-       
-        if show && !resualt {
-            let lodingView = UIActivityIndicatorView()
-            lodingView.tag = tag
-            lodingView.startAnimating()
-            addSubview(lodingView)
-            lodingView.snp.makeConstraints { (make) in
-                make.center.equalTo(self)
-                make.width.height.equalTo(20)
+            
+            if show && !resualt {
+                let lodingView = UIActivityIndicatorView()
+                lodingView.tag = tag
+                lodingView.startAnimating()
+                self.addSubview(lodingView)
+                lodingView.snp.makeConstraints { (make) in
+                    make.centerX.equalToSuperview()
+                    make.centerY.equalToSuperview().offset(offSetY)
+                    make.width.height.equalTo(20)
+                }
+                
+            }else if !show && resualt{
+                var subLoding : UIView?
+                for subView in self.subviews {
+                    if subView.tag == tag {
+                        subLoding = subView
+                    }
+                }
+                subLoding?.removeFromSuperview()
+            }
+        }
+
+
+    }
+    
+    /// 显示一个简单的toast
+    /// - Parameters:
+    ///   - str: 内容
+    ///   - delaySecond: 延迟时间
+    func wp_toast(_ str: String,_ delaySecond:DispatchTime = .now() + 2,offSetY: CGFloat = 0){
+        DispatchQueue.main.async {[weak self] in
+            guard let self = self else { return }
+            
+            let toastView = WPToastView()
+            toastView.titleL.text = str
+            toastView.alpha = 0
+            
+            self.addSubview(toastView)
+            
+            toastView.snp.makeConstraints { make in
+                make.centerX.equalToSuperview()
+                make.centerY.equalToSuperview().offset(offSetY)
             }
             
-        }else if !show && resualt{
-            var subLoding : UIView?
-            for subView in subviews {
-                if subView.tag == tag {
-                    subLoding = subView
+            UIView.animate(withDuration: 0.2, animations: {
+                toastView.alpha = 1
+            },completion: {isRes in
+                if isRes{
+                    DispatchQueue.main.asyncAfter(deadline: delaySecond, execute: {
+                        UIView.animate(withDuration: 0.5, animations: {
+                            toastView.alpha = 0
+                        },completion: { isRes in
+                            toastView.removeFromSuperview()
+                        })
+                    })
+                }else{
+                    toastView.removeFromSuperview()
                 }
-            }
-            subLoding?.removeFromSuperview()
+            })
         }
     }
 }
 
 open class WPPlaceholderView: UIView {
-    
+
     /// 标题
     public let titleL = UILabel()
     /// 描述
@@ -287,6 +363,38 @@ open class WPPlaceholderView: UIView {
     }
     
     required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class WPToastView: UIView {
+    /// 内容视图
+    let titleL = UILabel()
+    /// 背景视图
+    let backgroundV = UIView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(backgroundV)
+        addSubview(titleL)
+        backgroundV.backgroundColor = .init(0, 0, 0, 255 * 0.6)
+        titleL.numberOfLines = 0
+        titleL.textColor = .white
+        layer.cornerRadius = 8
+        clipsToBounds = true
+        
+        backgroundV.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        titleL.snp.makeConstraints { make in
+            make.left.top.equalTo(20)
+            make.bottom.right.equalTo(-20)
+        }
+
+    }
+    
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

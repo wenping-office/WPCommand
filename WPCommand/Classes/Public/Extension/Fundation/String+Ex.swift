@@ -11,6 +11,11 @@ import CommonCrypto
 
 public extension String{
     
+    /// 一个可变富文本
+    var wp_attStr : NSMutableAttributedString{
+        return NSMutableAttributedString(string: self)
+    }
+
     /// 加载一个bundle
     var wp_bundle : Bundle?{
         var bundle: Bundle?
@@ -63,6 +68,16 @@ public extension String{
         let modifiedString = regex.stringByReplacingMatches(in: self, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange.init(location: 0, length: self.count), withTemplate: "")
         return modifiedString
     }
+    
+    /// 过滤空格
+    var wp_filterSpace : String?{
+        return wp_filter(" ")
+    }
+    
+    /// 过滤换行
+    var wp_filterLineFeed : String?{
+        return wp_filter("\n")
+    }
 }
 
 public extension String{
@@ -102,5 +117,25 @@ public extension String{
     /// - Returns: 图片
     func wp_image(_ bundle: Bundle) -> UIImage {
         return UIImage(named: self, in: bundle, compatibleWith: nil) ?? UIImage()
+    }
+    
+    
+    /// 过滤字符串
+    /// - Parameter str: 关键字
+    /// - Returns: 过滤后的结果
+    func wp_filter(_ str:String)->String?{
+        return replacingOccurrences(of: str, with: "", options: .literal, range: nil)
+    }
+    
+    /// 返回子字符串在当前字符串的位置 如果有多个将会找最后一个
+    /// - Parameter str: 关键字
+    func wp_Of(_ keyword: String)->NSRange{
+        return (self as NSString).range(of: keyword)
+    }
+    
+    /// 复制到粘贴版
+    func wp_sopyToPasteboard(){
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = self
     }
 }

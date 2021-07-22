@@ -10,10 +10,10 @@ import UIKit
 open class WPTextView: UITextView {
     
     /// 过滤字符 只能单个字符过滤 例如[""]
-    var filter : [String] = []{
+    public var filter : [String] = []{
         didSet{
             filterKeys.removeAll()
-            oldValue.forEach { elmt in
+            filter.forEach { elmt in
                 filterKeys[elmt] = ""
             }
         }
@@ -22,7 +22,7 @@ open class WPTextView: UITextView {
     fileprivate var filterKeys : [String:String] = [:]
 
     /// 最大输入字符数
-    var maxCount = Int.max
+    public var maxCount = Int.max
 
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -42,9 +42,9 @@ extension WPTextView:UITextViewDelegate{
         if filter.count != 0 {
             let res = filterKeys[text]
             if res != nil {
-                return true
-            }else{
                 return false
+            }else{
+                return true
             }
         }else{
            return true

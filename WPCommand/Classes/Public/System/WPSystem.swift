@@ -59,27 +59,27 @@ public extension WPSystem{
     /// 键盘
     struct keyBoard {
         /// 键盘将要显示通知
-        public func willShow()->Observable<Notification>{
+        public var willShow : Observable<Notification>{
            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
         }
         /// 键盘已经显示通知
-        public func didShow()->Observable<Notification>{
+        public var didShow : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification)
         }
         /// 键盘将要收回通知
-        public func willHide()->Observable<Notification>{
+        public var willHide : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
         }
         /// 键盘已经收回通知
-        public func didHide()->Observable<Notification>{
+        public var didHide : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification)
         }
         /// 键盘高度改变通知
-        public func willChangeFrame()->Observable<Notification>{
+        public var willChangeFrame : Observable<Notification>{
            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification)
         }
         /// 键盘高度已经改变通知
-        public func didChangeFrame()->Observable<Notification>{
+        public var didChangeFrame : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification)
         }
         
@@ -88,7 +88,7 @@ public extension WPSystem{
         ///   - targetView: 目标view
         /// - Returns: 返回差值
         public func frameOffset(in targetView:UIView) -> Observable<CGFloat> {
-            return  WPSystem.share.keyboard.didChangeFrame().map { value in
+            return  WPSystem.share.keyboard.didChangeFrame.map { value in
                 guard
                     let endFrame = value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
                 else { return 0}
@@ -104,27 +104,27 @@ public extension WPSystem{
     struct app {
         
         /// 将要进入前台台
-        public func willEnterForeground()->Observable<Notification>{
+        public var willEnterForeground : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
         }
         
         /// 已经激活app
-        public func  didBecomeActive()->Observable<Notification>{
+        public var  didBecomeActive : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.didBecomeActiveNotification)
         }
 
         /// 将要挂起
-        public func willResignActive()->Observable<Notification>{
+        public var willResignActive : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.willResignActiveNotification)
         }
         
         /// 已经进入后台
-        public func didEnterBackground()->Observable<Notification>{
+        public var didEnterBackground : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
         }
         
         /// 将被杀死
-        public func willTerminate()->Observable<Notification>{
+        public var willTerminate : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.willTerminateNotification)
         }
     }

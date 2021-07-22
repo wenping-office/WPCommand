@@ -40,4 +40,63 @@ public extension UIColor{
         UIGraphicsEndImageContext()
         return image
     }
+    
+    /// 颜色转换 偏移时渐变
+    /// - Parameters:
+    ///   - beginColor: 开始渐变时颜色
+    ///   - endColor: 结束渐变最终颜色
+    ///   - offset: 到某一个点才开始渐变
+    ///   - spacing: 渐变颗粒度
+    ///   - beginPoint: 开始渐变点
+    ///   - endPoint: 结束渐变点
+    ///   - handle: 每一次渐变处理最终的rgb
+   static func wp_transfrom(of beginColor:UIColor,
+                   to endColor:UIColor,
+                   offset:CGPoint,
+                   spacing:CGFloat,
+                   beginPoint:CGFloat,
+                   endPoint:CGFloat,
+                   handle:(_ r:CGFloat,_ g:CGFloat,_ b:CGFloat,_ a:CGFloat, _ aa:CGFloat,_ ab:CGFloat)->Void){
+        
+        let ci = (endPoint - beginPoint) / spacing // 每一次的间距
+        let t : CGFloat = 255
+        
+        let bColorRGB = beginColor.cgColor.components; // 开始颜色RGB
+        let eColorRGB = endColor.cgColor.components; // 结束颜色RGB
+        
+        guard
+            let br = bColorRGB?[0],
+            let bg = bColorRGB?[1],
+            let bb = bColorRGB?[2],
+            let ba = bColorRGB?[3],
+            let er = eColorRGB?[0],
+            let eg = eColorRGB?[1],
+            let eb = eColorRGB?[2],
+            let ea = eColorRGB?[3]
+        else { return }
+        
+        // 每一次渐变的RGB值
+        let R : CGFloat = (br - er) * t / ci
+        let G : CGFloat = (bg - eg) * t / ci
+        let B : CGFloat = (bb - eb) * t / ci
+        let A : CGFloat = (ba - ea) * t / ci
+        let viewCi = t / ci; // 每一次btn的透明度
+        let Y = offset.y
+        
+        let currentCi = ((Y-beginPoint) / spacing) > 0 ? ((Y-beginPoint) / spacing) : 0;
+        let countCi = (endPoint - beginPoint) / spacing;
+        let cR = br * t - currentCi * R
+        let cG = bg * t - currentCi * G
+        let cB = bb * t - currentCi * B
+        let cA = ba * t - currentCi * A
+        let alphaA = (t - currentCi * viewCi) / t; // 每一次透明减少的度
+        let alphaB = currentCi * viewCi / t
+        if (currentCi < countCi) {
+            handle(cR,cG,cB,cA,alphaA,alphaB)
+        }
+    }
+
+
 }
+
+
