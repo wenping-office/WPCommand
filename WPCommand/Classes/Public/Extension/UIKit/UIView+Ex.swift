@@ -161,7 +161,7 @@ public extension UIView{
 }
 
 public extension UIView {
-    /// 子试图随机色
+    /// 子视图随机色
     func wp_subViewRandomColor(){
         subviews.forEach { subView in
             subView.backgroundColor = .wp_random

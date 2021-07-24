@@ -11,31 +11,31 @@ import WPCommand
 
 class ViewController: UIViewController {
 
+    let tableView = WPTableAutoLayoutView(style: .plain, reloadModel: .default)
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
-        let subview = UIView(frame: .init(x: 0, y: 50, width: 50, height: 50))
-        let lView = UIView(frame: .init(x: 0, y: 20, width: 20, height: 20))
-        subview.addSubview(lView)
         
-        view.addSubview(subview)
-        lView.backgroundColor = .wp_random
-        subview.backgroundColor = .wp_random
-        
-       let ob = lView.convert(lView.frame, to: self.view)
-
-        print(lView.wp_frameInWidow)
+        let group = WPTableGroup()
+        group.headerHeight = 0
+        group.footerHeight = 0
+        [("输入框",TestUIController())].forEach { elmt in
+            let item = WPTableItem(cellClass: UITableViewCell.self) { cell in
+                cell.textLabel?.text = elmt.0
+            } didSelected: { cell in
+                self.navigationController?.pushViewController(elmt.1, animated: true)
+            }
+            group.items.append(item)
+        }
+        tableView.groups = [group]
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     
 }
 
-class item: WPTableItem {
-    
-}
+

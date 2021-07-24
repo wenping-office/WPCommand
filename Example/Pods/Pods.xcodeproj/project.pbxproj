@@ -208,9 +208,10 @@
 		8819CBF35F9919DFC3C17016DF3ACE46 /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C365234D74D3ECCCF1153AC21853CC17 /* UIApplication+Rx.swift */; };
 		88B7668A82BD949F9B517D51A4AB57EB /* ObserverBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCE5BFAECA74A27832F1D885D8FE9A8 /* ObserverBase.swift */; };
 		8A8BF84561262954139FCC61814411B6 /* WPLatticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA6A84BA76D1D477BA3FC17068A40C6 /* WPLatticeCell.swift */; };
+		8B7D4A0A26ABEBE30075B40F /* WPTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0926ABEBE30075B40F /* WPTextView.swift */; };
+		8B7D4A0C26ABEC090075B40F /* WPTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0B26ABEC090075B40F /* WPTextField.swift */; };
 		8B7EEE0E899778DA279E64E26E38FB30 /* RxTextViewDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489E512FD1BB1244DCC6AE572CE4743A /* RxTextViewDelegateProxy.swift */; };
 		8B8BE709B46663F60DB6A661A3B2A28A /* ConstraintMakerPriortizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA4F7EC0823D823B54B21C25EB37A01 /* ConstraintMakerPriortizable.swift */; };
-		8BF9AC6126A272C200D3F693 /* WPTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF9AC6026A272C200D3F693 /* WPTextView.swift */; };
 		8C5FA225968DD3EE3703A7E86BF1233D /* GroupBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1CC760592EC19A34935F7618AE429F6 /* GroupBy.swift */; };
 		8CE605907DC8FA1F2E4751F939A4E604 /* UIControl+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0858A4316F23730BE5436462ACDB39 /* UIControl+Rx.swift */; };
 		8F123AAE538941DECC05FE6E867A8E19 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32603A5D1DC0375A4139EDE2C64B791 /* Queue.swift */; };
@@ -743,8 +744,9 @@
 		8A75130B7A051434BF733F75BC06DE5C /* JSONSerialization+Ex.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "JSONSerialization+Ex.swift"; sourceTree = "<group>"; };
 		8ADE82B83BBA62C043B0016594327A7B /* RxWKNavigationDelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxWKNavigationDelegateProxy.swift; path = RxCocoa/iOS/Proxies/RxWKNavigationDelegateProxy.swift; sourceTree = "<group>"; };
 		8B2753A8A5E2830565A19D69FEAD006B /* UIPickerView+Rx.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIPickerView+Rx.swift"; path = "RxCocoa/iOS/UIPickerView+Rx.swift"; sourceTree = "<group>"; };
+		8B7D4A0926ABEBE30075B40F /* WPTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPTextView.swift; sourceTree = "<group>"; };
+		8B7D4A0B26ABEC090075B40F /* WPTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPTextField.swift; sourceTree = "<group>"; };
 		8B9A1ABF97E11239EE2EF88D66CA8B8F /* RxTextStorageDelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxTextStorageDelegateProxy.swift; path = RxCocoa/iOS/Proxies/RxTextStorageDelegateProxy.swift; sourceTree = "<group>"; };
-		8BF9AC6026A272C200D3F693 /* WPTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WPTextView.swift; path = ../WPCommand/Classes/Public/TextView/WPTextView.swift; sourceTree = "<group>"; };
 		8C6B0471873CDD2AA0207839AE36A3A7 /* Filter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = RxSwift/Observables/Filter.swift; sourceTree = "<group>"; };
 		8CA2182F14A8223FEB0A7A8109DC8EDF /* RxCocoa.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxCocoa.swift; path = RxCocoa/RxCocoa.swift; sourceTree = "<group>"; };
 		8D5B7B6709F79AF21AE738F0183B3070 /* ElementAt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ElementAt.swift; path = RxSwift/Observables/ElementAt.swift; sourceTree = "<group>"; };
@@ -1110,7 +1112,8 @@
 		381108FAF64B8736B5E9B9084D397A7E /* WPCommand */ = {
 			isa = PBXGroup;
 			children = (
-				8BF9AC5F26A2729900D3F693 /* TextView */,
+				8B7D4A0826ABEBE30075B40F /* TextView */,
+				8B7D4A0726ABEBBA0075B40F /* TextField */,
 				50FF9344A6669B5A7BAE109E7A8B418F /* Base */,
 				1E883654267A2F947E0CC973F7E980C2 /* CollectionView */,
 				58335A1FAC47950BF426F71F11EA5BF2 /* Extension */,
@@ -1455,12 +1458,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8BF9AC5F26A2729900D3F693 /* TextView */ = {
+		8B7D4A0726ABEBBA0075B40F /* TextField */ = {
 			isa = PBXGroup;
 			children = (
-				8BF9AC6026A272C200D3F693 /* WPTextView.swift */,
+				8B7D4A0B26ABEC090075B40F /* WPTextField.swift */,
 			);
-			path = TextView;
+			path = TextField;
+			sourceTree = "<group>";
+		};
+		8B7D4A0826ABEBE30075B40F /* TextView */ = {
+			isa = PBXGroup;
+			children = (
+				8B7D4A0926ABEBE30075B40F /* WPTextView.swift */,
+			);
+			name = TextView;
+			path = WPCommand/Classes/Public/TextView;
 			sourceTree = "<group>";
 		};
 		8DB56DBFA995240548043B1631D4AEFA /* RxRelay */ = {
@@ -2458,12 +2470,13 @@
 				279DF1834CD323E3360683A1D4EB7905 /* UICollectionReusableView+Ex.swift in Sources */,
 				5744308845641D550106DD0EE2DC83EA /* UICollectionViewCell+Ex.swift in Sources */,
 				40AB556690D6E09184E533B7EB780072 /* UIColor+Ex.swift in Sources */,
-				8BF9AC6126A272C200D3F693 /* WPTextView.swift in Sources */,
+				8B7D4A0A26ABEBE30075B40F /* WPTextView.swift in Sources */,
 				C71492C0399FE23CF82779A4DC5C02EF /* UIImage+Ex.swift in Sources */,
 				06E24F7342AF86E80367D20DA3FD90C9 /* UILabel+Ex.swift in Sources */,
 				C3A2C68B23A4B645B9A2B2024D864ADB /* UINavigationController+Ex.swift in Sources */,
 				DD8652245CA996DD6D9B58CA9466F7E1 /* UITableViewCell+Ex.swift in Sources */,
 				FB30A83881339D51430849DAE4147FC8 /* UITableViewHeaderFooterView+Ex.swift in Sources */,
+				8B7D4A0C26ABEC090075B40F /* WPTextField.swift in Sources */,
 				81BA30DEAA449B8F9558166A095BDD19 /* UIView+Ex.swift in Sources */,
 				E1C2BF6328471B863E9794C8EB60F973 /* UIViewController+Ex.swift in Sources */,
 				672BE8575F730B64E5A2EAA3400CB3F0 /* WPBaseAlert.swift in Sources */,

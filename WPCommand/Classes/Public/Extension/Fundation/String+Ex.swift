@@ -70,12 +70,12 @@ public extension String{
     }
     
     /// 过滤空格
-    var wp_filterSpace : String?{
+    var wp_filterSpace : String{
         return wp_filter(" ")
     }
     
     /// 过滤换行
-    var wp_filterLineFeed : String?{
+    var wp_filterLineFeed : String{
         return wp_filter("\n")
     }
 }
@@ -123,7 +123,7 @@ public extension String{
     /// 过滤字符串
     /// - Parameter str: 关键字
     /// - Returns: 过滤后的结果
-    func wp_filter(_ str:String)->String?{
+    func wp_filter(_ str:String)->String{
         return replacingOccurrences(of: str, with: "", options: .literal, range: nil)
     }
     

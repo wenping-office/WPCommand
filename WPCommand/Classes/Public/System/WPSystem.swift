@@ -151,7 +151,7 @@ public extension WPSystem{
     ///   - phone: 电话
     ///   - failed: 拨打失败
     func callPhone(phone:String,failed:(()->Void)? = nil){
-        let phoneStr = "tel://" + phone.replacingOccurrences(of: " ", with: "", options: .literal, range: nil)
+        let phoneStr = "tel://" + phone.wp_filterSpace
         if let phoneURL = URL(string: phoneStr), UIApplication.shared.canOpenURL(phoneURL) {
              UIApplication.shared.openURL(phoneURL)
         }else{
