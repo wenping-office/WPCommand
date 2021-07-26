@@ -9,8 +9,8 @@ import UIKit
 
 public extension WPTextView {
     /// 输入模式
-   enum InputMode {
-        /// 过滤模式 默认过滤当前的关键字
+    enum InputMode {
+        /// 过滤模式 过滤当前的关键字
         case filter
         /// 输入模式 只能输入当前的关键字
         case input
@@ -25,7 +25,7 @@ open class WPTextView: UITextView {
             createKeyWordkeys()
         }
     }
-
+    
     /// 输入模式
     public let mode : WPTextView.InputMode
     
@@ -34,7 +34,7 @@ open class WPTextView: UITextView {
     
     /// 私有api 关键字的key
     fileprivate var keyWordKeys : [String:String] = [:]
-
+    
     /// 初始化一个文本输入框
     /// - Parameters:
     ///   - inputMode: 输入模式
@@ -58,11 +58,11 @@ open class WPTextView: UITextView {
             keyWordKeys[elmt] = ""
         }
     }
-
+    
 }
 
 extension WPTextView:UITextViewDelegate{
-
+    
     public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
         if keyWords.count != 0 {
@@ -81,25 +81,25 @@ extension WPTextView:UITextViewDelegate{
                 }else{
                     return false
                 }
-               }
+            }
         }else{
-           return true
+            return true
         }
     }
     
     public func textViewDidChange(_ textView: UITextView) {
         // /获取高亮部分
-         let selectedRange = textView.markedTextRange
-         let pos = textView.position(from: textView.beginningOfDocument, offset: 0)
-         
-         /// 如果在变化中是高亮部分在变，就不要计算字符了
-         if (selectedRange != nil) && (pos != nil) {
-             return
-         }
-         if textView.text.count >= maxCount {
-             textView.text = String(textView.text.prefix(maxCount))
-         }
-
+        let selectedRange = textView.markedTextRange
+        let pos = textView.position(from: textView.beginningOfDocument, offset: 0)
+        
+        /// 如果在变化中是高亮部分在变，就不要计算字符了
+        if (selectedRange != nil) && (pos != nil) {
+            return
+        }
+        if textView.text.count >= maxCount {
+            textView.text = String(textView.text.prefix(maxCount))
+        }
+        
     }
-
+    
 }

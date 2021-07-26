@@ -14,7 +14,7 @@ open class WPBaseAlert: UIView {
     /// 垃圾桶
     public let disposeBag = DisposeBag()
     /// 显示的根视图
-    public var rootView : UIView?{
+    open var rootView : UIView?{
         didSet{
             if let rootView = rootView{
                 rootView.addSubview(self)
@@ -27,7 +27,7 @@ open class WPBaseAlert: UIView {
         }
     }
     /// 蒙板
-    public var grayView = UIButton()
+    open var grayView = UIButton()
     /// 开始动画时间
     open var startDuration : CGFloat { return 0.3}
     /// 结束动画时间
@@ -63,7 +63,7 @@ open class WPBaseAlert: UIView {
         }).disposed(by: disposeBag)
     }
     /// 显示弹窗
-    public func show(){
+    open func show(){
         willShow()
         if self.rootView == nil{
             rootView = UIApplication.shared.keyWindow ?? UIView()
@@ -80,7 +80,7 @@ open class WPBaseAlert: UIView {
         })
     }
     /// 隐藏弹窗
-    public func dismiss(completeAnimate:(()->Void)?=nil){
+    open func dismiss(completeAnimate:(()->Void)?=nil){
         willDismiss()
         dismissToLocation()
         UIView.animate(withDuration: TimeInterval(endDuration), animations: {[weak self]in

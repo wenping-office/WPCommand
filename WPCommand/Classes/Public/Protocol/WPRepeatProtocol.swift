@@ -29,7 +29,7 @@ extension NSString: WPRepeatProtocol {}
 extension Date: WPRepeatProtocol {}
 
 public extension WPRepeatProtocol{
-
+    
     func wp_repeatKey() -> String{
         if let int = self as? Int{ return int.description }
         if let int16 = self as? Int16{ return int16.description }

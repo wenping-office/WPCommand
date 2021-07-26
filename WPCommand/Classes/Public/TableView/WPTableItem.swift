@@ -8,7 +8,7 @@
 import UIKit
 
 open class WPTableItem: NSObject {
-
+    
     public var reuseIdentifier : String{
         return NSStringFromClass(cellClass)
     }
@@ -37,7 +37,7 @@ open class WPTableItem: NSObject {
     public var didSetInfo : ((Any?) -> Void)?
     /// 刷新Item
     public var uploadItemBlock : ((WPTableItem) -> Void)?
-
+    
     public var info : Any?{
         didSet{
             guard let info = info  else { return }
@@ -45,19 +45,19 @@ open class WPTableItem: NSObject {
             didSetInfo(info: info)
         }
     }
-  
+    
     required public init <T:UITableViewCell>(cellClass:T.Type) {
         self.cellClass = cellClass
         super.init()
     }
-
+    
     public init<T:UITableViewCell>(cellClass:T.Type, willDisPlay : ((UITableViewCell) ->Void)?=nil, didSelected : ((UITableViewCell) ->Void)? = nil) {
         self.cellClass = cellClass
         super.init()
         didSelectedBlock = didSelected
         willDisplay = willDisPlay
     }
-
+    
     /// 设置完Info后调用，可在此方法手动计算Cell高度并赋值CellHeight
     open func didSetInfo(info:Any?){}
     

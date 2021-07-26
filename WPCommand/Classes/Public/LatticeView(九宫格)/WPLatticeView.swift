@@ -33,12 +33,12 @@ open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
         }
         return count % col == 0 ? count / col : count / col + 1
     }
-
+    
     /// 是否显示"+"号
     public var isShowPlus = false{
         didSet{
             var searchResualt = false
-
+            
             for item in contentGroup.items as! [itemT] {
                 if item.isPlus {
                     searchResualt = true
@@ -51,7 +51,7 @@ open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
                 contentGroup.items.append(plus)
             }else if isShowPlus == false && searchResualt{
                 contentGroup.items.removeLast()
-
+                
             }
             contentView.reloadData()
         }
@@ -122,7 +122,7 @@ open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
         }
         contentView.reloadData()
     }
-
+    
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

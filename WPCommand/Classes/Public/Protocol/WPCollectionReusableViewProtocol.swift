@@ -11,7 +11,7 @@ fileprivate var WPCollectionGroupPointer = "WPCollectionGroupPointer"
 
 /// group协议
 protocol WPCollectionReusableViewProtocol : NSObjectProtocol{
-
+    
     /// 即将加载group
     /// - Parameter model: 模型
     func didSetHeaderFooterModel(model:WPCollectionGroup)

@@ -27,6 +27,19 @@ public extension Array{
         self = result
     }
 
+    
+    /// 获取某个元素的下标
+    /// - Parameter resualtBlock: 条件block
+    /// - Returns: 结果
+    func wp_index(of resualtBlock:@escaping(Element)->Bool)->UInt?{
+        var index : UInt?
+        for subIndex in 0..<count {
+            if resualtBlock(self[subIndex]) {
+                index = UInt(subIndex)
+            }
+        }
+        return index
+    }
 }
 
 public extension Array where Element: WPRepeatProtocol{

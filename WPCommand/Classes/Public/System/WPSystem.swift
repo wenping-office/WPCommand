@@ -26,14 +26,14 @@ public let wp_safeArea = wp_isFullScreen ? UIEdgeInsets(top: 44.0, left: 0.0, bo
 /// 是否是刘海屏
 public var wp_isFullScreen: Bool{
     if #available(iOS 11, *) {
-          guard let w = UIApplication.shared.delegate?.window, let unwrapedWindow = w else {
-              return false
-          }
-
-          if unwrapedWindow.safeAreaInsets.left > 0 || unwrapedWindow.safeAreaInsets.bottom > 0 {
-              print(unwrapedWindow.safeAreaInsets)
-              return true
-          }
+        guard let w = UIApplication.shared.delegate?.window, let unwrapedWindow = w else {
+            return false
+        }
+        
+        if unwrapedWindow.safeAreaInsets.left > 0 || unwrapedWindow.safeAreaInsets.bottom > 0 {
+            print(unwrapedWindow.safeAreaInsets)
+            return true
+        }
     }
     return false
 }
@@ -43,13 +43,13 @@ open class WPSystem: NSObject {
     
     /// 垃圾桶
     let disposeBag = DisposeBag()
-
+    
     /// 单例
-   public static var share : WPSystem = {
-       let manager = WPSystem()
-       return manager
+    public static var share : WPSystem = {
+        let manager = WPSystem()
+        return manager
     }()
-
+    
     /// 键盘相关
     public let keyboard : WPSystem.KeyBoard = .init()
     
@@ -65,7 +65,7 @@ public extension WPSystem{
     struct KeyBoard {
         /// 键盘将要显示通知
         public var willShow : Observable<Notification>{
-           return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
         }
         /// 键盘已经显示通知
         public var didShow : Observable<Notification>{
@@ -81,7 +81,7 @@ public extension WPSystem{
         }
         /// 键盘高度改变通知
         public var willChangeFrame : Observable<Notification>{
-           return NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification)
+            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification)
         }
         /// 键盘高度已经改变通知
         public var didChangeFrame : Observable<Notification>{
@@ -97,7 +97,7 @@ public extension WPSystem{
                 guard
                     let endFrame = value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
                 else { return 0}
-            
+                
                 let targetFrame = targetView.wp_frameInWidow
                 return endFrame.origin.y - ((targetFrame.height + UIScreen.main.bounds.height) * 0.5)
             }
@@ -117,7 +117,7 @@ public extension WPSystem{
         public var  didBecomeActive : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.didBecomeActiveNotification)
         }
-
+        
         /// 将要挂起
         public var willResignActive : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.willResignActiveNotification)
@@ -136,9 +136,13 @@ public extension WPSystem{
     
     /// 屏幕相关
     struct Screen {
+        /// 自定义相关
+        public var custom = Custom()
+        /// 系统相关
+        public var system = System()
         /// 判断是否是16:9屏
         /// - Returns: true 是 false不是
-       public var is16x9:Bool{
+        public var is16x9:Bool{
             let maxWidth = wp_Screen.width
             let Sheight = wp_Screen.height
             let maxHeight = maxWidth / 9 * 16
@@ -147,7 +151,7 @@ public extension WPSystem{
         }
         
         /// 比例
-       public enum Proportion {
+        public enum Proportion {
             /// 4:3屏幕
             case p4x3
             /// 16x9屏幕
@@ -155,7 +159,7 @@ public extension WPSystem{
             
             /// 获取一个比例高度
             /// - Returns: 比例高度
-        public var height: CGFloat{
+            public var height: CGFloat{
                 let maxHeight = wp_Screen.height
                 let maxWidth = wp_Screen.width
                 switch self {
@@ -170,9 +174,9 @@ public extension WPSystem{
                 }
             }
         }
-
+        
         /// 系统屏幕相关
-        struct System {
+        public struct System {
             /// 屏幕方向
             public var orientation : Observable<UIDeviceOrientation>{
                 return NotificationCenter.default.rx.notification(UIDevice.orientationDidChangeNotification).map { value in
@@ -182,18 +186,19 @@ public extension WPSystem{
         }
         
         /// 自定义屏幕相关
-        struct Custom {
+        public struct Custom {
             /// 灵敏度
-           public var sensitivity : Double  = 0.77
-           /// 当前设备方向
-           public let orientation : BehaviorRelay<UIDeviceOrientation> = .init(value: .portrait)
-           ///运动管理器
-           private let motionManager = CMMotionManager()
-            
+            public var sensitivity : Double  = 0.77
+            /// 刷新间隔
+            public var updateInterval : TimeInterval = 3
+            /// 当前设备方向
+            public let orientation : BehaviorRelay<UIDeviceOrientation> = .init(value: .portrait)
+            /// 运动管理器
+            private let motionManager = CMMotionManager()
             /// 开始捕捉重力方向
-            func openCatch(){
+            public func openCatch(){
                 ///设置重力感应刷新时间间隔
-                motionManager.gyroUpdateInterval = 3
+                motionManager.gyroUpdateInterval = updateInterval
                 if motionManager.isDeviceMotionAvailable{
                     //开始实时获取数据
                     let queue = OperationQueue.current
@@ -203,7 +208,7 @@ public extension WPSystem{
                             let x = motion?.gravity.x,
                             let y = motion?.gravity.y
                         else { return }
-
+                        
                         if (fabs(y) >= fabs(x)) {// 竖屏
                             if (y < sensitivity) { // 正
                                 if orientation.value == .portrait { return }
@@ -225,9 +230,10 @@ public extension WPSystem{
                 }
             }
             /// 结束捕捉重力方向
-            func closeCatch(){
+            public func closeCatch(){
                 motionManager.stopDeviceMotionUpdates()
             }
+            
         }
     }
 }
@@ -239,14 +245,14 @@ public extension WPSystem{
         guard let url = URL(string: UIApplication.openSettingsURLString) else {
             return
         }
-
+        
         if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            UIApplication.shared.openURL(url)
         }
     }
-        
+    
     /// 拨打电话
     /// - Parameters:
     ///   - phone: 电话
@@ -254,7 +260,7 @@ public extension WPSystem{
     func callPhone(phone:String,failed:(()->Void)? = nil){
         let phoneStr = "tel://" + phone.wp_filterSpace
         if let phoneURL = URL(string: phoneStr), UIApplication.shared.canOpenURL(phoneURL) {
-             UIApplication.shared.openURL(phoneURL)
+            UIApplication.shared.openURL(phoneURL)
         }else{
             failed != nil ? failed!() : print("")
         }
@@ -284,7 +290,7 @@ public extension WPSystem{
         let authStatus = PHPhotoLibrary.authorizationStatus()
         let resault = (authStatus != .restricted && authStatus != .denied)
         
-         if authStatus == .notDetermined {
+        if authStatus == .notDetermined {
             if #available(iOS 14, *){
                 PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
                     
@@ -307,13 +313,13 @@ public extension WPSystem{
                     }
                 }
             }
-         }else{
+        }else{
             if resault {
                 open != nil ? open!() : print()
             }else{
                 close != nil ? close!() : print()
             }
-         }
+        }
     }
     
     /// 判断是否有打开相机权限
@@ -322,11 +328,11 @@ public extension WPSystem{
     ///   - close: 关闭
     /// - Returns: 结果
     func isOpenCamera(open:(()->Void)?=nil,close:(()->Void)?=nil){
-
+        
         let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
         
         let resault = (authStatus == .authorized)
-
+        
         if resault {
             open != nil ? open!() : print("")
         }else if authStatus == .notDetermined{

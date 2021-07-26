@@ -25,7 +25,7 @@ open class RwaBaseAlertVC: UIViewController {
         super.viewDidAppear(animated)
         show()
     }
-
+    
     required public init() {
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .overCurrentContext
@@ -59,9 +59,9 @@ open class RwaBaseAlertVC: UIViewController {
         }).disposed(by: disposeBag)
     }
     /// 显示弹窗
-     final func show(){
+    open func show(){
         willShow()
-
+        
         showToLoacton()
         UIView.animate(withDuration: TimeInterval(startDuration), animations: {[weak self]in
             self?.showToAnimates()
@@ -75,7 +75,7 @@ open class RwaBaseAlertVC: UIViewController {
         })
     }
     /// 隐藏弹窗
-    final func dismiss(completeAnimate:(()->Void)?=nil){
+    open func dismiss(completeAnimate:(()->Void)?=nil){
         willDismiss()
         dismissToLocation()
         UIView.animate(withDuration: TimeInterval(endDuration), animations: {[weak self]in
@@ -106,5 +106,5 @@ open class RwaBaseAlertVC: UIViewController {
     open func showToAnimates(){}
     /// 子类重写动画正在执行
     open func dismissToAnimates(){}
-
+    
 }

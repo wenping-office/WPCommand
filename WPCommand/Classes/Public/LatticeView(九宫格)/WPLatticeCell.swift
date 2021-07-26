@@ -24,7 +24,7 @@ open class WPLatticeCell: UICollectionViewCell{
         fatalError("init(coder:) has not been implemented")
     }
     
-   @objc open override func didSetItem(item: WPCollectionItem) {
+    @objc open override func didSetItem(item: WPCollectionItem) {
         guard let item = item as? WPLatticeItem else { return }
         
         if let image = item.image {

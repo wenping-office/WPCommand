@@ -20,7 +20,7 @@ open class WPCollectionAutoLayoutView: UICollectionView,UICollectionViewDataSour
     
     /// 当前选中item的Block
     open var itemsSelectedBlock : ((WPCollectionItem)->Void)?
-
+    
     public init<T:UICollectionViewCell>(
         collectionViewLayout layout: UICollectionViewLayout,
         cellClass : T.Type
@@ -31,7 +31,7 @@ open class WPCollectionAutoLayoutView: UICollectionView,UICollectionViewDataSour
         dataSource = self
         delegate = self
     }
-
+    
     public init<T:UICollectionViewCell>(
         cellClass:T.Type,
         selected:((WPCollectionItem)->Void)?=nil
@@ -44,7 +44,7 @@ open class WPCollectionAutoLayoutView: UICollectionView,UICollectionViewDataSour
         dataSource = self
         delegate = self
     }
-
+    
     public init(
         cellClass:AnyClass,
         headerFooterClass : AnyClass = UICollectionReusableView.self,
@@ -65,7 +65,7 @@ open class WPCollectionAutoLayoutView: UICollectionView,UICollectionViewDataSour
         self.dataSource = self
         self.delegate = self
     }
-
+    
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -74,17 +74,17 @@ open class WPCollectionAutoLayoutView: UICollectionView,UICollectionViewDataSour
 
 /// 数据源
 public extension WPCollectionAutoLayoutView{
-
-     func numberOfSections(in collectionView: UICollectionView) -> Int {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return groups.count
     }
-
-     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return groups[section].items.count
     }
-
-     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(self.cellClass), for: indexPath)
         let item = groups[indexPath.section].items[indexPath.row]
         
@@ -92,7 +92,7 @@ public extension WPCollectionAutoLayoutView{
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.didSetItem(item: item)
         }
-
+        
         cell.item = item
         cell.item?.indexPath = indexPath
         cell.didSetItem(item: item)
@@ -100,10 +100,10 @@ public extension WPCollectionAutoLayoutView{
         return cell
     }
     
-     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NSStringFromClass(headerFooterClass), for: indexPath)
-
+        
         let group = groups[indexPath.section]
         
         group.uploadGroupBlock = { group in
@@ -117,37 +117,37 @@ public extension WPCollectionAutoLayoutView{
 
 /// UICollectionViewDelegate代理
 public extension WPCollectionAutoLayoutView{
-     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = groups[indexPath.section].items[indexPath.row]
-
+        
         itemsSelectedBlock != nil ? itemsSelectedBlock!(item) : print("")
         item.selectedBlock != nil ? item.selectedBlock!(item) : print("")
-
+        
     }
 }
 /// UICollectionViewDelegateFlowLayout 代理
 public extension WPCollectionAutoLayoutView{
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return groups[indexPath.section].items[indexPath.row].itemSize
     }
-
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return groups[section].groupEdgeInsets
     }
-
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return CGFloat(groups[section].minimumLineSpacing)
     }
-
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return CGFloat(groups[section].minimumInteritemSpacing)
     }
-
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return groups[section].headerSize
     }
-
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         return groups[section].footerSize
     }
 }

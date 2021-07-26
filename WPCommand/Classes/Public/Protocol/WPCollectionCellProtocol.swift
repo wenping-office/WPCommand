@@ -23,6 +23,6 @@ public extension WPCollectionCellProtocol{
 }
 
 extension UICollectionViewCell:WPCollectionCellProtocol{
-        
+    
     @objc open func reloadItemInfo(info:Any?){}
 }
