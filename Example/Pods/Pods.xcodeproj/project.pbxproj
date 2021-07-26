@@ -211,12 +211,12 @@
 		8B7D4A0A26ABEBE30075B40F /* WPTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0926ABEBE30075B40F /* WPTextView.swift */; };
 		8B7D4A0C26ABEC090075B40F /* WPTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0B26ABEC090075B40F /* WPTextField.swift */; };
 		8B7D4AA926ABFE3A0075B40F /* ArrayEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4AA826ABFE3A0075B40F /* ArrayEx.swift */; };
-		8B7D4C2026AC19D40075B40F /* WPRepeatProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4C1F26AC19D30075B40F /* WPRepeatProtocol.swift */; };
 		8B7D4D0026AE4A2F0075B40F /* WPBaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4CFF26AE4A2F0075B40F /* WPBaseVC.swift */; };
-		8B7D4D0226AE578F0075B40F /* WPCollectionCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4D0126AE578F0075B40F /* WPCollectionCellProtocol.swift */; };
-		8B7D4D0426AE57A70075B40F /* WPTableHeaderFooterViewlProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4D0326AE57A70075B40F /* WPTableHeaderFooterViewlProtocol.swift */; };
-		8B7D4D0626AE57B60075B40F /* WPTableCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4D0526AE57B60075B40F /* WPTableCellProtocol.swift */; };
-		8B7D4D0826AE58180075B40F /* WPCollectionReusableViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4D0726AE58180075B40F /* WPCollectionReusableViewProtocol.swift */; };
+		8B7D4EE426AE5C7A0075B40F /* WPCollectionReusableViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EDF26AE5C7A0075B40F /* WPCollectionReusableViewProtocol.swift */; };
+		8B7D4EE526AE5C7A0075B40F /* WPRepeatProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EE026AE5C7A0075B40F /* WPRepeatProtocol.swift */; };
+		8B7D4EE626AE5C7A0075B40F /* WPCollectionCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EE126AE5C7A0075B40F /* WPCollectionCellProtocol.swift */; };
+		8B7D4EE726AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EE226AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift */; };
+		8B7D4EE826AE5C7A0075B40F /* WPTableCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EE326AE5C7A0075B40F /* WPTableCellProtocol.swift */; };
 		8B7EEE0E899778DA279E64E26E38FB30 /* RxTextViewDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489E512FD1BB1244DCC6AE572CE4743A /* RxTextViewDelegateProxy.swift */; };
 		8B8BE709B46663F60DB6A661A3B2A28A /* ConstraintMakerPriortizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA4F7EC0823D823B54B21C25EB37A01 /* ConstraintMakerPriortizable.swift */; };
 		8C5FA225968DD3EE3703A7E86BF1233D /* GroupBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1CC760592EC19A34935F7618AE429F6 /* GroupBy.swift */; };
@@ -754,12 +754,12 @@
 		8B7D4A0926ABEBE30075B40F /* WPTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPTextView.swift; sourceTree = "<group>"; };
 		8B7D4A0B26ABEC090075B40F /* WPTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPTextField.swift; sourceTree = "<group>"; };
 		8B7D4AA826ABFE3A0075B40F /* ArrayEx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayEx.swift; sourceTree = "<group>"; };
-		8B7D4C1F26AC19D30075B40F /* WPRepeatProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPRepeatProtocol.swift; sourceTree = "<group>"; };
 		8B7D4CFF26AE4A2F0075B40F /* WPBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPBaseVC.swift; sourceTree = "<group>"; };
-		8B7D4D0126AE578F0075B40F /* WPCollectionCellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPCollectionCellProtocol.swift; sourceTree = "<group>"; };
-		8B7D4D0326AE57A70075B40F /* WPTableHeaderFooterViewlProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPTableHeaderFooterViewlProtocol.swift; sourceTree = "<group>"; };
-		8B7D4D0526AE57B60075B40F /* WPTableCellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPTableCellProtocol.swift; sourceTree = "<group>"; };
-		8B7D4D0726AE58180075B40F /* WPCollectionReusableViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPCollectionReusableViewProtocol.swift; sourceTree = "<group>"; };
+		8B7D4EDF26AE5C7A0075B40F /* WPCollectionReusableViewProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPCollectionReusableViewProtocol.swift; sourceTree = "<group>"; };
+		8B7D4EE026AE5C7A0075B40F /* WPRepeatProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPRepeatProtocol.swift; sourceTree = "<group>"; };
+		8B7D4EE126AE5C7A0075B40F /* WPCollectionCellProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPCollectionCellProtocol.swift; sourceTree = "<group>"; };
+		8B7D4EE226AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPTableHeaderFooterViewlProtocol.swift; sourceTree = "<group>"; };
+		8B7D4EE326AE5C7A0075B40F /* WPTableCellProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPTableCellProtocol.swift; sourceTree = "<group>"; };
 		8B9A1ABF97E11239EE2EF88D66CA8B8F /* RxTextStorageDelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxTextStorageDelegateProxy.swift; path = RxCocoa/iOS/Proxies/RxTextStorageDelegateProxy.swift; sourceTree = "<group>"; };
 		8C6B0471873CDD2AA0207839AE36A3A7 /* Filter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = RxSwift/Observables/Filter.swift; sourceTree = "<group>"; };
 		8CA2182F14A8223FEB0A7A8109DC8EDF /* RxCocoa.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxCocoa.swift; path = RxCocoa/RxCocoa.swift; sourceTree = "<group>"; };
@@ -1126,7 +1126,7 @@
 		381108FAF64B8736B5E9B9084D397A7E /* WPCommand */ = {
 			isa = PBXGroup;
 			children = (
-				8B7D4C1E26AC19A40075B40F /* Protocol */,
+				8B7D4EDE26AE5C7A0075B40F /* Protocol */,
 				8B7D4A0826ABEBE30075B40F /* TextView */,
 				8B7D4A0726ABEBBA0075B40F /* TextField */,
 				50FF9344A6669B5A7BAE109E7A8B418F /* Base */,
@@ -1500,16 +1500,17 @@
 			path = Swift;
 			sourceTree = "<group>";
 		};
-		8B7D4C1E26AC19A40075B40F /* Protocol */ = {
+		8B7D4EDE26AE5C7A0075B40F /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
-				8B7D4C1F26AC19D30075B40F /* WPRepeatProtocol.swift */,
-				8B7D4D0126AE578F0075B40F /* WPCollectionCellProtocol.swift */,
-				8B7D4D0326AE57A70075B40F /* WPTableHeaderFooterViewlProtocol.swift */,
-				8B7D4D0526AE57B60075B40F /* WPTableCellProtocol.swift */,
-				8B7D4D0726AE58180075B40F /* WPCollectionReusableViewProtocol.swift */,
+				8B7D4EDF26AE5C7A0075B40F /* WPCollectionReusableViewProtocol.swift */,
+				8B7D4EE026AE5C7A0075B40F /* WPRepeatProtocol.swift */,
+				8B7D4EE126AE5C7A0075B40F /* WPCollectionCellProtocol.swift */,
+				8B7D4EE226AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift */,
+				8B7D4EE326AE5C7A0075B40F /* WPTableCellProtocol.swift */,
 			);
-			path = Protocol;
+			name = Protocol;
+			path = WPCommand/Classes/Public/Protocol;
 			sourceTree = "<group>";
 		};
 		8DB56DBFA995240548043B1631D4AEFA /* RxRelay */ = {
@@ -2504,20 +2505,22 @@
 				0E51DE91E6E4CDCFE2F4BB7485E8A6F5 /* Date+Ex.swift in Sources */,
 				8B7D4AA926ABFE3A0075B40F /* ArrayEx.swift in Sources */,
 				DC5B7C53C366DBD7CA34F7DBF5E1C2F2 /* JSONSerialization+Ex.swift in Sources */,
-				8B7D4D0426AE57A70075B40F /* WPTableHeaderFooterViewlProtocol.swift in Sources */,
 				35B90A370627ED5F44A6330034145201 /* String+Ex.swift in Sources */,
-				8B7D4C2026AC19D40075B40F /* WPRepeatProtocol.swift in Sources */,
 				279DF1834CD323E3360683A1D4EB7905 /* UICollectionReusableView+Ex.swift in Sources */,
+				8B7D4EE626AE5C7A0075B40F /* WPCollectionCellProtocol.swift in Sources */,
 				5744308845641D550106DD0EE2DC83EA /* UICollectionViewCell+Ex.swift in Sources */,
 				40AB556690D6E09184E533B7EB780072 /* UIColor+Ex.swift in Sources */,
 				8B7D4A0A26ABEBE30075B40F /* WPTextView.swift in Sources */,
-				8B7D4D0826AE58180075B40F /* WPCollectionReusableViewProtocol.swift in Sources */,
 				C71492C0399FE23CF82779A4DC5C02EF /* UIImage+Ex.swift in Sources */,
+				8B7D4EE826AE5C7A0075B40F /* WPTableCellProtocol.swift in Sources */,
 				06E24F7342AF86E80367D20DA3FD90C9 /* UILabel+Ex.swift in Sources */,
 				C3A2C68B23A4B645B9A2B2024D864ADB /* UINavigationController+Ex.swift in Sources */,
 				DD8652245CA996DD6D9B58CA9466F7E1 /* UITableViewCell+Ex.swift in Sources */,
 				FB30A83881339D51430849DAE4147FC8 /* UITableViewHeaderFooterView+Ex.swift in Sources */,
+				8B7D4EE526AE5C7A0075B40F /* WPRepeatProtocol.swift in Sources */,
+				8B7D4EE426AE5C7A0075B40F /* WPCollectionReusableViewProtocol.swift in Sources */,
 				8B7D4A0C26ABEC090075B40F /* WPTextField.swift in Sources */,
+				8B7D4EE726AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift in Sources */,
 				81BA30DEAA449B8F9558166A095BDD19 /* UIView+Ex.swift in Sources */,
 				E1C2BF6328471B863E9794C8EB60F973 /* UIViewController+Ex.swift in Sources */,
 				672BE8575F730B64E5A2EAA3400CB3F0 /* WPBaseAlert.swift in Sources */,
@@ -2529,9 +2532,7 @@
 				506B233F558183C234DB614E543CEBEC /* WPCollectionView.swift in Sources */,
 				D36A239EC4026D28EB12AE05551AFC23 /* WPCommand-dummy.m in Sources */,
 				8A8BF84561262954139FCC61814411B6 /* WPLatticeCell.swift in Sources */,
-				8B7D4D0226AE578F0075B40F /* WPCollectionCellProtocol.swift in Sources */,
 				2E35C533A7525162B64C28775C6078B7 /* WPLatticeItem.swift in Sources */,
-				8B7D4D0626AE57B60075B40F /* WPTableCellProtocol.swift in Sources */,
 				AD29DB4C6507348BDAE89DFBDC9E2328 /* WPLatticeView.swift in Sources */,
 				B72BDEBA2DCB43F3B251CA633616B0AC /* WPSystem.swift in Sources */,
 				2E13F7D443D93782D4FEDCE3D9D72CC6 /* WPTableAutoLayoutView.swift in Sources */,
