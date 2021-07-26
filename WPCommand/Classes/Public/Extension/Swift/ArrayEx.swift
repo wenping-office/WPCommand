@@ -36,6 +36,7 @@ public extension Array{
         for subIndex in 0..<count {
             if resualtBlock(self[subIndex]) {
                 index = UInt(subIndex)
+                break
             }
         }
         return index
