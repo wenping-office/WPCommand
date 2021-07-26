@@ -8,7 +8,7 @@
 
 import UIKit
 
-fileprivate var WPTableGroupPointer = "WPTableGroupPointer"
+
 
 extension UITableViewHeaderFooterView : WPTableHeaderFooterViewlProtocol{
 
@@ -17,23 +17,6 @@ extension UITableViewHeaderFooterView : WPTableHeaderFooterViewlProtocol{
     @objc open func reloadGroup(group: WPTableGroup) {}
 }
 
-public protocol WPTableHeaderFooterViewlProtocol : NSObjectProtocol{
 
-    func reloadGroup(group:WPTableGroup)
-    
-    var group : WPTableGroup?{ get set}
-}
-
-extension WPTableHeaderFooterViewlProtocol{
-    
-    public var group : WPTableGroup? {
-        get{
-            return objc_getAssociatedObject(self, &WPTableGroupPointer) as? WPTableGroup
-        }
-        set{
-            objc_setAssociatedObject(self, &WPTableGroupPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-}
 
 

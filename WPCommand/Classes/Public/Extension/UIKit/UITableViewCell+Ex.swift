@@ -8,7 +8,7 @@
 
 import UIKit
 
-fileprivate var WPitemPointer = "WPItemsModelPointer"
+
 
 extension UITableViewCell:WPTableCellProtocol{
     /// 给Cell 赋值item后调用
@@ -19,23 +19,7 @@ extension UITableViewCell:WPTableCellProtocol{
     @objc open func didSetItemInfo(info:Any?){}
 }
 
-public protocol WPTableCellProtocol : NSObjectProtocol{
-    
-    /// item模型创建时是什么item cell就会获得一个什么样的item
-    var item : WPTableItem?{ get set}
-}
 
-extension WPTableCellProtocol{
-
-    public var item : WPTableItem? {
-        get{
-            return objc_getAssociatedObject(self, &WPitemPointer) as? WPTableItem
-        }
-        set{
-            objc_setAssociatedObject(self, &WPitemPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-}
 
 
 

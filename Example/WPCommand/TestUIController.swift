@@ -9,7 +9,16 @@
 import UIKit
 import WPCommand
 
-class TestUIController: UIViewController {
+public struct Test:WPRepeatProtocol {
+    
+    var id : String = ""
+
+    var hashableKey : String {
+        return self.id
+    }
+}
+
+class TestUIController: WPBaseVC {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,6 +26,10 @@ class TestUIController: UIViewController {
 
         self.textField()
         self.textView()
+        var array = ["1","2","3","1","3"]
+        array.wp_repeat(retain: .last)
+        print(array)
+
     }
     
     func textField(){

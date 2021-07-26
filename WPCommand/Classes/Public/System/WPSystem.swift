@@ -48,9 +48,10 @@ open class WPSystem: NSObject {
        let manager = WPSystem()
        return manager
     }()
-    
+
     /// 键盘相关
     public let keyboard : WPSystem.keyBoard = .init()
+    
     /// app相关
     public let app : WPSystem.app = .init()
 }
@@ -144,8 +145,7 @@ public extension WPSystem{
                 UIApplication.shared.openURL(url)
         }
     }
-    
-    
+        
     /// 拨打电话
     /// - Parameters:
     ///   - phone: 电话

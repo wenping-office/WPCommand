@@ -16,24 +16,6 @@ extension UICollectionViewCell{
 
 }
 
-var WPCollectionItemPointer = "WPCollectionItemPointer"
 
-public protocol UICollectionCellProtocol : NSObjectProtocol{}
-
-public extension UICollectionCellProtocol{
-    var item : WPCollectionItem? {
-        get{
-            return objc_getAssociatedObject(self, &WPCollectionItemPointer) as? WPCollectionItem
-        }
-        set{
-            objc_setAssociatedObject(self, &WPCollectionItemPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-}
-
-extension UICollectionViewCell:UICollectionCellProtocol{
-        
-    @objc open func reloadItemInfo(info:Any?){}
-}
 
 

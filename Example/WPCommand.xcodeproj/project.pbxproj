@@ -108,11 +108,11 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				8B7D4A0D26ABF1000075B40F /* TestUIController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
-				8B7D4A0D26ABF1000075B40F /* TestUIController.swift */,
 			);
 			name = "Example for WPCommand";
 			path = WPCommand;

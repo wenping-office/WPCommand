@@ -25,11 +25,14 @@ class ViewController: UIViewController {
         let group = WPTableGroup()
         group.headerHeight = 0
         group.footerHeight = 0
-        [("输入框",TestUIController())].forEach { elmt in
+        [("输入框",TestUIController.self)].forEach { elmt in
             let item = WPTableItem(cellClass: UITableViewCell.self) { cell in
                 cell.textLabel?.text = elmt.0
             } didSelected: { cell in
-                self.navigationController?.pushViewController(elmt.1, animated: true)
+                
+                let vc = elmt.1.init()
+
+                self.navigationController?.pushViewController(vc, animated: true)
             }
             group.items.append(item)
         }
