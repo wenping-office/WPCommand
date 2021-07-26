@@ -13,6 +13,7 @@ import Photos
 import CoreTelephony
 import RxCocoa
 import RxSwift
+import CoreMotion
 
 /// 默认View边距
 public let wp_viewEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: -16, right: -16)
@@ -50,15 +51,18 @@ open class WPSystem: NSObject {
     }()
 
     /// 键盘相关
-    public let keyboard : WPSystem.keyBoard = .init()
+    public let keyboard : WPSystem.KeyBoard = .init()
     
     /// app相关
-    public let app : WPSystem.app = .init()
+    public let app : WPSystem.App = .init()
+    
+    /// 屏幕相关
+    public let screen : WPSystem.Screen = .init()
 }
 
 public extension WPSystem{
     /// 键盘
-    struct keyBoard {
+    struct KeyBoard {
         /// 键盘将要显示通知
         public var willShow : Observable<Notification>{
            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
@@ -102,7 +106,7 @@ public extension WPSystem{
     }
     
     /// app相关
-    struct app {
+    struct App {
         
         /// 将要进入前台台
         public var willEnterForeground : Observable<Notification>{
@@ -127,6 +131,103 @@ public extension WPSystem{
         /// 将被杀死
         public var willTerminate : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIApplication.willTerminateNotification)
+        }
+    }
+    
+    /// 屏幕相关
+    struct Screen {
+        /// 判断是否是16:9屏
+        /// - Returns: true 是 false不是
+       public var is16x9:Bool{
+            let maxWidth = wp_Screen.width
+            let Sheight = wp_Screen.height
+            let maxHeight = maxWidth / 9 * 16
+            let range = Sheight - maxHeight
+            return range <= 2
+        }
+        
+        /// 比例
+       public enum Proportion {
+            /// 4:3屏幕
+            case p4x3
+            /// 16x9屏幕
+            case p16x9
+            
+            /// 获取一个比例高度
+            /// - Returns: 比例高度
+        public var height: CGFloat{
+                let maxHeight = wp_Screen.height
+                let maxWidth = wp_Screen.width
+                switch self {
+                case .p16x9:
+                    if WPSystem.share.screen.is16x9{
+                        return maxHeight
+                    }else{
+                        return maxWidth / 9 * 16
+                    }
+                case .p4x3:
+                    return maxWidth / 3 * 4
+                }
+            }
+        }
+
+        /// 系统屏幕相关
+        struct System {
+            /// 屏幕方向
+            public var orientation : Observable<UIDeviceOrientation>{
+                return NotificationCenter.default.rx.notification(UIDevice.orientationDidChangeNotification).map { value in
+                    return UIDevice.current.orientation
+                }
+            }
+        }
+        
+        /// 自定义屏幕相关
+        struct Custom {
+            /// 灵敏度
+           public var sensitivity : Double  = 0.77
+           /// 当前设备方向
+           public let orientation : BehaviorRelay<UIDeviceOrientation> = .init(value: .portrait)
+           ///运动管理器
+           private let motionManager = CMMotionManager()
+            
+            /// 开始捕捉重力方向
+            func openCatch(){
+                ///设置重力感应刷新时间间隔
+                motionManager.gyroUpdateInterval = 3
+                if motionManager.isDeviceMotionAvailable{
+                    //开始实时获取数据
+                    let queue = OperationQueue.current
+                    
+                    motionManager.startDeviceMotionUpdates(to: queue!) { motion, error in
+                        guard
+                            let x = motion?.gravity.x,
+                            let y = motion?.gravity.y
+                        else { return }
+
+                        if (fabs(y) >= fabs(x)) {// 竖屏
+                            if (y < sensitivity) { // 正
+                                if orientation.value == .portrait { return }
+                                orientation.accept(.portrait)
+                            }else if y > -sensitivity { // 反
+                                if orientation.value == .portraitUpsideDown { return }
+                                orientation.accept(.portraitUpsideDown)
+                            }
+                        }else { // 横屏
+                            if (x < -sensitivity) { // 左
+                                if orientation.value == .landscapeLeft { return }
+                                orientation.accept(.landscapeLeft)
+                            }else if x > sensitivity { // 右
+                                if orientation.value == .landscapeRight { return }
+                                orientation.accept(.landscapeRight)
+                            }
+                        }
+                    }
+                }
+            }
+            /// 结束捕捉重力方向
+            func closeCatch(){
+                motionManager.stopDeviceMotionUpdates()
+            }
         }
     }
 }
