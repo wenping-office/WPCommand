@@ -20,18 +20,19 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 TODO: Add long description of the pod here.
                        DESC
-
+  # 项目主页
   s.homepage         = 'https://github.com/MyNameWp/WPCommand'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { '文平' => '850500722@qq.com' }
   s.source           = { :git => 'https://github.com/MyNameWp/WPCommand.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
+  # 最低支持的系统版本
   s.ios.deployment_target = '10.0'
-
+  # 源文件地址
   s.source_files = 'WPCommand/Classes/**/*'
-  
+  # 是否支持arc
+  s.requires_arc = true
   # s.resource_bundles = {
   #   'WPCommand' => ['WPCommand/Assets/*.png']
   # }
@@ -41,13 +42,7 @@ TODO: Add long description of the pod here.
    s.frameworks = 'UIKit', 'MapKit', 'Photos', 'AssetsLibrary', 'MediaPlayer', 'CoreTelephony', 'CoreLocation', 'AVFoundation'
   # s.dependency 'AFNetworking', '~> 2.3'
   
-  #   import Photos
-#   import AssetsLibrary
-#   import MediaPlayer
-#   import CoreTelephony
-#   import CoreLocation
-#   import AVFoundation
-
+    # 第三方依赖库
      s.dependency 'SnapKit'
      s.dependency 'Kingfisher'
      #RxSwift系列
