@@ -241,7 +241,7 @@ public extension WPSystem{
 public extension WPSystem{
     
     /// 打开系统设置页面
-    func pushSystemController(){
+    static func pushSystemController(){
         guard let url = URL(string: UIApplication.openSettingsURLString) else {
             return
         }
@@ -257,7 +257,7 @@ public extension WPSystem{
     /// - Parameters:
     ///   - phone: 电话
     ///   - failed: 拨打失败
-    func callPhone(phone:String,failed:(()->Void)? = nil){
+    static func callPhone(phone:String,failed:(()->Void)? = nil){
         let phoneStr = "tel://" + phone.wp_filterSpace
         if let phoneURL = URL(string: phoneStr), UIApplication.shared.canOpenURL(phoneURL) {
             UIApplication.shared.openURL(phoneURL)
@@ -271,7 +271,7 @@ public extension WPSystem{
     ///   - open: 开启
     ///   - close: 关闭
     /// - Returns: 是否开启
-    func isOpenLocation(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    static func isOpenLocation(open:(()->Void)?=nil,close:(()->Void)?=nil){
         let authStatus = CLLocationManager.authorizationStatus()
         let resault = (authStatus != .restricted && authStatus != .denied)
         if resault {
@@ -286,7 +286,7 @@ public extension WPSystem{
     ///   - open: 开启
     ///   - close: 关闭
     /// - Returns: 是否开启
-    func isOpenAlbum(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    static func isOpenAlbum(open:(()->Void)?=nil,close:(()->Void)?=nil){
         let authStatus = PHPhotoLibrary.authorizationStatus()
         let resault = (authStatus != .restricted && authStatus != .denied)
         
@@ -327,7 +327,7 @@ public extension WPSystem{
     ///   - open: 打开
     ///   - close: 关闭
     /// - Returns: 结果
-    func isOpenCamera(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    static func isOpenCamera(open:(()->Void)?=nil,close:(()->Void)?=nil){
         
         let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
         
@@ -356,7 +356,7 @@ public extension WPSystem{
     /// - Parameters:
     ///   - open: 打开
     ///   - close: 关闭
-    func isOpenNet(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    static func isOpenNet(open:(()->Void)?=nil,close:(()->Void)?=nil){
         let mainThreeOpen = {
             DispatchQueue.main.sync {
                 open != nil ? open!() : print()
