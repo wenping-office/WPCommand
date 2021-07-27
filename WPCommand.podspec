@@ -37,7 +37,7 @@ TODO: Add long description of the pod here.
   #   'WPCommand' => ['WPCommand/Assets/*.png']
   # }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
+#   s.public_header_files = 'WPCommand/Classes/**/*.h'
   
    s.frameworks = 'UIKit', 'MapKit', 'Photos', 'AssetsLibrary', 'MediaPlayer', 'CoreTelephony', 'CoreLocation', 'AVFoundation'
   # s.dependency 'AFNetworking', '~> 2.3'
