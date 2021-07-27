@@ -138,4 +138,40 @@ public extension String{
         let pasteboard = UIPasteboard.general
         pasteboard.string = self
     }
+    
+    /// 从头部开始取值 数量不足则返回所有
+    /// - Parameter count: 个数
+    /// - Returns: 结果
+    func wp_fistTo(_ count:Int) -> String{
+        return wp_subStrTo(.init(location: 0, length: count))
+    }
+    
+    /// 从尾部开始取值 数量不足则返回所有
+    /// - Parameter count: 个数
+    /// - Returns: 结果
+    func wp_lastTo(_ count:Int) -> String {
+
+        let location = self.count - count
+        if count <= self.count {
+            return self.wp_subStrTo(.init(location: location, length: self.count))
+
+        }else{
+            return self.wp_subStrTo(.init(location: 0, length: self.count))
+        }
+    }
+    
+    /// 截取数组 如果lenght越界 则返回最大的可取范围
+    /// - Parameter range: 返回
+    /// - Returns: 结果
+    func wp_subStrTo(_ range:NSRange) -> String{
+        let lenght = range.length
+        let maxLenght = self.count - range.location
+        if lenght <= maxLenght {
+            let count = range.location + range.length
+            return (self as NSString).substring(with: .init(location: range.location, length: count))
+        }else{
+            return (self as NSString).substring(with: .init(location: range.location, length: self.count))
+        }
+
+    }
 }

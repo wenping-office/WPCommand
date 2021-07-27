@@ -17,7 +17,7 @@ open class WPBaseVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         
         initSubView()
@@ -27,14 +27,14 @@ open class WPBaseVC: UIViewController {
     }
     
     // 绑定模型
-    public func bindViewModel(){}
+    open func bindViewModel(){}
     
     // 监听视图事件
-    public func observeSubViewEvent(){}
+    open func observeSubViewEvent(){}
     
     // 初始化视图布局
-    public func initSubViewlayout(){}
+    open func initSubViewlayout(){}
     
     // 初始化视图
-    public func initSubView(){}
+    open func initSubView(){}
 }

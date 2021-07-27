@@ -10,12 +10,12 @@ import UIKit
 import WPCommand
 
 public struct Test:WPRepeatProtocol {
-    
-    var id : String = ""
-
-    var hashableKey : String {
+    public var wp_repeatKey: String{
         return self.id
     }
+    
+    
+    var id : String = ""
 }
 
 class TestUIController: WPBaseVC {
@@ -28,7 +28,7 @@ class TestUIController: WPBaseVC {
         self.textView()
         var array = ["1","2","3","1","3"]
         array.wp_repeat(retain: .last)
-        print(array)
+
 
     }
     

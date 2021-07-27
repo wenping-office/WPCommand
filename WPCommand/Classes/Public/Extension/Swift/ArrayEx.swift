@@ -28,7 +28,7 @@ public extension Array{
     }
 
     
-    /// 获取某个元素的下标
+    /// 获取某个元素的下标 如果没有则返回空
     /// - Parameter resualtBlock: 条件block
     /// - Returns: 结果
     func wp_index(of resualtBlock:@escaping(Element)->Bool)->UInt?{
@@ -40,6 +40,41 @@ public extension Array{
             }
         }
         return index
+    }
+    
+    /// 从头部开始取值 数量不足则返回所有
+    /// - Parameter count: 个数
+    /// - Returns: 结果
+    func wp_fistTo(_ count:Int) -> ArraySlice<Element>{
+        return wp_subArrTo(.init(location: 0, length: count))
+    }
+    
+    /// 从尾部开始取值 数量不足则返回所有
+    /// - Parameter count: 个数
+    /// - Returns: 结果
+    func wp_lastTo(_ count:Int) -> ArraySlice<Element> {
+
+        let location = self.count - count
+        if count <= self.count {
+            return self[location..<self.count]
+        }else{
+            return self[0..<self.count]
+        }
+    }
+    
+    /// 截取数组 如果lenght越界 则返回最大的可取范围
+    /// - Parameter range: 返回
+    /// - Returns: 结果
+    func wp_subArrTo(_ range:NSRange) -> ArraySlice<Element>{
+        let lenght = range.length
+        let maxLenght = self.count - range.location
+        if lenght <= maxLenght {
+            let count = range.location + range.length
+            return self[range.location..<count]
+        }else{
+            return self[range.location..<self.count]
+        }
+
     }
 }
 
@@ -64,7 +99,7 @@ public extension Array where Element: WPRepeatProtocol{
 
             for index in 0..<count {
                 let obj = self[index]
-                tempArray.append((index,obj.wp_repeatKey(),obj))
+                tempArray.append((index,obj.wp_repeatKey,obj))
             }
 
             var json : [String:(index:Int,key:String,obj:Element)] = [:]
@@ -99,7 +134,7 @@ public extension Array where Element: WPRepeatProtocol{
             
             var json : [String:Element] = [:]
             forEach { elmt in
-                json[elmt.wp_repeatKey()] = elmt
+                json[elmt.wp_repeatKey] = elmt
             }
             
             json.forEach { subDict in

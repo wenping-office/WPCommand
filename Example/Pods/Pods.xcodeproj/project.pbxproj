@@ -217,6 +217,9 @@
 		8B7D4EE626AE5C7A0075B40F /* WPCollectionCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EE126AE5C7A0075B40F /* WPCollectionCellProtocol.swift */; };
 		8B7D4EE726AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EE226AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift */; };
 		8B7D4EE826AE5C7A0075B40F /* WPTableCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4EE326AE5C7A0075B40F /* WPTableCellProtocol.swift */; };
+		8B7D546C26AF98160075B40F /* WPBaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D546A26AF98150075B40F /* WPBaseVC.swift */; };
+		8B7D546D26AF98160075B40F /* WPBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D546B26AF98150075B40F /* WPBaseView.swift */; };
+		8B7D546F26AFA6440075B40F /* WPDateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D546E26AFA6440075B40F /* WPDateProtocol.swift */; };
 		8B7EEE0E899778DA279E64E26E38FB30 /* RxTextViewDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489E512FD1BB1244DCC6AE572CE4743A /* RxTextViewDelegateProxy.swift */; };
 		8B8BE709B46663F60DB6A661A3B2A28A /* ConstraintMakerPriortizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA4F7EC0823D823B54B21C25EB37A01 /* ConstraintMakerPriortizable.swift */; };
 		8C5FA225968DD3EE3703A7E86BF1233D /* GroupBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1CC760592EC19A34935F7618AE429F6 /* GroupBy.swift */; };
@@ -760,6 +763,9 @@
 		8B7D4EE126AE5C7A0075B40F /* WPCollectionCellProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPCollectionCellProtocol.swift; sourceTree = "<group>"; };
 		8B7D4EE226AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPTableHeaderFooterViewlProtocol.swift; sourceTree = "<group>"; };
 		8B7D4EE326AE5C7A0075B40F /* WPTableCellProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPTableCellProtocol.swift; sourceTree = "<group>"; };
+		8B7D546A26AF98150075B40F /* WPBaseVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPBaseVC.swift; sourceTree = "<group>"; };
+		8B7D546B26AF98150075B40F /* WPBaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPBaseView.swift; sourceTree = "<group>"; };
+		8B7D546E26AFA6440075B40F /* WPDateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPDateProtocol.swift; sourceTree = "<group>"; };
 		8B9A1ABF97E11239EE2EF88D66CA8B8F /* RxTextStorageDelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxTextStorageDelegateProxy.swift; path = RxCocoa/iOS/Proxies/RxTextStorageDelegateProxy.swift; sourceTree = "<group>"; };
 		8C6B0471873CDD2AA0207839AE36A3A7 /* Filter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = RxSwift/Observables/Filter.swift; sourceTree = "<group>"; };
 		8CA2182F14A8223FEB0A7A8109DC8EDF /* RxCocoa.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxCocoa.swift; path = RxCocoa/RxCocoa.swift; sourceTree = "<group>"; };
@@ -1175,6 +1181,8 @@
 		50FF9344A6669B5A7BAE109E7A8B418F /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				8B7D546A26AF98150075B40F /* WPBaseVC.swift */,
+				8B7D546B26AF98150075B40F /* WPBaseView.swift */,
 				0DA96D129F39322A5AD6A3002DB4EF8D /* WPBaseAlert.swift */,
 				2DEE70DE08EF834B273D0C6A07977D76 /* WPBaseAlertVC.swift */,
 				8B7D4CFF26AE4A2F0075B40F /* WPBaseVC.swift */,
@@ -1508,6 +1516,7 @@
 				8B7D4EE126AE5C7A0075B40F /* WPCollectionCellProtocol.swift */,
 				8B7D4EE226AE5C7A0075B40F /* WPTableHeaderFooterViewlProtocol.swift */,
 				8B7D4EE326AE5C7A0075B40F /* WPTableCellProtocol.swift */,
+				8B7D546E26AFA6440075B40F /* WPDateProtocol.swift */,
 			);
 			name = Protocol;
 			path = WPCommand/Classes/Public/Protocol;
@@ -2512,9 +2521,11 @@
 				40AB556690D6E09184E533B7EB780072 /* UIColor+Ex.swift in Sources */,
 				8B7D4A0A26ABEBE30075B40F /* WPTextView.swift in Sources */,
 				C71492C0399FE23CF82779A4DC5C02EF /* UIImage+Ex.swift in Sources */,
+				8B7D546D26AF98160075B40F /* WPBaseView.swift in Sources */,
 				8B7D4EE826AE5C7A0075B40F /* WPTableCellProtocol.swift in Sources */,
 				06E24F7342AF86E80367D20DA3FD90C9 /* UILabel+Ex.swift in Sources */,
 				C3A2C68B23A4B645B9A2B2024D864ADB /* UINavigationController+Ex.swift in Sources */,
+				8B7D546F26AFA6440075B40F /* WPDateProtocol.swift in Sources */,
 				DD8652245CA996DD6D9B58CA9466F7E1 /* UITableViewCell+Ex.swift in Sources */,
 				FB30A83881339D51430849DAE4147FC8 /* UITableViewHeaderFooterView+Ex.swift in Sources */,
 				8B7D4EE526AE5C7A0075B40F /* WPRepeatProtocol.swift in Sources */,
@@ -2524,6 +2535,7 @@
 				81BA30DEAA449B8F9558166A095BDD19 /* UIView+Ex.swift in Sources */,
 				E1C2BF6328471B863E9794C8EB60F973 /* UIViewController+Ex.swift in Sources */,
 				672BE8575F730B64E5A2EAA3400CB3F0 /* WPBaseAlert.swift in Sources */,
+				8B7D546C26AF98160075B40F /* WPBaseVC.swift in Sources */,
 				654989B5CBEB89168188CEFB2A3CEFC8 /* WPBaseAlertVC.swift in Sources */,
 				1795E3CB3BC8B443D3E5DDDD4DC54CAE /* WPCollectionAutoLayoutView.swift in Sources */,
 				1D99CCB688856ACD1AFA84C9BC7CBFB2 /* WPCollectionGroup.swift in Sources */,
