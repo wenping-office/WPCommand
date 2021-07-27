@@ -1,14 +1,14 @@
 #
-# Be sure to run `pod lib lint WPCommand.podspec' to ensure this is a
-# valid spec before submitting.
+#  Be sure to run `pod spec lint IFMMenu.podspec' to ensure this is a
+#  valid spec and to remove all comments including this before submitting the spec.
 #
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
+#  To learn more about Podspec attributes see https://guides.cocoapods.org/syntax/podspec.html
+#  To see working Podspecs in the CocoaPods repo see https://github.com/CocoaPods/Specs/
 #
 
-Pod::Spec.new do |s|
+Pod::Spec.new do |spec|
   s.name             = 'WPCommand'
-  s.version          = '0.0.1'
+  s.version          = '0.1.0'
   s.summary          = 'A short description of WPCommand.'
 
 # This description is used to generate tags and improve search results.
@@ -53,4 +53,5 @@ TODO: Add long description of the pod here.
      #RxSwift系列
      s.dependency 'RxSwift'
      s.dependency 'RxCocoa'
+
 end

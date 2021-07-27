@@ -20,9 +20,6 @@ open class WPBaseView: UIView{
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-extension WPBaseView{
     
     // 绑定模型
     open func bindViewModel(){}
@@ -35,5 +32,4 @@ extension WPBaseView{
     
     // 初始化视图
     open func initSubView(){}
-    
 }
