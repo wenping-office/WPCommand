@@ -9,6 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
   s.version          = '0.1.1'
+  # 介绍
   s.summary          = 'A short description of WPCommand.'
 
 # This description is used to generate tags and improve search results.
@@ -28,24 +29,30 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/MyNameWp/WPCommand.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   # 最低支持的系统版本
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '9.0'
   # 源文件地址
-  s.source_files = 'WPCommand/Classes/**/*'
+  #  s.source_files = 'WPCommand/Classes/**/*'
+  s.source_files = 'WPCommand/Classes/Public/**/*.{swift}'
+    
   # 是否支持arc
   s.requires_arc = true
+  # 资源文件
   # s.resource_bundles = {
   #   'WPCommand' => ['WPCommand/Assets/*.png']
   # }
-
-#   s.public_header_files = 'WPCommand/Classes/**/*.h'
   
-   s.frameworks = 'UIKit', 'MapKit', 'Photos', 'AssetsLibrary', 'MediaPlayer', 'CoreTelephony', 'CoreLocation', 'AVFoundation'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  # 公开头文件
+  #   s.public_header_files = 'WPCommand/Classes/**/*.h'
+
+  # 依赖系统库
+   s.frameworks = 'UIKit', 'Photos', 'AssetsLibrary', 'MediaPlayer', 'CoreTelephony', 'CoreLocation', 'AVFoundation'
+
   
     # 第三方依赖库
-     s.dependency 'SnapKit'
-     s.dependency 'Kingfisher'
+     s.dependency 'SnapKit','5.0.1'
+     s.dependency 'Kingfisher','6.3.0'
      #RxSwift系列
-     s.dependency 'RxSwift'
-     s.dependency 'RxCocoa'
+     s.dependency 'RxSwift','6.2.0'
+     s.dependency 'RxCocoa','6.2.0'
+     
 end
