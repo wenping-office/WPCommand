@@ -8,6 +8,12 @@
 
 import UIKit
 
+public extension UITableViewCell{
+    /// 加载的tableView
+    var wp_tableView: UITableView? {
+        return superview as? UITableView
+    }
+}
 
 
 extension UITableViewCell:WPTableCellProtocol{

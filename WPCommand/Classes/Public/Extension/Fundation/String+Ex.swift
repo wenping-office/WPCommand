@@ -11,6 +11,41 @@ import CommonCrypto
 
 public extension String{
     
+    /// 是否是邮箱
+    var wp_isEmail : Bool {
+        let predicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
+        return predicate.evaluate(with: self)
+    }
+    
+    /// 是否全中文
+    var wp_isChinese : Bool {
+        let predicate = NSPredicate(format: "SELF MATCHES %@", "^[\\u4E00-\\u9FA5]+$")
+        return predicate.evaluate(with: self)
+    }
+    
+    /// 是否是数字
+    var wp_isDigital: Bool {
+        let predicate = NSPredicate(format: "SELF MATCHES %@", "^[0-9]+(.[0-9]{1,8})?$")
+        return predicate.evaluate(with: self)
+    }
+    
+    /// 是否是电话
+    var isMobile: Bool {
+        let predicate = NSPredicate(format: "SELF MATCHES %@", "^1(3[0-9]|4[579]|5[0-35-9]|6[2567]|7[0-35-8]|8[0-9]|9[189])\\d{8}$")
+        return predicate.evaluate(with: self)
+    }
+    
+    /// 小数位数
+    var wp_minNumCount : Int {
+        if self.contains(".") {
+            let separatedArray = self.components(separatedBy: ".")
+            let numberStr = separatedArray.last
+            return numberStr?.count ?? 0
+        }else{
+            return -self.count
+        }
+    }
+    
     /// 一个可变富文本
     var wp_attStr : NSMutableAttributedString{
         return NSMutableAttributedString(string: self)
@@ -173,5 +208,38 @@ public extension String{
             return (self as NSString).substring(with: .init(location: range.location, length: self.count))
         }
 
+    }
+    
+    /// 获取文字的高度
+    /// - Parameters:
+    ///   - font: 字体
+    ///   - maxWidth: 最大的宽
+    /// - Returns: 高
+    func wp_height(_ font:UIFont,maxWidth:CGFloat) -> CGFloat {
+
+        let size = CGSize.init(width: maxWidth, height:  CGFloat(MAXFLOAT))
+
+        let dic = [NSAttributedString.Key.font:font] // swift 3.0
+
+        let strSize = self.boundingRect(with: size, options: [.usesLineFragmentOrigin], attributes: dic, context:nil).size
+
+        return ceil(strSize.height) + 1
+    }
+    
+    /// 获取文字的宽度
+    /// - Parameters:
+    ///   - font: 字体
+    ///   - maxHeight: 最大的高
+    /// - Returns: 宽
+    func wp_width(_ font:UIFont,_ maxHeight:CGFloat) -> CGFloat {
+
+        let size = CGSize.init(width: CGFloat(MAXFLOAT), height: maxHeight)
+
+        let dic = [NSAttributedString.Key.font:font] // swift 3.0
+
+        let cString = self.cString(using: String.Encoding.utf8)
+        let str = String.init(cString: cString!, encoding: String.Encoding.utf8)
+        let strSize = str?.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: dic, context:nil).size
+        return strSize?.width ?? 0
     }
 }

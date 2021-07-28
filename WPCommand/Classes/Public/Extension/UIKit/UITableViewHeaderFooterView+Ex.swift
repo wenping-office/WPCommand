@@ -8,8 +8,6 @@
 
 import UIKit
 
-
-
 extension UITableViewHeaderFooterView : WPTableHeaderFooterViewlProtocol{
 
     /// 加载group 每次显示时都会调用一次

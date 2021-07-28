@@ -11,6 +11,13 @@ import Foundation
 
 public extension Date{
     
+    /// 当天零点
+    var wp_zero : Date? {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year,.month,.day], from: self)
+        return calendar.date(from: components)
+    }
+    
     /// 年
     var wp_year : Int{
       return Calendar.current.component(.year, from: self)
@@ -80,39 +87,36 @@ public extension Date{
     /// 当前的网络时间
     /// - Parameter resualt: 结果
     static func wp_Net(_ resualt:@escaping(Date)->Void){
-        func loadNotworkDate(){
+        let url = URL(string: "http://www.baidu.com")
+        var request = URLRequest(url: url!)
+        request.httpMethod = "GET"
+        let configuration = URLSessionConfiguration.default
+        let session = URLSession(configuration: configuration)
+        
+        
+        let task = session.dataTask(with: request) { data, response, error in
             
-            let url = URL(string: "http://www.baidu.com")
-            var request = URLRequest(url: url!)
-            request.httpMethod = "GET"
-            let configuration = URLSessionConfiguration.default
-            let session = URLSession(configuration: configuration)
+            let resp = response as? HTTPURLResponse
+            let str =  resp?.allHeaderFields["Date"] as? String
+            guard
+                let str = str
+            else { return }
             
+            let fomat = DateFormatter()
+            fomat.locale = Locale(identifier: "en")
+            fomat.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
+            let date = fomat.date(from: str)
             
-            let task = session.dataTask(with: request) { data, response, error in
-                
-                let resp = response as? HTTPURLResponse
-                let str =  resp?.allHeaderFields["Date"] as? String
-                guard
-                    let str = str
-                else { return }
-                
-                let fomat = DateFormatter()
-                fomat.locale = Locale(identifier: "en")
-                fomat.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
-                let date = fomat.date(from: str)
-                
-                DispatchQueue.main.async {
-                    if let date = date{
-                        resualt(date + 8.wp_hour)
-                    }else{
+            DispatchQueue.main.async {
+                if let date = date{
+                    resualt(date + 8.wp_hour)
+                }else{
 
-                    }
                 }
             }
-            
-            task.resume()
         }
+        
+        task.resume()
     }
 }
 
@@ -121,9 +125,8 @@ public extension Date{
     /// 偏移年
     /// - Parameter year: 年
     /// - Returns: 结果
-    func wp_offSetYear(_ year:Int)->Date?{
+    func wp_offSetYear(_ year:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
-        let calendar = Calendar.current
         var comps = calendar.dateComponents([.year], from: date)
         comps.year = year
         return calendar.date(byAdding: comps, to: date)
@@ -132,9 +135,8 @@ public extension Date{
     /// 偏移月
     /// - Parameter month: 月
     /// - Returns: 结果
-    func wp_offSetMonth(_ month:Int)->Date?{
+    func wp_offSetMonth(_ month:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
-        let calendar = Calendar.current
         var comps = calendar.dateComponents([.month], from: date)
         comps.year = month
         return calendar.date(byAdding: comps, to: date)
@@ -143,9 +145,8 @@ public extension Date{
     /// 偏移日
     /// - Parameter day: 日
     /// - Returns: 结果
-    func wp_offSetDay(_ day:Int)->Date?{
+    func wp_offSetDay(_ day:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
-        let calendar = Calendar.current
         var comps = calendar.dateComponents([.day], from: date)
         comps.year = day
         return calendar.date(byAdding: comps, to: date)
@@ -154,9 +155,8 @@ public extension Date{
     /// 偏移时
     /// - Parameter hour: 时
     /// - Returns: 结果
-    func wp_offSetHour(_ hour:Int)->Date?{
+    func wp_offSetHour(_ hour:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
-        let calendar = Calendar.current
         var comps = calendar.dateComponents([.hour], from: date)
         comps.year = hour
         return calendar.date(byAdding: comps, to: date)
@@ -165,9 +165,8 @@ public extension Date{
     /// 偏移分
     /// - Parameter minute: 分
     /// - Returns: 结果
-    func wp_offSetMinute(_ minute:Int)->Date?{
+    func wp_offSetMinute(_ minute:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
-        let calendar = Calendar.current
         var comps = calendar.dateComponents([.minute], from: date)
         comps.year = minute
         return calendar.date(byAdding: comps, to: date)
@@ -176,9 +175,8 @@ public extension Date{
     /// 偏移秒
     /// - Parameter second: 秒
     /// - Returns: 结果
-    func wp_offSetSecond(_ second:Int)->Date?{
+    func wp_offSetSecond(_ second:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
-        let calendar = Calendar.current
         var comps = calendar.dateComponents([.second], from: date)
         comps.year = second
         return calendar.date(byAdding: comps, to: date)

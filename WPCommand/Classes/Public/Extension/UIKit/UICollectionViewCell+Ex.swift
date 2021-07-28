@@ -8,6 +8,13 @@
 
 import UIKit
 
+public extension UICollectionViewCell{
+    /// 加载的collectionView
+    var wp_collectionView: UICollectionView? {
+        return superview as? UICollectionView
+    }
+}
+
 extension UICollectionViewCell{
     
     /// 已赋值item后调用

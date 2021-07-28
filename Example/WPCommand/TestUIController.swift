@@ -10,10 +10,10 @@ import UIKit
 import WPCommand
 
 public struct Test:WPRepeatProtocol {
+    
     public var wp_repeatKey: String{
         return self.id
     }
-    
     
     var id : String = ""
 }
@@ -26,9 +26,17 @@ class TestUIController: WPBaseVC {
 
         self.textField()
         self.textView()
-        var array = ["1","2","3","1","3"]
-        array.wp_repeat(retain: .last)
-
+        
+        var arr = [ Test(id: "1"),
+        Test(id: "2"),
+        Test(id: "3"),
+        Test(id: "1"),
+        Test(id: "3"),]
+        
+        arr.wp_repeat(retain: .last)
+        
+        print(arr)
+        
 
     }
     

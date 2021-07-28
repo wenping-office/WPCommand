@@ -29,7 +29,7 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/MyNameWp/WPCommand.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   # 最低支持的系统版本
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
   # 源文件地址
   #  s.source_files = 'WPCommand/Classes/**/*'
   s.source_files = 'WPCommand/Classes/Public/**/*.{swift}'
@@ -49,10 +49,16 @@ TODO: Add long description of the pod here.
 
   
     # 第三方依赖库
-     s.dependency 'SnapKit','5.0.1'
-     s.dependency 'Kingfisher','6.3.0'
+     s.dependency 'SnapKit'
+     s.dependency 'Kingfisher'
      #RxSwift系列
-     s.dependency 'RxSwift','6.2.0'
-     s.dependency 'RxCocoa','6.2.0'
+     s.dependency 'RxSwift'
+     s.dependency 'RxCocoa'
+#     # 第三方依赖库
+#      s.dependency 'SnapKit','5.0.1'
+#      s.dependency 'Kingfisher','6.3.0'
+#      #RxSwift系列
+#      s.dependency 'RxSwift','6.2.0'
+#      s.dependency 'RxCocoa','6.2.0'
      
 end

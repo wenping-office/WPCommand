@@ -19,8 +19,7 @@ public extension UIView{
     }
 }
 
-public extension UIView {
-
+public extension UIView{
     /// 在keyWindow中的位置
      var wp_frameInWidow : CGRect{
         return convert(bounds, to: UIApplication.shared.windows.last)
@@ -39,11 +38,7 @@ public extension UIView {
         let data = NSKeyedArchiver.archivedData(withRootObject: Self.self)
         return NSKeyedUnarchiver.unarchiveObject(with: data) as! Self
     }
-
     
-}
-
-public extension UIView{
     var wp_x: CGFloat {
         get { return frame.origin.x }
         set { frame.origin.x = newValue }
@@ -91,7 +86,10 @@ public extension UIView{
     var wp_midY: CGFloat {
         return wp_height * 0.5
     }
+}
 
+public extension UIView {
+    
     /// 选择性圆角处理，需要设置frame后调用，如果是约束需要layout后调用才能生效
     /// - Parameters:
     ///   - corners: 原角点
@@ -158,9 +156,7 @@ public extension UIView{
         }
         self.layer.insertSublayer(layer, at: 0)
     }
-}
-
-public extension UIView {
+    
     /// 子视图随机色
     func wp_subViewRandomColor(){
         subviews.forEach { subView in

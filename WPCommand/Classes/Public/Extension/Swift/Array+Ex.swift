@@ -95,14 +95,14 @@ public extension Array where Element: WPRepeatProtocol{
         var resualtArray : [Element] = []
         
         if sortMode == .fist || sortMode == .last {
-            var tempArray : [(index:Int,key:String,obj:Element)] = []
+            var tempArray : [(index:Int,key:Element.type,obj:Element)] = []
 
             for index in 0..<count {
                 let obj = self[index]
                 tempArray.append((index,obj.wp_repeatKey,obj))
             }
 
-            var json : [String:(index:Int,key:String,obj:Element)] = [:]
+            var json : [Element.type:(index:Int,key:Element.type,obj:Element)] = [:]
             
             tempArray.forEach { elmt  in
 
@@ -116,7 +116,7 @@ public extension Array where Element: WPRepeatProtocol{
             }
             
             /// 去重以后的arr
-            var tempTowArr : [(index:Int,key:String,obj:Element)] = []
+            var tempTowArr : [(index:Int,key:Element.type,obj:Element)] = []
 
             json.forEach { subDict in
                 tempTowArr.append(subDict.value)
@@ -132,7 +132,7 @@ public extension Array where Element: WPRepeatProtocol{
             }
         }else{
             
-            var json : [String:Element] = [:]
+            var json : [Element.type:Element] = [:]
             forEach { elmt in
                 json[elmt.wp_repeatKey] = elmt
             }
