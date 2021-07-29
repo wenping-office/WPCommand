@@ -8,9 +8,9 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
-  s.version          = '0.1.7'
+  s.version          = '0.1.5'
   # 介绍
-  s.summary          = 'A short description of WPCommand.'
+  s.summary          = '基础库，工具类'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
