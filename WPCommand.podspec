@@ -50,7 +50,6 @@ TODO: Add long description of the pod here.
   
     # 第三方依赖库
      s.dependency 'SnapKit'
-     s.dependency 'Kingfisher'
      #RxSwift系列
      s.dependency 'RxSwift'
      s.dependency 'RxCocoa'

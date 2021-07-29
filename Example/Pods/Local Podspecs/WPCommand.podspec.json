@@ -1,7 +1,7 @@
 {
   "name": "WPCommand",
-  "version": "0.1.1",
-  "summary": "A short description of WPCommand.",
+  "version": "0.1.5",
+  "summary": "基础库，工具类",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/MyNameWp/WPCommand",
   "license": {
@@ -13,12 +13,12 @@
   },
   "source": {
     "git": "https://github.com/MyNameWp/WPCommand.git",
-    "tag": "0.1.1"
+    "tag": "0.1.5"
   },
   "platforms": {
     "ios": "10.0"
   },
-  "source_files": "WPCommand/Classes/**/*",
+  "source_files": "WPCommand/Classes/Public/**/*.{swift}",
   "requires_arc": true,
   "frameworks": [
     "UIKit",
@@ -31,16 +31,13 @@
   ],
   "dependencies": {
     "SnapKit": [
-      "5.0.1"
-    ],
-    "Kingfisher": [
-      "6.3.0"
+
     ],
     "RxSwift": [
-      "6.2.0"
+
     ],
     "RxCocoa": [
-      "6.2.0"
+
     ]
   }
 }

@@ -45,9 +45,8 @@ open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
                 }
             }
             if isShowPlus && searchResualt != true {
-                let plus = itemT(isPlus: true)
+                let plus = itemT(isPlus: true, plusImage)
                 plus.itemSize = itemSize
-                plus.image = plusImage
                 contentGroup.items.append(plus)
             }else if isShowPlus == false && searchResualt{
                 contentGroup.items.removeLast()
@@ -102,7 +101,7 @@ open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
     
     /// 添加一组subItem
     /// - Parameter Lattices: 一组Item
-    public func addLattices(Lattices:[itemT]){
+    public func setLattices(Lattices:[itemT]){
         let totalCount = Lattices.count + contentGroup.items.count + (isShowPlus ? -1 : 0)
         if totalCount > maxCount { print("WPLatticeView 超过了最大数量"); return }
         for item in Lattices {
@@ -116,7 +115,7 @@ open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
     public func clear(){
         contentGroup.items.removeAll()
         if isShowPlus {
-            let plus = WPLatticeItem(isPlus: true)
+            let plus = WPLatticeItem(isPlus: true, plusImage)
             plus.itemSize = itemSize
             contentGroup.items.append(plus)
         }
