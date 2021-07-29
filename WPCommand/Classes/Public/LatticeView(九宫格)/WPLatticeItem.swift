@@ -8,19 +8,18 @@
 import UIKit
 
 open class WPLatticeItem: WPCollectionItem{
-    /// 是否是+号
+    
+    /// 是否是+号 需要自己判断
     public let isPlus : Bool
+    /// plus为true的时候图片
+    public var plusImg : UIImage?
     /// image图片
     public var image : UIImage?
-    /// 网络图片url
-    public var url : String?
     
-    required public init(isPlus:Bool = false) {
+    required public init(isPlus:Bool = false,_ plusImg:UIImage?) {
         self.isPlus = isPlus
         super.init()
-        if isPlus {
-            image = UIImage(named: "photo_plus")
-        }
+        self.plusImg = plusImg
     }
 }
 
