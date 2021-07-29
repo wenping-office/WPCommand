@@ -1,5 +1,4 @@
 PODS:
-  - Kingfisher (6.3.0)
   - RxCocoa (6.2.0):
     - RxRelay (= 6.2.0)
     - RxSwift (= 6.2.0)
@@ -7,18 +6,16 @@ PODS:
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
   - SnapKit (5.0.1)
-  - WPCommand (0.1.1):
-    - Kingfisher (= 6.3.0)
-    - RxCocoa (= 6.2.0)
-    - RxSwift (= 6.2.0)
-    - SnapKit (= 5.0.1)
+  - WPCommand (0.1.5):
+    - RxCocoa
+    - RxSwift
+    - SnapKit
 
 DEPENDENCIES:
   - WPCommand (from `../`)
 
 SPEC REPOS:
   trunk:
-    - Kingfisher
     - RxCocoa
     - RxRelay
     - RxSwift
@@ -29,13 +26,12 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
-  WPCommand: 7dd17623d4d4387d2d14fb9a6f451dd5e2ce90d2
+  WPCommand: b62a98241688685a682094282ec24de2fca43074
 
 PODFILE CHECKSUM: 1c3f546445fa590af8dc7daea8ab67f09f5dcfee
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.2
