@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
-  s.version          = '0.1.5'
+  s.version          = '0.1.9'
   # 介绍
   s.summary          = '基础库，工具类'
 
