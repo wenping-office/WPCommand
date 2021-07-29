@@ -60,7 +60,7 @@ extension Decodable {
     /// - Returns: 结果
     static func map(_ json: Any) -> Self? {
         guard JSONSerialization.isValidJSONObject(json) else {
-            print("传入打不是一个json对象")
+            print("传入的不是一个json对象")
             return nil
         }
         if let data = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
