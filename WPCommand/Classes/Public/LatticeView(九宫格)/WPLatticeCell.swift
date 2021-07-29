@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import Kingfisher
 
 open class WPLatticeCell: UICollectionViewCell{
     let imageView = UIImageView()
@@ -26,13 +25,15 @@ open class WPLatticeCell: UICollectionViewCell{
     
     @objc open override func didSetItem(item: WPCollectionItem) {
         guard let item = item as? WPLatticeItem else { return }
-        
-        if let image = item.image {
-            imageView.image = image
-        }else if let url = item.url {
-            imageView.kf.setImage(with: URL(string: url))
+
+        if item.isPlus{
+            imageView.image = item.plusImg
         }else{
-            imageView.image = nil
+            if let image = item.image {
+                imageView.image = image
+            }else{
+                imageView.image = nil
+            }
         }
     }
 }
