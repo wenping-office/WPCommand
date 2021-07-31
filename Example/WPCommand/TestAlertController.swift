@@ -15,8 +15,7 @@ class TestAlertController: WPBaseVC {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        rootView.backgroundColor = .wp_random
+
         view.addSubview(rootView)
         rootView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -43,7 +42,7 @@ class TestAlertController: WPBaseVC {
             aler2.leftBtn.rx.tap.subscribe(onNext: {
                 WPAlertManager.default.dismiss()
             })
-            WPAlertManager.default.showNext(aler2)
+            WPAlertManager.default.target(in: self.view).showNext(aler2)
         })
     }
 
@@ -54,7 +53,22 @@ class TestAlertController: WPBaseVC {
     }
 }
 
-class rootViw: UIView {
+class rootViw: WPBaseView {
+    let btn = UIButton()
+    
+    override func initSubView() {
+        btn.setTitleColor(.black, for: .normal)
+        btn.setTitle("按钮点击", for: .normal)
+        addSubview(btn)
+        btn.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(150)
+        }
+        
+        btn.rx.tap.subscribe(onNext: {
+            print("底层视图点击")
+        })
+    }
+
     deinit {
         print("rootView释放了")
     }
@@ -80,15 +94,23 @@ class testAlert2: WPBaseView,WPAlertProtocol {
     
     var beginAnimateDuration: CGFloat{
         
-        return 3
+        return 0.3
     }
     
     var endLocation: WPAlertManager.EndLocation{
-        return .bottom
+        return .center
     }
     
     var endAnimateDuration: CGFloat{
         return 3
+    }
+    
+//    func touchMast() {
+//        print("testAlert2 点击了蒙版")
+//    }
+    
+    func maskInfo() -> WPAlertManager.Mask {
+        return .init(color: .blue, enabled: false, isHidden: false)
     }
     
     let leftBtn = UIButton()
@@ -135,7 +157,7 @@ class testAlert: WPBaseView,WPAlertProtocol {
     }
     
     var beginAnimateDuration: CGFloat{
-        return 2
+        return 0.3
     }
     
     var endLocation: WPAlertManager.EndLocation{
@@ -144,6 +166,14 @@ class testAlert: WPBaseView,WPAlertProtocol {
     
     var endAnimateDuration: CGFloat{
         return 0.3
+    }
+    
+    func touchMast() {
+        print("testAlert 点击了蒙版")
+    }
+
+    func maskInfo() -> WPAlertManager.Mask {
+        return .init(color: .red, enabled: false, isHidden: false)
     }
     
     let leftBtn = UIButton()

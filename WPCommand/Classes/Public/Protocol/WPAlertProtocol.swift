@@ -6,15 +6,22 @@
 //
 
 import UIKit
-
+import RxSwift
 
 
 public class WPAlertManager {
-    
+
     /// 弹窗视图
     fileprivate weak var currentAlert : WPAlertProtocol?
     /// 弹窗弹出的根视图
-    fileprivate weak var targetView : UIView? = UIApplication.shared.wp_topWindow
+    fileprivate weak var targetView : UIView? = UIApplication.shared.wp_topWindow{
+        willSet{
+            
+            removeMask()
+        }
+    }
+    /// 当前弹窗的mask
+    fileprivate weak var maskView : WPAlertManagerMask?
     /// 弹窗队列
     fileprivate var alerts : [WPAlertProtocol] = []
     /// 当前弹窗开始的frame
@@ -40,6 +47,8 @@ public class WPAlertManager {
     
     /// 移除一个弹窗
     public func removeAlert(_ alert : WPAlertProtocol){
+        
+        currentAlert = nil
         alert.alertManager = nil
         alert.removeFromSuperview()
         
@@ -52,6 +61,8 @@ public class WPAlertManager {
             alerts.remove(at: Int(alertIndex))
         }
         alert.updateStatus(status: .remove)
+        
+        currentAlert = alerts.first
     }
     
     /// 添加一组弹窗会清除现有的弹窗
@@ -108,14 +119,54 @@ extension WPAlertManager{
         return Int(arc4random_uniform(100) + arc4random_uniform(100) + arc4random_uniform(100))
     }
     
+    /// 添加一个蒙版
+    fileprivate func addMask(info:WPAlertManager.Mask){
+        var resualt = false
+
+        // 检查是否有蒙版
+        targetView?.subviews.forEach({ elmt in
+            if elmt.isKind(of: WPAlertManagerMask.self){
+                resualt = true
+            }
+        })
+
+        // 如果没有蒙版 那么添加一个
+        if !resualt  {
+            let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
+                
+                self?.currentAlert?.touchMast()
+            })
+            self.maskView = maskView
+            maskView.alpha = 0
+            targetView?.insertSubview(maskView, at: 999)
+            maskView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+    }
+    
+    /// 删除蒙版
+    fileprivate func removeMask(){
+        maskView?.removeFromSuperview()
+        maskView = nil
+    }
+    
+    /// 判断是否还有下一个弹窗
+    fileprivate func isNext()->Bool{
+        let count = alerts.count
+        return (count - 1) > 0
+    }
+
     /// 执行弹窗动画
     fileprivate func alertAnimate(isShow:Bool){
-        
         if let alert = currentAlert{
-            
+             
             if isShow {
+                addMask(info: alert.maskInfo())
+                
                 targetView?.insertSubview(alert, at: 1000)
                 resetFrame(alert: alert)
+                maskView?.maskInfo = alert.maskInfo()
                 
                 alert.updateStatus(status: .willShow)
                 currentAlertProgress = .willShow
@@ -125,20 +176,29 @@ extension WPAlertManager{
             }
             
             let duration =  isShow ? alert.beginAnimateDuration : alert.endAnimateDuration
-            
-            let animatesBolok : ()->Void = {
+
+            let animatesBolok : ()->Void = { [weak self] in
+                guard let self = self else { return }
+                
+                alert.transform = CGAffineTransform.identity
                 if isShow{
                     alert.frame = self.currentAlertBeginFrame
                     alert.alpha = 1
-                    alert.transform = CGAffineTransform.identity
+                    self.maskView?.alpha = 1
                 }else{
                     alert.frame = self.currentAlertEndFrame
-                    alert.alpha = 0
+                    if !self.isNext() {
+                        self.maskView?.alpha = 0
+                    }
+                    if alert.endLocation == .center {
+                        alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
+                    }
                 }
             }
             
             let animateCompleteBlock : (Bool)->Void = {[weak self] resualt in
                 guard let self = self else { return }
+                
                 if resualt{
                     if isShow {
                         alert.updateStatus(status: .didShow)
@@ -147,15 +207,12 @@ extension WPAlertManager{
                         self.currentAlertProgress = .didPop
                         alert.updateStatus(status: .didPop)
                         self.removeAlert(alert)
-                        self.currentAlert = nil
-                        self.currentAlert = self.alerts.first
                         self.show()
                     }
                 }
             }
             
             if alert.animateType == .default {
-                
                 UIView.animate(withDuration: TimeInterval(duration), animations: {
                     animatesBolok()
                 }, completion: {resualt in
@@ -172,6 +229,8 @@ extension WPAlertManager{
             currentAlert = alerts.first
             if  currentAlert != nil {
                 show()
+            }else{
+                removeMask()
             }
         }
     }
@@ -211,9 +270,10 @@ extension WPAlertManager{
             alert.wp_y = center.y
             alert.wp_x = maxW
         case .center:
-            alert.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-            alert.alpha = 0
             beginF.origin = center
+            alert.alpha = 0
+            alert.frame.origin = center
+            alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
         }
         
         switch alert.endLocation  {
@@ -240,6 +300,26 @@ extension WPAlertManager{
 }
 
 public extension WPAlertManager{
+    struct Mask {
+        /// 蒙板颜色
+       public let color : UIColor
+        /// 是否可以交互点击
+       public let enabled : Bool
+        /// 是否显示
+       public let isHidden : Bool
+        
+        /// 初始化一个蒙版信息
+        /// - Parameters:
+        ///   - color: 蒙板颜色
+        ///   - enabled: 是否可以交互点击
+        ///   - isHidden: 是否隐藏
+        public init(color:UIColor,enabled:Bool,isHidden:Bool) {
+            self.color = color
+            self.enabled = enabled
+            self.isHidden = isHidden
+        }
+    }
+    
     enum Progress{
         /// 挂起状态等待被弹出
         case cooling
@@ -294,6 +374,41 @@ public extension WPAlertManager{
     }
 }
 
+/// 蒙板视图
+class WPAlertManagerMask: UIView {
+    /// 垃圾桶
+    let disposeBag = DisposeBag()
+
+    /// 蒙板视图
+    let contentView = UIButton()
+
+    /// 蒙板info
+    var maskInfo : WPAlertManager.Mask{
+        didSet{
+            contentView.backgroundColor = maskInfo.color
+            contentView.isUserInteractionEnabled = !maskInfo.enabled
+            isHidden = maskInfo.isHidden
+        }
+    }
+    
+    init(maskInfo:WPAlertManager.Mask,action:(()->Void)?) {
+        self.maskInfo = maskInfo
+        super.init(frame: .zero)
+        
+        addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        contentView.rx.tap.subscribe(onNext: { _ in
+            action != nil ? action!() : print()
+        }).disposed(by: disposeBag)
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 fileprivate var WPAlertProtocolPointer = "WPItemsModelPointer"
 /// 弹窗协议
 public protocol WPAlertProtocol:UIView {
@@ -312,6 +427,10 @@ public protocol WPAlertProtocol:UIView {
     var endAnimateDuration : CGFloat { get }
     /// 弹窗状态变化后执行
     func updateStatus(status: WPAlertManager.Progress)
+    /// 蒙板属性
+    func maskInfo()->WPAlertManager.Mask
+    /// 点击了蒙版
+    func touchMast()
 }
 
 public extension WPAlertProtocol{
@@ -323,4 +442,15 @@ public extension WPAlertProtocol{
             objc_setAssociatedObject(self, &WPAlertProtocolPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
+    
+    func maskInfo()->WPAlertManager.Mask{
+        
+        return .init(color: UIColor.init(0, 0, 0,255 * 0.15), enabled: false,isHidden: false)
+    }
+    
+    func touchMast(){
+        alertManager?.dismiss()
+    }
+    
+    func updateStatus(status: WPAlertManager.Progress){}
 }
