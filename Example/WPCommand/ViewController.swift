@@ -25,7 +25,12 @@ class ViewController: UIViewController {
         let group = WPTableGroup()
         group.headerHeight = 0
         group.footerHeight = 0
-        [("输入框",TestUIController.self)].forEach { elmt in
+        
+        let vc : [(String,WPBaseVC.Type)] = [
+            ("输入框",TestUIController.self),
+            ("弹窗管理器",TestAlertController.self)]
+            
+        vc.forEach { elmt in
             let item = WPTableItem(cellClass: UITableViewCell.self) { cell in
                 cell.textLabel?.text = elmt.0
             } didSelected: { cell in

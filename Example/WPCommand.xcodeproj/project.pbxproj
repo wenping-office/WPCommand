@@ -13,6 +13,7 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		8B1B572326B399DB009178AE /* TestAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1B572226B399DB009178AE /* TestAlertController.swift */; };
 		8B7D4A0E26ABF1000075B40F /* TestUIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0D26ABF1000075B40F /* TestUIController.swift */; };
 		C9BAF466A13D325589B9E101 /* Pods_WPCommand_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F223C466D6825D9D7A498C /* Pods_WPCommand_Example.framework */; };
 		F09708D622FC3257F10C554A /* Pods_WPCommand_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C58DB079722391B159D224D6 /* Pods_WPCommand_Tests.framework */; };
@@ -45,6 +46,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		749E4C7E416D20EDA45BF3F3 /* Pods-WPCommand_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPCommand_Example.debug.xcconfig"; path = "Target Support Files/Pods-WPCommand_Example/Pods-WPCommand_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		83EE9023218D9A872E7D5784 /* WPCommand.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = WPCommand.podspec; path = ../WPCommand.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		8B1B572226B399DB009178AE /* TestAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAlertController.swift; sourceTree = "<group>"; };
 		8B7D4A0D26ABF1000075B40F /* TestUIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUIController.swift; sourceTree = "<group>"; };
 		C58DB079722391B159D224D6 /* Pods_WPCommand_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPCommand_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A9D6D80C37C160174B9E7F /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -106,9 +108,9 @@
 		607FACD21AFB9204008FA782 /* Example for WPCommand */ = {
 			isa = PBXGroup;
 			children = (
+				8B1B572126B399A3009178AE /* Test */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
-				8B7D4A0D26ABF1000075B40F /* TestUIController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -151,6 +153,15 @@
 				FBF56F91F792AB3195396600 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		8B1B572126B399A3009178AE /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				8B7D4A0D26ABF1000075B40F /* TestUIController.swift */,
+				8B1B572226B399DB009178AE /* TestAlertController.swift */,
+			);
+			name = Test;
 			sourceTree = "<group>";
 		};
 		BA24EACA7E3215F7DCBFBD1A /* Frameworks */ = {
@@ -342,6 +353,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B1B572326B399DB009178AE /* TestAlertController.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				8B7D4A0E26ABF1000075B40F /* TestUIController.swift in Sources */,

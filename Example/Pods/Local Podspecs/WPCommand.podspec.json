@@ -1,6 +1,6 @@
 {
   "name": "WPCommand",
-  "version": "0.1.5",
+  "version": "0.1.9",
   "summary": "基础库，工具类",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/MyNameWp/WPCommand",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/MyNameWp/WPCommand.git",
-    "tag": "0.1.5"
+    "tag": "0.1.9"
   },
   "platforms": {
     "ios": "10.0"

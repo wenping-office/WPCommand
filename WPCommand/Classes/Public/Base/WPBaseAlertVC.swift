@@ -9,7 +9,7 @@
 import UIKit
 import RxSwift
 
-open class RwaBaseAlertVC: UIViewController {
+open class WPBaseAlertVC: UIViewController {
     /// 垃圾桶
     public let disposeBag = DisposeBag()
     /// 蒙板

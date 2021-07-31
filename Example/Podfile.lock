@@ -6,7 +6,7 @@ PODS:
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
   - SnapKit (5.0.1)
-  - WPCommand (0.1.5):
+  - WPCommand (0.1.9):
     - RxCocoa
     - RxSwift
     - SnapKit
@@ -30,7 +30,7 @@ SPEC CHECKSUMS:
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
-  WPCommand: b62a98241688685a682094282ec24de2fca43074
+  WPCommand: f8a4d86fb84d58b306abfe6492bc539ca0990917
 
 PODFILE CHECKSUM: 1c3f546445fa590af8dc7daea8ab67f09f5dcfee
 
