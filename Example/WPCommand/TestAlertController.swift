@@ -42,7 +42,7 @@ class TestAlertController: WPBaseVC {
             aler2.leftBtn.rx.tap.subscribe(onNext: {
                 WPAlertManager.default.dismiss()
             })
-            WPAlertManager.default.target(in: self.view).showNext(aler2)
+            WPAlertManager.default.target(in: self.view).showNext(aler2,immediately: true)
         })
     }
 
@@ -79,38 +79,17 @@ class testAlert2: WPBaseView,WPAlertProtocol {
     deinit {
         print("弹窗释放了")
     }
-
-    func updateStatus(status: WPAlertManager.Progress) {
-        
+    
+    func alertInfo() -> WPAlertManager.Alert {
+        return .init(type: .bounces, startLocation: .center, startDuration: 0.3, stopLocation: .center, stopDuration: 3)
     }
     
-    var animateType: WPAlertManager.AnimateType{
-        return .bounces
-    }
-    
-    var beginLocation: WPAlertManager.BeginLocation{
-        return .center
-    }
-    
-    var beginAnimateDuration: CGFloat{
-        
-        return 0.3
-    }
-    
-    var endLocation: WPAlertManager.EndLocation{
-        return .center
-    }
-    
-    var endAnimateDuration: CGFloat{
-        return 3
-    }
-    
-//    func touchMast() {
+//    func touchMask() {
 //        print("testAlert2 点击了蒙版")
 //    }
     
     func maskInfo() -> WPAlertManager.Mask {
-        return .init(color: .blue, enabled: false, isHidden: false)
+        return .init(color: .blue, enabled: true, isHidden: false)
     }
     
     let leftBtn = UIButton()
@@ -144,32 +123,12 @@ class testAlert: WPBaseView,WPAlertProtocol {
         print("弹窗释放了")
     }
     
-    func updateStatus(status: WPAlertManager.Progress) {
-        
-    }
-    
-    var animateType: WPAlertManager.AnimateType{
-        return .default
-    }
-    
-    var beginLocation: WPAlertManager.BeginLocation{
-        return .left
-    }
-    
-    var beginAnimateDuration: CGFloat{
-        return 0.3
-    }
-    
-    var endLocation: WPAlertManager.EndLocation{
-        return .bottom
-    }
-    
-    var endAnimateDuration: CGFloat{
-        return 0.3
-    }
-    
-    func touchMast() {
+    func touchMask() {
         print("testAlert 点击了蒙版")
+    }
+
+    func alertInfo() -> WPAlertManager.Alert {
+        return .init(type: .default, startLocation: .left, startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
     }
 
     func maskInfo() -> WPAlertManager.Mask {

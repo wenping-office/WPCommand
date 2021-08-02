@@ -207,7 +207,8 @@
 		8781747B3044533CB56D151D01380397 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3570A8FDD1FB239E384A844F21BCBD1 /* AVFoundation.framework */; };
 		8819CBF35F9919DFC3C17016DF3ACE46 /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B9249B108A7CECC45779633BC02734 /* UIApplication+Rx.swift */; };
 		887823EF5414F49A2739AE28054DE348 /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77663878D920F9DDEEBDECA371DB72B9 /* Debounce.swift */; };
-		8B1B57C126B3C97E009178AE /* WPAlertProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1B57C026B3C97E009178AE /* WPAlertProtocol.swift */; };
+		8B1B5EFB26B78C30009178AE /* WPAlertProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1B5EF926B78C30009178AE /* WPAlertProtocol.swift */; };
+		8B1B5EFC26B78C30009178AE /* WPAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1B5EFA26B78C30009178AE /* WPAlertManager.swift */; };
 		8B221F0208E773DAFC5B589584B220E9 /* SkipWhile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E9AD53DC56577C4CB263E8BD0AA78D /* SkipWhile.swift */; };
 		8B7EEE0E899778DA279E64E26E38FB30 /* RxTextViewDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2B800007B628A364CD9823C648BD58 /* RxTextViewDelegateProxy.swift */; };
 		8CE605907DC8FA1F2E4751F939A4E604 /* UIControl+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DBDF41D8B6D963AB8712C8FAB195AA /* UIControl+Rx.swift */; };
@@ -708,7 +709,8 @@
 		8A8FBB4487ED0C6251C6B0A6122184C0 /* SectionedViewDataSourceType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SectionedViewDataSourceType.swift; path = RxCocoa/Common/SectionedViewDataSourceType.swift; sourceTree = "<group>"; };
 		8AFE2B1DB2F6BA23F79470F94146303E /* NSTextField+Rx.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "NSTextField+Rx.swift"; path = "RxCocoa/macOS/NSTextField+Rx.swift"; sourceTree = "<group>"; };
 		8B17770CFEC272AE34C5625818EF2157 /* RxCocoa.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxCocoa.swift; path = RxCocoa/RxCocoa.swift; sourceTree = "<group>"; };
-		8B1B57C026B3C97E009178AE /* WPAlertProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WPAlertProtocol.swift; sourceTree = "<group>"; };
+		8B1B5EF926B78C30009178AE /* WPAlertProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPAlertProtocol.swift; sourceTree = "<group>"; };
+		8B1B5EFA26B78C30009178AE /* WPAlertManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WPAlertManager.swift; sourceTree = "<group>"; };
 		8B1EE22FA97B6CAFDB27705BDC8FE508 /* RxSwift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RxSwift-prefix.pch"; sourceTree = "<group>"; };
 		8B904DEFDBFE9B221DA9601673436E80 /* SnapKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SnapKit.debug.xcconfig; sourceTree = "<group>"; };
 		8D3B9C30DD26AB42750BCA12FBC4AEEE /* Typealiases.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Typealiases.swift; path = Source/Typealiases.swift; sourceTree = "<group>"; };
@@ -1215,7 +1217,6 @@
 				FA0C096068D3D718730C74A9341907AD /* WPRepeatProtocol.swift */,
 				970A2E999A66DE34C971843F237C993F /* WPTableCellProtocol.swift */,
 				8DBAEB22A7BD97AE0D3627C83A97F37A /* WPTableHeaderFooterViewlProtocol.swift */,
-				8B1B57C026B3C97E009178AE /* WPAlertProtocol.swift */,
 			);
 			name = Protocol;
 			path = WPCommand/Classes/Public/Protocol;
@@ -1277,6 +1278,7 @@
 		60D45FFB6523811DE4116E0D29048C98 /* WPCommand */ = {
 			isa = PBXGroup;
 			children = (
+				8B1B5EF826B78C30009178AE /* Alert */,
 				1E4E6C3CF4B3CDF6E0B2C69EE74344AC /* Base */,
 				8408CC42884E6BE0BE0F45C52F87A9F9 /* CollectionView */,
 				646CF295258201162725BD22CB91863E /* Extension */,
@@ -1345,6 +1347,16 @@
 			);
 			name = CollectionView;
 			path = WPCommand/Classes/Public/CollectionView;
+			sourceTree = "<group>";
+		};
+		8B1B5EF826B78C30009178AE /* Alert */ = {
+			isa = PBXGroup;
+			children = (
+				8B1B5EF926B78C30009178AE /* WPAlertProtocol.swift */,
+				8B1B5EFA26B78C30009178AE /* WPAlertManager.swift */,
+			);
+			name = Alert;
+			path = WPCommand/Classes/Public/Alert;
 			sourceTree = "<group>";
 		};
 		8E8B19E557DF8EFF5ED14951349BAD5F /* Support Files */ = {
@@ -2188,8 +2200,9 @@
 				13F5AB1103FF9B873A5ED075AAA8FC50 /* WPLatticeItem.swift in Sources */,
 				547431384B23EC617FC5989B7F5966A3 /* WPLatticeView.swift in Sources */,
 				39C69D7BEEDA7D62248B8629D8F7297A /* WPRepeatProtocol.swift in Sources */,
+				8B1B5EFC26B78C30009178AE /* WPAlertManager.swift in Sources */,
 				6B1E727CFD9E90FC589FC50B25BD8755 /* WPSystem.swift in Sources */,
-				8B1B57C126B3C97E009178AE /* WPAlertProtocol.swift in Sources */,
+				8B1B5EFB26B78C30009178AE /* WPAlertProtocol.swift in Sources */,
 				E26CFC245BE1EACFAD723AFD5151AD82 /* WPTableAutoLayoutView.swift in Sources */,
 				0A6A3DFB1C4AD04EC71634E97A53C7FD /* WPTableCellProtocol.swift in Sources */,
 				2E9FF4FB331DA1ECA23C823C2DA8F39E /* WPTableGroup.swift in Sources */,

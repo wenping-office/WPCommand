@@ -1,35 +1,43 @@
 //
-//  WPAlertProtocol.swift
+//  WPAlertManager.swift
 //  WPCommand
 //
-//  Created by WenPing on 2021/7/30.
+//  Created by WenPing on 2021/8/2.
 //
 
 import UIKit
 import RxSwift
 
-
 public class WPAlertManager {
-
+    /// 弹窗队列
+    private struct AlertQueue{
+        let alert : WPAlertProtocol
+        let level : Int
+    }
     /// 弹窗视图
-    fileprivate weak var currentAlert : WPAlertProtocol?
+    private weak var currentAlert : WPAlertProtocol?
     /// 弹窗弹出的根视图
-    fileprivate weak var targetView : UIView? = UIApplication.shared.wp_topWindow{
+    private weak var targetView : UIView? = UIApplication.shared.wp_topWindow{
         willSet{
-            
             removeMask()
         }
     }
     /// 当前弹窗的mask
-    fileprivate weak var maskView : WPAlertManagerMask?
+    private weak var maskView : WPAlertManagerMask?
     /// 弹窗队列
-    fileprivate var alerts : [WPAlertProtocol] = []
+    private var alerts : [AlertQueue] = []{
+        didSet{
+            alerts.sort { elmt1, elmt2 in
+                return elmt1.level < elmt2.level
+            }
+        }
+    }
     /// 当前弹窗开始的frame
-    fileprivate var currentAlertBeginFrame : CGRect = .zero
+    private var currentAlertBeginFrame : CGRect = .zero
     /// 当前弹窗结束的frame
-    fileprivate var currentAlertEndFrame : CGRect = .zero
+    private var currentAlertEndFrame : CGRect = .zero
     /// 当前弹窗的进度
-    fileprivate var currentAlertProgress : Progress = .unknown
+    private var currentAlertProgress : Progress = .unknown
     
     /// 单例
     public static var  `default` : WPAlertManager = {
@@ -41,20 +49,20 @@ public class WPAlertManager {
     public func addAlert(_ alert : WPAlertProtocol){
         alert.updateStatus(status: .cooling)
         alert.tag = WPAlertManager.identification()
-        alerts.append(alert)
-        alert.alertManager = self
+        alerts.append(.init(alert: alert, level: Int(alert.alertLevel())))
+        alert.alert = self
     }
     
     /// 移除一个弹窗
     public func removeAlert(_ alert : WPAlertProtocol){
         
         currentAlert = nil
-        alert.alertManager = nil
+        alert.alert = nil
         alert.removeFromSuperview()
         
         let id = alert.tag
         let index = self.alerts.wp_index { elmt in
-            return elmt.tag == id
+            return elmt.alert.tag == id
         }
         
         if let alertIndex = index {
@@ -62,7 +70,7 @@ public class WPAlertManager {
         }
         alert.updateStatus(status: .remove)
         
-        currentAlert = alerts.first
+        currentAlert = alerts.first?.alert
     }
     
     /// 添加一组弹窗会清除现有的弹窗
@@ -78,15 +86,16 @@ public class WPAlertManager {
     /// 弹出一个弹窗 如果序列里有多个弹窗将会插入到下一个
     /// - Parameters:
     ///   - alert: 弹窗
-    public func showNext(_ alert:WPAlertProtocol){
+    ///   - immediately: 是否延迟 true的话强制立马弹出 false的话会插入到下一个弹窗
+    public func showNext(_ alert:WPAlertProtocol,immediately:Bool=false){
         alert.tag = WPAlertManager.identification()
-        alerts.insert(alert, at: 0)
-        alert.alertManager = self
+        alerts.insert(.init(alert: alert, level: -1), at: 0)
+        alert.alert = self
         
         if currentAlertProgress == .didShow{
-            dismiss()
+            alertAnimate(isShow: false,immediately: immediately)
         }else if currentAlertProgress == .unknown{
-            show()
+            alertAnimate(isShow: true,immediately: immediately)
         }else{
             alert.updateStatus(status: .cooling)
         }
@@ -102,25 +111,24 @@ public class WPAlertManager {
     
     /// 隐藏当前的弹框 如果弹框序列里还有弹窗将会弹出下一个
     public func dismiss(){
-        alertAnimate(isShow: false)
+        alertAnimate(isShow: false,immediately: false)
     }
     
     /// 显示弹窗
     public func show(){
-        
-        alertAnimate(isShow: true)
+        alertAnimate(isShow: true,immediately: false)
     }
 }
 
 extension WPAlertManager{
     
     /// 获取一个唯一标识
-    fileprivate static func identification()->Int{
+    private static func identification()->Int{
         return Int(arc4random_uniform(100) + arc4random_uniform(100) + arc4random_uniform(100))
     }
     
     /// 添加一个蒙版
-    fileprivate func addMask(info:WPAlertManager.Mask){
+    private func addMask(info:WPAlertManager.Mask){
         var resualt = false
 
         // 检查是否有蒙版
@@ -133,8 +141,7 @@ extension WPAlertManager{
         // 如果没有蒙版 那么添加一个
         if !resualt  {
             let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
-                
-                self?.currentAlert?.touchMast()
+                self?.currentAlert?.touchMask()
             })
             self.maskView = maskView
             maskView.alpha = 0
@@ -146,19 +153,20 @@ extension WPAlertManager{
     }
     
     /// 删除蒙版
-    fileprivate func removeMask(){
+    private func removeMask(){
         maskView?.removeFromSuperview()
         maskView = nil
     }
     
     /// 判断是否还有下一个弹窗
-    fileprivate func isNext()->Bool{
+    private func isNext()->Bool{
         let count = alerts.count
         return (count - 1) > 0
     }
 
     /// 执行弹窗动画
-    fileprivate func alertAnimate(isShow:Bool){
+    /// immediately 是否强制
+    private func alertAnimate(isShow:Bool,immediately:Bool){
         if let alert = currentAlert{
              
             if isShow {
@@ -175,7 +183,7 @@ extension WPAlertManager{
                 currentAlertProgress = .willPop
             }
             
-            let duration =  isShow ? alert.beginAnimateDuration : alert.endAnimateDuration
+            let duration = immediately ? 0 : (isShow ? alert.alertInfo().startDuration : alert.alertInfo().stopDuration)
 
             let animatesBolok : ()->Void = { [weak self] in
                 guard let self = self else { return }
@@ -190,7 +198,7 @@ extension WPAlertManager{
                     if !self.isNext() {
                         self.maskView?.alpha = 0
                     }
-                    if alert.endLocation == .center {
+                    if alert.alertInfo().stopLocation == .center {
                         alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
                     }
                 }
@@ -212,13 +220,13 @@ extension WPAlertManager{
                 }
             }
             
-            if alert.animateType == .default {
+            if alert.alertInfo().type == .default {
                 UIView.animate(withDuration: TimeInterval(duration), animations: {
                     animatesBolok()
                 }, completion: {resualt in
                     animateCompleteBlock(resualt)
                 })
-            }else if alert.animateType == .bounces{
+            }else if alert.alertInfo().type == .bounces{
                 UIView.animate(withDuration: TimeInterval(duration), delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveLinear, animations: {
                     animatesBolok()
                 }, completion: {resualt in
@@ -226,7 +234,7 @@ extension WPAlertManager{
                 })
             }
         }else{
-            currentAlert = alerts.first
+            currentAlert = alerts.first?.alert
             if  currentAlert != nil {
                 show()
             }else{
@@ -236,7 +244,7 @@ extension WPAlertManager{
     }
     
     /// 计算弹窗的位置
-    fileprivate func resetFrame(alert:WPAlertProtocol){
+    private func resetFrame(alert:WPAlertProtocol){
         
         let alertW : CGFloat = alert.wp_width
         let alertH : CGFloat = alert.wp_height
@@ -247,7 +255,7 @@ extension WPAlertManager{
         var beginF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         var endF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
-        switch alert.beginLocation {
+        switch alert.alertInfo().startLocation {
         case .top:
             beginF.origin.x = center.x
             beginF.origin.y = 0
@@ -276,7 +284,7 @@ extension WPAlertManager{
             alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
         }
         
-        switch alert.endLocation  {
+        switch alert.alertInfo().stopLocation  {
         case .top:
             endF.origin.x = center.x
             endF.origin.y = -alertH
@@ -300,6 +308,40 @@ extension WPAlertManager{
 }
 
 public extension WPAlertManager{
+    
+    struct Alert {
+        /// 动画类型
+        let type : WPAlertManager.AnimateType
+        /// 弹窗开始位置
+        let startLocation : WPAlertManager.BeginLocation
+        /// 弹窗弹出的时间
+        let startDuration : TimeInterval
+        /// 弹窗结束位置
+        let stopLocation : WPAlertManager.EndLocation
+        /// 弹窗结束的时间
+        let stopDuration : TimeInterval
+        
+        
+        /// 初始化一个弹窗信息
+        /// - Parameters:
+        ///   - type: 动画类型
+        ///   - startLocation: 开始弹出的位置
+        ///   - startDuration: 开始动画时间
+        ///   - stopLocation: 结束弹出的位置
+        ///   - stopDuration: 结束动画时间
+        public init(type:WPAlertManager.AnimateType,
+                    startLocation:WPAlertManager.BeginLocation,
+                    startDuration:TimeInterval,
+                    stopLocation:WPAlertManager.EndLocation,
+                    stopDuration:TimeInterval){
+            self.type = type
+            self.startLocation = startLocation
+            self.startDuration = startDuration
+            self.stopLocation = stopLocation
+            self.stopDuration = stopDuration
+        }
+    }
+
     struct Mask {
         /// 蒙板颜色
        public let color : UIColor
@@ -407,50 +449,4 @@ class WPAlertManagerMask: UIView {
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-fileprivate var WPAlertProtocolPointer = "WPItemsModelPointer"
-/// 弹窗协议
-public protocol WPAlertProtocol:UIView {
-    
-    /// 当前弹窗属于的manager
-    var alertManager : WPAlertManager?{ get set}
-    /// 弹簧效果
-    var animateType : WPAlertManager.AnimateType{ get }
-    /// 弹窗开始位置
-    var beginLocation : WPAlertManager.BeginLocation { get }
-    /// 弹出弹出的时间
-    var beginAnimateDuration : CGFloat { get }
-    /// 弹窗结束位置
-    var endLocation : WPAlertManager.EndLocation { get }
-    /// 弹窗结束的时间
-    var endAnimateDuration : CGFloat { get }
-    /// 弹窗状态变化后执行
-    func updateStatus(status: WPAlertManager.Progress)
-    /// 蒙板属性
-    func maskInfo()->WPAlertManager.Mask
-    /// 点击了蒙版
-    func touchMast()
-}
-
-public extension WPAlertProtocol{
-    var alertManager : WPAlertManager? {
-        get{
-            return objc_getAssociatedObject(self, &WPAlertProtocolPointer) as? WPAlertManager
-        }
-        set{
-            objc_setAssociatedObject(self, &WPAlertProtocolPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    func maskInfo()->WPAlertManager.Mask{
-        
-        return .init(color: UIColor.init(0, 0, 0,255 * 0.15), enabled: false,isHidden: false)
-    }
-    
-    func touchMast(){
-        alertManager?.dismiss()
-    }
-    
-    func updateStatus(status: WPAlertManager.Progress){}
 }
