@@ -16,7 +16,7 @@ public extension UIColor{
     ///   - b:蓝色
     ///   - a:透明度
     convenience init(_ r:CGFloat,_ g:CGFloat,_ b:CGFloat,_ a:CGFloat) {
-        self.init(red: r/255.0, green: g/255.0, blue: b/255.0, alpha: a/255)
+        self.init(red: r/255.0, green: g/255.0, blue: b/255.0, alpha: a*255/255)
     }
     
     /// 16进制颜色

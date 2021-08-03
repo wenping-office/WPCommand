@@ -17,7 +17,7 @@ public class WPAlertManager {
     /// 弹窗视图
     private weak var currentAlert : WPAlertProtocol?
     /// 弹窗弹出的根视图
-    private weak var targetView : UIView? = UIApplication.shared.wp_topWindow{
+    private weak var targetView : UIView!{
         willSet{
             removeMask()
         }
@@ -41,23 +41,25 @@ public class WPAlertManager {
     
     /// 单例
     public static var  `default` : WPAlertManager = {
-        let manager = WPAlertManager()
+        let manager = WPAlertManager(target: UIApplication.shared.wp_topWindow)
         return manager
     }()
+    
+    public init(target:UIView){
+       _ = self.target(in: target)
+    }
     
     /// 添加一个弹窗
     public func addAlert(_ alert : WPAlertProtocol){
         alert.updateStatus(status: .cooling)
         alert.tag = WPAlertManager.identification()
         alerts.append(.init(alert: alert, level: Int(alert.alertLevel())))
-        alert.alert = self
     }
     
     /// 移除一个弹窗
     public func removeAlert(_ alert : WPAlertProtocol){
         
         currentAlert = nil
-        alert.alert = nil
         alert.removeFromSuperview()
         
         let id = alert.tag
@@ -90,7 +92,6 @@ public class WPAlertManager {
     public func showNext(_ alert:WPAlertProtocol,immediately:Bool=false){
         alert.tag = WPAlertManager.identification()
         alerts.insert(.init(alert: alert, level: -1), at: 0)
-        alert.alert = self
         
         if currentAlertProgress == .didShow{
             alertAnimate(isShow: false,immediately: immediately)
@@ -171,7 +172,13 @@ extension WPAlertManager{
              
             if isShow {
                 addMask(info: alert.maskInfo())
-                
+                if(alert.frame.size == .zero){ // 如果是layout布局那么强制刷新获取尺寸
+                    alert.wp_x = -10000
+                    alert.wp_y = -10000
+                    UIApplication.shared.wp_topWindow.addSubview(alert)
+                    alert.superview?.layoutIfNeeded()
+                    alert.removeFromSuperview()
+                }
                 targetView?.insertSubview(alert, at: 1000)
                 resetFrame(alert: alert)
                 maskView?.maskInfo = alert.maskInfo()
@@ -215,6 +222,7 @@ extension WPAlertManager{
                         self.currentAlertProgress = .didPop
                         alert.updateStatus(status: .didPop)
                         self.removeAlert(alert)
+                        
                         self.show()
                     }
                 }
@@ -235,7 +243,7 @@ extension WPAlertManager{
             }
         }else{
             currentAlert = alerts.first?.alert
-            if  currentAlert != nil {
+            if  currentAlert != nil{
                 show()
             }else{
                 removeMask()
@@ -256,29 +264,29 @@ extension WPAlertManager{
         var endF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
         switch alert.alertInfo().startLocation {
-        case .top:
-            beginF.origin.x = center.x
-            beginF.origin.y = 0
-            alert.wp_x = center.x
-            alert.wp_y = -alertH
-        case .left:
-            beginF.origin.x = 0
-            beginF.origin.y = center.y
-            alert.wp_x = -alertW
-            alert.wp_y = center.y
-        case .bottom:
-            beginF.origin.x = center.x
-            beginF.origin.y = maxH-alertH
-            alert.wp_x = center.x
-            alert.wp_y = maxH
-        case .right:
-            
-            beginF.origin.y = center.y
-            beginF.origin.x = maxW - alertW
-            alert.wp_y = center.y
-            alert.wp_x = maxW
-        case .center:
-            beginF.origin = center
+        case .top(let offset):
+            beginF.origin.x = center.x + offset.x
+            beginF.origin.y = 0 + offset.y
+            alert.wp_x = center.x + offset.x
+            alert.wp_y = -alertH + offset.y
+        case .left(let offset):
+            beginF.origin.x = 0 + offset.x
+            beginF.origin.y = center.y + offset.y
+            alert.wp_x = -alertW + offset.x
+            alert.wp_y = center.y + offset.y
+        case .bottom(let offset):
+            beginF.origin.x = center.x + offset.x
+            beginF.origin.y = maxH-alertH + offset.y
+            alert.wp_x = center.x + offset.x
+            alert.wp_y = maxH + offset.y
+        case .right(let offset):
+            beginF.origin.x = maxW - alertW + offset.x
+            beginF.origin.y = center.y + offset.y
+            alert.wp_y = center.y + offset.y
+            alert.wp_x = maxW + offset.x
+        case .center(let offSet):
+            beginF.origin.x = center.x + offSet.x
+            beginF.origin.y = center.y + offSet.y
             alert.alpha = 0
             alert.frame.origin = center
             alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
@@ -286,7 +294,7 @@ extension WPAlertManager{
         
         switch alert.alertInfo().stopLocation  {
         case .top:
-            endF.origin.x = center.x
+            endF.origin.x = beginF.origin.x
             endF.origin.y = -alertH
         case .left:
             endF.origin.x = -alertW
@@ -296,9 +304,9 @@ extension WPAlertManager{
             endF.origin.y = maxH
         case .right:
             endF.origin.x = maxW
-            endF.origin.y = center.y
+            endF.origin.y = beginF.origin.y
         case .center:
-            endF.origin = center
+            endF.origin = beginF.origin
         }
         
         currentAlertBeginFrame = beginF
@@ -390,15 +398,15 @@ public extension WPAlertManager{
     /// 弹窗开始位置
     enum BeginLocation {
         /// 顶部弹出
-        case top
+        case top(offset:CGPoint = .zero)
         /// 左边弹出
-        case left
+        case left(offset:CGPoint = .zero)
         /// 底部弹出
-        case bottom
+        case bottom(offset:CGPoint = .zero)
         /// 右边弹出
-        case right
+        case right(offset:CGPoint = .zero)
         /// 中间弹出
-        case center
+        case center(offset:CGPoint = .zero)
     }
     
     /// 弹出结束位置

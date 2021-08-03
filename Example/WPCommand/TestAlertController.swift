@@ -22,28 +22,37 @@ class TestAlertController: WPBaseVC {
         }
 
         let alert = testAlert()
+
         alert.backgroundColor = .wp_random
         alert.wp_width = 200
         alert.wp_height = 200
         view.layoutIfNeeded()
-        WPAlertManager.default.setAlerts([alert]).target(in: self.rootView).show()
-//        WPAlertManager.default.target(in: self.view).showNext(alert)
-        
+
+        WPAlertManager.default.addAlert(alert)
+        WPAlertManager.default.show()
+
+//        manager.addAlert(alert)
+//        manager.show()
+
+//        WPAlertManager.default.setAlerts([alert]).target(in: self.rootView).show()
+////        WPAlertManager.default.target(in: self.view).showNext(alert)
+//
         alert.leftBtn.rx.tap.subscribe(onNext: {
             WPAlertManager.default.dismiss()
         })
         
-        alert.rightBtn.rx.tap.subscribe(onNext: {
-            
-            let aler2 = testAlert2()
-            aler2.backgroundColor = .red
-            aler2.wp_width = 200
-            aler2.wp_height = 200
-            aler2.leftBtn.rx.tap.subscribe(onNext: {
-                WPAlertManager.default.dismiss()
-            })
-            WPAlertManager.default.target(in: self.view).showNext(aler2,immediately: true)
-        })
+//
+//        alert.rightBtn.rx.tap.subscribe(onNext: {
+//
+//            let aler2 = testAlert2()
+//            aler2.backgroundColor = .red
+//            aler2.wp_width = 200
+//            aler2.wp_height = 200
+//            aler2.leftBtn.rx.tap.subscribe(onNext: {
+//                WPAlertManager.default.dismiss()
+//            })
+//            WPAlertManager.default.target(in: self.view).showNext(aler2,immediately: true)
+//        })
     }
 
     override func viewDidLoad() {
@@ -75,13 +84,15 @@ class rootViw: WPBaseView {
 }
 
 class testAlert2: WPBaseView,WPAlertProtocol {
+    var alert: WPAlertManager?
+    
     
     deinit {
         print("弹窗释放了")
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(type: .bounces, startLocation: .center, startDuration: 0.3, stopLocation: .center, stopDuration: 3)
+        return .init(type: .bounces, startLocation: .center(), startDuration: 0.3, stopLocation: .center, stopDuration: 3)
     }
     
 //    func touchMask() {
@@ -119,6 +130,8 @@ class testAlert2: WPBaseView,WPAlertProtocol {
 }
 
 class testAlert: WPBaseView,WPAlertProtocol {
+    var alert: WPAlertManager?
+    
     deinit {
         print("弹窗释放了")
     }
@@ -128,7 +141,7 @@ class testAlert: WPBaseView,WPAlertProtocol {
     }
 
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(type: .default, startLocation: .left, startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
+        return .init(type: .default, startLocation: .left(offset: .init(x: 30, y: -100)), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
     }
 
     func maskInfo() -> WPAlertManager.Mask {
