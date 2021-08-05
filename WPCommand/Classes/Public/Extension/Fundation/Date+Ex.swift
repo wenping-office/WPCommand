@@ -13,7 +13,9 @@ public extension Date{
     
     /// 获取当月最大天数
     var wp_dayInMonth : Int{
-        return wp_offSetDay(-self.wp_day+1)?.wp_day ?? 0
+        let date = wp_offSetMonth(1) ?? Date()
+        
+        return date.wp_offSetDay(-date.wp_day)?.wp_day ?? 0
     }
 
     /// 当天零点
