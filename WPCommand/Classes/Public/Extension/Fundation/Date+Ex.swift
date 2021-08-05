@@ -11,6 +11,11 @@ import Foundation
 
 public extension Date{
     
+    /// 获取当月最大天数
+    var wp_dayInMonth : Int{
+        return wp_offSetDay(-self.wp_day+1)?.wp_day ?? 0
+    }
+
     /// 当天零点
     var wp_zero : Date? {
         let calendar = Calendar.current
@@ -138,7 +143,7 @@ public extension Date{
     func wp_offSetMonth(_ month:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
         var comps = calendar.dateComponents([.month], from: date)
-        comps.year = month
+        comps.month = month
         return calendar.date(byAdding: comps, to: date)
     }
     
@@ -148,7 +153,7 @@ public extension Date{
     func wp_offSetDay(_ day:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
         var comps = calendar.dateComponents([.day], from: date)
-        comps.year = day
+        comps.day = day
         return calendar.date(byAdding: comps, to: date)
     }
     
@@ -158,7 +163,7 @@ public extension Date{
     func wp_offSetHour(_ hour:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
         var comps = calendar.dateComponents([.hour], from: date)
-        comps.year = hour
+        comps.hour = hour
         return calendar.date(byAdding: comps, to: date)
     }
     
@@ -168,7 +173,7 @@ public extension Date{
     func wp_offSetMinute(_ minute:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
         var comps = calendar.dateComponents([.minute], from: date)
-        comps.year = minute
+        comps.minute = minute
         return calendar.date(byAdding: comps, to: date)
     }
     
@@ -178,7 +183,7 @@ public extension Date{
     func wp_offSetSecond(_ second:Int,_ calendar : Calendar = Calendar.current)->Date?{
         let date = self
         var comps = calendar.dateComponents([.second], from: date)
-        comps.year = second
+        comps.second = second
         return calendar.date(byAdding: comps, to: date)
     }
 }

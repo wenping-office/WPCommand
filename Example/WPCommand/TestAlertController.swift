@@ -20,45 +20,40 @@ class TestAlertController: WPBaseVC {
         rootView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
-        let alert = testAlert()
-
-        alert.backgroundColor = .wp_random
-        alert.wp_width = 200
-        alert.wp_height = 200
-        view.layoutIfNeeded()
-
-        WPAlertManager.default.addAlert(alert)
-        WPAlertManager.default.show()
-
-//        manager.addAlert(alert)
-//        manager.show()
-
-//        WPAlertManager.default.setAlerts([alert]).target(in: self.rootView).show()
-////        WPAlertManager.default.target(in: self.view).showNext(alert)
-//
-        alert.leftBtn.rx.tap.subscribe(onNext: {
-            WPAlertManager.default.dismiss()
-        })
-        
-//
-//        alert.rightBtn.rx.tap.subscribe(onNext: {
-//
-//            let aler2 = testAlert2()
-//            aler2.backgroundColor = .red
-//            aler2.wp_width = 200
-//            aler2.wp_height = 200
-//            aler2.leftBtn.rx.tap.subscribe(onNext: {
-//                WPAlertManager.default.dismiss()
-//            })
-//            WPAlertManager.default.target(in: self.view).showNext(aler2,immediately: true)
-//        })
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .white
+        
+        WPAlertManager.default.setAlerts([alert1(),alert2(),alert2(),alert1(),alert2(),alert1()]).show()
+    }
+    
+    func alert1() -> testAlert {
+        let alert = testAlert()
+        alert.backgroundColor = .wp_random
+        alert.wp_width = 200
+        alert.wp_height = 200
+        alert.leftBtn.rx.tap.subscribe(onNext: {
+            WPAlertManager.default.dismiss()
+        })
+
+        alert.rightBtn.rx.tap.subscribe(onNext: {
+            WPAlertManager.default.target(in: self.view).showNext(self.alert2(),immediately: true)
+        })
+        return alert
+    }
+    
+    func alert2() -> testAlert2 {
+        let aler2 = testAlert2()
+        aler2.backgroundColor = .red
+        aler2.wp_width = 200
+        aler2.wp_height = 200
+        aler2.leftBtn.rx.tap.subscribe(onNext: {
+            WPAlertManager.default.dismiss()
+        })
+        return aler2
     }
 }
 
@@ -92,7 +87,7 @@ class testAlert2: WPBaseView,WPAlertProtocol {
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(type: .bounces, startLocation: .center(), startDuration: 0.3, stopLocation: .center, stopDuration: 3)
+        return .init(type: .default, startLocation: .center(), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
     }
     
 //    func touchMask() {
@@ -116,14 +111,11 @@ class testAlert2: WPBaseView,WPAlertProtocol {
         leftBtn.setTitleColor(.black, for: .normal)
         rightBtn.setTitleColor(.black, for: .normal)
         
-        leftBtn.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-        }
-        
-        rightBtn.snp.makeConstraints { make in
-            make.right.equalToSuperview()
-        }
-
+       
+        leftBtn.wp_x = 0
+        rightBtn.wp_x = 100
+        leftBtn.sizeToFit()
+        rightBtn.sizeToFit()
         wp_subViewRandomColor()
     }
     
@@ -161,14 +153,10 @@ class testAlert: WPBaseView,WPAlertProtocol {
         leftBtn.setTitleColor(.black, for: .normal)
         rightBtn.setTitleColor(.black, for: .normal)
         
-        leftBtn.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-        }
-        
-        rightBtn.snp.makeConstraints { make in
-            make.right.equalToSuperview()
-        }
-
+        leftBtn.sizeToFit()
+        rightBtn.sizeToFit()
+        leftBtn.wp_x = 0
+        rightBtn.wp_x = 100
         wp_subViewRandomColor()
     }
     

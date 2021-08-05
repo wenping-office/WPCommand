@@ -16,10 +16,18 @@ public class WPAlertManager {
     }
     /// 弹窗视图
     private weak var currentAlert : WPAlertProtocol?
-    /// 弹窗弹出的根视图
-    private weak var targetView : UIView!{
+    /// 弹窗的根视图
+    private weak var target : UIView?{
         willSet{
             removeMask()
+        }
+    }
+    /// 弹窗弹出的根视图
+    private var targetView : UIView{
+        if target == nil {
+            return UIApplication.shared.wp_topWindow
+        }else{
+            return target!
         }
     }
     /// 当前弹窗的mask
@@ -46,7 +54,7 @@ public class WPAlertManager {
     }()
     
     public init(target:UIView){
-       _ = self.target(in: target)
+        _ = self.target(in: target)
     }
     
     /// 添加一个弹窗
@@ -93,12 +101,11 @@ public class WPAlertManager {
         alert.tag = WPAlertManager.identification()
         alerts.insert(.init(alert: alert, level: -1), at: 0)
         
-        if currentAlertProgress == .didShow{
+        if currentAlertProgress == .didShow && alerts.count >= 1{
             alertAnimate(isShow: false,immediately: immediately)
-        }else if currentAlertProgress == .unknown{
-            alertAnimate(isShow: true,immediately: immediately)
         }else{
             alert.updateStatus(status: .cooling)
+            alertAnimate(isShow: true,immediately: immediately)
         }
     }
     
@@ -106,7 +113,7 @@ public class WPAlertManager {
     /// - Parameter view:
     /// - Returns: 弹窗管理者
     public func target(in view:UIView) -> WPAlertManager {
-        targetView = view
+        target = view
         return self
     }
     
@@ -131,14 +138,13 @@ extension WPAlertManager{
     /// 添加一个蒙版
     private func addMask(info:WPAlertManager.Mask){
         var resualt = false
-
         // 检查是否有蒙版
-        targetView?.subviews.forEach({ elmt in
+        targetView.subviews.forEach({ elmt in
             if elmt.isKind(of: WPAlertManagerMask.self){
                 resualt = true
             }
         })
-
+        
         // 如果没有蒙版 那么添加一个
         if !resualt  {
             let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
@@ -146,7 +152,7 @@ extension WPAlertManager{
             })
             self.maskView = maskView
             maskView.alpha = 0
-            targetView?.insertSubview(maskView, at: 999)
+            targetView.insertSubview(maskView, at: 999)
             maskView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
@@ -164,12 +170,12 @@ extension WPAlertManager{
         let count = alerts.count
         return (count - 1) > 0
     }
-
+    
     /// 执行弹窗动画
     /// immediately 是否强制
     private func alertAnimate(isShow:Bool,immediately:Bool){
         if let alert = currentAlert{
-             
+            
             if isShow {
                 addMask(info: alert.maskInfo())
                 if(alert.frame.size == .zero){ // 如果是layout布局那么强制刷新获取尺寸
@@ -179,7 +185,8 @@ extension WPAlertManager{
                     alert.superview?.layoutIfNeeded()
                     alert.removeFromSuperview()
                 }
-                targetView?.insertSubview(alert, at: 1000)
+
+                targetView.insertSubview(alert, at: 1000)
                 resetFrame(alert: alert)
                 maskView?.maskInfo = alert.maskInfo()
                 
@@ -191,7 +198,7 @@ extension WPAlertManager{
             }
             
             let duration = immediately ? 0 : (isShow ? alert.alertInfo().startDuration : alert.alertInfo().stopDuration)
-
+            
             let animatesBolok : ()->Void = { [weak self] in
                 guard let self = self else { return }
                 
@@ -222,9 +229,11 @@ extension WPAlertManager{
                         self.currentAlertProgress = .didPop
                         alert.updateStatus(status: .didPop)
                         self.removeAlert(alert)
-                        
                         self.show()
                     }
+                }else{
+                    alert.updateStatus(status: .unknown)
+                    self.currentAlertProgress = .unknown
                 }
             }
             
@@ -256,8 +265,8 @@ extension WPAlertManager{
         
         let alertW : CGFloat = alert.wp_width
         let alertH : CGFloat = alert.wp_height
-        let maxW : CGFloat = targetView?.wp_width ?? 0
-        let maxH : CGFloat = targetView?.wp_height ?? 0
+        let maxW : CGFloat = targetView.wp_width
+        let maxH : CGFloat = targetView.wp_height
         let center : CGPoint = .init(x: (maxW - alertW) * 0.5, y: (maxH - alertH) * 0.5)
         
         var beginF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
@@ -349,14 +358,14 @@ public extension WPAlertManager{
             self.stopDuration = stopDuration
         }
     }
-
+    
     struct Mask {
         /// 蒙板颜色
-       public let color : UIColor
+        public let color : UIColor
         /// 是否可以交互点击
-       public let enabled : Bool
+        public let enabled : Bool
         /// 是否显示
-       public let isHidden : Bool
+        public let isHidden : Bool
         
         /// 初始化一个蒙版信息
         /// - Parameters:
@@ -428,10 +437,10 @@ public extension WPAlertManager{
 class WPAlertManagerMask: UIView {
     /// 垃圾桶
     let disposeBag = DisposeBag()
-
+    
     /// 蒙板视图
     let contentView = UIButton()
-
+    
     /// 蒙板info
     var maskInfo : WPAlertManager.Mask{
         didSet{
