@@ -116,6 +116,22 @@ public extension String{
 }
 
 public extension String{
+    
+    
+    /// 转日期 默认本地日期
+    /// - Parameter format: 日期格式
+    /// - Parameter locale: 默认zh_CN
+    /// - parameter timeZone: 默认当前时区
+    /// - Returns: 日期
+    func wp_toDate(_ format:String,
+                   _ locale:Locale = Locale(identifier: "zh_CN"),
+                   _ timeZone:TimeZone = TimeZone.current)->Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = timeZone
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: self)
+    }
+
     /// 字符串转本地日期
     /// - Parameter format: 解码规则
     /// - Returns:

@@ -7,7 +7,7 @@
 
 import UIKit
 
-/// 弹窗协议
+/// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出
 public protocol WPAlertProtocol:UIView {
     /// 弹窗状态变化后执行
     func updateStatus(status: WPAlertManager.Progress)

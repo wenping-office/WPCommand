@@ -1,7 +1,7 @@
 {
   "name": "WPCommand",
   "version": "0.2.0",
-  "summary": "基础库，工具类",
+  "summary": "基础库工具类、队列Alert,TextView、TextField、等",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/MyNameWp/WPCommand",
   "license": {

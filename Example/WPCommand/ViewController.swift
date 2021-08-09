@@ -28,15 +28,15 @@ class ViewController: UIViewController {
         
         let vc : [(String,WPBaseVC.Type)] = [
             ("输入框",TestUIController.self),
-            ("弹窗管理器",TestAlertController.self)]
-            
+            ("弹窗管理器",TestAlertController.self),
+            ("菜单视图",TestMenuVC.self),
+        ]
         vc.forEach { elmt in
             let item = WPTableItem(cellClass: UITableViewCell.self) { cell in
                 cell.textLabel?.text = elmt.0
             } didSelected: { cell in
-                
                 let vc = elmt.1.init()
-
+                vc.title = elmt.0
                 self.navigationController?.pushViewController(vc, animated: true)
             }
             group.items.append(item)

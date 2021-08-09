@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 
+/// 弹窗队列弹出实现WPAlertProtocol协议的弹窗
 public class WPAlertManager {
     /// 弹窗队列
     private struct AlertQueue{

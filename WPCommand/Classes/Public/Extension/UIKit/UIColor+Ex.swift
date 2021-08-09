@@ -57,7 +57,7 @@ public extension UIColor{
 public extension UIColor{
     /// 转换成图片
     /// - Returns: 图片
-    func image(size:CGSize = .init(width: 1, height: 1)) -> UIImage?{
+    func wp_image(size:CGSize = .init(width: 1, height: 1)) -> UIImage?{
         let rect = CGRect(x:0,y:0,width:size.width,height:size.height)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()

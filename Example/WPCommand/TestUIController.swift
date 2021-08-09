@@ -34,9 +34,6 @@ class TestUIController: WPBaseVC {
         Test(id: "3"),]
         
         arr.wp_repeat(retain: .last)
-        
-        print(arr)
-        
 
     }
     
@@ -49,8 +46,6 @@ class TestUIController: WPBaseVC {
             make.height.equalTo(44)
             make.center.equalToSuperview()
         }
-        
-        view.wp_subViewRandomColor()
     }
     
     func textView(){

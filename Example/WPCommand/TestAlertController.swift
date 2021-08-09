@@ -27,7 +27,7 @@ class TestAlertController: WPBaseVC {
 
         view.backgroundColor = .white
         
-        WPAlertManager.default.setAlerts([alert1(),alert2(),alert2(),alert1(),alert2(),alert1()]).show()
+        WPAlertManager.default.setAlerts([alert1(),alert1()]).show()
     }
     
     func alert1() -> testAlert {
