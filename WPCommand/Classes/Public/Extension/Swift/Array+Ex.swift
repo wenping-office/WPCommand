@@ -28,6 +28,35 @@ public extension Array{
     }
 
     
+    /// 查找一组符合条件的元素
+    /// - Parameter resualtBlock: 条件
+    /// - Returns: 结果
+    func wp_elmts(by resualtBlock:@escaping(Element)->Bool)->[Element]?{
+        var res : [Element] = []
+        for index in 0..<count {
+            let elmt = self[index]
+            if resualtBlock(elmt){
+                res.append(elmt)
+            }
+        }
+        return res
+    }
+    
+    /// 查找某个符合条件的元素
+    /// - Parameter resualtBlock: 条件
+    /// - Returns: 结果
+    func wp_elmt(by resualtBlock:@escaping(Element)->Bool)->Element?{
+        var res : Element?
+        for index in 0..<count {
+            let elmt = self[index]
+            if resualtBlock(elmt){
+                res = elmt
+                break
+            }
+        }
+        return res
+    }
+    
     /// 获取某个元素的下标 如果没有则返回空
     /// - Parameter resualtBlock: 条件block
     /// - Returns: 结果
