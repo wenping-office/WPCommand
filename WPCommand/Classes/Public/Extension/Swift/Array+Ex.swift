@@ -26,7 +26,38 @@ public extension Array{
         }
         self = result
     }
+    
+    
+    /// 安全插入一个元素
+    /// - Parameters:
+    ///   - newElmt: 元素
+    ///   - index: 索引
+    mutating func wp_safeInset(_ newElmt:Element ,at index:Int){
+        if index <= 0 {
+            insert(newElmt, at: 0)
+        }else{
+            insert(newElmt, at: index)
+        }
+    }
+    
+    /// 安全移除一个元素
+    /// - Parameter index: 索引
+    mutating func wp_safeRemove(at index:Int){
+        if count > index-1 {
+            remove(at: index)
+        }
+    }
 
+    /// 交换元素
+    /// - Parameters:
+    ///   - index: 交换元素的索引
+    ///   - newElmt: 元素
+    mutating func wp_exchange(of index:Int,_ newElmt:Element){
+        
+        wp_safeRemove(at: index)
+        
+        wp_safeInset(newElmt, at: index)
+    }
     
     /// 查找一组符合条件的元素
     /// - Parameter resualtBlock: 条件
