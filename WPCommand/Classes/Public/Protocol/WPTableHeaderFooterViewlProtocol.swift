@@ -9,8 +9,10 @@ import UIKit
 
 fileprivate var WPTableGroupPointer = "WPTableGroupPointer"
 
-public protocol WPTableHeaderFooterViewlProtocol : NSObjectProtocol{
-
+public protocol WPTableHeaderFooterViewlProtocol : NSObjectProtocol,UITableViewHeaderFooterView{
+    
+    /// 加载模型时调用
+    /// - Parameter group: group模型
     func reloadGroup(group:WPTableGroup)
     
     /// group模型
@@ -21,10 +23,10 @@ extension WPTableHeaderFooterViewlProtocol{
     
     public var group : WPTableGroup? {
         get{
-            return objc_getAssociatedObject(self, &WPTableGroupPointer) as? WPTableGroup
+            return WPRunTime.get(self, &WPTableGroupPointer)
         }
         set{
-            objc_setAssociatedObject(self, &WPTableGroupPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return WPRunTime.set(self, newValue, &WPTableGroupPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

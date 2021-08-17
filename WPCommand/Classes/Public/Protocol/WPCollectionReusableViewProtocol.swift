@@ -10,7 +10,7 @@ import UIKit
 fileprivate var WPCollectionGroupPointer = "WPCollectionGroupPointer"
 
 /// group协议
-protocol WPCollectionReusableViewProtocol : NSObjectProtocol{
+protocol WPCollectionReusableViewProtocol : NSObjectProtocol,UICollectionReusableView{
     
     /// 即将加载group
     /// - Parameter model: 模型
@@ -24,10 +24,10 @@ extension WPCollectionReusableViewProtocol{
     
     var group : WPCollectionGroup? {
         get{
-            return objc_getAssociatedObject(self, &WPCollectionGroupPointer) as? WPCollectionGroup
+            return WPRunTime.get(self, &WPCollectionGroupPointer)
         }
         set{
-            objc_setAssociatedObject(self, &WPCollectionGroupPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, &WPCollectionGroupPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

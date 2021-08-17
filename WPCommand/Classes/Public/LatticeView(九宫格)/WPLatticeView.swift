@@ -8,7 +8,7 @@
 import UIKit
 
 open class WPLatticeView<cellT:WPLatticeCell,itemT:WPLatticeItem>: UIView {
-    private lazy var contentView = WPCollectionView.init(cellClass: cellT.self, scrollDirection: .vertical) { [weak self](item) in
+    private lazy var contentView = WPCollectionAutoLayoutView.init(cellClass: cellT.self, scrollDirection: .vertical) { [weak self](item) in
         self?.action != nil ? self?.action!(item as! itemT) : print("")
     }
     

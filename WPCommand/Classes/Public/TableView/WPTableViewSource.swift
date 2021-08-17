@@ -1,35 +1,77 @@
 //
-//  WPTableView.swift
-//  WPTableView
+//  WPTableViewSource.swift
+//  WPCommand
 //
-//  Created by WenPing on 2021/5/2.
+//  Created by WenPing on 2021/8/17.
 //
 
 import UIKit
 
+fileprivate var WPTableViewSourcePointer = "WPTableViewSourcePointer"
 
-/// 系统代理 可以实现拖动监听手势等
-public protocol WPTableViewSystemDelegate : UIScrollViewDelegate{
-    
+/// 扩展数据源
+public extension UITableView{
+
+    /// 数据源
+    var wp_source : WPTableViewSource{
+        set{
+            WPRunTime.set(self, newValue, &WPTableViewSourcePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            delegate = newValue
+            dataSource = newValue
+        }
+        get{
+            guard let source : WPTableViewSource = WPRunTime.get(self, &WPTableViewSourcePointer) else {
+                let wp_source = WPTableViewSource(tableView: self)
+                delegate = wp_source
+                dataSource = wp_source
+                self.wp_source = wp_source
+                return wp_source
+            }
+          return source
+        }
+    }
 }
 
-/// 默认使用autolayout布局
-open class WPTableAutoLayoutView: UITableView {
+public extension WPTableViewSource{
+    enum ReloadMode{
+        /// 默认模式 手动刷新
+        case `default`
+        /// 当新增了group时自动刷新
+        case group
+        /// 当新增了item时自动刷新
+        case item
+    }
+}
+
+public class WPTableViewSource:WPBaseSource {
     
+    /// 当前的tableView
+    weak var tableView : UITableView!
+    
+    /// 初始化一个数据源
+    /// - Parameter tableView: 对应的tableView
+    public init(tableView:UITableView) {
+        self.tableView = tableView
+        super.init()
+    }
+
+    /// 是否添加到superView
     private var isAddToSuperView = false
-    
+    /// 刷新模式 暂未测
+    public var reloadMode : ReloadMode = .default
+    /// 每一组
     public var groups : [WPTableGroup] = []{
         didSet{
-            switch reloadModel {
+            switch reloadMode {
             case .item:
                 
                 for group in groups {
                     group.didAddItem = { (section,style)->() in
                         DispatchQueue.main.async { [unowned self] in
                             if isAddToSuperView{
-                                reloadSections([section], with: style)
+                                tableView.reloadSections([section], with: style)
                             }else{
-                                reloadData()
+                                tableView.reloadData()
                             }
                         }
                     }
@@ -37,43 +79,17 @@ open class WPTableAutoLayoutView: UITableView {
                 break
                 
             case .group:
-                reloadData()
+                tableView.reloadData()
                 break
             default:
-                reloadData()
+                tableView.reloadData()
                 break
             }
-            
         }
-    }
-    
-    /// 继承自系统代理 如果要监听滑动手势等 可以重写
-    public var systemDelegate : WPTableViewSystemDelegate?
-    /// 暂未测
-    public let reloadModel : WPTableAutoLayoutView.ReloadModel
-    
-    public enum ReloadModel{
-        case `default`
-        case group
-        case item
-    }
-    
-    public init(style:UITableView.Style,reloadModel:WPTableAutoLayoutView.ReloadModel) {
-        self.reloadModel = reloadModel
-        super.init(frame: CGRect.zero, style: style)
-        delegate = self
-        dataSource = self
-        tableFooterView = UIView()
-        sectionFooterHeight = 0.01
-        sectionHeaderHeight = 0.01
-    }
-    
-    required public init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
-extension WPTableAutoLayoutView : UITableViewDataSource{
+extension WPTableViewSource:UITableViewDataSource{
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         groups[section].section = section
         return groups[section].items.count
@@ -115,8 +131,7 @@ extension WPTableAutoLayoutView : UITableViewDataSource{
     }
 }
 
-extension WPTableAutoLayoutView : UITableViewDelegate{
-    
+extension WPTableViewSource:UITableViewDelegate{
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return groups[indexPath.section].items[indexPath.row].cellHeight
     }
@@ -209,24 +224,10 @@ extension WPTableAutoLayoutView : UITableViewDelegate{
         let group = groups[section]
         let footerView = view as! UITableViewHeaderFooterView
         footerView.reloadGroup(group: group)
-        
         group.footWillDisplayBlock != nil ? group.headWillDisplayBlock!(footerView) : print("")
-        
     }
-    
-    //    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-    //        return groups[indexPath.section].items[indexPath.row].actions
-    //    }
 }
 
-extension WPTableAutoLayoutView : UIScrollViewDelegate{
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        systemDelegate?.scrollViewDidScroll?(scrollView)
-    }
-    
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        systemDelegate?.scrollViewWillBeginDragging?(scrollView)
-    }
-}
+
 
 

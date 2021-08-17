@@ -9,20 +9,22 @@ import UIKit
 
 var WPCollectionItemPointer = "WPCollectionItemPointer"
 
-public protocol WPCollectionCellProtocol : NSObjectProtocol{}
+public protocol WPCollectionCellProtocol : NSObjectProtocol,UICollectionViewCell{}
 
 public extension WPCollectionCellProtocol{
     var item : WPCollectionItem? {
         get{
-            return objc_getAssociatedObject(self, &WPCollectionItemPointer) as? WPCollectionItem
+           return WPRunTime.get(self, &WPCollectionItemPointer)
         }
         set{
-            objc_setAssociatedObject(self, &WPCollectionItemPointer, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, &WPCollectionItemPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
 
 extension UICollectionViewCell:WPCollectionCellProtocol{
     
+    /// 加载itemInfo时调用
+    /// - Parameter info: 附件
     @objc open func reloadItemInfo(info:Any?){}
 }
