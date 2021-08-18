@@ -11,7 +11,7 @@ import WPCommand
 
 class ViewController: UIViewController {
 
-    let tableView = WPTableAutoLayoutView(style: .plain, reloadModel: .default)
+    let tableView = UITableView(frame: .zero, style: .plain)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +41,8 @@ class ViewController: UIViewController {
             }
             group.items.append(item)
         }
-        tableView.groups = [group]
+        tableView.wp_source.groups = [group]
+        
     }
     
 }

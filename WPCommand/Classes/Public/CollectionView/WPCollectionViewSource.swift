@@ -34,7 +34,7 @@ public extension UICollectionView{
 
 
 
-public class WPCollectionViewSource: WPBaseSource {
+public class WPCollectionViewSource: WPScrollViewDelegate {
     /// 数据源
     open var groups : [WPCollectionGroup] = []
     

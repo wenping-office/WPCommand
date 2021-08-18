@@ -23,8 +23,8 @@ open class WPTableItem: NSObject {
     public var editingStyle = UITableViewCell.EditingStyle.none
     /// 分割线间距
     public var separatorInset = UIEdgeInsets(top: 0, left: 16.0, bottom: 0, right: 0)
-    /// 即将删除调用
-    public var didDeleteBlock : ((WPTableItem,WPTableGroup)->Void)?
+    /// 编辑按钮点击后调用
+    public var didCommitEditBlock : ((WPTableItem,WPTableGroup)->Void)?
     /// 选中一行调用
     public var didSelectedBlock : ((UITableViewCell) ->Void)?
     /// 选中当前行调用

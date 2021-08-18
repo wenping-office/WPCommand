@@ -27,7 +27,6 @@ public extension Array{
         self = result
     }
     
-    
     /// 安全插入一个元素
     /// - Parameters:
     ///   - newElmt: 元素
@@ -45,6 +44,19 @@ public extension Array{
     mutating func wp_safeRemove(at index:Int){
         if count > index-1 {
             remove(at: index)
+        }
+    }
+    
+    
+    /// 安全获取一个元素
+    /// - Parameter index: 所有
+    /// - Returns: 元素
+    func wp_safeGet(of index:Int)->Element?{
+        
+        if index <= count-1 {
+            return self[index]
+        }else{
+            return nil
         }
     }
 

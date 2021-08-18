@@ -18,16 +18,17 @@ class TestMenuVC: WPBaseVC {
         view.backgroundColor = .white
         
         menuView.backgroundColor = .wp_random
+        let tableView = UITableView()
     }
     
     override func initSubView() {
-        view.addSubview(menuView)
+//        view.addSubview(menuView)
     }
 
     override func initSubViewlayout() {
-        menuView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+//        menuView.snp.makeConstraints { make in
+//            make.edges.equalToSuperview()
+//        }
     }
 
 }

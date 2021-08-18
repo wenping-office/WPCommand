@@ -1,13 +1,35 @@
 //
-//  WPBaseSource.swift
+//  UIScrollView+Ex.swift
 //  WPCommand
 //
-//  Created by WenPing on 2021/8/17.
+//  Created by WenPing on 2021/8/18.
 //
 
 import UIKit
 
- public class WPBaseSource: NSObject {
+fileprivate var WPScrollViewDelegatePointer = "WPScrollViewSourcePointer"
+
+public extension UIScrollView{
+    
+    /// 数据源
+    @objc var wp_delegate : WPScrollViewDelegate{
+        set{
+            WPRunTime.set(self, newValue, &WPScrollViewDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            delegate = newValue
+        }
+        get{
+            guard let wp_delegate : WPScrollViewDelegate = WPRunTime.get(self, &WPScrollViewDelegatePointer) else {
+                let wp_delegate = WPScrollViewDelegate()
+                self.wp_delegate = wp_delegate
+                return wp_delegate
+            }
+            return wp_delegate
+        }
+    }
+    
+}
+
+public class WPScrollViewDelegate: NSObject {
     /// 正在滚动
     public var didScroll:(UIScrollView)->Void = {_ in }
     /// 正在缩放
@@ -45,7 +67,7 @@ import UIKit
     public var didChangeAdjustedContentInset:(UIScrollView) -> Void = { _ in }
 }
 
-extension WPBaseSource:UIScrollViewDelegate{
+extension WPScrollViewDelegate:UIScrollViewDelegate{
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         didScroll(scrollView)
