@@ -11,7 +11,7 @@ fileprivate var WPScrollViewDelegatePointer = "WPScrollViewSourcePointer"
 
 public extension UIScrollView{
     
-    /// 数据源
+    /// 代理
     @objc var wp_delegate : WPScrollViewDelegate{
         set{
             WPRunTime.set(self, newValue, &WPScrollViewDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

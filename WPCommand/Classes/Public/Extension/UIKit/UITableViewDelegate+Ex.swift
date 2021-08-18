@@ -7,7 +7,7 @@
 
 import UIKit
 
-fileprivate var WPTableViewDelegatePointer = "WPScrollViewSourcePointer"
+fileprivate var WPTableViewDelegatePointer = "WPTableViewDelegatePointer"
 
 public extension UITableView{
     
@@ -19,7 +19,6 @@ public extension UITableView{
         get{
             guard let wp_delegate : WPTableViewDelegate = WPRunTime.get(self, &WPTableViewDelegatePointer) else {
                 let wp_delegate = WPTableViewDelegate()
-                delegate = wp_delegate
                 self.wp_delegate = wp_delegate
                 return wp_delegate
             }

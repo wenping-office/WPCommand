@@ -42,7 +42,7 @@ public extension Array{
     /// 安全移除一个元素
     /// - Parameter index: 索引
     mutating func wp_safeRemove(at index:Int){
-        if count > index-1 {
+        if count > index-1 && index >= 0{
             remove(at: index)
         }
     }
@@ -53,7 +53,7 @@ public extension Array{
     /// - Returns: 元素
     func wp_safeGet(of index:Int)->Element?{
         
-        if index <= count-1 {
+        if index <= count-1 && index >= 0 {
             return self[index]
         }else{
             return nil
@@ -74,7 +74,7 @@ public extension Array{
     /// 查找一组符合条件的元素
     /// - Parameter resualtBlock: 条件
     /// - Returns: 结果
-    func wp_elmts(by resualtBlock:@escaping(Element)->Bool)->[Element]?{
+    func wp_elmts(by resualtBlock:@escaping(Element)->Bool)->[Element]{
         var res : [Element] = []
         for index in 0..<count {
             let elmt = self[index]

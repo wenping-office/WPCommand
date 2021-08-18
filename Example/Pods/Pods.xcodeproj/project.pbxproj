@@ -208,7 +208,9 @@
 		8B7EEE0E899778DA279E64E26E38FB30 /* RxTextViewDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2B800007B628A364CD9823C648BD58 /* RxTextViewDelegateProxy.swift */; };
 		8BC9CEC026CCA8840050E9DF /* UIScrollViewDelegate+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC9CEBF26CCA8840050E9DF /* UIScrollViewDelegate+Ex.swift */; };
 		8BC9CEC226CCABA10050E9DF /* UITableViewDelegate+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC9CEC126CCABA10050E9DF /* UITableViewDelegate+Ex.swift */; };
-		8BC9CEC426CCABB70050E9DF /* UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC9CEC326CCABB70050E9DF /* UITableViewDataSource.swift */; };
+		8BC9CEC426CCABB70050E9DF /* UITableViewDataSource+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC9CEC326CCABB70050E9DF /* UITableViewDataSource+Ex.swift */; };
+		8BC9D35926CCE7990050E9DF /* UICollectionViewDataSource+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC9D35826CCE7990050E9DF /* UICollectionViewDataSource+Ex.swift */; };
+		8BC9D35B26CCE7C10050E9DF /* UICollectionViewDelegate+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC9D35A26CCE7C10050E9DF /* UICollectionViewDelegate+Ex.swift */; };
 		8BEFCA301DCC10241192711431A20620 /* WPTableHeaderFooterViewlProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA50457F7DDD808A6558CCD526D20D0 /* WPTableHeaderFooterViewlProtocol.swift */; };
 		8C4A48A1510ED7A56C04C091655368EE /* TailRecursiveSink.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF38ACD9E6761F3E696FAFFAC322A1D /* TailRecursiveSink.swift */; };
 		8CE605907DC8FA1F2E4751F939A4E604 /* UIControl+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DBDF41D8B6D963AB8712C8FAB195AA /* UIControl+Rx.swift */; };
@@ -718,7 +720,9 @@
 		8B904DEFDBFE9B221DA9601673436E80 /* SnapKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SnapKit.debug.xcconfig; sourceTree = "<group>"; };
 		8BC9CEBF26CCA8840050E9DF /* UIScrollViewDelegate+Ex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollViewDelegate+Ex.swift"; sourceTree = "<group>"; };
 		8BC9CEC126CCABA10050E9DF /* UITableViewDelegate+Ex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewDelegate+Ex.swift"; sourceTree = "<group>"; };
-		8BC9CEC326CCABB70050E9DF /* UITableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewDataSource.swift; sourceTree = "<group>"; };
+		8BC9CEC326CCABB70050E9DF /* UITableViewDataSource+Ex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewDataSource+Ex.swift"; sourceTree = "<group>"; };
+		8BC9D35826CCE7990050E9DF /* UICollectionViewDataSource+Ex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionViewDataSource+Ex.swift"; sourceTree = "<group>"; };
+		8BC9D35A26CCE7C10050E9DF /* UICollectionViewDelegate+Ex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionViewDelegate+Ex.swift"; sourceTree = "<group>"; };
 		8C1DED77B4255AD9BEBF6C30B9D1F059 /* WPLatticeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WPLatticeView.swift; sourceTree = "<group>"; };
 		8D3B9C30DD26AB42750BCA12FBC4AEEE /* Typealiases.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Typealiases.swift; path = Source/Typealiases.swift; sourceTree = "<group>"; };
 		8DB864A41DF66924B77080F4F7CEC690 /* SingleAsync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SingleAsync.swift; path = RxSwift/Observables/SingleAsync.swift; sourceTree = "<group>"; };
@@ -1271,7 +1275,9 @@
 				E4C571BA8AEEF85BB8D5CCB1BDE35147 /* UIViewController+Ex.swift */,
 				8BC9CEBF26CCA8840050E9DF /* UIScrollViewDelegate+Ex.swift */,
 				8BC9CEC126CCABA10050E9DF /* UITableViewDelegate+Ex.swift */,
-				8BC9CEC326CCABB70050E9DF /* UITableViewDataSource.swift */,
+				8BC9CEC326CCABB70050E9DF /* UITableViewDataSource+Ex.swift */,
+				8BC9D35826CCE7990050E9DF /* UICollectionViewDataSource+Ex.swift */,
+				8BC9D35A26CCE7C10050E9DF /* UICollectionViewDelegate+Ex.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -2261,6 +2267,7 @@
 			files = (
 				8BC9CEC026CCA8840050E9DF /* UIScrollViewDelegate+Ex.swift in Sources */,
 				D865D38A3BE1F0D69C1AED39E94A9808 /* Array+Ex.swift in Sources */,
+				8BC9D35926CCE7990050E9DF /* UICollectionViewDataSource+Ex.swift in Sources */,
 				02D2DE593D1ABAF4FA920CD1B333B8D5 /* Codable+Ex.swift in Sources */,
 				ABDFB287028518EBEE755E017CB6F10C /* Date+Ex.swift in Sources */,
 				16145D54B9C0CD1861687CA3DBF37E88 /* Geometry+Ex.swift in Sources */,
@@ -2282,6 +2289,7 @@
 				667FEC4BEAF2255006711AA386329127 /* UIView+Ex.swift in Sources */,
 				F7E39A8170D127E451F3DEADB043392E /* UIViewController+Ex.swift in Sources */,
 				2FD1F0BAD45AB9B05393A9F2FC1C3001 /* WPAlertManager.swift in Sources */,
+				8BC9D35B26CCE7C10050E9DF /* UICollectionViewDelegate+Ex.swift in Sources */,
 				03F3551B1903ECB2EC64A3742DCAF121 /* WPAlertProtocol.swift in Sources */,
 				C24081DF0DEC9CDF3E6E9A637C432B5D /* WPBaseAlert.swift in Sources */,
 				F63BF70C20A1C1580CF745F4204C736F /* WPBaseAlertVC.swift in Sources */,
@@ -2307,7 +2315,7 @@
 				84F5ED98A6492AD50571C1DFE704B037 /* WPTableGroup.swift in Sources */,
 				8BEFCA301DCC10241192711431A20620 /* WPTableHeaderFooterViewlProtocol.swift in Sources */,
 				5B7A34516228F0BE0E4DB6318C69E235 /* WPTableItem.swift in Sources */,
-				8BC9CEC426CCABB70050E9DF /* UITableViewDataSource.swift in Sources */,
+				8BC9CEC426CCABB70050E9DF /* UITableViewDataSource+Ex.swift in Sources */,
 				47DDE5251594C75268A44C0DEBE01D6D /* WPTextField.swift in Sources */,
 				94D07EB59C233EDECA47BECD07DF4B43 /* WPTextView.swift in Sources */,
 			);
