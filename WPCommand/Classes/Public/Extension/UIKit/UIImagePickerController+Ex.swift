@@ -7,15 +7,23 @@
 
 import UIKit
 
+fileprivate var UIImagePickerControllerDelegatePointer = "UIImagePickerControllerDelegatePointer"
 
-class WPImagePickerControllerDelegate: NSObject,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+public extension UIImagePickerController{
     
-    /// 图片选择完成后调
-    var didFinishPickingMedia : (([UIImagePickerController.InfoKey : Any]) -> Void)? = nil
-
-    /// 图片选择完成
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        self.didFinishPickingMedia != nil ? didFinishPickingMedia!(info) : print()
+    var wp_delegate: WPImagePickerControllerDelegate{
+        set{
+            WPRunTime.set(self, newValue, &UIImagePickerControllerDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            delegate = newValue
+        }
+        get{
+            guard let wp_delegate : WPImagePickerControllerDelegate = WPRunTime.get(self, &UIImagePickerControllerDelegatePointer) else {
+                let wp_delegate = WPImagePickerControllerDelegate()
+                self.wp_delegate = wp_delegate
+                return wp_delegate
+            }
+            return wp_delegate
+        }
     }
 }
 
@@ -31,12 +39,9 @@ public extension UIImagePickerController{
     static func selected(vc:UIViewController? = nil,
                         source:UIImagePickerController.SourceType,
                         allowsEditing:Bool = false,
-                        complete:@escaping ([UIImagePickerController.InfoKey : Any])->Void){
-        
-        let birage = WPImagePickerControllerDelegate()
-        birage.didFinishPickingMedia = complete
+                        complete:@escaping (UIImagePickerController,[UIImagePickerController.InfoKey : Any])->Void){
         let picker = self.init()
-        picker.delegate = birage
+        picker.wp_delegate.didFinishPickingMedia = complete
         picker.sourceType = source
         picker.allowsEditing = allowsEditing
         if vc != nil {
@@ -53,8 +58,26 @@ public extension UIImagePickerController{
     ///   - complete: 选择后回调
     static func capture(vc:UIViewController? = nil,
                                      allowsEditing:Bool = false,
-                                     complete:@escaping ([UIImagePickerController.InfoKey : Any])->Void){
+                                     complete:@escaping (UIImagePickerController,[UIImagePickerController.InfoKey : Any])->Void){
         selected(vc: vc, source: .camera, allowsEditing: allowsEditing, complete: complete)
     }
 }
 
+public class WPImagePickerControllerDelegate: NSObject{
+    
+    /// 图片选择完成后调
+    public var didFinishPickingMedia : ((UIImagePickerController,[UIImagePickerController.InfoKey : Any]) -> Void)? = nil
+    /// 点击了取消
+    public var didCancel : ((UIImagePickerController)->Void)?
+}
+
+extension WPImagePickerControllerDelegate:UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        didFinishPickingMedia != nil ? didFinishPickingMedia!(picker,info) : print()
+    }
+    
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        didCancel != nil ? didCancel!(picker) : print()
+    }
+}

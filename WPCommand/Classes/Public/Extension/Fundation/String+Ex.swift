@@ -124,8 +124,8 @@ public extension String{
     /// - parameter timeZone: 默认当前时区
     /// - Returns: 日期
     func wp_toDate(_ format:String,
-                   _ locale:Locale = Locale(identifier: "zh_CN"),
-                   _ timeZone:TimeZone = TimeZone.current)->Date?{
+                   locale:Locale? = Locale(identifier: "zh_CN"),
+                   timeZone:TimeZone? = TimeZone.current)->Date?{
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = timeZone
         dateFormatter.dateFormat = format
