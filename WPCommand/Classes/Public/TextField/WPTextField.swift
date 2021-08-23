@@ -27,7 +27,7 @@ open class WPTextField: UITextField {
     }
     
     /// 输入模式
-    public let mode : WPTextField.InputMode
+    public var mode : WPTextField.InputMode
     
     /// 最大输入字符数
     public var maxCount = Int.max

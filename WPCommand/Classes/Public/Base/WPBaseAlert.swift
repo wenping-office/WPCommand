@@ -58,7 +58,7 @@ open class WPBaseAlert: UIView {
     }
     /// 监听子控件事件
     open func observeSubViewEvent(){
-        grayView.rx.tap.subscribe(onNext: {[weak self]in
+        grayView.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] in
             self?.dismiss()
         }).disposed(by: disposeBag)
     }

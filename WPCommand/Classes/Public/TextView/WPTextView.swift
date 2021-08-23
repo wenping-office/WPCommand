@@ -27,7 +27,7 @@ open class WPTextView: UITextView {
     }
     
     /// 输入模式
-    public let mode : WPTextView.InputMode
+    public var mode : WPTextView.InputMode
     
     /// 最大输入字符数
     public var maxCount = Int.max

@@ -459,7 +459,7 @@ class WPAlertManagerMask: UIView {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        contentView.rx.tap.subscribe(onNext: { _ in
+        contentView.rx.controlEvent(.touchUpInside).subscribe(onNext: {
             action != nil ? action!() : print()
         }).disposed(by: disposeBag)
     }
