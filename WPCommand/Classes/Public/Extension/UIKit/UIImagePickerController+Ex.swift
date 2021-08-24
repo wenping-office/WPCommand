@@ -42,10 +42,13 @@ public extension UIImagePickerController{
                         complete:@escaping (UIImagePickerController,[UIImagePickerController.InfoKey : Any])->Void){
         let picker = self.init()
         picker.wp_delegate.didFinishPickingMedia = complete
+        picker.wp_delegate.didCancel = { vc in
+            vc.dismiss(animated: true, completion: nil)
+        }
         picker.sourceType = source
         picker.allowsEditing = allowsEditing
         if vc != nil {
-            vc?.present(picker, animated: false, completion: nil)
+            vc?.present(picker, animated: true, completion: nil)
         }else{
             UIApplication.shared.wp_topWindow.rootViewController?.present(picker, animated: true, completion: nil)
         }
