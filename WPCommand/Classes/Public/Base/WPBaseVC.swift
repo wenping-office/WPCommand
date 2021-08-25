@@ -28,6 +28,11 @@ open class WPBaseVC: UIViewController {
     open var navigationBackgroundImage : UIImage{
         return UIColor.white.wp_image()!
     }
+    
+    /// 导航栏是否透明
+    open var navigationTranslucent: Bool{
+        return false
+    }
 
     required public init(){
         super.init(nibName: nil, bundle: nil)
@@ -40,6 +45,7 @@ open class WPBaseVC: UIViewController {
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        navigationController?.navigationBar.isTranslucent = navigationTranslucent
         navigationStyle(backgroundImage: navigationBackgroundImage,
                         titleColor: navigationTitleColor,
                         font: navigationTitleFont,
@@ -58,7 +64,7 @@ open class WPBaseVC: UIViewController {
         super.viewDidLoad()
         
         initSubView()
-        initSubViewlayout()
+        initSubViewLayout()
         observeSubViewEvent()
         bindViewModel()
     }
@@ -70,7 +76,7 @@ open class WPBaseVC: UIViewController {
     open func observeSubViewEvent(){}
     
     // 初始化视图布局
-    open func initSubViewlayout(){}
+    open func initSubViewLayout(){}
     
     // 初始化视图
     open func initSubView(){}
