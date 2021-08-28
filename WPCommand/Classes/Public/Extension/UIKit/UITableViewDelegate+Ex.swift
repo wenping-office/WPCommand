@@ -84,7 +84,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
         if heightForHeaderInSection != nil {
             return heightForHeaderInSection!(tableView,section)
         }else if (group != nil){
-            return group!.footerHeight
+            return group!.headerHeight
         }else{
             return 0.01
         }

@@ -22,13 +22,13 @@ class TestMenuVC: WPBaseVC {
     }
     
     override func initSubView() {
-//        view.addSubview(menuView)
+        view.addSubview(menuView)
     }
 
-    override func initSubViewlayout() {
-//        menuView.snp.makeConstraints { make in
-//            make.edges.equalToSuperview()
-//        }
+    override func initSubViewLayout() {
+        menuView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 
 }

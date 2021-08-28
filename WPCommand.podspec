@@ -32,7 +32,7 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '10.0'
   # 源文件地址
   #  s.source_files = 'WPCommand/Classes/**/*'
-  s.source_files = 'WPCommand/Classes/Public/**/*.{swift}'
+  s.source_files = 'WPCommand/Classes/Public/**/*'
     
   # 是否支持arc
   s.requires_arc = true
@@ -59,5 +59,7 @@ TODO: Add long description of the pod here.
 #      #RxSwift系列
 #      s.dependency 'RxSwift','6.2.0'
 #      s.dependency 'RxCocoa','6.2.0'
+
+s.prefix_header_contents = '#import "Bridge.h"'
      
 end

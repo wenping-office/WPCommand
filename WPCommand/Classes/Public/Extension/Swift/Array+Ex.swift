@@ -48,6 +48,19 @@ public extension Array{
     }
     
     
+    /// 判断是否包含某个元素
+    /// - Parameter resualtBlock: 条件
+    /// - Returns: 结果
+    func wp_isContent(in resualtBlock:@escaping(Element)->Bool) -> Bool {
+        for index in 0..<count {
+            let elmt = self[index]
+            if resualtBlock(elmt){
+                return true
+            }
+        }
+        return false
+    }
+
     /// 安全获取一个元素
     /// - Parameter index: 所有
     /// - Returns: 元素

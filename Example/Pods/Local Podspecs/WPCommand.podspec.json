@@ -18,7 +18,7 @@
   "platforms": {
     "ios": "10.0"
   },
-  "source_files": "WPCommand/Classes/Public/**/*.{swift}",
+  "source_files": "WPCommand/Classes/Public/**/*",
   "requires_arc": true,
   "frameworks": [
     "UIKit",
@@ -39,5 +39,6 @@
     "RxCocoa": [
 
     ]
-  }
+  },
+  "prefix_header_contents": "#import \"Bridge.h\""
 }
