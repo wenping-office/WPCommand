@@ -124,6 +124,11 @@ public extension WPCollectionAutoLayoutView{
         item.selectedBlock != nil ? item.selectedBlock!(item) : print("")
         
     }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let item = groups[indexPath.section].items[indexPath.row]
+        item.willDisplay != nil ? item.willDisplay!(item) : print("")
+    }
 }
 /// UICollectionViewDelegateFlowLayout 代理
 public extension WPCollectionAutoLayoutView{

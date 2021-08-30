@@ -20,6 +20,8 @@ open class WPCollectionItem: NSObject {
     open var status = WPCollectionItem.status.normal
     /// 选中block
     open var selectedBlock : ((_ item:WPCollectionItem)->())?
+    /// 即将显示
+    open var willDisplay : ((_ item:WPCollectionItem)->())?
     /// indexPath
     open var indexPath : IndexPath = IndexPath(item: 0, section: 0)
     /// 设置完info后回调
