@@ -75,6 +75,11 @@ public extension String{
         return String(format: hash as String)
     }
     
+    /// mainBundle中的图片
+    var wp_image : UIImage{
+        return UIImage.init(named: self) ?? UIImage()
+    }
+    
     /// 加密成base64字符串
     var wp_base64 : String?{
         let da = data(using: String.Encoding.utf8)
@@ -116,8 +121,7 @@ public extension String{
 }
 
 public extension String{
-    
-    
+
     /// 转日期 默认本地日期
     /// - Parameter format: 日期格式
     /// - Parameter locale: 默认zh_CN
@@ -169,8 +173,7 @@ public extension String{
     func wp_image(_ bundle: Bundle) -> UIImage {
         return UIImage(named: self, in: bundle, compatibleWith: nil) ?? UIImage()
     }
-    
-    
+
     /// 过滤字符串
     /// - Parameter str: 关键字
     /// - Returns: 过滤后的结果

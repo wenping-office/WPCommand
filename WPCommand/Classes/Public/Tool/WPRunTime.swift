@@ -18,3 +18,25 @@ open class WPRunTime: NSObject {
         objc_setAssociatedObject(target, key, value, policy)
     }
 }
+
+open class WPGCD: NSObject {
+    /// 主线程异步
+    public static func main_Async(task:@escaping()->Void){
+        DispatchQueue.main.async {
+            task()
+        }
+    }
+    /// 主线程同步
+    public static func main_Sync(task:@escaping()->Void){
+        DispatchQueue.main.sync {
+            task()
+        }
+    }
+    
+    /// 主线程异步延迟
+    public static func main_asyncAfter(_ timer:DispatchTime,task:@escaping()->Void){
+        DispatchQueue.main.asyncAfter(deadline:timer , execute: {
+            task()
+        })
+    }
+}

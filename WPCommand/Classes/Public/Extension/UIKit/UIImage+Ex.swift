@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 
 public extension UIImage {
     //水印位置枚举
@@ -52,5 +53,48 @@ public extension UIImage {
             UIGraphicsEndImageContext ()
             
             return waterMarkedImage
+    }
+}
+
+public extension UIImage{
+    
+    
+    /// image转PHAsset
+    var wp_PHAsset : PHAsset?{
+        var localId : String?
+
+        try? PHPhotoLibrary.shared().performChangesAndWait {
+            let request = PHAssetChangeRequest.creationRequestForAsset(from: self)
+            localId = request.placeholderForCreatedAsset?.localIdentifier
+        }
+        
+        if localId != nil{
+            let result = PHAsset.fetchAssets(withLocalIdentifiers: [localId!], options: nil)
+            return result.firstObject
+        }else{
+            return nil
+        }
+    }
+    
+    /// 保存图片到集合
+    /// - Parameters:
+    ///   - collection: 集合 == 相册
+    ///   - complete: 完成回调
+    func wp_saveTo(_ collection : PHAssetCollection,complete:((Bool,PHAsset?,Error?)->Void)?){
+        if let asset = wp_PHAsset {
+            let arr = [asset]
+            
+            PHPhotoLibrary.shared().performChanges {
+                let request = PHAssetCollectionChangeRequest(for: collection)
+                request?.addAssets(arr as NSFastEnumeration)
+            } completionHandler: { isSuccess, error in
+                WPGCD.main_Async {
+                    complete?(isSuccess,asset,error)
+                }
+            }
+        }else{
+            let error = NSError(domain: "图片转换失败", code: -100, userInfo: nil) as Error
+            complete?(false,nil,error)
+        }
     }
 }

@@ -90,41 +90,6 @@ public extension Date{
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: self)
     }
-    
-    /// 当前的网络时间
-    /// - Parameter resualt: 结果
-    static func wp_Net(_ resualt:@escaping(Date)->Void){
-        let url = URL(string: "http://www.baidu.com")
-        var request = URLRequest(url: url!)
-        request.httpMethod = "GET"
-        let configuration = URLSessionConfiguration.default
-        let session = URLSession(configuration: configuration)
-        
-        
-        let task = session.dataTask(with: request) { data, response, error in
-            
-            let resp = response as? HTTPURLResponse
-            let str =  resp?.allHeaderFields["Date"] as? String
-            guard
-                let str = str
-            else { return }
-            
-            let fomat = DateFormatter()
-            fomat.locale = Locale(identifier: "en")
-            fomat.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
-            let date = fomat.date(from: str)
-            
-            DispatchQueue.main.async {
-                if let date = date{
-                    resualt(date + 8.wp_hour)
-                }else{
-
-                }
-            }
-        }
-        
-        task.resume()
-    }
 }
 
 public extension Date{
@@ -187,5 +152,42 @@ public extension Date{
         var comps = calendar.dateComponents([.second], from: date)
         comps.second = second
         return calendar.date(byAdding: comps, to: date)
+    }
+}
+
+public extension Date{
+    
+    /// 获取当前网络时间
+    /// - Parameters:
+    ///   - success: 成功
+    ///   - failed: 失败
+    static func wp_currentInNet(success:(@escaping(Date)->Void),failed:(()->Void)?=nil){
+        let url = URL(string: "http://www.baidu.com")
+        var request = URLRequest(url: url!)
+        request.httpMethod = "GET"
+        let configuration = URLSessionConfiguration.default
+        let session = URLSession(configuration: configuration)
+        let task = session.dataTask(with: request) { data, response, error in
+            let resp = response as? HTTPURLResponse
+            let str =  resp?.allHeaderFields["Date"] as? String
+            guard
+                let str = str
+            else { return }
+            
+            let fomat = DateFormatter()
+            fomat.locale = Locale(identifier: "en")
+            fomat.timeZone = .init(identifier: "UTC")
+            fomat.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
+            let date = fomat.date(from: str)
+            
+            DispatchQueue.main.async {
+                if let date = date{
+                    success(date)
+                }else{
+                    failed?()
+                }
+            }
+        }
+        task.resume()
     }
 }

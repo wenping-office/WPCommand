@@ -129,6 +129,8 @@ public extension WPCollectionAutoLayoutView{
         let item = groups[indexPath.section].items[indexPath.row]
         item.willDisplay != nil ? item.willDisplay!(item) : print("")
     }
+    
+    
 }
 /// UICollectionViewDelegateFlowLayout 代理
 public extension WPCollectionAutoLayoutView{
