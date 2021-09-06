@@ -28,9 +28,9 @@ open class WPTableGroup: NSObject {
     /// 即将价值一个item时的动画
     public var didLoadStyle = UITableView.RowAnimation.fade
     /// 头部缓存标识符
-    public var headViewReuseIdentifier : String? = NSStringFromClass(UITableViewHeaderFooterView.self)
+    public var headViewReuseIdentifier : String?
     /// 尾部缓存标识符
-    public var footViewReuseIdentifier : String? = NSStringFromClass(UITableViewHeaderFooterView.self)
+    public var footViewReuseIdentifier : String?
     /// 头部class
     public var headViewClass = UITableViewHeaderFooterView.self
     /// 尾部class
@@ -50,11 +50,13 @@ open class WPTableGroup: NSObject {
     public init<T:UITableViewHeaderFooterView>(headerClass:T.Type) {
         super.init()
         headViewClass = headerClass
+        headViewReuseIdentifier = NSStringFromClass(headerClass)
     }
     
     public init<T:UITableViewHeaderFooterView>(footerClass:T.Type) {
         super.init()
         footViewClass = footerClass
+        headViewReuseIdentifier = NSStringFromClass(footerClass)
     }
 }
 

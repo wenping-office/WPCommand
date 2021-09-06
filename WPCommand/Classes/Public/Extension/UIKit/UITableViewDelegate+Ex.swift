@@ -108,19 +108,18 @@ extension WPTableViewDelegate:UITableViewDelegate{
         if viewForHeaderInSection != nil {
             return viewForHeaderInSection!(tableView,section)
         }else if let group = tableView.wp_source.groups.wp_safeGet(of:section){
+            var headView : UITableViewHeaderFooterView?
             
-            guard let idStr = group.headViewReuseIdentifier else {
-                return nil
+            if let idStr = group.headViewReuseIdentifier{
+               headView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)
+                if headView == nil {
+                    tableView.register(group.headViewClass, forHeaderFooterViewReuseIdentifier: idStr)
+                    headView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)
+                }
+                headView?.group = group
+                headView?.reloadGroup(group: group)
             }
-            guard let headView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)  else {
-                tableView.register(group.headViewClass, forHeaderFooterViewReuseIdentifier: idStr)
-                let newHeadView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)!
-                newHeadView.group = group
-                return newHeadView
-            }
-            headView.reloadGroup(group: group)
-        }else{
-            return nil
+            return headView
         }
         
         return nil
@@ -131,18 +130,18 @@ extension WPTableViewDelegate:UITableViewDelegate{
         if viewForFooterInSection != nil {
             return viewForFooterInSection!(tableView,section)
         }else if let group = tableView.wp_source.groups.wp_safeGet(of:section){
-            guard let idStr = group.footViewReuseIdentifier else {
-                return nil
+            var foodView : UITableViewHeaderFooterView?
+            
+            if let idStr = group.headViewReuseIdentifier{
+                foodView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)
+                if foodView == nil {
+                    tableView.register(group.headViewClass, forHeaderFooterViewReuseIdentifier: idStr)
+                    foodView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)
+                }
+                foodView?.group = group
+                foodView?.reloadGroup(group: group)
             }
-            guard let footView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)  else {
-                tableView.register(group.footViewClass, forHeaderFooterViewReuseIdentifier: idStr)
-                let newFootView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)!
-                newFootView.group = group
-                return newFootView
-            }
-            footView.reloadGroup(group: group)
-        }else{
-            return nil
+            return foodView
         }
         
         return nil
