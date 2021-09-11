@@ -8,11 +8,30 @@
 import UIKit
 import RxSwift
 
+public extension WPAlertManager{
+    /// 插入选项
+    struct Option{
+        /// true的话强制立马弹出 false的话会插入到下一个弹窗
+        public var immediately = false
+        /// 是否保留上一个被强制插入的弹窗
+        public var keep = true
+        
+        public init(){}
+        
+        /// 默认选项
+        public static var `default` : Option {
+            return WPAlertManager.Option.init()
+        }
+    }
+}
+
 /// 弹窗队列弹出实现WPAlertProtocol协议的弹窗
 public class WPAlertManager {
     /// 弹窗队列
-    private struct AlertQueue{
+    private struct AlertItem{
+        /// 弹窗
         let alert : WPAlertProtocol
+        /// 弹窗等级
         let level : Int
     }
     /// 弹窗视图
@@ -34,7 +53,7 @@ public class WPAlertManager {
     /// 当前弹窗的mask
     private weak var maskView : WPAlertManagerMask?
     /// 弹窗队列
-    private var alerts : [AlertQueue] = []{
+    private var alerts : [AlertItem] = []{
         didSet{
             alerts.sort { elmt1, elmt2 in
                 return elmt1.level < elmt2.level
@@ -45,6 +64,8 @@ public class WPAlertManager {
     private var currentAlertBeginFrame : CGRect = .zero
     /// 当前弹窗结束的frame
     private var currentAlertEndFrame : CGRect = .zero
+    /// 自动布局下的block
+    private var layoutFrame : (begin:(()->Void),end:()->Void) = ({},{})
     /// 当前弹窗的进度
     private var currentAlertProgress : Progress = .unknown
     
@@ -71,13 +92,8 @@ public class WPAlertManager {
         currentAlert = nil
         alert.removeFromSuperview()
         
-        let id = alert.tag
-        let index = self.alerts.wp_index { elmt in
-            return elmt.alert.tag == id
-        }
-        
-        if let alertIndex = index {
-            alerts.remove(at: Int(alertIndex))
+        self.alerts.wp_filter { elmt in
+            return elmt.alert.tag == alert.tag
         }
         alert.updateStatus(status: .remove)
         
@@ -86,6 +102,7 @@ public class WPAlertManager {
     
     /// 添加一组弹窗会清除现有的弹窗
     /// - Parameter alerts: 弹窗
+    @discardableResult
     public func setAlerts(_ alerts:[WPAlertProtocol])->WPAlertManager{
         self.alerts = []
         alerts.forEach {[weak self] elmt in
@@ -97,35 +114,36 @@ public class WPAlertManager {
     /// 弹出一个弹窗 如果序列里有多个弹窗将会插入到下一个
     /// - Parameters:
     ///   - alert: 弹窗
-    ///   - immediately: 是否延迟 true的话强制立马弹出 false的话会插入到下一个弹窗
-    public func showNext(_ alert:WPAlertProtocol,immediately:Bool=false){
+    ///   - option:
+    public func showNext(_ alert:WPAlertProtocol,option:Option = .default){
         alert.tag = WPAlertManager.identification()
         alerts.insert(.init(alert: alert, level: -1), at: 0)
         
         if currentAlertProgress == .didShow && alerts.count >= 1{
-            alertAnimate(isShow: false,immediately: immediately)
+            alertAnimate(isShow: false,option: option)
         }else{
             alert.updateStatus(status: .cooling)
-            alertAnimate(isShow: true,immediately: immediately)
+            alertAnimate(isShow: true,option: option)
         }
     }
     
     /// 弹窗的根视图 在哪个视图上弹出
     /// - Parameter view:
     /// - Returns: 弹窗管理者
-    public func target(in view:UIView) -> WPAlertManager {
+    @discardableResult
+    public func target(in view:UIView?) -> WPAlertManager {
         target = view
         return self
     }
     
     /// 隐藏当前的弹框 如果弹框序列里还有弹窗将会弹出下一个
     public func dismiss(){
-        alertAnimate(isShow: false,immediately: false)
+        alertAnimate(isShow: false,option: .default)
     }
     
     /// 显示弹窗
     public func show(){
-        alertAnimate(isShow: true,immediately: false)
+        alertAnimate(isShow: true,option: .default)
     }
 }
 
@@ -138,13 +156,11 @@ extension WPAlertManager{
     
     /// 添加一个蒙版
     private func addMask(info:WPAlertManager.Mask){
-        var resualt = false
+        
         // 检查是否有蒙版
-        targetView.subviews.forEach({ elmt in
-            if elmt.isKind(of: WPAlertManagerMask.self){
-                resualt = true
-            }
-        })
+        let resualt = targetView.subviews.wp_isContent { elmt in
+            return elmt.isKind(of: WPAlertManagerMask.self)
+        }
         
         // 如果没有蒙版 那么添加一个
         if !resualt  {
@@ -174,23 +190,20 @@ extension WPAlertManager{
     
     /// 执行弹窗动画
     /// immediately 是否强制
-    private func alertAnimate(isShow:Bool,immediately:Bool){
+    private func alertAnimate(isShow:Bool,option:Option){
         if let alert = currentAlert{
-            
+            var isAutoLayout = false
             if isShow {
                 addMask(info: alert.maskInfo())
-                if(alert.frame.size == .zero){ // 如果是layout布局那么强制刷新获取尺寸
-                    alert.wp_x = -10000
-                    alert.wp_y = -10000
-                    UIApplication.shared.wp_topWindow.addSubview(alert)
-                    alert.superview?.layoutIfNeeded()
-                    alert.removeFromSuperview()
-                }
-
                 targetView.insertSubview(alert, at: 1000)
-                resetFrame(alert: alert)
-                maskView?.maskInfo = alert.maskInfo()
+                isAutoLayout = resetFrame(alert)
                 
+                if alert.wp_size == .zero {
+                    isAutoLayout = true
+                    alert.superview?.layoutIfNeeded()
+                    layoutFrame.begin()
+                }
+                maskView?.maskInfo = alert.maskInfo()
                 alert.updateStatus(status: .willShow)
                 currentAlertProgress = .willShow
             }else{
@@ -198,14 +211,20 @@ extension WPAlertManager{
                 currentAlertProgress = .willPop
             }
             
-            let duration = immediately ? 0 : (isShow ? alert.alertInfo().startDuration : alert.alertInfo().stopDuration)
+            let duration = option.immediately ? 0 : (isShow ? alert.alertInfo().startDuration : alert.alertInfo().stopDuration)
             
             let animatesBolok : ()->Void = { [weak self] in
                 guard let self = self else { return }
                 
                 alert.transform = CGAffineTransform.identity
+                
                 if isShow{
-                    alert.frame = self.currentAlertBeginFrame
+                    if isAutoLayout {
+                        alert.superview?.layoutIfNeeded()
+                    }else{
+                        alert.frame = self.currentAlertBeginFrame
+                    }
+                    
                     alert.alpha = 1
                     self.maskView?.alpha = 1
                 }else{
@@ -224,6 +243,9 @@ extension WPAlertManager{
                 
                 if resualt{
                     if isShow {
+                        if isAutoLayout {
+                            self.resetEndFrame(alert)
+                        }
                         alert.updateStatus(status: .didShow)
                         self.currentAlertProgress = .didShow
                     }else{
@@ -238,13 +260,13 @@ extension WPAlertManager{
                 }
             }
             
-            if alert.alertInfo().type == .default {
+            if alert.alertInfo().animateType == .default {
                 UIView.animate(withDuration: TimeInterval(duration), animations: {
                     animatesBolok()
                 }, completion: {resualt in
                     animateCompleteBlock(resualt)
                 })
-            }else if alert.alertInfo().type == .bounces{
+            }else if alert.alertInfo().animateType == .bounces{
                 UIView.animate(withDuration: TimeInterval(duration), delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveLinear, animations: {
                     animatesBolok()
                 }, completion: {resualt in
@@ -262,7 +284,7 @@ extension WPAlertManager{
     }
     
     /// 计算弹窗的位置
-    private func resetFrame(alert:WPAlertProtocol){
+    private func resetFrame(_ alert:WPAlertProtocol)->Bool{
         
         let alertW : CGFloat = alert.wp_width
         let alertH : CGFloat = alert.wp_height
@@ -273,33 +295,89 @@ extension WPAlertManager{
         var beginF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         var endF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
+        let isAutoLayout = alert.wp_size == .zero
+        
         switch alert.alertInfo().startLocation {
         case .top(let offset):
             beginF.origin.x = center.x + offset.x
             beginF.origin.y = 0 + offset.y
             alert.wp_x = center.x + offset.x
             alert.wp_y = -alertH + offset.y
+            if isAutoLayout {
+                alert.snp.makeConstraints { make in
+                    make.centerX.equalToSuperview().offset(offset.x)
+                    make.bottom.equalTo(targetView.snp.top)
+                }
+                layoutFrame.begin = {
+                    alert.snp.remakeConstraints { make in
+                        make.centerX.equalToSuperview().offset(offset.x)
+                        make.top.equalToSuperview().offset(offset.y)
+                    }
+                }
+            }
         case .left(let offset):
             beginF.origin.x = 0 + offset.x
             beginF.origin.y = center.y + offset.y
             alert.wp_x = -alertW + offset.x
             alert.wp_y = center.y + offset.y
+            if isAutoLayout {
+                alert.snp.makeConstraints { make in
+                    make.right.equalTo(targetView.snp.left)
+                    make.centerY.equalToSuperview().offset(offset.y)
+                }
+                layoutFrame.begin = {
+                    alert.snp.remakeConstraints { make in
+                        make.centerY.equalToSuperview().offset(offset.y)
+                        make.left.equalToSuperview().offset(offset.x)
+                    }
+                }
+            }
         case .bottom(let offset):
             beginF.origin.x = center.x + offset.x
             beginF.origin.y = maxH-alertH + offset.y
             alert.wp_x = center.x + offset.x
             alert.wp_y = maxH + offset.y
+            if isAutoLayout {
+                alert.snp.makeConstraints { make in
+                    make.top.equalTo(targetView.snp.bottom)
+                    make.centerX.equalToSuperview().offset(offset.x)
+                }
+                layoutFrame.begin = {
+                    alert.snp.remakeConstraints { make in
+                        make.bottom.equalToSuperview().offset(offset.y)
+                        make.centerX.equalToSuperview().offset(offset.x)
+                    }
+                }
+            }
         case .right(let offset):
             beginF.origin.x = maxW - alertW + offset.x
             beginF.origin.y = center.y + offset.y
             alert.wp_y = center.y + offset.y
             alert.wp_x = maxW + offset.x
+            if isAutoLayout {
+                alert.snp.makeConstraints { make in
+                    make.left.equalTo(targetView.snp.right)
+                    make.centerY.equalToSuperview().offset(offset.y)
+                }
+                layoutFrame.begin = {
+                    alert.snp.remakeConstraints { make in
+                        make.right.equalToSuperview().offset(offset.x)
+                        make.centerY.equalToSuperview().offset(offset.y)
+                    }
+                }
+            }
         case .center(let offSet):
             beginF.origin.x = center.x + offSet.x
             beginF.origin.y = center.y + offSet.y
             alert.alpha = 0
-            alert.frame.origin = center
+            alert.wp_orgin = beginF.origin
             alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
+            if isAutoLayout {
+                alert.snp.makeConstraints { make in
+                    make.centerX.equalToSuperview().offset(offSet.x)
+                    make.centerY.equalToSuperview().offset(offSet.y)
+                }
+            }
         }
         
         switch alert.alertInfo().stopLocation  {
@@ -320,16 +398,44 @@ extension WPAlertManager{
         }
         
         currentAlertBeginFrame = beginF
-        currentAlertEndFrame = endF
+        
+        return isAutoLayout
     }
     
+    /// 计算弹窗结束位置
+    private func resetEndFrame(_ alert:WPAlertProtocol){
+        let alertW : CGFloat = alert.wp_width
+        let alertH : CGFloat = alert.wp_height
+        let maxW : CGFloat = targetView.wp_width
+        let maxH : CGFloat = targetView.wp_height
+        var endF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
+        
+        switch alert.alertInfo().stopLocation  {
+        case .top:
+            endF.origin.x = alert.wp_x
+            endF.origin.y = -alertH
+        case .left:
+            endF.origin.x = -alertW
+            endF.origin.y = alert.wp_y
+        case .bottom:
+            endF.origin.x = alert.wp_x
+            endF.origin.y = maxH
+        case .right:
+            endF.origin.x = maxW
+            endF.origin.y = alert.wp_y
+        case .center:
+            endF.origin = alert.wp_orgin
+        }
+        
+        currentAlertEndFrame = endF
+    }
 }
 
 public extension WPAlertManager{
     
     struct Alert {
         /// 动画类型
-        let type : WPAlertManager.AnimateType
+        let animateType : WPAlertManager.AnimateType
         /// 弹窗开始位置
         let startLocation : WPAlertManager.BeginLocation
         /// 弹窗弹出的时间
@@ -342,17 +448,17 @@ public extension WPAlertManager{
         
         /// 初始化一个弹窗信息
         /// - Parameters:
-        ///   - type: 动画类型
+        ///   - animateType: 动画类型
         ///   - startLocation: 开始弹出的位置
         ///   - startDuration: 开始动画时间
         ///   - stopLocation: 结束弹出的位置
         ///   - stopDuration: 结束动画时间
-        public init(type:WPAlertManager.AnimateType,
+        public init(_ animateType:WPAlertManager.AnimateType,
                     startLocation:WPAlertManager.BeginLocation,
                     startDuration:TimeInterval,
                     stopLocation:WPAlertManager.EndLocation,
                     stopDuration:TimeInterval){
-            self.type = type
+            self.animateType = animateType
             self.startLocation = startLocation
             self.startDuration = startDuration
             self.stopLocation = stopLocation
@@ -408,15 +514,15 @@ public extension WPAlertManager{
     /// 弹窗开始位置
     enum BeginLocation {
         /// 顶部弹出
-        case top(offset:CGPoint = .zero)
+        case top(_ offset:CGPoint = .zero)
         /// 左边弹出
-        case left(offset:CGPoint = .zero)
+        case left(_ offset:CGPoint = .zero)
         /// 底部弹出
-        case bottom(offset:CGPoint = .zero)
+        case bottom(_ offset:CGPoint = .zero)
         /// 右边弹出
-        case right(offset:CGPoint = .zero)
+        case right(_ offset:CGPoint = .zero)
         /// 中间弹出
-        case center(offset:CGPoint = .zero)
+        case center(_ offset:CGPoint = .zero)
     }
     
     /// 弹出结束位置

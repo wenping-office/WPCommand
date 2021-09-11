@@ -40,7 +40,7 @@ class TestAlertController: WPBaseVC {
         })
 
         alert.rightBtn.rx.tap.subscribe(onNext: {
-            WPAlertManager.default.target(in: self.view).showNext(self.alert2(),immediately: true)
+            WPAlertManager.default.target(in: self.view).showNext(self.alert2(),option: .default)
         })
         return alert
     }
@@ -87,7 +87,7 @@ class testAlert2: WPBaseView,WPAlertProtocol {
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(type: .default, startLocation: .center(), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
+        return .init(.default, startLocation: .center(), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
     }
     
 //    func touchMask() {
@@ -133,7 +133,7 @@ class testAlert: WPBaseView,WPAlertProtocol {
     }
 
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(type: .default, startLocation: .left(offset: .init(x: 30, y: -100)), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
+        return .init(.default, startLocation: .right(.init(x: 30, y: -100)), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
     }
 
     func maskInfo() -> WPAlertManager.Mask {

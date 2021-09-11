@@ -271,14 +271,16 @@ public extension WPSystem{
     ///   - open: 开启
     ///   - close: 关闭
     /// - Returns: 是否开启
-    static func isOpenLocation(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    @discardableResult
+    static func isOpenLocation(open:(()->Void)?=nil,close:(()->Void)?=nil)->Bool{
         let authStatus = CLLocationManager.authorizationStatus()
         let resault = (authStatus != .restricted && authStatus != .denied)
         if resault {
-            open != nil ? open!() : print()
+            open?()
         }else{
-            close != nil ? close!() : print()
+            close?()
         }
+        return resault
     }
     
     /// 检测是否开启相册权限
@@ -286,40 +288,41 @@ public extension WPSystem{
     ///   - open: 开启
     ///   - close: 关闭
     /// - Returns: 是否开启
-    static func isOpenAlbum(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    @discardableResult
+    static func isOpenAlbum(open:(()->Void)?=nil,close:(()->Void)?=nil)->Bool{
         let authStatus = PHPhotoLibrary.authorizationStatus()
         let resault = (authStatus != .restricted && authStatus != .denied)
         
         if authStatus == .notDetermined {
             if #available(iOS 14, *){
                 PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
-                    
-                    DispatchQueue.main.async {
+                    WPGCD.main_Async {
                         if status == .authorized || status == .limited{
-                            open != nil ? open!() : print()
+                            open?()
                         }else{
-                            close != nil ? close!() : print()
+                            close?()
                         }
                     }
                 }
             }  else{
                 PHPhotoLibrary.requestAuthorization { status in
-                    DispatchQueue.main.async {
+                    WPGCD.main_Async {
                         if status == .authorized{
-                            open != nil ? open!() : print()
+                            open?()
                         }else{
-                            close != nil ? close!() : print()
+                            close?()
                         }
                     }
                 }
             }
         }else{
             if resault {
-                open != nil ? open!() : print()
+                open?()
             }else{
-                close != nil ? close!() : print()
+                close?()
             }
         }
+        return resault
     }
     
     /// 判断是否有打开相机权限
@@ -327,44 +330,46 @@ public extension WPSystem{
     ///   - open: 打开
     ///   - close: 关闭
     /// - Returns: 结果
-    static func isOpenCamera(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    @discardableResult
+    static func isOpenCamera(open:(()->Void)?=nil,close:(()->Void)?=nil)->Bool{
         
         let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
         
         let resault = (authStatus == .authorized)
         
         if resault {
-            open != nil ? open!() : print("")
+            open?()
         }else if authStatus == .notDetermined{
             AVCaptureDevice .requestAccess(for: .video, completionHandler: { granted in
-                if granted{
-                    DispatchQueue.main.async {
-                        open != nil ? open!() : print("")
-                    }
-                }else{
-                    DispatchQueue.main.async {
-                        close != nil ? close!() : print("")
+                WPGCD.main_Async {
+                    if granted{
+                        open?()
+                        
+                    }else{
+                        close?()
                     }
                 }
             })
         }else{
-            close != nil ? close!() : print("")
+            close?()
         }
+        return resault
     }
     
     /// 是否打开网络
     /// - Parameters:
     ///   - open: 打开
     ///   - close: 关闭
-    static func isOpenNet(open:(()->Void)?=nil,close:(()->Void)?=nil){
+    @discardableResult
+    static func isOpenNet(open:(()->Void)?=nil,close:(()->Void)?=nil)->Bool{
         let mainThreeOpen = {
-            DispatchQueue.main.sync {
+            WPGCD.main_Async {
                 open != nil ? open!() : print()
             }
         }
         
         let mainThreeClose = {
-            DispatchQueue.main.sync {
+            WPGCD.main_Async {
                 close != nil ? close!() : print()
             }
         }
@@ -378,10 +383,13 @@ public extension WPSystem{
             }
         }
         let state = cellularData.restrictedState
+        
         if state == CTCellularDataRestrictedState.restrictedStateUnknown ||  state == CTCellularDataRestrictedState.notRestricted {
             mainThreeClose()
+            return false
         } else {
             mainThreeOpen()
+            return true
         }
     }
 }

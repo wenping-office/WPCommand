@@ -86,10 +86,36 @@ public extension UIView{
     var wp_midY: CGFloat {
         return wp_height * 0.5
     }
+    
+    var wp_size : CGSize{
+        get { return frame.size }
+        set { frame.size = newValue }
+    }
+    
+    var wp_orgin : CGPoint{
+        get { return frame.origin }
+        set { frame.origin = newValue }
+    }
 }
 
 public extension UIView {
     
+    
+    @discardableResult
+    /// 自身约束
+    func wp_equalLayout(_ attribute: NSLayoutConstraint.Attribute,
+                            constant: CGFloat) -> NSLayoutConstraint {
+        let layout = NSLayoutConstraint(item: self,
+                                        attribute: attribute,
+                                        relatedBy: .equal,
+                                        toItem: nil,
+                                        attribute: .notAnAttribute,
+                                        multiplier:0.0,
+                                        constant:constant)
+        addConstraint(layout)
+        return layout
+    }
+
     /// 选择性圆角处理，需要设置frame后调用，如果是约束需要layout后调用才能生效
     /// - Parameters:
     ///   - corners: 原角点

@@ -75,7 +75,7 @@ public extension UIImage{
             return nil
         }
     }
-    
+
     /// 保存图片到集合
     /// - Parameters:
     ///   - collection: 集合 == 相册
@@ -95,6 +95,26 @@ public extension UIImage{
         }else{
             let error = NSError(domain: "图片转换失败", code: -100, userInfo: nil) as Error
             complete?(false,nil,error)
+        }
+    }
+    
+    
+    /// 转换成phasset
+    /// - Parameter img: 图片
+    /// - Returns: 结果
+    static func wp_toAsset(_ img:UIImage)->PHAsset?{
+        var localId : String?
+
+        try? PHPhotoLibrary.shared().performChangesAndWait {
+            let request = PHAssetChangeRequest.creationRequestForAsset(from: img)
+            localId = request.placeholderForCreatedAsset?.localIdentifier
+        }
+
+        if localId != nil{
+            let result = PHAsset.fetchAssets(withLocalIdentifiers: [localId!], options: nil)
+            return result.firstObject
+        }else{
+            return nil
         }
     }
 }

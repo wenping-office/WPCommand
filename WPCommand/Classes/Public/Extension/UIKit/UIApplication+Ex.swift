@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIApplication{
+public extension UIApplication{
     
     /// 当前最上面的windw
      var wp_topWindow : UIWindow {

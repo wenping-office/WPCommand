@@ -8,7 +8,7 @@
 import UIKit
 
 
-extension Encodable {
+public extension Encodable {
     
     /// 转换成data
     var wp_data:Data?{
@@ -30,7 +30,7 @@ extension Encodable {
     }
 }
 
-extension Decodable {
+public extension Decodable {
     
     /// jsonAata解码成对象
     /// - Parameter data: jsonData

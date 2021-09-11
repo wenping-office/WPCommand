@@ -9,6 +9,8 @@ import UIKit
 
 /// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出
 public protocol WPAlertProtocol:UIView {
+    /// 是否是自适应布局 由弹窗子控件撑开布局时返回必须返回true 否则按照frame方式来实现
+//    var isAutoLayout : Bool { get }
     /// 弹窗状态变化后执行
     func updateStatus(status: WPAlertManager.Progress)
     /// 弹窗的属性
@@ -19,13 +21,14 @@ public protocol WPAlertProtocol:UIView {
     func alertLevel()->UInt
     /// 点击了蒙版
     func touchMask()
+
 }
 
 public extension WPAlertProtocol{
 
     /// 弹窗的属性
     func alertInfo()->WPAlertManager.Alert{
-        return .init(type: .default,
+        return .init(.default,
                      startLocation: .center(),
                      startDuration: 0.3,
                      stopLocation: .center,
@@ -34,7 +37,7 @@ public extension WPAlertProtocol{
     
     /// 蒙板属性
     func maskInfo()->WPAlertManager.Mask{
-        return .init(color: UIColor.init(0, 0, 0,255 * 0.15),
+        return .init(color: UIColor.init(0, 0, 0,0.15),
                      enabled: false,
                      isHidden: false)
     }

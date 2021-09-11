@@ -75,9 +75,11 @@ public extension Date{
     /// 转日期
     /// - Parameter format: format
     /// - Returns: 结果
-    func wp_format(_ format:String)->String{
+    func wp_format(_ format:String,timerZone:TimeZone = .init(identifier: "UTC")!)->String{
         let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = timerZone
         dateFormatter.dateFormat = format
+        dateFormatter.locale = Locale(identifier: "en")
         return dateFormatter.string(from: self)
     }
 
@@ -167,23 +169,24 @@ public extension Date{
         request.httpMethod = "GET"
         let configuration = URLSessionConfiguration.default
         let session = URLSession(configuration: configuration)
+        
         let task = session.dataTask(with: request) { data, response, error in
             let resp = response as? HTTPURLResponse
-            let str =  resp?.allHeaderFields["Date"] as? String
-            guard
-                let str = str
-            else { return }
-            
-            let fomat = DateFormatter()
-            fomat.locale = Locale(identifier: "en")
-            fomat.timeZone = .init(identifier: "UTC")
-            fomat.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
-            let date = fomat.date(from: str)
-            
-            DispatchQueue.main.async {
-                if let date = date{
-                    success(date)
-                }else{
+            if let str =  resp?.allHeaderFields["Date"] as? String{
+                let fomat = DateFormatter()
+                fomat.locale = Locale(identifier: "en")
+                fomat.timeZone = .init(identifier: "UTC")
+                fomat.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
+                let date = fomat.date(from: str)
+                WPGCD.main_Async {
+                    if let date = date{
+                        success(date)
+                    }else{
+                        failed?()
+                    }
+                }
+            }else{
+                WPGCD.main_Async {
                     failed?()
                 }
             }

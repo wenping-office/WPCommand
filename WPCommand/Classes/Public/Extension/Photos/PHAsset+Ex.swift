@@ -64,16 +64,11 @@ public extension PHAsset{
     func wp_placeholderImage(in size:CGSize,
                              contentModel:PHImageContentMode,
                              complete:@escaping(UIImage?,[AnyHashable:Any]?)->Void){
-
-        // 新建一个PHImageRequestOptions对象
-        let option = PHImageRequestOptions()
-        // PHImageRequestOptions是否有效
-        option.isSynchronous = true
-        // 缩略图的压缩模式设置为无
-        option.resizeMode = .none
-        // 缩略图的质量为高质量，不管加载时间花多少
-        option.deliveryMode = .fastFormat
-        wp_image(in: size, contentMode: contentModel, option: option, resultHandler: complete)
+        wp_image(in: size, contentMode: contentModel, option: nil) { img, info in
+            WPGCD.main_Async {
+                complete(img,info)
+            }
+        }
     }
     
     /// 从系统相册中删除

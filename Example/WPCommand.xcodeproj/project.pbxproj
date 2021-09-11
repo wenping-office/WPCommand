@@ -15,6 +15,7 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		8B1B572326B399DB009178AE /* TestAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1B572226B399DB009178AE /* TestAlertController.swift */; };
 		8B7D4A0E26ABF1000075B40F /* TestUIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0D26ABF1000075B40F /* TestUIController.swift */; };
+		8B9474A826EB805A00115DDE /* TestLayoutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9474A726EB805A00115DDE /* TestLayoutVC.swift */; };
 		8BF362A026BBF04A000A2280 /* TestMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF3629F26BBF04A000A2280 /* TestMenuVC.swift */; };
 		C9BAF466A13D325589B9E101 /* Pods_WPCommand_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F223C466D6825D9D7A498C /* Pods_WPCommand_Example.framework */; };
 		F09708D622FC3257F10C554A /* Pods_WPCommand_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C58DB079722391B159D224D6 /* Pods_WPCommand_Tests.framework */; };
@@ -49,6 +50,7 @@
 		83EE9023218D9A872E7D5784 /* WPCommand.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = WPCommand.podspec; path = ../WPCommand.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8B1B572226B399DB009178AE /* TestAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAlertController.swift; sourceTree = "<group>"; };
 		8B7D4A0D26ABF1000075B40F /* TestUIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUIController.swift; sourceTree = "<group>"; };
+		8B9474A726EB805A00115DDE /* TestLayoutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutVC.swift; sourceTree = "<group>"; };
 		8BF3629F26BBF04A000A2280 /* TestMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMenuVC.swift; sourceTree = "<group>"; };
 		C58DB079722391B159D224D6 /* Pods_WPCommand_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPCommand_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A9D6D80C37C160174B9E7F /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				8B7D4A0D26ABF1000075B40F /* TestUIController.swift */,
 				8B1B572226B399DB009178AE /* TestAlertController.swift */,
 				8BF3629F26BBF04A000A2280 /* TestMenuVC.swift */,
+				8B9474A726EB805A00115DDE /* TestLayoutVC.swift */,
 			);
 			name = Test;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 			files = (
 				8B1B572326B399DB009178AE /* TestAlertController.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				8B9474A826EB805A00115DDE /* TestLayoutVC.swift in Sources */,
 				8BF362A026BBF04A000A2280 /* TestMenuVC.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				8B7D4A0E26ABF1000075B40F /* TestUIController.swift in Sources */,

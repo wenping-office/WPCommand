@@ -11,6 +11,10 @@ import CommonCrypto
 
 public extension String{
     
+    /// 当前app版本
+    static var wp_appVersion : String?{
+        return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+    }
     /// 是否是邮箱
     var wp_isEmail : Bool {
         let predicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
