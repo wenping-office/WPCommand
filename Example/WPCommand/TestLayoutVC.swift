@@ -22,14 +22,14 @@ class TestLayoutVC: WPBaseVC {
         WPGCD.main_asyncAfter(.now() + 4, task: {
             let alert2 = LabTestAlert2()
             alert2.wp_size = .init(width: 250, height: 250)
-            WPAlertManager.default.showNext(alert2,option: .immediately(keep: true))
+            WPAlertManager.default.showNext(alert2,option: .default)
         })
         
         WPGCD.main_asyncAfter(.now() + 8, task: {
             let alert2 = LabTestAlert3()
             alert2.wp_size = .init(width: 100, height: 150)
             alert2.backgroundColor = .red
-            WPAlertManager.default.showNext(alert2,option: .immediately(keep:true))
+            WPAlertManager.default.showNext(alert2,option: .default)
         })
     }
 
