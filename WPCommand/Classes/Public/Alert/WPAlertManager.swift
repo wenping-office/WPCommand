@@ -87,7 +87,6 @@ public class WPAlertManager {
     
     /// 移除一个弹窗
     public func removeAlert(_ alert : WPAlertProtocol){
-        
         currentAlert = nil
         alert.removeFromSuperview()
         
@@ -116,7 +115,8 @@ public class WPAlertManager {
     ///   - option: 选择条件
     public func showNext(_ alert:WPAlertProtocol,option:Option = .immediately(keep: true)){
         alert.tag = WPAlertManager.identification()
-        alerts.insert(.init(alert: alert, level: -1), at: 0)
+        let level = (currentAlert?.level ?? 0) - 1
+        alerts.insert(.init(alert: alert, level: level), at: 0)
         alert.updateStatus(status: .cooling)
         
         if currentAlertProgress == .didShow && alerts.count >= 1{
@@ -156,7 +156,13 @@ extension WPAlertManager{
     
     /// 获取一个唯一标识
     private static func identification()->Int{
-        return Int(arc4random_uniform(100) + arc4random_uniform(100) + arc4random_uniform(100))
+        return Int(
+            arc4random_uniform(100) +
+                arc4random_uniform(100) +
+                arc4random_uniform(100) +
+                arc4random_uniform(100) +
+                arc4random_uniform(100)
+        )
     }
     
     /// 添加一个蒙版
@@ -216,7 +222,6 @@ extension WPAlertManager{
         }
         currentAlert = alerts.first
         
-        item.isInterruptInset = false
         item.alert.wp_size = .zero
         alerts.insert(item, at: 1)
     }
@@ -282,6 +287,7 @@ extension WPAlertManager{
             let animateCompleteBlock : (Bool)->Void = {[weak self] resualt in
                 if resualt{
                     if isShow {
+                        item.isInterruptInset = false
                         self?.autoLayoutBeginBlock = nil
                         self?.resetEndFrame(item.alert)
                         item.alert.updateStatus(status: .didShow)
@@ -290,7 +296,6 @@ extension WPAlertManager{
                         if !item.isInterruptInset{ // 正常弹出才更新状态
                             self?.currentAlertProgress = .didPop
                             item.alert.updateStatus(status: .didPop)
-                            
                             self?.removeAlert(item.alert)
                         }else{
                             self?.moveItemToFist(item)

@@ -49,3 +49,19 @@ public extension WPAlertProtocol{
     /// 弹窗弹出的等级 越小越靠前
     func alertLevel()->UInt{ return 1000 }
 }
+
+extension WPAlertProtocol{
+    
+    /// 快速显示一个弹窗
+    /// - Parameters:
+    ///   - targetView: 弹窗根视图
+    ///   - option: 选项
+    func show(in targetView:UIView?,option:WPAlertManager.Option = .default){
+        WPAlertManager.default.target(in: targetView).showNext(self, option: option)
+    }
+    
+    /// 隐藏弹框
+    func dissmiss(){
+        WPAlertManager.default.dismiss()
+    }
+}
