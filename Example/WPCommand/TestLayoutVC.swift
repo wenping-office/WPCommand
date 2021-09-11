@@ -18,8 +18,44 @@ class TestLayoutVC: WPBaseVC {
         let alert = LabTestAlert()
         
         WPAlertManager.default.showNext(alert, option: .default)
+        
+        WPGCD.main_asyncAfter(.now() + 4, task: {
+            let alert2 = LabTestAlert2()
+            alert2.wp_size = .init(width: 250, height: 250)
+            WPAlertManager.default.showNext(alert2,option: .immediately(keep: true))
+        })
     }
 
+}
+
+class LabTestAlert2: WPBaseView,WPAlertProtocol {
+    let lab = UILabel()
+    
+    override func initSubView() {
+        lab.text = "弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2"
+        lab.numberOfLines = 0
+        addSubview(lab)
+        backgroundColor = .yellow
+    }
+    
+    override func initSubViewLayout() {
+//        lab.snp.makeConstraints { make in
+//            make.top.left.right.bottom.equalToSuperview()
+//            make.width.lessThanOrEqualTo(300)
+//        }
+    }
+    
+    func alertInfo() -> WPAlertManager.Alert {
+        return .init(.bounces, startLocation: .bottom(.zero), startDuration: 2, stopLocation: .bottom, stopDuration: 0.4)
+    }
+    
+    func touchMask() {
+        WPAlertManager.default.dismiss()
+    }
+    
+    deinit {
+        print("黄色释放了")
+    }
 }
 
 
@@ -42,14 +78,18 @@ class LabTestAlert: WPBaseView,WPAlertProtocol {
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.7, stopLocation: .top, stopDuration: 0.8)
+        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
     }
 
     func touchMask() {
         WPAlertManager.default.dismiss()
     }
     
+    func updateStatus(status: WPAlertManager.Progress) {
+        print(status,"---")
+    }
+
     deinit {
-        print(self,"释放了")
+        print("释放了")
     }
 }

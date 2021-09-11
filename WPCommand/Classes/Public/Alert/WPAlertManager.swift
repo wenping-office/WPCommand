@@ -9,33 +9,32 @@ import UIKit
 import RxSwift
 
 public extension WPAlertManager{
-    /// 插入选项
-    struct Option{
-        /// true的话强制立马弹出 false的话会插入到下一个弹窗
-        public var immediately = false
-        /// 是否保留上一个被强制插入的弹窗
-        public var keep = true
-        
-        public init(){}
-        
-        /// 默认选项
-        public static var `default` : Option {
-            return WPAlertManager.Option.init()
-        }
+    enum Option {
+        /// 强制立马弹出 keep== true 插入弹窗消失后弹出被插入的弹窗
+        case immediately(keep:Bool)
+        /// 默认选项 插入到下一个弹窗
+        case `default`
     }
 }
 
 /// 弹窗队列弹出实现WPAlertProtocol协议的弹窗
 public class WPAlertManager {
-    /// 弹窗队列
-    private struct AlertItem{
+    /// 弹窗
+    private class AlertItem{
         /// 弹窗
         let alert : WPAlertProtocol
         /// 弹窗等级
         let level : Int
+        /// 是否被中断动画并且被插入到当前位置
+        var isInterruptInset = false
+        
+        init(alert:WPAlertProtocol,level:Int) {
+            self.alert = alert
+            self.level = level
+        }
     }
     /// 弹窗视图
-    private weak var currentAlert : WPAlertProtocol?
+    private weak var currentAlert : AlertItem?
     /// 弹窗的根视图
     private weak var target : UIView?{
         willSet{
@@ -65,7 +64,7 @@ public class WPAlertManager {
     /// 当前弹窗结束的frame
     private var currentAlertEndFrame : CGRect = .zero
     /// 自动布局下的block
-    private var layoutFrame : (begin:(()->Void),end:()->Void) = ({},{})
+    private var autoLayoutBeginBlock : (()->Void)?
     /// 当前弹窗的进度
     private var currentAlertProgress : Progress = .unknown
     
@@ -92,12 +91,12 @@ public class WPAlertManager {
         currentAlert = nil
         alert.removeFromSuperview()
         
-        self.alerts.wp_filter { elmt in
+        alerts.wp_filter { elmt in
             return elmt.alert.tag == alert.tag
         }
         alert.updateStatus(status: .remove)
         
-        currentAlert = alerts.first?.alert
+        currentAlert = alerts.first
     }
     
     /// 添加一组弹窗会清除现有的弹窗
@@ -114,17 +113,23 @@ public class WPAlertManager {
     /// 弹出一个弹窗 如果序列里有多个弹窗将会插入到下一个
     /// - Parameters:
     ///   - alert: 弹窗
-    ///   - option:
-    public func showNext(_ alert:WPAlertProtocol,option:Option = .default){
+    ///   - option: 选择条件
+    public func showNext(_ alert:WPAlertProtocol,option:Option = .immediately(keep: true)){
         alert.tag = WPAlertManager.identification()
         alerts.insert(.init(alert: alert, level: -1), at: 0)
+        alert.updateStatus(status: .cooling)
         
         if currentAlertProgress == .didShow && alerts.count >= 1{
-            alertAnimate(isShow: false,option: option)
+            switch option {
+            case .immediately(let keep):
+                currentAlert?.isInterruptInset = keep
+                alertAnimate(isShow: false,option: option)
+            default:break
+            }
         }else{
-            alert.updateStatus(status: .cooling)
-            alertAnimate(isShow: true,option: option)
+            alertAnimate(isShow: true,option: .default)
         }
+        
     }
     
     /// 弹窗的根视图 在哪个视图上弹出
@@ -165,7 +170,9 @@ extension WPAlertManager{
         // 如果没有蒙版 那么添加一个
         if !resualt  {
             let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
-                self?.currentAlert?.touchMask()
+                if self?.currentAlertProgress == .didShow{
+                    self?.currentAlert?.alert.touchMask()
+                }
             })
             self.maskView = maskView
             maskView.alpha = 0
@@ -188,85 +195,121 @@ extension WPAlertManager{
         return (count - 1) > 0
     }
     
+    /// 判断下一个弹窗是否是插入进来的
+    private func nextAlertIsInset()->Bool{
+        guard
+            let nextItem = alerts.wp_safeGet(of: 1)
+        else { return false }
+        if nextItem.level <= 0 {
+            return true
+        }
+        return false
+    }
+    
+    /// 移动一个item并插入到插入数组的第一个
+    private func moveItemToFist(_ item:WPAlertManager.AlertItem){
+        currentAlert = nil
+        item.alert.removeFromSuperview()
+        
+        self.alerts.wp_filter { elmt in
+            return elmt.alert.tag == item.alert.tag
+        }
+        currentAlert = alerts.first
+        
+        item.isInterruptInset = false
+        item.alert.wp_size = .zero
+        alerts.insert(item, at: 1)
+    }
+    
     /// 执行弹窗动画
     /// immediately 是否强制
     private func alertAnimate(isShow:Bool,option:Option){
-        if let alert = currentAlert{
+        if let item = currentAlert{
             var isAutoLayout = false
             if isShow {
-                addMask(info: alert.maskInfo())
-                targetView.insertSubview(alert, at: 1000)
-                isAutoLayout = resetFrame(alert)
+                addMask(info: item.alert.maskInfo())
+                targetView.insertSubview(item.alert, at: 1000)
+                isAutoLayout = resetFrame(item.alert)
                 
-                if alert.wp_size == .zero {
+                if item.alert.wp_size == .zero {
                     isAutoLayout = true
-                    alert.superview?.layoutIfNeeded()
-                    layoutFrame.begin()
+                    item.alert.superview?.layoutIfNeeded()
+                    
+                    autoLayoutBeginBlock?()
                 }
-                maskView?.maskInfo = alert.maskInfo()
-                alert.updateStatus(status: .willShow)
+                maskView?.maskInfo = item.alert.maskInfo()
+                item.alert.updateStatus(status: .willShow)
                 currentAlertProgress = .willShow
             }else{
-                alert.updateStatus(status: .willPop)
+                item.alert.updateStatus(status: .willPop)
                 currentAlertProgress = .willPop
             }
             
-            let duration = option.immediately ? 0 : (isShow ? alert.alertInfo().startDuration : alert.alertInfo().stopDuration)
+            // 动画时间
+            var duration : TimeInterval = 0
+            switch option {
+            case .default:
+                duration = (isShow ? item.alert.alertInfo().startDuration : item.alert.alertInfo().stopDuration)
+            case .immediately(_):
+                duration = 0
+            }
             
             let animatesBolok : ()->Void = { [weak self] in
                 guard let self = self else { return }
                 
-                alert.transform = CGAffineTransform.identity
+                item.alert.transform = CGAffineTransform.identity
                 
                 if isShow{
                     if isAutoLayout {
-                        alert.superview?.layoutIfNeeded()
+                        item.alert.superview?.layoutIfNeeded()
                     }else{
-                        alert.frame = self.currentAlertBeginFrame
+                        item.alert.frame = self.currentAlertBeginFrame
                     }
                     
-                    alert.alpha = 1
+                    item.alert.alpha = 1
                     self.maskView?.alpha = 1
                 }else{
-                    alert.frame = self.currentAlertEndFrame
+                    item.alert.frame = self.currentAlertEndFrame
                     if !self.isNext() {
                         self.maskView?.alpha = 0
                     }
-                    if alert.alertInfo().stopLocation == .center {
-                        alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
+                    if item.alert.alertInfo().stopLocation == .center {
+                        item.alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
                     }
                 }
             }
             
             let animateCompleteBlock : (Bool)->Void = {[weak self] resualt in
-                guard let self = self else { return }
-                
                 if resualt{
                     if isShow {
-                        if isAutoLayout {
-                            self.resetEndFrame(alert)
-                        }
-                        alert.updateStatus(status: .didShow)
-                        self.currentAlertProgress = .didShow
+                        self?.autoLayoutBeginBlock = nil
+                        self?.resetEndFrame(item.alert)
+                        item.alert.updateStatus(status: .didShow)
+                        self?.currentAlertProgress = .didShow
                     }else{
-                        self.currentAlertProgress = .didPop
-                        alert.updateStatus(status: .didPop)
-                        self.removeAlert(alert)
-                        self.show()
+                        if !item.isInterruptInset{ // 正常弹出才更新状态
+                            self?.currentAlertProgress = .didPop
+                            item.alert.updateStatus(status: .didPop)
+                            
+                            self?.removeAlert(item.alert)
+                        }else{
+                            self?.moveItemToFist(item)
+                        }
+                        self?.show()
                     }
                 }else{
-                    alert.updateStatus(status: .unknown)
-                    self.currentAlertProgress = .unknown
+                    item.alert.updateStatus(status: .unknown)
+                    self?.currentAlertProgress = .unknown
                 }
             }
             
-            if alert.alertInfo().animateType == .default {
+            if item.alert.alertInfo().animateType == .default {
                 UIView.animate(withDuration: TimeInterval(duration), animations: {
                     animatesBolok()
                 }, completion: {resualt in
                     animateCompleteBlock(resualt)
                 })
-            }else if alert.alertInfo().animateType == .bounces{
+            }else if item.alert.alertInfo().animateType == .bounces{
                 UIView.animate(withDuration: TimeInterval(duration), delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveLinear, animations: {
                     animatesBolok()
                 }, completion: {resualt in
@@ -274,7 +317,7 @@ extension WPAlertManager{
                 })
             }
         }else{
-            currentAlert = alerts.first?.alert
+            currentAlert = alerts.first
             if  currentAlert != nil{
                 show()
             }else{
@@ -291,9 +334,7 @@ extension WPAlertManager{
         let maxW : CGFloat = targetView.wp_width
         let maxH : CGFloat = targetView.wp_height
         let center : CGPoint = .init(x: (maxW - alertW) * 0.5, y: (maxH - alertH) * 0.5)
-        
         var beginF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
-        var endF : CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
         let isAutoLayout = alert.wp_size == .zero
         
@@ -304,11 +345,11 @@ extension WPAlertManager{
             alert.wp_x = center.x + offset.x
             alert.wp_y = -alertH + offset.y
             if isAutoLayout {
-                alert.snp.makeConstraints { make in
+                alert.snp.remakeConstraints { make in
                     make.centerX.equalToSuperview().offset(offset.x)
                     make.bottom.equalTo(targetView.snp.top)
                 }
-                layoutFrame.begin = {
+                autoLayoutBeginBlock = {
                     alert.snp.remakeConstraints { make in
                         make.centerX.equalToSuperview().offset(offset.x)
                         make.top.equalToSuperview().offset(offset.y)
@@ -321,11 +362,11 @@ extension WPAlertManager{
             alert.wp_x = -alertW + offset.x
             alert.wp_y = center.y + offset.y
             if isAutoLayout {
-                alert.snp.makeConstraints { make in
+                alert.snp.remakeConstraints { make in
                     make.right.equalTo(targetView.snp.left)
                     make.centerY.equalToSuperview().offset(offset.y)
                 }
-                layoutFrame.begin = {
+                autoLayoutBeginBlock = {
                     alert.snp.remakeConstraints { make in
                         make.centerY.equalToSuperview().offset(offset.y)
                         make.left.equalToSuperview().offset(offset.x)
@@ -338,11 +379,11 @@ extension WPAlertManager{
             alert.wp_x = center.x + offset.x
             alert.wp_y = maxH + offset.y
             if isAutoLayout {
-                alert.snp.makeConstraints { make in
+                alert.snp.remakeConstraints { make in
                     make.top.equalTo(targetView.snp.bottom)
                     make.centerX.equalToSuperview().offset(offset.x)
                 }
-                layoutFrame.begin = {
+                autoLayoutBeginBlock = {
                     alert.snp.remakeConstraints { make in
                         make.bottom.equalToSuperview().offset(offset.y)
                         make.centerX.equalToSuperview().offset(offset.x)
@@ -355,11 +396,11 @@ extension WPAlertManager{
             alert.wp_y = center.y + offset.y
             alert.wp_x = maxW + offset.x
             if isAutoLayout {
-                alert.snp.makeConstraints { make in
+                alert.snp.remakeConstraints { make in
                     make.left.equalTo(targetView.snp.right)
                     make.centerY.equalToSuperview().offset(offset.y)
                 }
-                layoutFrame.begin = {
+                autoLayoutBeginBlock = {
                     alert.snp.remakeConstraints { make in
                         make.right.equalToSuperview().offset(offset.x)
                         make.centerY.equalToSuperview().offset(offset.y)
@@ -373,28 +414,11 @@ extension WPAlertManager{
             alert.wp_orgin = beginF.origin
             alert.transform = CGAffineTransform.init(scaleX: 0.01, y: 0.01)
             if isAutoLayout {
-                alert.snp.makeConstraints { make in
+                alert.snp.remakeConstraints { make in
                     make.centerX.equalToSuperview().offset(offSet.x)
                     make.centerY.equalToSuperview().offset(offSet.y)
                 }
             }
-        }
-        
-        switch alert.alertInfo().stopLocation  {
-        case .top:
-            endF.origin.x = beginF.origin.x
-            endF.origin.y = -alertH
-        case .left:
-            endF.origin.x = -alertW
-            endF.origin.y = beginF.origin.y
-        case .bottom:
-            endF.origin.x = beginF.origin.x
-            endF.origin.y = maxH
-        case .right:
-            endF.origin.x = maxW
-            endF.origin.y = beginF.origin.y
-        case .center:
-            endF.origin = beginF.origin
         }
         
         currentAlertBeginFrame = beginF

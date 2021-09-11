@@ -9,8 +9,6 @@ import UIKit
 
 /// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出
 public protocol WPAlertProtocol:UIView {
-    /// 是否是自适应布局 由弹窗子控件撑开布局时返回必须返回true 否则按照frame方式来实现
-//    var isAutoLayout : Bool { get }
     /// 弹窗状态变化后执行
     func updateStatus(status: WPAlertManager.Progress)
     /// 弹窗的属性

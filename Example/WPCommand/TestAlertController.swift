@@ -133,7 +133,7 @@ class testAlert: WPBaseView,WPAlertProtocol {
     }
 
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .right(.init(x: 30, y: -100)), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
+        return .init(.default, startLocation: .right(.init(x: 30, y: -100)), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
     }
 
     func maskInfo() -> WPAlertManager.Mask {
