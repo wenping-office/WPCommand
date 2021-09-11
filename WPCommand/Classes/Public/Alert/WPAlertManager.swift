@@ -124,7 +124,8 @@ public class WPAlertManager {
             case .immediately(let keep):
                 currentAlert?.isInterruptInset = keep
                 alertAnimate(isShow: false,option: option)
-            default:break
+            case .default:
+                alertAnimate(isShow: true,option: .default)
             }
         }else{
             alertAnimate(isShow: true,option: .default)
