@@ -74,7 +74,9 @@ public class WPAlertManager {
         return manager
     }()
     
-    public init(target:UIView){
+    /// 初始化一个manager
+    /// - Parameter target: 弹窗目标视图
+    public init(target:UIView? = nil){
         _ = self.target(in: target)
     }
     
