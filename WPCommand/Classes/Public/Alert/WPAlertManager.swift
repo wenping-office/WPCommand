@@ -363,6 +363,16 @@ extension WPAlertManager{
                     }
                 }
             }
+        case .topWidthFill(let offsetY):
+            alert.snp.remakeConstraints { make in
+                make.left.right.equalToSuperview()
+                make.bottom.equalTo(targetView.snp.top)
+            }
+            autoLayoutBeginBlock = {
+                alert.snp.remakeConstraints { make in
+                    make.top.equalToSuperview().offset(offsetY)
+                }
+            }
         case .left(let offset):
             beginF.origin.x = 0 + offset.x
             beginF.origin.y = center.y + offset.y
@@ -378,6 +388,17 @@ extension WPAlertManager{
                         make.centerY.equalToSuperview().offset(offset.y)
                         make.left.equalToSuperview().offset(offset.x)
                     }
+                }
+            }
+        case .leftHeightFill(let offsetX):
+            alert.snp.remakeConstraints { make in
+                make.right.equalTo(targetView.snp.left)
+                make.top.bottom.equalToSuperview()
+            }
+            autoLayoutBeginBlock = {
+                alert.snp.remakeConstraints { make in
+                    make.top.bottom.equalToSuperview()
+                    make.left.equalToSuperview().offset(offsetX)
                 }
             }
         case .bottom(let offset):
@@ -397,6 +418,17 @@ extension WPAlertManager{
                     }
                 }
             }
+        case .bottomWidthFill(let offsetY):
+            alert.snp.remakeConstraints { make in
+                make.top.equalTo(targetView.snp.bottom)
+                make.left.right.equalToSuperview()
+            }
+            autoLayoutBeginBlock = {
+                alert.snp.remakeConstraints { make in
+                    make.bottom.equalToSuperview().offset(offsetY)
+                    make.left.right.equalToSuperview()
+                }
+            }
         case .right(let offset):
             beginF.origin.x = maxW - alertW + offset.x
             beginF.origin.y = center.y + offset.y
@@ -412,6 +444,17 @@ extension WPAlertManager{
                         make.right.equalToSuperview().offset(offset.x)
                         make.centerY.equalToSuperview().offset(offset.y)
                     }
+                }
+            }
+        case .rightHeightFill(let offsetY):
+            alert.snp.remakeConstraints { make in
+                make.left.equalTo(targetView.snp.right)
+                make.top.bottom.equalToSuperview()
+            }
+            autoLayoutBeginBlock = {
+                alert.snp.remakeConstraints { make in
+                    make.right.equalToSuperview().offset(offsetY)
+                    make.top.bottom.equalToSuperview()
                 }
             }
         case .center(let offSet):
@@ -554,6 +597,14 @@ public extension WPAlertManager{
         case right(_ offset:CGPoint = .zero)
         /// 中间弹出
         case center(_ offset:CGPoint = .zero)
+        /// 顶部弹出 layout模式下width填充至弹窗的width
+        case topWidthFill(_ offsetY:CGFloat = 0)
+        /// 左边弹出 layout模式下height填充至弹窗的height
+        case leftHeightFill(_ offsetX:CGFloat = 0)
+        /// 底部弹出 layout模式下width填充至弹窗的width
+        case bottomWidthFill(_ offsetY:CGFloat = 0)
+        /// 右边弹出 layout模式下height填充至弹窗的height
+        case rightHeightFill(_ offsetY:CGFloat = 0)
     }
     
     /// 弹出结束位置

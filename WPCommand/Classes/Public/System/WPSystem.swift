@@ -150,6 +150,16 @@ public extension WPSystem{
             return range <= 2
         }
         
+        /// 是否是横屏幕 根据系统手机方向判断
+        public var isHorizontal:Bool{
+            switch UIDevice.current.orientation {
+            case .faceDown,.faceUp,.portrait,.portraitUpsideDown,.unknown:
+                return false
+            default:
+                return true
+            }
+        }
+
         /// 比例
         public enum Proportion {
             /// 4:3屏幕
