@@ -27,7 +27,9 @@ public class WPAlertManager {
         let level : Int
         /// 是否被中断动画并且被插入到当前位置
         var isInterruptInset = false
-        
+        /// 目标视图
+        weak var target : UIView?
+
         init(alert:WPAlertProtocol,level:Int) {
             self.alert = alert
             self.level = level
@@ -234,6 +236,9 @@ extension WPAlertManager{
         if let item = currentAlert{
             var isAutoLayout = false
             if isShow {
+                if item.target != nil {
+                    target = item.target
+                }
                 addMask(info: item.alert.maskInfo())
                 targetView.insertSubview(item.alert, at: 1000)
                 isAutoLayout = resetFrame(item.alert)
@@ -247,6 +252,7 @@ extension WPAlertManager{
                 maskView?.maskInfo = item.alert.maskInfo()
                 item.alert.updateStatus(status: .willShow)
                 currentAlertProgress = .willShow
+                item.target = target
             }else{
                 item.alert.updateStatus(status: .willPop)
                 currentAlertProgress = .willPop
