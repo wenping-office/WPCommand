@@ -27,7 +27,7 @@ public extension UICollectionView{
     }
 }
 
-public class WPCollectionViewDelegate: WPScrollViewDelegate {
+open class WPCollectionViewDelegate: WPScrollViewDelegate {
 
     /// 点击了某一个cell
     public var didSelectItemAt : ((UICollectionView,IndexPath)->Void)?

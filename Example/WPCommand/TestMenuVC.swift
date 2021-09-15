@@ -9,7 +9,10 @@
 import UIKit
 import WPCommand
 
-class TestMenuVC: WPBaseVC {
+class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
+    func viewForIndex(index: Int) -> UIView? {
+        return nil
+    }
 
     let menuView = WPMenuView(navigationHeight: 44)
 
@@ -17,7 +20,7 @@ class TestMenuVC: WPBaseVC {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        let items = [testMenuItem(),testMenuItem()]
+        let items = [testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem()]
 
         menuView.backgroundColor = .wp_random
 
@@ -26,6 +29,7 @@ class TestMenuVC: WPBaseVC {
     }
     
     override func initSubView() {
+        menuView.dataSource = self
         view.addSubview(menuView)
     }
 

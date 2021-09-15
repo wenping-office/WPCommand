@@ -55,7 +55,7 @@ public extension WPSystem{
         }
     }
     
-    /// 当前手机设备型号
+    /// 当前设备型号
     static var deviceModel : DeviceModel{
         switch WPSystem.deviceType {
         case .iPhone:
@@ -467,7 +467,6 @@ public extension WPSystem{
     }
 
     enum DeviceModel{
-        /// 未知
         case iPhone4
         case iPhone4S
         case iPhone5

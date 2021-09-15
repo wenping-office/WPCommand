@@ -30,7 +30,7 @@ public extension UICollectionView{
     }
 }
 
-public class WPCollectionViewSource: WPScrollViewDelegate {
+open class WPCollectionViewSource: WPScrollViewDelegate {
     
     weak var collectionView : UICollectionView!
     
@@ -40,13 +40,13 @@ public class WPCollectionViewSource: WPScrollViewDelegate {
     }
 
     /// 数据源
-    open var groups : [WPCollectionGroup] = []
+    public var groups : [WPCollectionGroup] = []
     
     /// cellClass
-    open var cellClass: AnyClass = UICollectionViewCell.self
+    public var cellClass: AnyClass = UICollectionViewCell.self
     
     /// headerFooterClass
-    open var headerFooterClass: AnyClass = UICollectionReusableView.self
+    public var headerFooterClass: AnyClass = UICollectionReusableView.self
 }
 
 extension WPCollectionViewSource : UICollectionViewDataSource{

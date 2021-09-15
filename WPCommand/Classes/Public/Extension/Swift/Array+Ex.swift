@@ -32,10 +32,12 @@ public extension Array{
     ///   - newElmt: 元素
     ///   - index: 索引
     mutating func wp_safeInset(_ newElmt:Element ,at index:Int){
-        if index <= 0 {
+        if index <= 0 && index < count {
+            insert(newElmt, at: index)
+        }else if index <= 0{
             insert(newElmt, at: 0)
         }else{
-            insert(newElmt, at: index)
+            append(newElmt)
         }
     }
     

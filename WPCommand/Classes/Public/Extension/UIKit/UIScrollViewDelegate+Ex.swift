@@ -29,7 +29,7 @@ public extension UIScrollView{
     
 }
 
-public class WPScrollViewDelegate: NSObject {
+open class WPScrollViewDelegate: NSObject {
     /// 正在滚动
     public var didScroll:(UIScrollView)->Void = {_ in }
     /// 正在缩放

@@ -21,26 +21,33 @@ public extension WPMenuView{
     /// 添加一组item
     /// - Parameter items: items
     func setItems(items:[WPMenuViewNavigationProtocol]){
-        let navGroup = navView.group
-        navGroup.items.removeAll()
-        items.forEach { elmt in
-            elmt.upledeStatus(status: .normal)
-            let item = WPCollectionItem()
-            item.itemSize = .init(width: 100, height: navigationHeight)
-            item.info = elmt
-            navGroup.items.append(item)
-        }
-        navView.contentView.reloadData()
+//        let navGroup = navView.group
+//        navGroup.items.removeAll()
+//        items.forEach { elmt in
+//            elmt.upledeStatus(status: .normal)
+//            let item = WPCollectionItem()
+//            item.itemSize = .init(width: 100, height: navigationHeight)
+//            item.info = elmt
+//            navGroup.items.append(item)
+//        }
+//        navView.contentView.reloadData()
+//
+//        var index = 0
+//        let bodyGroup =  bodyView.group
+//        bodyGroup.items.removeAll()
+//        items.forEach { elmt in
+//            let item = WPCollectionItem()
+//            item.customIdentifier = index.description
+//            item.willDisplay = {[weak self] item,cell in
+//                let bodyCell = cell as? WPMenuChildContentCell
+//                bodyCell?.setBodyView(self?.dataSource?.viewForIndex(index: item.indexPath.row))
+//            }
+//            item.info = elmt
+//            bodyGroup.items.append(item)
+//            index+=1
+//        }
         
-        let bodyGroup =  bodyView.group
-        bodyGroup.items.removeAll()
-        items.forEach { elmt in
-            let item = WPCollectionItem()
-            item.info = elmt
-            bodyGroup.items.append(item)
-        }
-        
-        bodyView.contentCollectionView.reloadData()
+//        bodyView.contentCollectionView.reloadData()
     }
 }
 
@@ -55,7 +62,7 @@ public class WPMenuView: WPBaseView {
     /// 头部视图
     private let headerView = UITableViewCell()
     /// 菜单视图
-    private let bodyView = WPMenuChildView()
+    private let bodyView = WPMenuBodyView()
     /// 数据源
     public weak var dataSource : WPMenuViewDataSource?
     /// 代理
@@ -80,14 +87,7 @@ public class WPMenuView: WPBaseView {
     }
     
     public override func observeSubViewEvent() {
-        // 导航按钮点击
-        navView.contentView.itemsSelectedBlock = {[weak self] item in
-            self?.didSelected(item: item)
-        }
-        // bodyView滑动
-        bodyView.contentCollectionView.itemsSelectedBlock = {[weak self] item in
-            self?.didSelected(item: item)
-        }
+        
     }
 }
 
@@ -124,10 +124,8 @@ extension WPMenuView:UITableViewDelegate,UITableViewDataSource{
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let bodyHeight = wp_height - navigationHeight
-        bodyView.group.items.forEach { item in
-            item.itemSize = .init(width: wp_width, height: bodyHeight)
-        }
-        bodyView.contentCollectionView.reloadData()
+
+
         return indexPath.section <= 0 ? 0 : bodyHeight
     }
 }
@@ -137,18 +135,18 @@ extension WPMenuView{
     
     /// 选中一个item
     private func didSelected(item:WPCollectionItem){
-        navView.contentView.groups.forEach { group in
-            group.items.forEach { item in
-                item.status = .normal
-                item.update()
-            }
-        }
-        item.status = .selected
-        item.update()
-
-        let menuItem = item.info as? WPMenuViewNavigationProtocol
-
-        menuItem?.upledeStatus(status: item.status == .normal ? .normal : .selected)
+//        navView.contentView.groups.forEach { group in
+//            group.items.forEach { item in
+//                item.status = .normal
+//                item.update()
+//            }
+//        }
+//        item.status = .selected
+//        item.update()
+//
+//        let menuItem = item.info as? WPMenuViewNavigationProtocol
+//
+//        menuItem?.upledeStatus(status: item.status == .normal ? .normal : .selected)
     }
 }
 
@@ -160,70 +158,6 @@ extension WPMenuView{
 
 
 
-class WPMenuNavigationView: WPBaseView {
-    /// 内容视图
-    let contentView = WPCollectionAutoLayoutView(cellClass: WPMenuNavigationViewCell.self)
-    let group = WPCollectionGroup()
 
-    override func initSubView() {
-        contentView.backgroundColor = .clear
-        contentView.groups = [group]
-        backgroundColor = .white
-        addSubview(contentView)
-    }
-    
-    override func initSubViewLayout() {
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-    }
-}
 
-/// 菜单视图
-class WPMenuNavigationViewCell: UICollectionViewCell{
-    override func didSetItem(item: WPCollectionItem) {
-        if let menuItem = item.info as? WPMenuViewNavigationProtocol {
-            wp_removeAllSubViewFromSuperview()
-            addSubview(menuItem)
-            menuItem.snp.remakeConstraints { make in
-                make.edges.equalToSuperview()
-            }
-        }
-    }
-}
 
-/// 菜单视图
-class WPMenuChildView: UITableViewCell{
-
-    let contentCollectionView = WPCollectionAutoLayoutView(cellClass: WPMenuChildContentCell.self, scrollDirection: .horizontal)
-    
-    let group = WPCollectionGroup()
-
-    init() {
-        super.init(style: .default, reuseIdentifier: nil)
-        contentView.backgroundColor = .wp_random
-        contentCollectionView.groups = [group]
-        contentCollectionView.backgroundColor = .white
-        contentView.addSubview(contentCollectionView)
-        contentCollectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        contentCollectionView.backgroundColor = .blue
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class WPMenuChildContentCell: UICollectionViewCell {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .wp_random
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-}

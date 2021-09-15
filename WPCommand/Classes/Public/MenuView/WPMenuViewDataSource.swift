@@ -8,5 +8,9 @@
 import UIKit
 
 public protocol WPMenuViewDataSource:NSObjectProtocol{
+
+    /// 当前索引返回的视图
+    /// - Parameter index: 索引
+    func viewForIndex(index:Int)->UIView?
     
 }

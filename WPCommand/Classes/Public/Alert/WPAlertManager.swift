@@ -227,7 +227,7 @@ extension WPAlertManager{
         currentAlert = alerts.first
         
         item.alert.wp_size = .zero
-        alerts.insert(item, at: 1)
+        alerts.append(item)
     }
     
     /// 执行弹窗动画

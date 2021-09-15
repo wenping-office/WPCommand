@@ -127,10 +127,9 @@ public extension WPCollectionAutoLayoutView{
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let item = groups[indexPath.section].items[indexPath.row]
-        item.willDisplay != nil ? item.willDisplay!(item) : print("")
+        item.willDisplay != nil ? item.willDisplay!(item,cell) : print("")
     }
-    
-    
+
 }
 /// UICollectionViewDelegateFlowLayout 代理
 public extension WPCollectionAutoLayoutView{
