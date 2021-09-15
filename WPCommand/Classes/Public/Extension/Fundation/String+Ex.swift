@@ -191,6 +191,14 @@ public extension String{
         return (self as NSString).range(of: keyword)
     }
     
+    /// 判断是否包含某个字符串
+    /// - Parameter keyword: 关键字
+    /// - Returns: 结果
+    func wp_isContent(_ keyword:String)->Bool{
+        let resualt = wp_Of(keyword)
+        return resualt.length != 0
+    }
+    
     /// 复制到粘贴版
     func wp_sopyToPasteboard(){
         let pasteboard = UIPasteboard.general

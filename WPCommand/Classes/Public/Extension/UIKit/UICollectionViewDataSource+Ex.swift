@@ -47,9 +47,6 @@ public class WPCollectionViewSource: WPScrollViewDelegate {
     
     /// headerFooterClass
     open var headerFooterClass: AnyClass = UICollectionReusableView.self
-    
-    /// 当前选中item的Block
-    open var itemsSelectedBlock : ((WPCollectionItem)->Void)?
 }
 
 extension WPCollectionViewSource : UICollectionViewDataSource{

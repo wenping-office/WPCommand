@@ -30,19 +30,19 @@ public extension UICollectionView{
 public class WPCollectionViewDelegate: WPScrollViewDelegate {
 
     /// 点击了某一个cell
-    var didSelectItemAt : ((UICollectionView,IndexPath)->Void)?
+    public var didSelectItemAt : ((UICollectionView,IndexPath)->Void)?
     /// item的尺寸
-    var layoutSizeForItemAt : ((UICollectionView,UICollectionViewLayout,IndexPath)->CGSize)?
+    public var layoutSizeForItemAt : ((UICollectionView,UICollectionViewLayout,IndexPath)->CGSize)?
     /// 内边距
-    var layoutInsetForSectionAt : ((UICollectionView,UICollectionViewLayout,Int)->UIEdgeInsets)?
+    public var layoutInsetForSectionAt : ((UICollectionView,UICollectionViewLayout,Int)->UIEdgeInsets)?
     /// 每组最小间距
-    var layoutMinimumLineSpacingForSectionAt : ((UICollectionView,UICollectionViewLayout,Int)->CGFloat)?
+    public var layoutMinimumLineSpacingForSectionAt : ((UICollectionView,UICollectionViewLayout,Int)->CGFloat)?
     /// 每组间距
-    var layoutMinimumInteritemSpacingForSectionAt : ((UICollectionView,UICollectionViewLayout,Int)->CGFloat)?
+    public var layoutMinimumInteritemSpacingForSectionAt : ((UICollectionView,UICollectionViewLayout,Int)->CGFloat)?
     /// 每一组头部视图size
-    var layoutReferenceSizeForHeaderInSection : ((UICollectionView,UICollectionViewLayout,Int)->CGSize)?
+    public var layoutReferenceSizeForHeaderInSection : ((UICollectionView,UICollectionViewLayout,Int)->CGSize)?
     /// 每一组尾部试图size
-    var layoutReferenceSizeForFooterInSection : ((UICollectionView,UICollectionViewLayout,Int)->CGSize)?
+    public var layoutReferenceSizeForFooterInSection : ((UICollectionView,UICollectionViewLayout,Int)->CGSize)?
 }
 
 extension WPCollectionViewDelegate:UICollectionViewDelegateFlowLayout{

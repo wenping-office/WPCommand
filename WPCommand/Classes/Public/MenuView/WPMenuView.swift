@@ -7,24 +7,45 @@
 
 import UIKit
 
-public protocol WPMenuViewDelegate {
-    /// 即将选中一个菜单的索引
-    func didSelected(at index:Int)
+public extension WPMenuView{
+    enum NavigationStatus {
+        /// 默认状态
+        case normal
+        /// 选中状态
+        case selected
+    }
 }
 
-public extension WPMenuViewDelegate{
-    func didSelected(at index:Int){}
-}
-
-extension WPMenuView{
-    struct MenuItem {
-        let title:String?
+public extension WPMenuView{
+    
+    /// 添加一组item
+    /// - Parameter items: items
+    func setItems(items:[WPMenuViewNavigationProtocol]){
+        let navGroup = navView.group
+        navGroup.items.removeAll()
+        items.forEach { elmt in
+            elmt.upledeStatus(status: .normal)
+            let item = WPCollectionItem()
+            item.itemSize = .init(width: 100, height: navigationHeight)
+            item.info = elmt
+            navGroup.items.append(item)
+        }
+        navView.contentView.reloadData()
+        
+        let bodyGroup =  bodyView.group
+        bodyGroup.items.removeAll()
+        items.forEach { elmt in
+            let item = WPCollectionItem()
+            item.info = elmt
+            bodyGroup.items.append(item)
+        }
+        
+        bodyView.contentCollectionView.reloadData()
     }
 }
 
 /// 菜单视图
 public class WPMenuView: WPBaseView {
-    
     /// 导航条高度
     private let navigationHeight : CGFloat
     /// 当前导航视图
@@ -32,9 +53,13 @@ public class WPMenuView: WPBaseView {
     /// 内容视图
     private let contentView = UITableView(frame: .zero)
     /// 头部视图
-    private let headerView = WPMenuChildView()
+    private let headerView = UITableViewCell()
     /// 菜单视图
     private let bodyView = WPMenuChildView()
+    /// 数据源
+    public weak var dataSource : WPMenuViewDataSource?
+    /// 代理
+    public weak var delegate : WPMenuViewDelegate?
     
     public init(navigationHeight:CGFloat) {
         self.navigationHeight = navigationHeight
@@ -44,7 +69,6 @@ public class WPMenuView: WPBaseView {
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 
     public override func initSubView() {
         contentView.delegate = self
@@ -55,45 +79,78 @@ public class WPMenuView: WPBaseView {
         }
     }
     
-    public override var frame: CGRect{
-        didSet{
-            contentView.reloadData()
+    public override func observeSubViewEvent() {
+        // 导航按钮点击
+        navView.contentView.itemsSelectedBlock = {[weak self] item in
+            self?.didSelected(item: item)
+        }
+        // bodyView滑动
+        bodyView.contentCollectionView.itemsSelectedBlock = {[weak self] item in
+            self?.didSelected(item: item)
         }
     }
 }
 
 extension WPMenuView:UITableViewDelegate,UITableViewDataSource{
+    
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        switch indexPath.row {
+        switch indexPath.section {
         case 0:
             return headerView
         case 1:
             return bodyView
         default:
-           return UITableViewCell(frame: .zero)
+            return UITableViewCell(frame: .zero)
         }
     }
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return navigationHeight
+        return section <= 0 ? 0 : navigationHeight
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return navView
+        navView.backgroundColor = .wp_random
+        return section <= 0 ? nil : navView
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return wp_height - navigationHeight
+        let bodyHeight = wp_height - navigationHeight
+        bodyView.group.items.forEach { item in
+            item.itemSize = .init(width: wp_width, height: bodyHeight)
+        }
+        bodyView.contentCollectionView.reloadData()
+        return indexPath.section <= 0 ? 0 : bodyHeight
     }
 }
 
 
+extension WPMenuView{
+    
+    /// 选中一个item
+    private func didSelected(item:WPCollectionItem){
+        navView.contentView.groups.forEach { group in
+            group.items.forEach { item in
+                item.status = .normal
+                item.update()
+            }
+        }
+        item.status = .selected
+        item.update()
 
+        let menuItem = item.info as? WPMenuViewNavigationProtocol
+
+        menuItem?.upledeStatus(status: item.status == .normal ? .normal : .selected)
+    }
+}
 
 
 
@@ -104,27 +161,69 @@ extension WPMenuView:UITableViewDelegate,UITableViewDataSource{
 
 
 class WPMenuNavigationView: WPBaseView {
+    /// 内容视图
     let contentView = WPCollectionAutoLayoutView(cellClass: WPMenuNavigationViewCell.self)
+    let group = WPCollectionGroup()
+
     override func initSubView() {
-        backgroundColor = .wp_random
+        contentView.backgroundColor = .clear
+        contentView.groups = [group]
+        backgroundColor = .white
+        addSubview(contentView)
+    }
+    
+    override func initSubViewLayout() {
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 }
 
 /// 菜单视图
 class WPMenuNavigationViewCell: UICollectionViewCell{
-    /// 标题
-    var title : String?
+    override func didSetItem(item: WPCollectionItem) {
+        if let menuItem = item.info as? WPMenuViewNavigationProtocol {
+            wp_removeAllSubViewFromSuperview()
+            addSubview(menuItem)
+            menuItem.snp.remakeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+    }
 }
 
 /// 菜单视图
 class WPMenuChildView: UITableViewCell{
+
+    let contentCollectionView = WPCollectionAutoLayoutView(cellClass: WPMenuChildContentCell.self, scrollDirection: .horizontal)
+    
+    let group = WPCollectionGroup()
+
     init() {
         super.init(style: .default, reuseIdentifier: nil)
-        
         contentView.backgroundColor = .wp_random
+        contentCollectionView.groups = [group]
+        contentCollectionView.backgroundColor = .white
+        contentView.addSubview(contentCollectionView)
+        contentCollectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        contentCollectionView.backgroundColor = .blue
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+class WPMenuChildContentCell: UICollectionViewCell {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .wp_random
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
 }

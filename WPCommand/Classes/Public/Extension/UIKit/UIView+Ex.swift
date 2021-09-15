@@ -190,6 +190,13 @@ public extension UIView {
             backgroundColor = .wp_random
         }
     }
+    
+    /// 移除所有子视图
+    func wp_removeAllSubViewFromSuperview(){
+        subviews.forEach { elmt in
+            elmt.removeFromSuperview()
+        }
+    }
 
     /// 绘制虚线
     /// - Parameters:

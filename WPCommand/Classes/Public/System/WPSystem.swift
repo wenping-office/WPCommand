@@ -38,9 +38,55 @@ public var wp_isFullScreen: Bool{
     return false
 }
 
+public extension WPSystem{
+    /// 当前设备类型
+    static var deviceType : DeviceType{
+        let modelStr = WPSystem.modelStr
+        if modelStr.wp_isContent("iPhone") {
+            return .iPhone
+        }else if modelStr.wp_isContent("iPod"){
+            return .iPod
+        }else if modelStr.wp_isContent("iPad"){
+            return .iPad
+        }else if modelStr.wp_isContent("i386") || modelStr.wp_isContent("x86_64"){
+            return .simulator
+        }else{
+            return .unknown
+        }
+    }
+    
+    /// 当前手机设备型号
+    static var deviceModel : DeviceModel{
+        switch WPSystem.deviceType {
+        case .iPhone:
+            return DeviceModel.init(modelNumber: WPSystem.DeviceModel.modelPhoneNum)
+        case .iPod:
+            return DeviceModel.init(modelNumber: WPSystem.DeviceModel.modeliPodNum)
+        case .iPad:
+            return DeviceModel.init(modelNumber: WPSystem.DeviceModel.modeliPadNum)
+        case .simulator:
+           return .simulator
+        case .unknown:
+            return .unknown
+        }
+    }
+    /// 型号
+    static var modelStr : String{
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else {
+                return identifier
+            }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        return identifier
+    }
+}
 
 open class WPSystem: NSObject {
-    
+
     /// 垃圾桶
     let disposeBag = DisposeBag()
     
@@ -404,3 +450,244 @@ public extension WPSystem{
     }
 }
 
+
+public extension WPSystem{
+    
+    enum DeviceType {
+        /// iTouch
+        case iPod
+        /// iPad
+        case iPad
+        /// 手机
+        case iPhone
+        /// 模拟器
+        case simulator
+        /// 未知
+        case unknown
+    }
+
+    enum DeviceModel{
+        /// 未知
+        case iPhone4
+        case iPhone4S
+        case iPhone5
+        case iPhone5c
+        case iPhone5s
+        case iPhone6
+        case iPhone6s
+        case iPhone6Plus
+        case iPhone6SPlus
+        case iPhoneSE
+        case iPhone7
+        case iPhone7Plus
+        case iPhone8
+        case iPhone8Plus
+        case iPhoneX
+        case iPhoneXS
+        case iPhoneXSMax
+        case iPhoneXR
+        case iPhone11
+        case iPhone11Pro
+        case iPhone11ProMax
+        case iPhoneSE2
+        case iPhone12Mini
+        case iPhone12
+        case iPhone12Pro
+        case iPhone12ProMax
+        case iPodTouch1G
+        case iPodTouch2G
+        case iPodTouch3G
+        case iPodTouch4G
+        case iPodTouch5G
+        case iPodTouch6G
+        case iPodTouch7G
+        case iPad
+        case iPad3G
+        case iPad2
+        case iPadMini
+        case iPad3
+        case iPad4
+        case iPadAir
+        case iPadMini2
+        case iPadMini3
+        case iPadMini4
+        case iPadAir2
+        case iPadPro_9_7
+        case iPadPro_12_9
+        case iPad5
+        case iPadPro_12_9inch_2nd_gen
+        case iPadPro_10_5inch
+        case iPad6
+        case iPad7
+        case iPadPro_11inch
+        case iPadPro_12_9inch_3rd_gen
+        case iPadPro_11inch_2nd_gen
+        case iPadPro_12_9inch_4th_gen
+        case iPadMini5
+        case unknown
+        case simulator
+       public init(modelNumber:Int) {
+            switch WPSystem.deviceType {
+            case .iPhone:
+                switch modelNumber {
+                case 31,32,33:
+                    self = .iPhone4
+                case 41:
+                    self = .iPhone4S
+                case 51,52:
+                    self = .iPhone5
+                case 53,55:
+                    self = .iPhone5c
+                case 61,62:
+                    self = .iPhone5s
+                case 71:
+                    self = .iPhone6Plus
+                case 72:
+                    self = .iPhone6
+                case 81:
+                    self = .iPhone6s
+                case 82:
+                    self = .iPhone6SPlus
+                case 84:
+                    self = .iPhoneSE
+                case 91,93:
+                    self = .iPhone7
+                case 92,94:
+                    self = .iPhone7Plus
+                case 101,104:
+                    self = .iPhone8
+                case 102,105:
+                    self = .iPhone8Plus
+                case 103,106:
+                    self = .iPhoneX
+                case 112:
+                    self = .iPhoneXS
+                case 114,116:
+                    self = .iPhoneXSMax
+                case 118:
+                    self = .iPhoneXR
+                case 121:
+                    self = .iPhone11
+                case 123:
+                    self = .iPhone11Pro
+                case 125:
+                    self = .iPhone11ProMax
+                case 128:
+                    self = .iPhoneSE2
+                case 131:
+                    self = .iPhone12Mini
+                case 132:
+                    self = .iPhone12
+                case 133:
+                    self = .iPhone12Pro
+                case 134:
+                    self = .iPhone12ProMax
+                default:
+                    self = .unknown
+                }
+            case .iPad:
+                switch modelNumber {
+                case 11:
+                    self = .iPad
+                case 12:
+                    self = .iPad3G
+                case 21,22,23,24:
+                    self = .iPad2
+                case 25,26,27:
+                    self = .iPadMini
+                case 31,32,33:
+                    self = .iPad3
+                case 34,35,36:
+                    self = .iPad4
+                case 41,42:
+                    self = .iPadAir
+                case 44,45,46:
+                    self = .iPadMini2
+                case 47,48,49:
+                    self = .iPadMini3
+                case 51,52:
+                    self = .iPadMini4
+                case 53,54:
+                    self = .iPadAir2
+                case 63,64:
+                    self = .iPadPro_9_7
+                case 67,68:
+                    self = .iPadPro_12_9
+                case 611,612:
+                    self = .iPad5
+                case 71,72:
+                    self = .iPadPro_12_9inch_2nd_gen
+                case 73,74:
+                    self = .iPadPro_10_5inch
+                case 75,76:
+                    self = .iPad6
+                case 711,712:
+                    self = .iPad7
+                case 81,82,83,84:
+                    self = .iPadPro_11inch
+                case 85,86,87,88:
+                    self = .iPadPro_12_9inch_3rd_gen
+                case 89,810:
+                    self = .iPadPro_11inch_2nd_gen
+                case 811,812:
+                    self = .iPadPro_12_9inch_4th_gen
+                case 111:
+                    self = .iPadMini5
+                default:
+                    self = .unknown
+                }
+            case .iPod:
+                switch modelNumber {
+                case 11:
+                    self = .iPodTouch1G
+                case 21:
+                    self = .iPodTouch2G
+                case 31:
+                    self = .iPodTouch3G
+                case 41:
+                    self = .iPodTouch4G
+                case 51:
+                    self = .iPodTouch5G
+                case 71:
+                    self = .iPodTouch6G
+                case 91:
+                    self = .iPodTouch7G
+                default:
+                    self = .unknown
+                }
+            case .simulator:
+                self = .simulator
+            default:
+                self = .unknown
+            }
+        }
+        
+        /// 判断是否是目标设备 如果当前设备是目标设备返回true 否则false
+        /// - Returns: 结果
+        public func isTarget(_ devices:[DeviceModel])->Bool{
+            let resualt = devices.wp_isContent { elmt in
+                elmt == self
+            }
+            return resualt
+        }
+        
+        /// iPhone架构号码
+        static var modelPhoneNum : Int{
+            let num = WPSystem.modelStr.wp_filter("iPhone").wp_filter(",")
+            return Int.init(num) ?? 0
+        }
+        
+        /// iPod架构号
+        static var modeliPodNum : Int{
+            let num = WPSystem.modelStr.wp_filter("iPod").wp_filter(",")
+            return Int.init(num) ?? 0
+        }
+        
+        /// iPad架构号
+        static var modeliPadNum : Int{
+            let num = WPSystem.modelStr.wp_filter("iPad").wp_filter(",")
+            return Int.init(num) ?? 0
+        }
+    }
+    
+}

@@ -17,8 +17,12 @@ class TestMenuVC: WPBaseVC {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        let items = [testMenuItem(),testMenuItem()]
+
         menuView.backgroundColor = .wp_random
-        let tableView = UITableView()
+
+        menuView.setItems(items: items)
+        
     }
     
     override func initSubView() {
@@ -31,4 +35,15 @@ class TestMenuVC: WPBaseVC {
         }
     }
 
+}
+
+
+class testMenuItem: UILabel,WPMenuViewNavigationProtocol {
+    func upledeStatus(status: WPMenuView.NavigationStatus) {
+        text = "测试代码"
+        textColor = .wp_random
+        backgroundColor = .wp_random
+    }
+    
+    
 }
