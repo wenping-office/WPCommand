@@ -7,8 +7,13 @@
 
 import UIKit
 
+fileprivate var AlertTargetViewPointer = "WPAlertProtocolTargetViewPointer"
+
 /// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出
 public protocol WPAlertProtocol:UIView {
+    
+    /// 弹窗根视图
+    var targetView : UIView? { get set }
     /// 弹窗状态变化后执行
     func updateStatus(status: WPAlertManager.Progress)
     /// 弹窗的属性
@@ -23,6 +28,17 @@ public protocol WPAlertProtocol:UIView {
 }
 
 public extension WPAlertProtocol{
+    
+    
+    /// 弹窗根视图
+    var targetView : UIView? {
+        get{
+            return WPRunTime.get(self, &AlertTargetViewPointer)
+        }
+        set{
+            return WPRunTime.set(self, newValue, &AlertTargetViewPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
 
     /// 弹窗的属性
     func alertInfo()->WPAlertManager.Alert{
@@ -57,7 +73,8 @@ public extension WPAlertProtocol{
     ///   - targetView: 弹窗根视图
     ///   - option: 选项
     func show(in targetView:UIView? = nil,option:WPAlertManager.Option = .default){
-        WPAlertManager.default.target(in: targetView).showNext(self, option: option)
+        self.targetView = targetView
+        WPAlertManager.default.showNext(self, option: option)
     }
     
     /// 隐藏弹框

@@ -10,8 +10,9 @@ import UIKit
 import WPCommand
 
 class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
-    func viewForIndex(index: Int) -> UIView? {
-        return nil
+
+    func menuBodyViewForIndex(index: Int) -> UIView? {
+        return UIView()
     }
 
     let menuView = WPMenuView(navigationHeight: 44)
@@ -30,6 +31,7 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
     
     override func initSubView() {
         menuView.dataSource = self
+        
         view.addSubview(menuView)
     }
 
@@ -43,11 +45,16 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
 
 
 class testMenuItem: UILabel,WPMenuViewNavigationProtocol {
-    func upledeStatus(status: WPMenuView.NavigationStatus) {
-        text = "测试代码"
-        textColor = .wp_random
-        backgroundColor = .wp_random
+    func menuItemWidth() -> CGFloat {
+        return CGFloat(arc4random_uniform(50) + 50)
     }
     
-    
+    func upledeStatus(status: WPMenuView.NavigationStatus) {
+        text = "测试代码"
+        if status == .normal {
+            backgroundColor = .white
+        }else{
+            backgroundColor = .blue
+        }
+    }
 }

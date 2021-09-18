@@ -11,6 +11,9 @@ import UIKit
 public protocol WPMenuViewNavigationProtocol:UIView {
     /// 状态更新以后回调用
     func upledeStatus(status:WPMenuView.NavigationStatus)
+    
+    /// 每一个菜单item的width
+    func menuItemWidth()->CGFloat
 }
 
 public extension WPMenuViewNavigationProtocol{

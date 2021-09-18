@@ -7,39 +7,73 @@
 
 import UIKit
 
-class WPMenuNavigationView: WPBaseView {
+class WPMenuNavigationItem {
+    /// 每一个item的size
+    let size : CGSize
+    /// 当前item索引
+    let index : Int
+    /// 是否被选中
+    var isSelected = false
+    /// item
+    let navigationItem : WPMenuViewNavigationProtocol
+
+    init(size:CGSize,
+         index:Int,
+         item:WPMenuViewNavigationProtocol) {
+        self.index = index
+        self.size = size
+        self.navigationItem = item
+    }
+}
+
+class WPMenuNavigationView: UITableViewHeaderFooterView {
     
     let layout = UICollectionViewFlowLayout()
     /// 内容视图
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     /// 当前数据源
-    let data : [WPMenuViewNavigationProtocol] = []
+    var data : [WPMenuNavigationItem] = []{
+        didSet{
+            collectionView.reloadData()
+        }
+    }
 
-    override func initSubView() {
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+        
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(WPMenuNavigationCell.self, forCellWithReuseIdentifier: NSStringFromClass(WPMenuNavigationCell.self))
         backgroundColor = .white
-        addSubview(collectionView)
+        contentView.addSubview(collectionView)
+        collectionView.backgroundColor = .blue
         
-    }
-    
-    override func initSubViewLayout() {
         collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.left.right.bottom.top.equalToSuperview()
         }
     }
     
-    func setCollectionSize(_ size:CGSize){
-        layout.itemSize = size
-        collectionView.reloadData()
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    /// 注册视图
+    func registerCell() {
+        for index in 0..<data.count {
+            let reuseIdentifier = NSStringFromClass(WPMenuNavigationCell.self) + index.description
+            collectionView.register(WPMenuNavigationCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        }
     }
 }
 
-extension WPMenuNavigationView:UICollectionViewDelegate{
+extension WPMenuNavigationView:UICollectionViewDelegate,UICollectionViewDelegateFlowLayout{
 
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        return data[indexPath.row].size
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
     }
 }
@@ -50,21 +84,30 @@ extension WPMenuNavigationView:UICollectionViewDataSource{
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(WPMenuNavigationCell.self), for: indexPath)
+        
+        let reuseIdentifier = NSStringFromClass(WPMenuNavigationCell.self) + indexPath.row.description
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! WPMenuNavigationCell
+        
+        cell.navItem = data[indexPath.row]
         return cell
     }
-    
     
 }
 
 /// 菜单视图
 class WPMenuNavigationCell: UICollectionViewCell{
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .wp_random
-    }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    /// 导航栏item
+    var navItem : WPMenuNavigationItem?{
+        didSet{
+            if let item = navItem {
+                item.navigationItem.upledeStatus(status: .normal)
+                wp_removeAllSubViewFromSuperview()
+                addSubview(item.navigationItem)
+                item.navigationItem.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+            }
+        }
     }
 }

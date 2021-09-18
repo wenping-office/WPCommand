@@ -21,33 +21,30 @@ public extension WPMenuView{
     /// 添加一组item
     /// - Parameter items: items
     func setItems(items:[WPMenuViewNavigationProtocol]){
-//        let navGroup = navView.group
-//        navGroup.items.removeAll()
-//        items.forEach { elmt in
-//            elmt.upledeStatus(status: .normal)
-//            let item = WPCollectionItem()
-//            item.itemSize = .init(width: 100, height: navigationHeight)
-//            item.info = elmt
-//            navGroup.items.append(item)
-//        }
-//        navView.contentView.reloadData()
-//
-//        var index = 0
-//        let bodyGroup =  bodyView.group
-//        bodyGroup.items.removeAll()
-//        items.forEach { elmt in
-//            let item = WPCollectionItem()
-//            item.customIdentifier = index.description
-//            item.willDisplay = {[weak self] item,cell in
-//                let bodyCell = cell as? WPMenuChildContentCell
-//                bodyCell?.setBodyView(self?.dataSource?.viewForIndex(index: item.indexPath.row))
-//            }
-//            item.info = elmt
-//            bodyGroup.items.append(item)
-//            index+=1
-//        }
         
-//        bodyView.contentCollectionView.reloadData()
+        var navItems : [WPMenuNavigationItem] = []
+        var bodyItems : [WPMenuBodyViewItem] = []
+        
+        for index in 0..<items.count {
+            let bodyItem = WPMenuBodyViewItem(index: index, view: self.dataSource?.menuBodyViewForIndex(index: index))
+            let navItem = WPMenuNavigationItem(size: .init(width: items[index].menuItemWidth(), height: navigationHeight), index: index, item: items[index])
+            bodyItems.append(bodyItem)
+            navItems.append(navItem)
+        }
+        navView.data = navItems
+        navView.registerCell()
+        bodyView.data = bodyItems
+        bodyView.registerCell()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        let bodyHeight = wp_height - navigationHeight
+        if bodyHeight > 0 {
+            bodyView.setCollectionSize(.init(width: wp_width, height: bodyHeight))
+            contentView.reloadData()
+        }
     }
 }
 
@@ -71,6 +68,7 @@ public class WPMenuView: WPBaseView {
     public init(navigationHeight:CGFloat) {
         self.navigationHeight = navigationHeight
         super.init(frame: .zero)
+        contentView.register(WPMenuNavigationView.self, forHeaderFooterViewReuseIdentifier: "WPMenuNavigationView")
     }
     
     required public init?(coder: NSCoder) {
@@ -88,6 +86,16 @@ public class WPMenuView: WPBaseView {
     
     public override func observeSubViewEvent() {
         
+        bodyView.contentOffSet = { offset in
+            print(offset)
+        }
+        bodyView.selectedIndexBlock = {[weak self] index in
+
+            self?.navView.data.forEach { item in
+                item.navigationItem.upledeStatus(status: .normal)
+            }
+            self?.navView.data[index].navigationItem.upledeStatus(status: .selected)
+        }
     }
 }
 
@@ -118,14 +126,12 @@ extension WPMenuView:UITableViewDelegate,UITableViewDataSource{
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        navView.backgroundColor = .wp_random
-        return section <= 0 ? nil : navView
+
+        return section <= 0 ? nil : tableView.dequeueReusableHeaderFooterView(withIdentifier: "WPMenuNavigationView")
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let bodyHeight = wp_height - navigationHeight
-
-
         return indexPath.section <= 0 ? 0 : bodyHeight
     }
 }
@@ -134,19 +140,20 @@ extension WPMenuView:UITableViewDelegate,UITableViewDataSource{
 extension WPMenuView{
     
     /// 选中一个item
-    private func didSelected(item:WPCollectionItem){
-//        navView.contentView.groups.forEach { group in
-//            group.items.forEach { item in
-//                item.status = .normal
-//                item.update()
-//            }
-//        }
-//        item.status = .selected
-//        item.update()
-//
-//        let menuItem = item.info as? WPMenuViewNavigationProtocol
-//
-//        menuItem?.upledeStatus(status: item.status == .normal ? .normal : .selected)
+    private func didSelected(_ index:Int){
+        delegate?.menuViewDidSelected(index: index)
+        
+        let navItem = navView.data[index]
+
+        navView.data.forEach { elmt in
+            if elmt.isSelected{
+                elmt.navigationItem.upledeStatus(status: .normal)
+            }
+            elmt.isSelected = false
+        }
+
+        navItem.isSelected = true
+        navItem.navigationItem.upledeStatus(status: .selected)
     }
 }
 
