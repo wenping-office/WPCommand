@@ -120,7 +120,9 @@ public class WPAlertManager {
     public func showNext(_ alert:WPAlertProtocol,option:Option = .immediately(keep: true)){
         alert.tag = WPAlertManager.identification()
         let level = (currentAlert?.level ?? 0) - 1
-        alerts.insert(.init(alert: alert, level: level), at: 0)
+        let alertItem : WPAlertManager.AlertItem = .init(alert: alert, level: level)
+        alertItem.target = alert.targetView
+        alerts.insert(alertItem, at: 0)
         alert.updateStatus(status: .cooling)
         
         if currentAlertProgress == .didShow && alerts.count >= 1{
@@ -236,7 +238,8 @@ extension WPAlertManager{
         if let item = currentAlert{
             var isAutoLayout = false
             if isShow {
-                if item.target != nil {
+                if target == nil && item.target == nil {
+                }else{
                     target = item.target
                 }
                 addMask(info: item.alert.maskInfo())
