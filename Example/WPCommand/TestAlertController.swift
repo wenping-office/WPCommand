@@ -40,7 +40,7 @@ class TestAlertController: WPBaseVC {
         })
 
         alert.rightBtn.rx.tap.subscribe(onNext: {
-            WPAlertManager.default.target(in: self.view).showNext(self.alert2(),option: .default)
+            WPAlertManager.default.showNext(self.alert2(),option: .default)
         })
         return alert
     }

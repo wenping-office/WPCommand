@@ -72,16 +72,10 @@ public class WPAlertManager {
     
     /// 单例
     public static var  `default` : WPAlertManager = {
-        let manager = WPAlertManager(target: UIApplication.shared.wp_topWindow)
+        let manager = WPAlertManager()
         return manager
     }()
-    
-    /// 初始化一个manager
-    /// - Parameter target: 弹窗目标视图
-    public init(target:UIView? = nil){
-        _ = self.target(in: target)
-    }
-    
+
     /// 添加一个弹窗
     public func addAlert(_ alert : WPAlertProtocol){
         alert.updateStatus(status: .cooling)
@@ -136,15 +130,6 @@ public class WPAlertManager {
             alertAnimate(isShow: true,option: .default)
         }
         
-    }
-    
-    /// 弹窗的根视图 在哪个视图上弹出
-    /// - Parameter view:
-    /// - Returns: 弹窗管理者
-    @discardableResult
-    public func target(in view:UIView?) -> WPAlertManager {
-        target = view
-        return self
     }
     
     /// 隐藏当前的弹框 如果弹框序列里还有弹窗将会弹出下一个
