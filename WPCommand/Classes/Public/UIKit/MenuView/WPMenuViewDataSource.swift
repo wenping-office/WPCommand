@@ -11,6 +11,13 @@ public protocol WPMenuViewDataSource:NSObjectProtocol{
 
     /// 当前索引返回的视图
     /// - Parameter index: 索引
-    func menuBodyViewForIndex(index:Int)->UIView?
+    func menuBodyViewForIndex(index:Int) -> WPMenuBodyViewProtocol
     
+    /// 返回当前页面的headerView
+    /// - Parameter index: 索引
+    func menuHeaderViewForIndex(index:Int) -> WPMenuHeaderViewProtocol?
+}
+
+extension WPMenuViewDataSource{
+    func menuHeaderViewForIndex(index:Int) -> WPMenuHeaderViewProtocol?{ return nil }
 }

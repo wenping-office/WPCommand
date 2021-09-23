@@ -7,22 +7,18 @@
 
 import UIKit
 
-class WPMenuNavigationItem {
+class WPMenuNavigationItem:WPMenuView.Item {
     /// 每一个item的size
     let size : CGSize
-    /// 当前item索引
-    let index : Int
-    /// 是否被选中
-    var isSelected = false
     /// item
-    let navigationItem : WPMenuViewNavigationProtocol
+    let navigationItem : WPMenuNavigationViewProtocol
 
     init(size:CGSize,
          index:Int,
-         item:WPMenuViewNavigationProtocol) {
-        self.index = index
+         item:WPMenuNavigationViewProtocol) {
         self.size = size
         self.navigationItem = item
+        super.init(index: index)
     }
 }
 
@@ -37,17 +33,23 @@ class WPMenuNavigationView: UITableViewHeaderFooterView {
             collectionView.reloadData()
         }
     }
+    /// 选中按钮回调
+    var didSelected:((Int)->Void)?
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 0
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
         collectionView.delegate = self
-        backgroundColor = .white
+        let backView = UIView()
+        backView.backgroundColor = .clear
+        backgroundView = backView
         contentView.addSubview(collectionView)
-        collectionView.backgroundColor = .blue
-        
+            
         collectionView.snp.makeConstraints { make in
             make.left.right.bottom.top.equalToSuperview()
         }
@@ -74,7 +76,7 @@ extension WPMenuNavigationView:UICollectionViewDelegate,UICollectionViewDelegate
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        didSelected?(indexPath.row)
     }
 }
 
@@ -87,7 +89,6 @@ extension WPMenuNavigationView:UICollectionViewDataSource{
         
         let reuseIdentifier = NSStringFromClass(WPMenuNavigationCell.self) + indexPath.row.description
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! WPMenuNavigationCell
-        
         cell.navItem = data[indexPath.row]
         return cell
     }
@@ -95,13 +96,18 @@ extension WPMenuNavigationView:UICollectionViewDataSource{
 }
 
 /// 菜单视图
-class WPMenuNavigationCell: UICollectionViewCell{
+class WPMenuNavigationCell: WPBaseCollectionViewCell{
     
+    override func initSubView() {
+        backgroundColor = .clear
+    }
     /// 导航栏item
     var navItem : WPMenuNavigationItem?{
         didSet{
             if let item = navItem {
-                item.navigationItem.upledeStatus(status: .normal)
+                if let menuView = superview?.superview?.superview as? WPMenuView{
+                    item.navigationItem.menuViewChildViewUpdateStatus(menuView: menuView, status: .normal)
+                }
                 wp_removeAllSubViewFromSuperview()
                 addSubview(item.navigationItem)
                 item.navigationItem.snp.makeConstraints { make in
