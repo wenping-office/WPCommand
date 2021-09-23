@@ -29,7 +29,7 @@ public extension WPMenuView{
         case left
         /// 靠右选中
         case right
-        /// 剧中选中
+        /// 居中选中
         case center
     }
     
