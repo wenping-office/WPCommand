@@ -17,13 +17,18 @@ public extension UICollectionView{
             delegate = newValue as? UICollectionViewDelegate
         }
         get{
-            guard let wp_delegate : WPTableViewDelegate = WPRunTime.get(self, &WPCollectionDelegatePointer) else {
+            guard let wp_delegate : WPCollectionViewDelegate = WPRunTime.get(self, &WPCollectionDelegatePointer) else {
                 let wp_delegate = WPCollectionViewDelegate()
                 self.wp_delegate = wp_delegate
                 return wp_delegate
             }
             return wp_delegate
         }
+    }
+    
+    /// 桥接代理
+    var wp_bridgeDelegate : WPCollectionViewDelegate{
+        return wp_delegate as! WPCollectionViewDelegate
     }
 }
 

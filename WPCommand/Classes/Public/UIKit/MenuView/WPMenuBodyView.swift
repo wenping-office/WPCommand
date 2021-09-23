@@ -7,11 +7,9 @@
 
 import UIKit
 
-class WPMenuBodyViewItem {
-    /// 当前item索引
-    let index : Int
+class WPMenuBodyViewItem:WPMenuView.Item {
     /// 展示的视图
-    var view : UIView?{
+    var bodyView : WPMenuBodyViewProtocol?{
         didSet{
             isAddToSuperView = false
         }
@@ -23,10 +21,10 @@ class WPMenuBodyViewItem {
         return NSStringFromClass(WPMenuBodyCell.self) + index.description
     }
     
-    init(index:Int,view:UIView?) {
-        
-        self.index = index
-        self.view = view
+    init(index:Int,
+         bodyView:WPMenuBodyViewProtocol?) {
+        super.init(index: index)
+        self.bodyView = bodyView
     }
 }
 
@@ -41,7 +39,10 @@ class WPMenuBodyView: UITableViewCell{
     /// 内容滚动回调
     var contentOffSet : ((CGFloat)->Void)?
     /// 当前滚动到的索引
-    var selectedIndexBlock : ((Int)->Void)?
+    var didSelected : ((Int)->Void)?
+    /// 是否执行选中动画
+    var selectedAnimate = false
+    
 
     init(){
         super.init(style: .default, reuseIdentifier: nil)
@@ -53,7 +54,7 @@ class WPMenuBodyView: UITableViewCell{
         collectionView.delegate = self
         collectionView.isPagingEnabled = true
         selectionStyle = .none
-        backgroundColor = .white
+        backgroundColor = .clear
         contentView.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -71,13 +72,16 @@ class WPMenuBodyView: UITableViewCell{
         }
     }
     
+    /// 设置内容size
     func setCollectionSize(_ size:CGSize){
         layout.itemSize = size
         collectionView.reloadData()
     }
     
+    /// 选中一页
+    /// - Parameter index: 索引
     func selected(_ index:Int){
-        collectionView.contentOffset = .init(x: CGFloat(index) * collectionView.wp_width, y: 0)
+        collectionView.scrollToItem(at: .init(row: index, section: 0), at: .left, animated: selectedAnimate)
     }
 }
 
@@ -88,7 +92,7 @@ extension WPMenuBodyView:UICollectionViewDelegate{
         let cell = cell as? WPMenuBodyCell
         
         if !item.isAddToSuperView {
-            cell?.setBodyView(item.view)
+            cell?.setBodyView(item.bodyView?.menuBodyView())
             item.isAddToSuperView = true
         }
     }
@@ -96,13 +100,11 @@ extension WPMenuBodyView:UICollectionViewDelegate{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offSet = scrollView.contentOffset.x / scrollView.wp_width
         contentOffSet?(offSet)
-        let index = Int(scrollView.contentOffset.x / scrollView.wp_width + 0.5)
-        selectedIndexBlock?(index)
     }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let index = Int(scrollView.contentOffset.x / scrollView.wp_width + 0.5)
-        selectedIndexBlock?(index)
+        didSelected?(index)
     }
 }
 
@@ -119,28 +121,26 @@ extension WPMenuBodyView:UICollectionViewDataSource{
 }
 
 
-class WPMenuBodyCell: UICollectionViewCell {
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .wp_random
-    }
+class WPMenuBodyCell: WPBaseCollectionViewCell {
+    /// 内容视图
+    var bodyView : UIView?
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func initSubView() {
+        backgroundColor = .clear
     }
 
     /// 添加一个视图
     func setBodyView(_ view:UIView?){
+        bodyView = view
         if let view = view {
             contentView.wp_removeAllSubViewFromSuperview()
             contentView.addSubview(view)
-            contentView.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
-            }
         }else{
             contentView.wp_removeAllSubViewFromSuperview()
         }
-
+    }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        bodyView?.frame = bounds
     }
 }

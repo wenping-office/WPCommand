@@ -25,6 +25,11 @@ public extension UITableView{
             return wp_delegate
         }
     }
+    
+    /// 桥接代理
+    var wp_bridgeDelegate : WPTableViewDelegate{
+        return wp_delegate as! WPTableViewDelegate
+    }
 }
 
 public class WPTableViewDelegate: WPScrollViewDelegate {

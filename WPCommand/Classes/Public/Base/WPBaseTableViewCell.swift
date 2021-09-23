@@ -20,9 +20,6 @@ open class WPBaseTableViewCell: UITableViewCell{
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
- extension WPBaseTableViewCell{
     
     // 绑定模型
     open func bindViewModel(){}
@@ -35,7 +32,7 @@ open class WPBaseTableViewCell: UITableViewCell{
     
     // 初始化视图
     open func initSubView(){}
-    
 }
+
 
 
