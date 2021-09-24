@@ -18,7 +18,9 @@ import CoreMotion
 /// 默认View边距
 public let wp_viewEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: -16, right: -16)
 /// 屏幕尺寸
-public let wp_Screen = UIScreen.main.bounds
+public var wp_Screen : CGRect {
+    return UIScreen.main.bounds
+}
 /// 导航栏高度
 public var wp_navigationHeight : CGFloat =  UIApplication.shared.statusBarFrame.size.height + UINavigationController().navigationBar.frame.size.height
 /// 安全距离
@@ -134,18 +136,17 @@ public extension WPSystem{
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification)
         }
         
-        /// 基于window中心Y获取键盘和目标视图的Y轴差值
+        /// 基于window中心Y获取目标视图的底部和键盘顶部的差值
         /// - Parameters:
         ///   - targetView: 目标view
         /// - Returns: 返回差值
-        public func frameOffset(in targetView:UIView) -> Observable<CGFloat> {
+        public func offsetY(in targetView:UIView) -> Observable<CGFloat> {
             return  WPSystem.share.keyboard.didChangeFrame.map { value in
                 guard
                     let endFrame = value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
                 else { return 0}
-                
                 let targetFrame = targetView.wp_frameInWidow
-                return endFrame.origin.y - ((targetFrame.height + UIScreen.main.bounds.height) * 0.5)
+                return endFrame.origin.y - targetFrame.maxY
             }
             
         }
