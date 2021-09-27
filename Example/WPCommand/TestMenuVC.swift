@@ -37,12 +37,71 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        let items = [testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem()]
+//        let items = [testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem()]
+//
+//        menuView.bounces = false
+////        menuView.navigationInset = .init(left: 40, right: 30, spacing: 30)
+//        menuView.setItems(items: items)
+//        menuView.backgroundColor = .wp_random
+        
 
-        menuView.bounces = false
-//        menuView.navigationInset = .init(left: 40, right: 30, spacing: 30)
-        menuView.setItems(items: items)
-        menuView.backgroundColor = .wp_random
+
+        let contentView = UIView()
+        view.addSubview(contentView)
+        contentView.backgroundColor = .blue
+        contentView.snp.makeConstraints { make in
+            make.left.right.top.equalToSuperview()
+            make.height.equalTo(600)
+        }
+        
+        let field = UITextField()
+        view.addSubview(field)
+        field.snp.makeConstraints { make  in
+            make.centerY.equalToSuperview().offset(-200)
+            make.left.right.equalToSuperview()
+            make.height.greaterThanOrEqualTo(30)
+        }
+        field.backgroundColor = .wp_random
+
+        // 测试代码
+        let testView = UIView()
+        testView.backgroundColor = .wp_random
+        contentView.addSubview(testView)
+
+        testView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.height.greaterThanOrEqualTo(44)
+            make.bottom.equalToSuperview().offset(0)
+        }
+        
+        WPSystem.share.keyboard.offsetY(in: testView).subscribe(onNext: { value in
+            if testView.superview != nil {
+                testView.snp.updateConstraints { make in
+                    make.bottom.equalToSuperview().offset(value)
+                }
+//                print(value)
+            }
+        })
+        
+        WPSystem.share.keyboard.willShow.subscribe(onNext: { value in
+            print("键盘将要显示")
+        })
+        WPSystem.share.keyboard.didShow.subscribe(onNext: { value in
+            print("键盘已显示")
+        })
+        WPSystem.share.keyboard.willHide.subscribe(onNext: { value in
+            print("键盘将要隐藏")
+        })
+        WPSystem.share.keyboard.didHide.subscribe(onNext: { value in
+            print("键盘已经隐藏")
+        })
+        WPSystem.share.keyboard.willChangeFrame.subscribe(onNext: { value in
+            print("键盘将要改变高度")
+        })
+        WPSystem.share.keyboard.didChangeFrame.subscribe(onNext: { value in
+            print("键盘已经改变高度")
+        })
+        
         
     }
     

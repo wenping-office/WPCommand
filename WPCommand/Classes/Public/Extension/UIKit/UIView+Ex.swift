@@ -22,7 +22,7 @@ public extension UIView{
 public extension UIView{
     /// 在keyWindow中的位置
      var wp_frameInWidow : CGRect{
-        return convert(bounds, to: UIApplication.shared.windows.last)
+        return convert(bounds, to: UIApplication.shared.keyWindow)
     }
 
     ///将当前视图转为UIImage

@@ -145,10 +145,18 @@ public extension WPSystem{
                 guard
                     let endFrame = value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
                 else { return 0}
-                let targetFrame = targetView.wp_frameInWidow
-                return endFrame.origin.y - targetFrame.maxY
+                
+                if endFrame.minY == wp_Screen.height{
+                    return 0
+                }else{
+                    let superFrame = targetView.superview?.wp_frameInWidow ?? .zero
+                    let targetFrame = targetView.wp_frameInWidow ?? .zero
+                    
+                    let supserOffsetY = wp_Screen.height - superFrame.maxY
+
+                    return 0
+                }
             }
-            
         }
     }
     
