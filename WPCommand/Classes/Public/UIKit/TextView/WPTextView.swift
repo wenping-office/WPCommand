@@ -37,7 +37,13 @@ open class WPTextView: UITextView {
     
     /// 私有api 关键字的key
     fileprivate var keyWordKeys : [String:String] = [:]
-    
+
+    open override var text: String!{
+        didSet{
+            textChange?(self)
+        }
+    }
+
     /// 初始化一个文本输入框
     /// - Parameters:
     ///   - inputMode: 输入模式
