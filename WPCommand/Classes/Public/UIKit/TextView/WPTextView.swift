@@ -26,6 +26,9 @@ open class WPTextView: UITextView {
         }
     }
     
+    /// 内容改变
+    public var textChange : ((WPTextView)->Void)?
+
     /// 输入模式
     public var mode : WPTextView.InputMode
     
@@ -100,6 +103,7 @@ extension WPTextView:UITextViewDelegate{
             textView.text = String(textView.text.prefix(maxCount))
         }
         
+        textChange?(self)
     }
     
 }
