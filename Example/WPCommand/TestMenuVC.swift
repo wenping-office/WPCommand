@@ -9,6 +9,7 @@
 import UIKit
 import WPCommand
 import MJRefresh
+import RxSwift
 
 class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
     let tableVC = testTableVC()
@@ -43,7 +44,6 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
 //        menuView.navigationInset = .init(left: 40, right: 30, spacing: 30)
         menuView.setItems(items: items)
         menuView.backgroundColor = .wp_random
-        
     }
     
     override func initSubView() {

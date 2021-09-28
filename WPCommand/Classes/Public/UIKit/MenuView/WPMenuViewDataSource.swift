@@ -18,6 +18,6 @@ public protocol WPMenuViewDataSource:NSObjectProtocol{
     func menuHeaderViewForIndex(index:Int) -> WPMenuHeaderViewProtocol?
 }
 
-extension WPMenuViewDataSource{
+public extension WPMenuViewDataSource{
     func menuHeaderViewForIndex(index:Int) -> WPMenuHeaderViewProtocol?{ return nil }
 }

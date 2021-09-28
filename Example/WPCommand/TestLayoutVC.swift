@@ -18,12 +18,12 @@ class TestLayoutVC: WPBaseVC {
         let alert = LabTestAlert()
         alert.show(in: self.view)
         
-        WPSystem.share.app.didBecomeActive.subscribe(onNext: {_ in
+        WPSystem.application.didBecomeActive.subscribe(onNext: {_ in
             let alert2 = LabTestAlert2()
             alert2.wp_size = .init(width: 250, height: 250)
             alert2.show(in: nil, option: .immediately(keep: true))
         })
-        
+
 //        WPGCD.main_asyncAfter(.now() + 4, task: {
 //            let alert2 = LabTestAlert2()
 //            alert2.wp_size = .init(width: 250, height: 250)
