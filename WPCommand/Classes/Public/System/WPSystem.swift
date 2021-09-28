@@ -130,7 +130,7 @@ public extension WPSystem{
         ///   - veiw: 目标视图
         ///   - bag: 垃圾桶 使用rxSwift实现
         /// - Returns: 观察者
-        public static func offsetY(in view:UIView,bag:DisposeBag)->Observable<CGFloat>{
+        public func offsetY(in view:UIView,bag:DisposeBag)->Observable<CGFloat>{
             var obServer : AnyObserver<CGFloat>?
             let ob : Observable<CGFloat> = .create { ob in
                 obServer = ob

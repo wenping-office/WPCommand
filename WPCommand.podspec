@@ -45,7 +45,12 @@ TODO: Add long description of the pod here.
   #   s.public_header_files = 'WPCommand/Classes/**/*.h'
 
   # 依赖系统库
-   s.frameworks = 'UIKit', 'Photos', 'AssetsLibrary', 'MediaPlayer', 'CoreTelephony', 'CoreLocation', 'AVFoundation'
+   s.frameworks = 'UIKit',
+ 'Photos', 'AssetsLibrary',
+ 'MediaPlayer',
+ 'CoreTelephony',
+ 'CoreLocation',
+ 'AVFoundation'
 
   
     # 第三方依赖库
@@ -53,12 +58,7 @@ TODO: Add long description of the pod here.
      #RxSwift系列
      s.dependency 'RxSwift'
      s.dependency 'RxCocoa'
-#     # 第三方依赖库
-#      s.dependency 'SnapKit','5.0.1'
-#      s.dependency 'Kingfisher','6.3.0'
-#      #RxSwift系列
-#      s.dependency 'RxSwift','6.2.0'
-#      s.dependency 'RxCocoa','6.2.0'
+
 
 s.prefix_header_contents = '#import "Bridge.h"'
      
