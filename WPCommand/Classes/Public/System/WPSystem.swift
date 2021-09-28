@@ -88,24 +88,14 @@ public extension WPSystem{
 }
 
 open class WPSystem: NSObject {
-
-    /// 垃圾桶
-    let disposeBag = DisposeBag()
-    
-    /// 单例
-    public static var share : WPSystem = {
-        let manager = WPSystem()
-        return manager
-    }()
-    
     /// 键盘相关
-    public let keyboard : WPSystem.KeyBoard = .init()
+    public static let keyboard : WPSystem.KeyBoard = .init()
     
     /// app相关
-    public let app : WPSystem.App = .init()
+    public static let application : WPSystem.Appliaction = .init()
     
     /// 屏幕相关
-    public let screen : WPSystem.Screen = .init()
+    public static let screen : WPSystem.Screen = .init()
 }
 
 public extension WPSystem{
@@ -135,33 +125,37 @@ public extension WPSystem{
         public var didChangeFrame : Observable<Notification>{
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification)
         }
-        
-        /// 基于window中心Y获取目标视图的底部和键盘顶部的差值
+        /// 获取目标视图与键盘顶部的Y轴差值 0 键盘收回 正数代表被键盘覆盖的差值 负数代表没有被键盘覆盖的差值
         /// - Parameters:
-        ///   - targetView: 目标view
-        /// - Returns: 返回差值
-        public func offsetY(in targetView:UIView) -> Observable<CGFloat> {
-            return  WPSystem.share.keyboard.didChangeFrame.map { value in
-                guard
-                    let endFrame = value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect
-                else { return 0}
-                
-                if endFrame.minY == wp_Screen.height{
-                    return 0
-                }else{
-                    let superFrame = targetView.superview?.wp_frameInWidow ?? .zero
-                    let targetFrame = targetView.wp_frameInWidow ?? .zero
-                    
-                    let supserOffsetY = wp_Screen.height - superFrame.maxY
-
-                    return 0
-                }
+        ///   - veiw: 目标视图
+        ///   - bag: 垃圾桶 使用rxSwift实现
+        /// - Returns: 观察者
+        public static func offsetY(in view:UIView,bag:DisposeBag)->Observable<CGFloat>{
+            var obServer : AnyObserver<CGFloat>?
+            let ob : Observable<CGFloat> = .create { ob in
+                obServer = ob
+                return Disposables.create()
             }
+            var targetFrame : CGRect = view.wp_frameInWidow
+
+            WPSystem.keyboard.willShow.subscribe(onNext: { value in
+                if targetFrame == .zero{
+                    targetFrame = view.wp_frameInWidow
+                }
+                let keyBoardEnd = (value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero
+                let of = -(targetFrame.maxY - keyBoardEnd.minY)
+                obServer?.onNext(of)
+            }).disposed(by: bag)
+
+            WPSystem.keyboard.willHide.subscribe(onNext: { value in
+                obServer?.onNext(0)
+            }).disposed(by: bag)
+            return ob
         }
     }
     
     /// app相关
-    struct App {
+    struct Appliaction {
         
         /// 将要进入前台台
         public var willEnterForeground : Observable<Notification>{
@@ -229,7 +223,7 @@ public extension WPSystem{
                 let maxWidth = wp_Screen.width
                 switch self {
                 case .p16x9:
-                    if WPSystem.share.screen.is16x9{
+                    if WPSystem.screen.is16x9{
                         return maxHeight
                     }else{
                         return maxWidth / 9 * 16
