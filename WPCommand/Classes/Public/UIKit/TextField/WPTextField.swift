@@ -26,6 +26,8 @@ open class WPTextField: UITextField {
         }
     }
     
+    /// 内容变动监听
+    public var textChange : ((WPTextField) -> Void)?
     /// 输入模式
     public var mode : WPTextField.InputMode
     
@@ -35,6 +37,12 @@ open class WPTextField: UITextField {
     /// 私有api 关键字的key
     fileprivate var keyWordKeys : [String:String] = [:]
     
+    open override var text: String?{
+        didSet{
+            textChange?(self)
+        }
+    }
+
     /// 初始化一个输入框
     /// - Parameters:
     ///   - inputMode: 输入模式
@@ -107,5 +115,7 @@ extension WPTextField:UITextFieldDelegate{
                 self.text = String(text.prefix(maxCount))
             }
          }
+        
+        textChange?(self)
     }
 }

@@ -26,6 +26,9 @@ open class WPTextView: UITextView {
         }
     }
     
+    /// 内容改变
+    public var textChange : ((WPTextView)->Void)?
+
     /// 输入模式
     public var mode : WPTextView.InputMode
     
@@ -34,7 +37,13 @@ open class WPTextView: UITextView {
     
     /// 私有api 关键字的key
     fileprivate var keyWordKeys : [String:String] = [:]
-    
+
+    open override var text: String!{
+        didSet{
+            textChange?(self)
+        }
+    }
+
     /// 初始化一个文本输入框
     /// - Parameters:
     ///   - inputMode: 输入模式
@@ -100,6 +109,7 @@ extension WPTextView:UITextViewDelegate{
             textView.text = String(textView.text.prefix(maxCount))
         }
         
+        textChange?(self)
     }
     
 }
