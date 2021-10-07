@@ -21,10 +21,9 @@ public extension UIView{
 
 public extension UIView{
     /// 在keyWindow中的位置
-     var wp_frameInWidow : CGRect{
+    var wp_frameInWidow : CGRect{
         return convert(bounds, to: UIApplication.shared.keyWindow)
     }
-
     ///将当前视图转为UIImage
     var wp_image : UIImage{
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
@@ -32,7 +31,6 @@ public extension UIView{
             layer.render(in: rendererContext.cgContext)
         }
     }
-    
     /// copy一个视图
     var wp_copy : Self{
         let data = NSKeyedArchiver.archivedData(withRootObject: Self.self)
@@ -43,46 +41,46 @@ public extension UIView{
         get { return frame.origin.x }
         set { frame.origin.x = newValue }
     }
-
+    
     var wp_y: CGFloat {
         get { return frame.origin.y }
         set { frame.origin.y = newValue }
     }
-
+    
     var wp_width: CGFloat {
         get { return frame.size.width }
         set { frame.size.width = newValue }
     }
-
+    
     var wp_height: CGFloat {
         get { return frame.size.height }
         set { frame.size.height = newValue }
     }
-
+    
     var wp_maxX: CGFloat {
         get { return wp_x + wp_width }
         set { wp_x = newValue - wp_width }
     }
-
+    
     var wp_maxY: CGFloat {
         get { return wp_y + wp_height }
         set { wp_y = newValue - wp_height }
     }
-
+    
     var wp_centerX: CGFloat {
         get { return center.x }
         set { center.x = newValue }
     }
-
+    
     var wp_centerY: CGFloat {
         get { return center.y }
         set { center.y = newValue }
     }
-
+    
     var wp_midX: CGFloat {
         return wp_width * 0.5
     }
-
+    
     var wp_midY: CGFloat {
         return wp_height * 0.5
     }
@@ -104,7 +102,7 @@ public extension UIView {
     @discardableResult
     /// 自身约束
     func wp_equalLayout(_ attribute: NSLayoutConstraint.Attribute,
-                            constant: CGFloat) -> NSLayoutConstraint {
+                        constant: CGFloat) -> NSLayoutConstraint {
         let layout = NSLayoutConstraint(item: self,
                                         attribute: attribute,
                                         relatedBy: .equal,
@@ -115,7 +113,7 @@ public extension UIView {
         addConstraint(layout)
         return layout
     }
-
+    
     /// 选择性圆角处理，需要设置frame后调用，如果是约束需要layout后调用才能生效
     /// - Parameters:
     ///   - corners: 原角点
@@ -127,11 +125,11 @@ public extension UIView {
         corners.forEach { elmt in
             value += elmt.rawValue
         }
-
+        
         if force && bounds.size == .zero {
             layoutIfNeeded()
         }
-
+        
         let maskPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: UIRectCorner(rawValue: value), cornerRadii: CGSize(width: radius, height: radius))
         var maskLayer = layer.mask
         if layer.mask == nil {
@@ -152,7 +150,7 @@ public extension UIView {
                         CGRect(x: wp_width - width, y: 0, width: width, height: wp_height),
                         CGRect(x: 0, y: wp_height - width, width: self.wp_width, height: wp_width),
                         CGRect(x: 0, y: 0, width: width, height: wp_height)]
-
+        
         for (idx, bo) in boolList.enumerated() {
             if bo {
                 let layer: CALayer = CALayer()
@@ -165,7 +163,8 @@ public extension UIView {
     }
     
     ///设置渐变背景色，需在设置frame或约束后调用
-    func wp_layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor]) {
+    @discardableResult
+    func wp_layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor])->CAGradientLayer {
         let layer = CAGradientLayer()
         let sKey = "c-p-p"
         layer.name = sKey
@@ -177,10 +176,11 @@ public extension UIView {
         for oldLayer in self.layer.sublayers ?? [] {
             if oldLayer.name == sKey {
                 self.layer.replaceSublayer(oldLayer, with: layer)
-                return
+                return layer
             }
         }
         self.layer.insertSublayer(layer, at: 0)
+        return layer
     }
     
     /// 子视图随机色
@@ -197,7 +197,7 @@ public extension UIView {
             elmt.removeFromSuperview()
         }
     }
-
+    
     /// 绘制虚线
     /// - Parameters:
     ///   - strokeColor: 颜色
@@ -236,8 +236,7 @@ public extension UIView {
     ///   - config: 配置项
     func wp_showPlaceholder(offSetY:CGFloat=0,
                             config:@escaping (WPPlaceholderView)->Void){
-
-        DispatchQueue.main.async { [weak self] in
+        WPGCD.main_Async {[weak self] in
             guard let self = self else { return }
             let tag = 10086
             var contetnView : UIView?
@@ -250,6 +249,7 @@ public extension UIView {
             if contetnView == nil {
                 contetnView = UIView()
             }
+            
             contetnView?.tag = tag
             self.addSubview(contetnView!)
             
@@ -269,33 +269,25 @@ public extension UIView {
     
     /// 移除占位视图
     func wp_removePlaceholder(){
-        DispatchQueue.main.async {
-        let tag = 10086
-        var contetnView : UIView?
-            self.subviews.forEach { elmt in
-            if elmt.tag == tag{
-                contetnView = elmt
-            }
-        }
-            contetnView?.removeFromSuperview()
+        WPGCD.main_Async {[weak self] in
+            let tag = 10086
+            let contentView = self?.subviews.wp_elmt(by: { elmt in
+                return elmt.tag == tag
+            })
+            contentView?.removeFromSuperview()
         }
     }
     
     /// 显示加载小菊花
     /// - Parameter show: 是否显示
     func wp_loading(is show: Bool,offSetY: CGFloat = 0) {
-        
-        DispatchQueue.main.async { [weak self] in
+        WPGCD.main_Async { [weak self] in
             guard let self = self else { return }
             
-        let tag = 10087
-        var resualt = false
-            for subView in self.subviews {
-            if subView.tag == tag {
-                resualt = true
+            let tag = 10087
+            let resualt = self.subviews.wp_isContent { elmt in
+                return elmt.tag == tag
             }
-        }
-            
             if show && !resualt {
                 let lodingView = UIActivityIndicatorView()
                 lodingView.tag = tag
@@ -308,17 +300,13 @@ public extension UIView {
                 }
                 
             }else if !show && resualt{
-                var subLoding : UIView?
-                for subView in self.subviews {
-                    if subView.tag == tag {
-                        subLoding = subView
-                    }
+                let subLoding = self.subviews.wp_elmt { elmt in
+                    return elmt.tag == tag
                 }
                 subLoding?.removeFromSuperview()
             }
+            
         }
-
-
     }
     
     /// 显示一个简单的toast
@@ -326,7 +314,7 @@ public extension UIView {
     ///   - str: 内容
     ///   - delaySecond: 延迟时间
     func wp_toast(_ str: String,_ delaySecond:DispatchTime = .now() + 2,offSetY: CGFloat = 0){
-        DispatchQueue.main.async {[weak self] in
+        WPGCD.main_Async {[weak self] in
             guard let self = self else { return }
             
             let toastView = WPToastView()
@@ -360,7 +348,7 @@ public extension UIView {
 }
 
 open class WPPlaceholderView: UIView {
-
+    
     /// 标题
     public let titleL = UILabel()
     /// 描述
@@ -370,7 +358,7 @@ open class WPPlaceholderView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         addSubview(titleL)
         addSubview(descL)
         addSubview(imgV)
@@ -415,12 +403,12 @@ class WPToastView: UIView {
         backgroundV.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
+        
         titleL.snp.makeConstraints { make in
             make.left.top.equalTo(20)
             make.bottom.right.equalTo(-20)
         }
-
+        
     }
     
     required init?(coder: NSCoder) {

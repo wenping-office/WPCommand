@@ -35,7 +35,7 @@ public extension Decodable {
     /// jsonAata解码成对象
     /// - Parameter data: jsonData
     /// - Returns: 结果
-    static func map(_ data: Data) -> Self? {
+    static func wp_map(_ data: Data) -> Self? {
         do {
             return try JSONDecoder().decode(Self.self, from: data)
         } catch let error {
@@ -46,7 +46,7 @@ public extension Decodable {
     /// jsonStr解码成对象
     /// - Parameter jsonStr: jsonStr
     /// - Returns: 结果
-    static func map(_ jsonStr: String) -> Self? {
+    static func wp_map(_ jsonStr: String) -> Self? {
         do {
             return try JSONDecoder().decode(Self.self, from: Data(jsonStr.utf8))
         } catch let error {
@@ -58,7 +58,7 @@ public extension Decodable {
     /// json解码成对象
     /// - Parameter json: json
     /// - Returns: 结果
-    static func map(_ json: Any) -> Self? {
+    static func wp_map(_ json: Any) -> Self? {
         guard JSONSerialization.isValidJSONObject(json) else {
             print("传入的不是一个json对象")
             return nil
