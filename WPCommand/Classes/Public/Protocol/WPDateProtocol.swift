@@ -8,7 +8,7 @@
 import UIKit
 
 /// 日期协议
- protocol WPDateProtocol{
+public protocol WPDateProtocol{
     /// 日
     var wp_day : TimeInterval{ get }
     
@@ -22,148 +22,148 @@ import UIKit
     var wp_second : TimeInterval{ get }
 }
 
-public extension Int:   WPDateProtocol {
+extension Int:   WPDateProtocol {
     
-     var wp_day: TimeInterval {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
 }
 
-public extension Int32: WPDateProtocol {
-     var wp_day: TimeInterval {
+extension Int32: WPDateProtocol {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
     
 }
-public extension Int64: WPDateProtocol {
-     var wp_day: TimeInterval {
+extension Int64: WPDateProtocol {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
     
 }
-public extension UInt:  WPDateProtocol {
-     var wp_day: TimeInterval {
+extension UInt:  WPDateProtocol {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
     
 }
 
-public extension UInt32: WPDateProtocol {
-     var wp_day: TimeInterval {
+extension UInt32: WPDateProtocol {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
     
 }
-public extension UInt64: WPDateProtocol {
-     var wp_day: TimeInterval {
+extension UInt64: WPDateProtocol {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
     
 }
-public extension Double: WPDateProtocol {
-     var wp_day: TimeInterval {
+extension Double: WPDateProtocol {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
     
 }
-public extension CGFloat: WPDateProtocol {
-     var wp_day: TimeInterval {
+extension CGFloat: WPDateProtocol {
+    public var wp_day: TimeInterval {
         return TimeInterval(60 * 60 * 24 * self)
     }
     
-     var wp_hour: TimeInterval {
+    public var wp_hour: TimeInterval {
         return TimeInterval(60 * 60 * self)
     }
     
-     var wp_minute: TimeInterval {
+    public var wp_minute: TimeInterval {
         return TimeInterval(60 * self)
     }
     
-     var wp_second: TimeInterval {
+    public var wp_second: TimeInterval {
         return TimeInterval(self)
     }
     
