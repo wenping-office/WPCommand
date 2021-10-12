@@ -27,7 +27,11 @@ open class WPTextView: UITextView {
     }
     
     /// 内容改变
-    public var textChange : ((WPTextView)->Void)?
+    public var textChange : ((WPTextView)->Void)?{
+        didSet{
+            textChange?(self)
+        }
+    }
 
     /// 输入模式
     public var mode : WPTextView.InputMode

@@ -27,7 +27,11 @@ open class WPTextField: UITextField {
     }
     
     /// 内容变动监听
-    public var textChange : ((WPTextField) -> Void)?
+    public var textChange : ((WPTextField) -> Void)?{
+        didSet{
+            textChange?(self)
+        }
+    }
     /// 输入模式
     public var mode : WPTextField.InputMode
     
