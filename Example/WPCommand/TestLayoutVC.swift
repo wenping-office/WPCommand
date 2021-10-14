@@ -8,15 +8,20 @@
 
 import UIKit
 import WPCommand
+import RxSwift
 
 class TestLayoutVC: WPBaseVC {
-
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         let alert = LabTestAlert()
         alert.show(in: self.view)
+
+        Observable.merge([alert.event.obj,alert.event.obj2]).subscribe(onNext: { value in
+            
+        }).disposed(by: alert.wp_disposeBag)
+
         
         WPSystem.application.didBecomeActive.subscribe(onNext: {_ in
             let alert2 = LabTestAlert2()
@@ -86,7 +91,17 @@ class LabTestAlert2: WPBaseView,WPAlertProtocol {
 }
 
 
-class LabTestAlert: WPBaseView,WPAlertProtocol {
+class LabTestAlert: WPBaseView,WPAlertProtocol,WPEventProtocol {
+    
+    var event: Event = .init()
+    
+    struct Event{
+        /// 点击事件
+        let obj = PublishSubject<Void>.init()
+        /// 长安事件
+        let obj2 = PublishSubject<Void>.init()
+    }
+    
     let lab = UILabel()
     
     override func initSubView() {
