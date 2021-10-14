@@ -27,15 +27,42 @@ open class WPTextField: UITextField {
     }
     
     /// 内容变动监听
-    public var textChange : ((WPTextField) -> Void)?
+    public var textChange : ((WPTextField) -> Void)?{
+        didSet{
+            textChange?(self)
+        }
+    }
     /// 输入模式
     public var mode : WPTextField.InputMode
-    
     /// 最大输入字符数
     public var maxCount = Int.max
-
+    /// 过滤高亮后的text
+    public var filterText : String?{
+        if let textRange = markedTextRange {
+            if textRange.isEmpty {
+                return text
+            }else{
+                let highStrCount = text(in: textRange)?.count ?? 0
+                return text?.wp_fistTo(text?.count ?? 0 - highStrCount)
+            }
+        }else{
+            return text
+        }
+    }
+    /// 是否禁用全选功能
+    public var isSelectAllEnabled : Bool = false
+    /// 是否禁用选中功能
+    public var isSelectEnabled : Bool = false
+    /// 是否禁用粘贴功能
+    public var isPasteEnabled : Bool = false
+    /// 是否禁用复制功能
+    public var isCopyEnabled : Bool = false
+    /// 是否禁用分享功能
+    public var isShareEnabled : Bool = true
+    /// 是否禁用删除功能
+    public var isDeleteEnabled : Bool = false
     /// 私有api 关键字的key
-    fileprivate var keyWordKeys : [String:String] = [:]
+    private var keyWordKeys : [String:String] = [:]
     
     open override var text: String?{
         didSet{
@@ -72,6 +99,24 @@ open class WPTextField: UITextField {
         }
     }
     
+    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        let actionStr = action.description
+        if actionStr == "selectAll:" {
+            return isSelectAllEnabled ? false : super.canPerformAction(action, withSender: sender)
+        }else if actionStr == "copy:"{
+            return isCopyEnabled ? false : super.canPerformAction(action, withSender: sender)
+        }else if actionStr == "paste:"{
+            return isPasteEnabled ? false : super.canPerformAction(action, withSender: sender)
+        }else if actionStr == "select:"{
+            return isSelectEnabled ? false : super.canPerformAction(action, withSender: sender)
+        }else if actionStr == "delete:"{
+            return isDeleteEnabled ? false : super.canPerformAction(action, withSender: sender)
+        }else if actionStr == "_share:"{
+            return isShareEnabled ? false : super.canPerformAction(action, withSender: sender)
+        }else{
+            return super.canPerformAction(action, withSender: sender)
+        }
+    }
 }
 
 extension WPTextField:UITextFieldDelegate{
@@ -108,6 +153,7 @@ extension WPTextField:UITextFieldDelegate{
          
          /// 如果在变化中是高亮部分在变，就不要计算字符了
          if (selectedRange != nil) && (pos != nil) {
+            textChange?(self)
              return
          }
         if text?.count ?? 0 >= maxCount {

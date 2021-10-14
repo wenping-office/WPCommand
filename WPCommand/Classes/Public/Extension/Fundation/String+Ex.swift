@@ -181,7 +181,7 @@ public extension String{
     /// 过滤字符串
     /// - Parameter str: 关键字
     /// - Returns: 过滤后的结果
-    func wp_filter(_ str:String)->String{
+    func wp_filter(_ str:String)->Self{
         return replacingOccurrences(of: str, with: "", options: .literal, range: nil)
     }
     
@@ -208,14 +208,14 @@ public extension String{
     /// 从头部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func wp_fistTo(_ count:Int) -> String{
+    func wp_fistTo(_ count:Int) -> Self{
         return wp_subStrTo(.init(location: 0, length: count))
     }
     
     /// 从尾部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func wp_lastTo(_ count:Int) -> String {
+    func wp_lastTo(_ count:Int) -> Self {
 
         let location = self.count - count
         if count <= self.count {
@@ -229,7 +229,7 @@ public extension String{
     /// 截取数组 如果lenght越界 则返回最大的可取范围
     /// - Parameter range: 返回
     /// - Returns: 结果
-    func wp_subStrTo(_ range:NSRange) -> String{
+    func wp_subStrTo(_ range:NSRange) -> Self{
         let lenght = range.length
         let maxLenght = self.count - range.location
         if lenght <= maxLenght {

@@ -496,6 +496,10 @@ public extension WPSystem{
         case iPhone12
         case iPhone12Pro
         case iPhone12ProMax
+        case iPhone13Mini
+        case iPhone13
+        case iPhone13Pro
+        case iPhone13ProMax
         case iPodTouch1G
         case iPodTouch2G
         case iPodTouch3G
@@ -584,6 +588,14 @@ public extension WPSystem{
                     self = .iPhone12Pro
                 case 134:
                     self = .iPhone12ProMax
+                case 144:
+                    self = .iPhone13Mini
+                case 145:
+                    self = .iPhone13
+                case 142:
+                    self = .iPhone13Pro
+                case 143:
+                    self = .iPhone13ProMax
                 default:
                     self = .unknown
                 }
