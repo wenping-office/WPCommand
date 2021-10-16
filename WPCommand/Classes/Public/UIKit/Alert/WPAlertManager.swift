@@ -357,7 +357,7 @@ extension WPAlertManager{
                     }
                 }
             }
-        case .topWidthFill(let offsetY):
+        case .topWidthToFill(let offsetY):
             alert.snp.remakeConstraints { make in
                 make.left.right.equalToSuperview()
                 make.bottom.equalTo(targetView.snp.top)
@@ -384,7 +384,7 @@ extension WPAlertManager{
                     }
                 }
             }
-        case .leftHeightFill(let offsetX):
+        case .leftHeightToFill(let offsetX):
             alert.snp.remakeConstraints { make in
                 make.right.equalTo(targetView.snp.left)
                 make.top.bottom.equalToSuperview()
@@ -412,7 +412,7 @@ extension WPAlertManager{
                     }
                 }
             }
-        case .bottomWidthFill(let offsetY):
+        case .bottomWidthToFill(let offsetY):
             alert.snp.remakeConstraints { make in
                 make.top.equalTo(targetView.snp.bottom)
                 make.left.right.equalToSuperview()
@@ -440,7 +440,7 @@ extension WPAlertManager{
                     }
                 }
             }
-        case .rightHeightFill(let offsetY):
+        case .rightHeightToFill(let offsetY):
             alert.snp.remakeConstraints { make in
                 make.left.equalTo(targetView.snp.right)
                 make.top.bottom.equalToSuperview()
@@ -592,13 +592,13 @@ public extension WPAlertManager{
         /// 中间弹出
         case center(_ offset:CGPoint = .zero)
         /// 顶部弹出 layout模式下width填充至弹窗的width
-        case topWidthFill(_ offsetY:CGFloat = 0)
+        case topWidthToFill(_ offsetY:CGFloat = 0)
         /// 左边弹出 layout模式下height填充至弹窗的height
-        case leftHeightFill(_ offsetX:CGFloat = 0)
+        case leftHeightToFill(_ offsetX:CGFloat = 0)
         /// 底部弹出 layout模式下width填充至弹窗的width
-        case bottomWidthFill(_ offsetY:CGFloat = 0)
+        case bottomWidthToFill(_ offsetY:CGFloat = 0)
         /// 右边弹出 layout模式下height填充至弹窗的height
-        case rightHeightFill(_ offsetY:CGFloat = 0)
+        case rightHeightToFill(_ offsetY:CGFloat = 0)
     }
     
     /// 弹出结束位置
