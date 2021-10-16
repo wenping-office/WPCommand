@@ -72,13 +72,15 @@ public extension WPAlertProtocol{
     /// - Parameters:
     ///   - targetView: 弹窗根视图
     ///   - option: 选项
-    func show(in targetView:UIView? = nil,option:WPAlertManager.Option = .default){
+    func show(in targetView:UIView? = nil,
+              option:WPAlertManager.Option = .default,
+              by manager:WPAlertManager = WPAlertManager.default){
         self.targetView = targetView
-        WPAlertManager.default.showNext(self, option: option)
+        manager.showNext(self, option: option)
     }
     
     /// 隐藏弹框
-    func dissmiss(){
-        WPAlertManager.default.dismiss()
+    func dismiss(by manager:WPAlertManager = WPAlertManager.default){
+        manager.dismiss()
     }
 }
