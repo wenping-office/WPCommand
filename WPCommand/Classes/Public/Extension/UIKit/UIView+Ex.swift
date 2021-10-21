@@ -94,6 +94,11 @@ public extension UIView{
         get { return frame.origin }
         set { frame.origin = newValue }
     }
+    
+    /// 是否有添加约束
+    var isAddConstraints : Bool{
+        return constraints.count > 0
+    }
 }
 
 public extension UIView {

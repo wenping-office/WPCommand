@@ -10,14 +10,14 @@ import RxSwift
 
 public extension WPAlertManager{
     enum Option {
-        /// 强制立马弹出 keep== true 插入弹窗消失后弹出被插入的弹窗
+        /// 插入式强制立马弹出 keep== true 插入弹窗消失后弹出被插入的弹窗
         case immediately(keep:Bool)
-        /// 默认选项 插入到下一个弹窗
+        /// 默认选项 添加到下一个弹窗
         case `default`
     }
 }
 
-/// 弹窗队列弹出实现WPAlertProtocol协议的弹窗
+/// 弹窗队列弹出实现WPAlertProtocol协议的弹窗，可弹出一组弹窗或插入式弹窗，也可自定义一个manager自己管理一组弹窗
 public class WPAlertManager {
     /// 弹窗
     private class AlertItem{
