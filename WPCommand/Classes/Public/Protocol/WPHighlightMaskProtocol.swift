@@ -18,7 +18,7 @@ public protocol WPHighlightMaskProtocol:UIView{
     /// 高亮右边视图
     func highlightRightView() -> WPHighlightViewProtocol
     /// 高亮中心视图
-    func highlightCenterView()->WPHighlightViewProtocol
+    func highlightCenterView() -> WPHighlightViewProtocol
 }
 
 public extension WPHighlightMaskProtocol{
@@ -40,7 +40,7 @@ public extension WPHighlightMaskProtocol{
     }
     /// 高亮中心视图
     func highlightCenterView()->WPHighlightViewProtocol{
-        return WPHighlighMaskView()
+        return WPHighlighMaskCenterView()
     }
     
     /// 显示高亮到某个视图
@@ -71,19 +71,19 @@ public extension WPHighlightMaskProtocol{
         rightView.addGestureRecognizer(rightTapGesture)
         centerView.addGestureRecognizer(centerTapGesture)
         topTapGesture.rx.event.bind(onNext: { gesture in
-            topView.highlighMaskTouch(tapGesture: gesture)
+            topView.highlighMaskTouch(tapGesture: gesture,targetView: topView)
             touch?(topView)
         }).disposed(by: topView.wp_disposeBag)
         bottomTapGesture.rx.event.bind(onNext: { gesture in
-            bottomView.highlighMaskTouch(tapGesture: gesture)
+            bottomView.highlighMaskTouch(tapGesture: gesture,targetView: bottomView)
             touch?(bottomView)
         }).disposed(by: topView.wp_disposeBag)
         leftTapGesture.rx.event.bind(onNext: { gesture in
-            leftView.highlighMaskTouch(tapGesture: gesture)
+            leftView.highlighMaskTouch(tapGesture: gesture,targetView: leftView)
             touch?(leftView)
         }).disposed(by: topView.wp_disposeBag)
         rightTapGesture.rx.event.bind(onNext: { gesture in
-            rightView.highlighMaskTouch(tapGesture: gesture)
+            rightView.highlighMaskTouch(tapGesture: gesture,targetView: rightView)
             touch?(rightView)
         }).disposed(by: topView.wp_disposeBag)
 
@@ -91,12 +91,11 @@ public extension WPHighlightMaskProtocol{
         bottomView.backgroundColor = color
         leftView.backgroundColor = color
         rightView.backgroundColor = color
-        centerView.backgroundColor = color
-        topView.highlighMaskDidSet(color: color)
-        bottomView.highlighMaskDidSet(color: color)
-        leftView.highlighMaskDidSet(color: color)
-        rightView.highlighMaskDidSet(color: color)
-        centerView.highlighMaskDidSet(color: color)
+        topView.highlighMaskDidSet(color: color,targetView: topView)
+        bottomView.highlighMaskDidSet(color: color,targetView: bottomView)
+        leftView.highlighMaskDidSet(color: color,targetView: leftView)
+        rightView.highlighMaskDidSet(color: color,targetView: rightView)
+        centerView.highlighMaskDidSet(color: color,targetView: centerView)
 
         keyView?.addSubview(topView)
         keyView?.addSubview(bottomView)
@@ -127,12 +126,11 @@ public extension WPHighlightMaskProtocol{
             make.left.equalTo(keyViewFrame.maxX)
         }
         
-        if isAddConstraints {
-            centerView.snp.makeConstraints { make in
-                make.edges.equalTo(self)
-            }
-        }else{
-            centerView.frame = frame
+        centerView.frame = frame
+        if layer.cornerRadius != 0 {
+            let layer = CAShapeLayer.wp_shapefillet([.allCorners], radius: layer.cornerRadius, in: bounds)
+            layer.fillColor = color.cgColor
+            centerView.layer.addSublayer(layer)
         }
     }
     
@@ -157,21 +155,26 @@ public extension WPHighlightMaskProtocol{
 /// 高亮视图协议 实现协议后会返回高亮时创建的视图
 public protocol WPHighlightViewProtocol:UIView {
     /// 蒙层被点击了
-    func highlighMaskTouch(tapGesture:UITapGestureRecognizer)
+    func highlighMaskTouch(tapGesture:UITapGestureRecognizer,targetView:WPHighlightViewProtocol)
     /// 设置高亮时的颜色
-    func highlighMaskDidSet(color:UIColor)
+    func highlighMaskDidSet(color:UIColor,targetView:WPHighlightViewProtocol)
 }
 
 public extension WPHighlightViewProtocol{
     /// 蒙层被点击了
-    func highlighMaskTouch(tapGesture:UITapGestureRecognizer){}
+    func highlighMaskTouch(tapGesture:UITapGestureRecognizer,targetView:WPHighlightViewProtocol){}
     /// 设置高亮时的颜色
-    func highlighMaskDidSet(color:UIColor){}
+    func highlighMaskDidSet(color:UIColor,targetView:WPHighlightViewProtocol){}
 }
 
 /// 高亮蒙层视图内部使用
 class WPHighlighMaskView:UIView,WPHighlightViewProtocol {}
+/// 高亮蒙层视图内部使用
+class WPHighlighMaskCenterView:UIView,WPHighlightViewProtocol {
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        return nil
+    }
+}
 
-extension UIView:WPHighlightMaskProtocol{}
 
 
