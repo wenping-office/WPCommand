@@ -94,10 +94,20 @@ public extension UIView{
         get { return frame.origin }
         set { frame.origin = newValue }
     }
+    
+    /// 是否有添加约束
+    var isAddConstraints : Bool{
+        return constraints.count > 0
+    }
 }
 
 public extension UIView {
     
+    /// 平面旋转
+    /// - Parameter angle: 角度
+    func wp_rotation2D(angle:CGFloat){
+        transform = CGAffineTransform(rotationAngle: angle)
+    }
     
     @discardableResult
     /// 自身约束
@@ -121,16 +131,13 @@ public extension UIView {
     ///   - force: 是否强制 true的话在自身宽高都等于0的时候会调用一次layoutIfNeed
     func wp_corner(_ corners: [UIRectCorner], radius: CGFloat,force:Bool = false) {
         if corners.count <= 0 { return }
-        var value : UInt = 0
-        corners.forEach { elmt in
-            value += elmt.rawValue
-        }
         
         if force && bounds.size == .zero {
             layoutIfNeeded()
         }
         
-        let maskPath = UIBezierPath(roundedRect: bounds, byRoundingCorners: UIRectCorner(rawValue: value), cornerRadii: CGSize(width: radius, height: radius))
+        let maskPath = UIBezierPath.wp_corner(corners, radius: radius, in: bounds)
+        
         var maskLayer = layer.mask
         if layer.mask == nil {
             maskLayer = CAShapeLayer()

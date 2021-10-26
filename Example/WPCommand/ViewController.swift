@@ -30,7 +30,8 @@ class ViewController: UIViewController {
             ("输入框",TestUIController.self),
             ("弹窗管理器",TestAlertController.self),
             ("菜单视图",TestMenuVC.self),
-            ("layout弹窗",TestLayoutVC.self)
+            ("layout弹窗",TestLayoutVC.self),
+            ("高亮蒙层",TestHighlightVC.self),
         ]
         vc.forEach { elmt in
             let item = WPTableItem(cellClass: UITableViewCell.self) { cell in

@@ -15,6 +15,22 @@ public extension String{
     static var wp_appVersion : String?{
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     }
+    
+    /// 当前appBuild版本
+    static var wp_appBuildVersion : String?{
+        return Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+    }
+        
+    /// 当前app的包标识符
+    static var wp_appIdentifier : String?{
+        return Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String
+    }
+    
+    /// 当前app的包名
+    static var wp_appName : String?{
+        return Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
+    }
+    
     /// 是否是邮箱
     var wp_isEmail : Bool {
         let predicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
