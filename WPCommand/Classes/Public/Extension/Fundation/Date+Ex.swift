@@ -10,7 +10,7 @@ import UIKit
 import Foundation
 
 public extension Date{
-    
+
     /// 获取当月最大天数
     var wp_dayInMonth : Int{
         let date = wp_offSetMonth(1) ?? Date()
@@ -67,6 +67,37 @@ public extension Date{
         let timeInterval: TimeInterval = self.timeIntervalSince1970
         let millisecond = CLongLong(round(timeInterval*1000))
         return "\(millisecond)"
+    }
+    
+    /// 星期 [0星期天,1星期一,2星期二，已此类推]
+    var wp_weekday : Int {
+        let interval = self.timeIntervalSince1970;
+        let days = Int(interval / 86400);
+        return (days - 3) % 7;
+    }
+    
+    /// 是否是当天
+    var isToDay : Bool {
+        let calendar = Calendar.current
+        let nowComponents = calendar.dateComponents([.day, .month, .year], from: Date())
+        let selfComponents = calendar.dateComponents([.day, .month, .year], from: self)
+        return (selfComponents.year == nowComponents.year) && (selfComponents.month == nowComponents.month) && (selfComponents.day == nowComponents.day)
+    }
+    
+    /// 是否是当月
+    var isToMonth : Bool{
+        let calendar = Calendar.current
+        let nowComponents = calendar.dateComponents([.month, .year], from: Date())
+        let selfComponents = calendar.dateComponents([.month, .year], from: self)
+        return (selfComponents.year == nowComponents.year) && (selfComponents.month == nowComponents.month)
+    }
+    
+    /// 是否是当年
+    var isToYear : Bool{
+        let calendar = Calendar.current
+        let nowComponents = calendar.dateComponents([.year], from: Date())
+        let selfComponents = calendar.dateComponents([.year], from: self)
+        return (selfComponents.year == nowComponents.year)
     }
 }
 

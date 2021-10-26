@@ -19,9 +19,9 @@ public extension NSMutableAttributedString{
         style.lineSpacing = spacing
 
         if range != nil{
-            self.addAttributes([.paragraphStyle:style], range: range!)
+            addAttributes([.paragraphStyle:style], range: range!)
         }else{
-            self.addAttributes([.paragraphStyle:style], range: NSMakeRange(0, self.string.count))
+            addAttributes([.paragraphStyle:style], range: NSMakeRange(0, string.count))
         }
 
         return self
@@ -35,9 +35,9 @@ public extension NSMutableAttributedString{
     func wp_font(font:UIFont,range:NSRange?=nil) -> NSMutableAttributedString {
 
         if range != nil{
-            self.addAttributes([.font:font], range: range!)
+            addAttributes([.font:font], range: range!)
         }else{
-            self.addAttributes([.font:font], range: NSMakeRange(0, self.string.count))
+            addAttributes([.font:font], range: NSMakeRange(0, string.count))
         }
 
         return self
@@ -50,9 +50,26 @@ public extension NSMutableAttributedString{
     /// - Returns: 结果
     func wp_foregroundColor(color:UIColor,range:NSRange?=nil) -> NSMutableAttributedString {
         if range != nil{
-            self.addAttributes([.foregroundColor:color], range: range!)
+            addAttributes([.foregroundColor:color], range: range!)
         }else{
-            self.addAttributes([.foregroundColor:color], range: NSMakeRange(0, self.string.count))
+            addAttributes([.foregroundColor:color], range: NSMakeRange(0, string.count))
+        }
+        return self
+    }
+    
+    /// 数字单独设置字体
+    /// - Parameters:
+    ///   - numberFont: 字体
+    /// - Returns: 结果
+    func wp_number(font numberFont:UIFont) -> NSMutableAttributedString {
+        do {
+            let regular = try NSRegularExpression(pattern: "[a-zA-Z0-9(:/%)]+", options: .caseInsensitive)
+            let results = regular.matches(in: string, options: .reportProgress, range: NSRange(location: 0, length: string.count))
+            for result in results {
+                addAttributes([.font:numberFont], range: result.range)
+            }
+        } catch {
+            return self
         }
         return self
     }
