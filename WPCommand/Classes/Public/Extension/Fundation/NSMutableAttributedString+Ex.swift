@@ -14,7 +14,7 @@ public extension NSMutableAttributedString{
     ///   - spacing: 行间距
     ///   - range: 范围
     /// - Returns: 结果
-    func wp_lineSpacing(spacing:CGFloat,range:NSRange?=nil) -> NSMutableAttributedString {
+    func wp_lineSpacing(_ spacing:CGFloat,range:NSRange?=nil) -> NSMutableAttributedString {
         let style = NSMutableParagraphStyle()
         style.lineSpacing = spacing
 
@@ -32,7 +32,7 @@ public extension NSMutableAttributedString{
     ///   - font: 字体
     ///   - range: 范围
     /// - Returns: 结果
-    func wp_font(font:UIFont,range:NSRange?=nil) -> NSMutableAttributedString {
+    func wp_font(_ font:UIFont,range:NSRange?=nil) -> NSMutableAttributedString {
 
         if range != nil{
             addAttributes([.font:font], range: range!)
@@ -48,7 +48,7 @@ public extension NSMutableAttributedString{
     ///   - color: 颜色
     ///   - range: 范围
     /// - Returns: 结果
-    func wp_foregroundColor(color:UIColor,range:NSRange?=nil) -> NSMutableAttributedString {
+    func wp_foregroundColor(_ color:UIColor,range:NSRange?=nil) -> NSMutableAttributedString {
         if range != nil{
             addAttributes([.foregroundColor:color], range: range!)
         }else{
@@ -61,7 +61,7 @@ public extension NSMutableAttributedString{
     /// - Parameters:
     ///   - numberFont: 字体
     /// - Returns: 结果
-    func wp_number(font numberFont:UIFont) -> NSMutableAttributedString {
+    func wp_number(_ numberFont:UIFont) -> NSMutableAttributedString {
         do {
             let regular = try NSRegularExpression(pattern: "[a-zA-Z0-9(:/%)]+", options: .caseInsensitive)
             let results = regular.matches(in: string, options: .reportProgress, range: NSRange(location: 0, length: string.count))

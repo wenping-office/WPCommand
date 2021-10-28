@@ -27,27 +27,24 @@ class TestAlertController: WPBaseVC {
 
         view.backgroundColor = .white
         
-        WPAlertManager.default.setAlerts([alert1(),alert1()]).show()
+        WPAlertManager.default.setAlerts([alert1()]).show()
     }
     
     func alert1() -> testAlert {
         let alert = testAlert()
-        alert.backgroundColor = .wp_random
-        alert.wp_width = 200
-        alert.wp_height = 200
         alert.leftBtn.rx.tap.subscribe(onNext: {
             WPAlertManager.default.dismiss()
         })
 
         alert.rightBtn.rx.tap.subscribe(onNext: {
-            WPAlertManager.default.showNext(self.alert2(),option: .default)
+            WPAlertManager.default.showNext(self.alert2(),option: .immediately(keep: true))
         })
         return alert
     }
     
     func alert2() -> testAlert2 {
         let aler2 = testAlert2()
-        aler2.backgroundColor = .red
+        aler2.backgroundColor = .yellow
         aler2.wp_width = 200
         aler2.wp_height = 200
         aler2.leftBtn.rx.tap.subscribe(onNext: {
@@ -89,10 +86,7 @@ class testAlert2: WPBaseView,WPAlertProtocol {
     func alertInfo() -> WPAlertManager.Alert {
         return .init(.default, startLocation: .center(), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
     }
-    
-//    func touchMask() {
-//        print("testAlert2 点击了蒙版")
-//    }
+
     
     func maskInfo() -> WPAlertManager.Mask {
         return .init(color: .blue, enabled: true, isHidden: false)
@@ -122,27 +116,14 @@ class testAlert2: WPBaseView,WPAlertProtocol {
 }
 
 class testAlert: WPBaseView,WPAlertProtocol {
-    var alert: WPAlertManager?
-    
-    deinit {
-        print("弹窗释放了")
-    }
-    
-    func touchMask() {
-        print("testAlert 点击了蒙版")
-    }
-
-    func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .right(.init(x: 30, y: -100)), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
-    }
-
-    func maskInfo() -> WPAlertManager.Mask {
-        return .init(color: .red, enabled: false, isHidden: false)
-    }
     
     let leftBtn = UIButton()
     let rightBtn = UIButton()
     
+    func alertInfo() -> WPAlertManager.Alert {
+        return .init(.bounces, startLocation: .bottom(.zero), startDuration: 0.3, stopLocation: .right, stopDuration: 0.5)
+    }
+
     override func initSubView() {
         
         addSubview(leftBtn)
@@ -153,11 +134,19 @@ class testAlert: WPBaseView,WPAlertProtocol {
         leftBtn.setTitleColor(.black, for: .normal)
         rightBtn.setTitleColor(.black, for: .normal)
         
-        leftBtn.sizeToFit()
-        rightBtn.sizeToFit()
-        leftBtn.wp_x = 0
-        rightBtn.wp_x = 100
-        wp_subViewRandomColor()
+        leftBtn.snp.makeConstraints { make in
+            make.left.top.equalToSuperview()
+            make.width.equalTo(150)
+            make.bottom.equalToSuperview()
+        }
+        
+        rightBtn.snp.makeConstraints { make in
+            make.right.top.equalToSuperview()
+            make.width.equalTo(150)
+            make.left.equalTo(leftBtn.snp.right)
+        }
+        
+        backgroundColor = .wp_random
     }
     
 }

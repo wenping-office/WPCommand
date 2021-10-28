@@ -228,7 +228,7 @@ public class WPMenuView: WPBaseView {
             // 设置翻页
             self?.selectedPage(index: index)
             // 设置header头
-            let headerItem = self?.contentView.headerView.datas[index]
+            let headerItem = self?.contentView.headerView.datas.wp_safeGet(of: index)
             
             guard let self = self else { return }
 
@@ -260,9 +260,9 @@ public class WPMenuView: WPBaseView {
             }
             item.isSelected = false
         })
-        let navItem = contentView.navView.data[index]
-        navItem.isSelected = true
-        navItem.navigationItem.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
+        let navItem = contentView.navView.data.wp_safeGet(of: index)
+        navItem?.isSelected = true
+        navItem?.navigationItem.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
         
         contentView.bodyView.data.forEach({ item in
             if item.isSelected{
@@ -270,9 +270,9 @@ public class WPMenuView: WPBaseView {
             }
             item.isSelected = false
         })
-        let bodyItem = contentView.bodyView.data[index]
-        bodyItem.isSelected = true
-        bodyItem.bodyView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
+        let bodyItem = contentView.bodyView.data.wp_safeGet(of: index)
+        bodyItem?.isSelected = true
+        bodyItem?.bodyView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
         
         contentView.headerView.datas.forEach { item in
             if item.isSelected{
@@ -280,9 +280,9 @@ public class WPMenuView: WPBaseView {
             }
             item.isSelected = false
         }
-        let headItem = contentView.headerView.datas[index]
-        headItem.isSelected = true
-        headItem.headerView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
+        let headItem = contentView.headerView.datas.wp_safeGet(of: index)
+        headItem?.isSelected = true
+        headItem?.headerView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
     }
 }
 

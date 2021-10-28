@@ -137,10 +137,10 @@ extension WPTableViewDelegate:UITableViewDelegate{
         }else if let group = tableView.wp_source.groups.wp_safeGet(of:section){
             var foodView : UITableViewHeaderFooterView?
             
-            if let idStr = group.headViewReuseIdentifier{
+            if let idStr = group.footViewReuseIdentifier{
                 foodView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)
                 if foodView == nil {
-                    tableView.register(group.headViewClass, forHeaderFooterViewReuseIdentifier: idStr)
+                    tableView.register(group.footViewClass, forHeaderFooterViewReuseIdentifier: idStr)
                     foodView = tableView.dequeueReusableHeaderFooterView(withIdentifier: idStr)
                 }
                 foodView?.group = group

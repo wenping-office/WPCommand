@@ -14,7 +14,7 @@ public extension UINavigationController{
     /// - Parameters:
     ///   - type: vc类型
     ///   - completion: 完成回调
-    func wp_popToViewController<T:UIViewController>(type:T.Type,completion:((T)->Void?)?=nil){
+    func wp_popToViewController<T:UIViewController>(_ type:T.Type,completion:((T)->Void?)?=nil){
         let targetControl = viewControllers.wp_elmt(by: { elmt in
             return elmt.isKind(of: type)
         })
@@ -31,11 +31,11 @@ public extension UINavigationController{
     ///   - completion: 完成回调
     func wp_popViewController(animated:Bool = true,completion:((UIViewController)->Void?)?=nil){
         if viewControllers.count <= 1 { return }
-        if let viewController = viewControllers.wp_safeGet(of: viewControllers.count - 1){
+        if let viewController = viewControllers.wp_safeGet(of: viewControllers.count - 2){
             let pushCompletion : ()->Void = {
                 completion?(viewController)
             }
-            
+
             CATransaction.begin()
             CATransaction.setCompletionBlock(pushCompletion)
             popToViewController(viewController, animated: animated)
@@ -64,7 +64,7 @@ public extension UINavigationController{
     /// - Parameters:
     ///   - viewController: controller
     ///   - completion: 完成回调
-    func wp_pushViewController<T:UIViewController>(viewController: T, completion: ((T) -> Void)? = nil) {
+    func wp_pushViewController<T:UIViewController>(_ viewController: T, completion: ((T) -> Void)? = nil) {
         let pushCompletion : ()->Void = {
             completion?(viewController)
         }

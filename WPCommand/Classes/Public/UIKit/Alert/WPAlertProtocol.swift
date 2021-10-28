@@ -73,7 +73,7 @@ public extension WPAlertProtocol{
     ///   - targetView: 弹窗根视图
     ///   - option: 选项
     func show(in targetView:UIView? = nil,
-              option:WPAlertManager.Option = .default,
+              option:WPAlertManager.Option = .add,
               by manager:WPAlertManager = WPAlertManager.default){
         self.targetView = targetView
         manager.showNext(self, option: option)
