@@ -7,8 +7,8 @@
 
 import UIKit
 
-class WPBaseTableViewHeaderFooterView: UITableViewHeaderFooterView {
-    override init(reuseIdentifier: String?) {
+open class WPBaseTableViewHeaderFooterView: UITableViewHeaderFooterView {
+    override public init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         initSubView()
         initSubViewLayout()
@@ -16,7 +16,7 @@ class WPBaseTableViewHeaderFooterView: UITableViewHeaderFooterView {
         bindViewModel()
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     

@@ -17,7 +17,7 @@ public extension UIViewController{
     @objc class func wp_show(in viewController:UIViewController,
                           info:Any?=nil,
                           completion: ((UIViewController) -> Void)? = nil){
-        viewController.navigationController?.wp_pushViewController(viewController: self.init(), completion: completion)
+        viewController.navigationController?.wp_pushViewController(self.init(), completion: completion)
      }
     
     

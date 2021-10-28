@@ -10,10 +10,11 @@ import RxSwift
 
 public extension WPAlertManager{
     enum Option {
-        /// 插入式强制立马弹出 keep== true 插入弹窗消失后弹出被插入的弹窗
-        case immediately(keep:Bool)
-        /// 默认选项 添加到下一个弹窗
-        case `default`
+        /// 插入式强制立马弹出 keep == true 插入弹窗消失后弹出被插入的弹窗
+        /// keep == false 干掉被插入的弹窗
+        case insert(keep:Bool)
+        /// 添加到下一个弹窗
+        case add
     }
 }
 
@@ -111,7 +112,7 @@ public class WPAlertManager {
     /// - Parameters:
     ///   - alert: 弹窗
     ///   - option: 选择条件
-    public func showNext(_ alert:WPAlertProtocol,option:Option = .immediately(keep: true)){
+    public func showNext(_ alert:WPAlertProtocol,option:Option = .insert(keep: true)){
         alert.tag = WPAlertManager.identification()
         let level = (currentAlert?.level ?? 0) - 1
         let alertItem : WPAlertManager.AlertItem = .init(alert: alert, level: level)
@@ -121,25 +122,25 @@ public class WPAlertManager {
         
         if currentAlertProgress == .didShow && alerts.count >= 1{
             switch option {
-            case .immediately(let keep):
+            case .insert(let keep):
                 currentAlert?.isInterruptInset = keep
                 alertAnimate(isShow: false,option: option)
             default: break
             }
         }else{
-            alertAnimate(isShow: true,option: .default)
+            alertAnimate(isShow: true,option: .add)
         }
         
     }
     
     /// 隐藏当前的弹框 如果弹框序列里还有弹窗将会弹出下一个
     public func dismiss(){
-        alertAnimate(isShow: false,option: .default)
+        alertAnimate(isShow: false,option: .add)
     }
     
     /// 显示弹窗
     public func show(){
-        alertAnimate(isShow: true,option: .default)
+        alertAnimate(isShow: true,option: .add)
     }
 }
 
@@ -218,7 +219,7 @@ extension WPAlertManager{
     }
     
     /// 执行弹窗动画
-    /// immediately 是否强制
+    /// insert 是否强制
     private func alertAnimate(isShow:Bool,option:Option){
         if let item = currentAlert{
             var isAutoLayout = false
@@ -249,9 +250,9 @@ extension WPAlertManager{
             // 动画时间
             var duration : TimeInterval = 0
             switch option {
-            case .default:
+            case .add:
                 duration = (isShow ? item.alert.alertInfo().startDuration : item.alert.alertInfo().stopDuration)
-            case .immediately(_):
+            case .insert(_):
                 duration = 0
             }
             
