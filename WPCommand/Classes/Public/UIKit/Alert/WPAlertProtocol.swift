@@ -65,12 +65,7 @@ public extension WPAlertProtocol{
 }
 
 public extension WPAlertProtocol{
-    
-    /// 快速显示一个弹窗
-    /// - Parameters:
-    ///   - targetView: 弹窗根视图
-    ///   - option: 选项
-    
+
     /// 快速显示弹窗
     /// - Parameters:
     ///   - targetView: 弹窗根视图
@@ -82,7 +77,6 @@ public extension WPAlertProtocol{
         self.targetView = targetView
         manager.showNext(self, option: option)
     }
-    
     
     /// 隐藏弹窗
     /// - Parameter manager: 弹窗管理者 必须和显示的时候使用的同一个管理者
