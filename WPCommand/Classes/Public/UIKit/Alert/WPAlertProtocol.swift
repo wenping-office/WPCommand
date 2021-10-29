@@ -65,12 +65,7 @@ public extension WPAlertProtocol{
 }
 
 public extension WPAlertProtocol{
-    
-    /// 快速显示一个弹窗
-    /// - Parameters:
-    ///   - targetView: 弹窗根视图
-    ///   - option: 选项
-    
+
     /// 快速显示弹窗
     /// - Parameters:
     ///   - targetView: 弹窗根视图
@@ -83,7 +78,6 @@ public extension WPAlertProtocol{
         manager.showNext(self, option: option)
     }
     
-    
     /// 隐藏弹窗
     /// - Parameter manager: 弹窗管理者 必须和显示的时候使用的同一个管理者
     func dismiss(by manager:WPAlertManager = WPAlertManager.default){
@@ -95,7 +89,7 @@ public extension WPAlertProtocol{
 fileprivate var WPAlertBridgeStatusPointer = "WPAlertBridgeStatusPointer"
 fileprivate var WPAlertBridgeMaskPointer = "WPAlertBridgeMaskPointer"
 
-/// 弹窗桥接状态协议 快速显示时可携带handler处理弹窗状态
+/// 弹窗桥接状态协议 show时可携带maskHandler处理点击 dismiss时可携带handler处理弹窗状态
 public protocol WPAlertBridgeProtocol : WPAlertProtocol{
     /// 弹窗状态处理 只处理弹出状态
     typealias StatusHandler = ((WPAlertBridgeProtocol,WPAlertManager.Progress)->Void)?
