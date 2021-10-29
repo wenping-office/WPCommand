@@ -37,7 +37,7 @@ class TestAlertController: WPBaseVC {
         })
 
         alert.rightBtn.rx.tap.subscribe(onNext: {
-            WPAlertManager.default.showNext(self.alert2(),option: .immediately(keep: true))
+            WPAlertManager.default.showNext(self.alert2(),option: .insert(keep: true))
         })
         return alert
     }

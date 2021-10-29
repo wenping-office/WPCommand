@@ -28,8 +28,6 @@ public protocol WPAlertProtocol:UIView {
 }
 
 public extension WPAlertProtocol{
-    
-    
     /// 弹窗根视图
     var targetView : UIView? {
         get{
@@ -72,6 +70,12 @@ public extension WPAlertProtocol{
     /// - Parameters:
     ///   - targetView: 弹窗根视图
     ///   - option: 选项
+    
+    /// 快速显示弹窗
+    /// - Parameters:
+    ///   - targetView: 弹窗根视图
+    ///   - option: 选项 默认添加到下一个
+    ///   - manager: 弹窗管理者 可自定义
     func show(in targetView:UIView? = nil,
               option:WPAlertManager.Option = .add,
               by manager:WPAlertManager = WPAlertManager.default){
@@ -79,8 +83,83 @@ public extension WPAlertProtocol{
         manager.showNext(self, option: option)
     }
     
-    /// 隐藏弹框
+    
+    /// 隐藏弹窗
+    /// - Parameter manager: 弹窗管理者 必须和显示的时候使用的同一个管理者
     func dismiss(by manager:WPAlertManager = WPAlertManager.default){
+        manager.dismiss()
+    }
+}
+
+
+fileprivate var WPAlertBridgeStatusPointer = "WPAlertBridgeStatusPointer"
+fileprivate var WPAlertBridgeMaskPointer = "WPAlertBridgeMaskPointer"
+
+/// 弹窗桥接状态协议 快速显示时可携带handler处理弹窗状态
+public protocol WPAlertBridgeProtocol : WPAlertProtocol{
+    /// 弹窗状态处理 只处理弹出状态
+    typealias StatusHandler = ((WPAlertBridgeProtocol,WPAlertManager.Progress)->Void)?
+    /// 弹窗蒙层点击处理 只处理didShow后的点击
+    typealias MaskHandler = ((WPAlertBridgeProtocol)->Void)?
+    /// 弹窗状态
+    var statusHandler : StatusHandler { get set }
+    /// 蒙层点击
+    var maskHandler : MaskHandler { get set }
+}
+
+public extension WPAlertBridgeProtocol{
+    /// 弹窗状态
+    var statusHandler : StatusHandler {
+        get{
+            return WPRunTime.get(self, &AlertTargetViewPointer)
+        }
+        set{
+            return WPRunTime.set(self, newValue, &AlertTargetViewPointer, .OBJC_ASSOCIATION_COPY)
+        }
+    }
+    
+    /// 弹窗状态
+    var maskHandler : MaskHandler {
+        get{
+            return WPRunTime.get(self, &WPAlertBridgeMaskPointer)
+        }
+        set{
+            return WPRunTime.set(self, newValue, &WPAlertBridgeMaskPointer, .OBJC_ASSOCIATION_COPY)
+        }
+    }
+    
+    /// 弹窗状态更新 重写后statusHandler需要自己调用
+    func updateStatus(status: WPAlertManager.Progress) {
+        statusHandler?(self,status)
+    }
+    
+    /// 蒙层点击 重写maskHandler需要自己调用
+    func touchMask() {
+        maskHandler?(self)
+    }
+    
+    /// 快速显示弹窗
+    /// - Parameters:
+    ///   - targetView: 根视图
+    ///   - option: 选项 默认添加到下一个
+    ///   - manager: 弹窗管理者 可自定义
+    ///   - maskHandler: 蒙层点击处理
+    func show(in targetView:UIView? = nil,
+              option:WPAlertManager.Option = .add,
+              by manager:WPAlertManager = WPAlertManager.default,
+              maskHandler : MaskHandler = nil){
+        self.targetView = targetView
+        self.maskHandler = maskHandler
+        manager.showNext(self, option: option)
+    }
+    
+    /// 隐藏弹窗
+    /// - Parameters:
+    ///   - manager: 弹窗管理者 必须和显示的时候使用的同一个管理者
+    ///   - statusHandler: 弹窗状态处理
+    func dismiss(by manager:WPAlertManager = WPAlertManager.default,
+                 statusHandler : StatusHandler = nil){
+        self.statusHandler = statusHandler
         manager.dismiss()
     }
 }

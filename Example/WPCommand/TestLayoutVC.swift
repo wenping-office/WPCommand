@@ -16,17 +16,16 @@ class TestLayoutVC: WPBaseVC {
         super.viewDidAppear(animated)
         
         let alert = LabTestAlert()
-        alert.show(in: self.view)
+        alert.show(in: self.view,maskHandler: { alert in
 
-        Observable.merge([alert.event.obj,alert.event.obj2]).subscribe(onNext: { value in
-            
-        }).disposed(by: alert.wp_disposeBag)
+        })
+
 
         
         WPSystem.application.didBecomeActive.subscribe(onNext: {_ in
             let alert2 = LabTestAlert2()
             alert2.wp_size = .init(width: 250, height: 250)
-            alert2.show(in: nil, option: .immediately(keep: true))
+            alert2.show(in: nil, option: .insert(keep: true))
         })
 
 //        WPGCD.main_asyncAfter(.now() + 4, task: {
@@ -91,7 +90,7 @@ class LabTestAlert2: WPBaseView,WPAlertProtocol {
 }
 
 
-class LabTestAlert: WPBaseView,WPAlertProtocol,WPEventProtocol {
+class LabTestAlert: WPBaseView,WPAlertBridgeProtocol,WPEventProtocol {
     
     var event: Event = .init()
     
@@ -121,10 +120,6 @@ class LabTestAlert: WPBaseView,WPAlertProtocol,WPEventProtocol {
     
     func alertInfo() -> WPAlertManager.Alert {
         return .init(.default, startLocation: .center(.init(x: 0, y: -200)), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
-    }
-
-    func touchMask() {
-        WPAlertManager.default.dismiss()
     }
 
     deinit {
