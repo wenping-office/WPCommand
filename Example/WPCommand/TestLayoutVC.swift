@@ -17,9 +17,7 @@ class TestLayoutVC: WPBaseVC {
         
         let alert = LabTestAlert()
         alert.show(in: self.view,maskHandler: { alert in
-            alert.dismiss(statusHandler: { status in
-                    print("---",status)
-            })
+
         })
 
 

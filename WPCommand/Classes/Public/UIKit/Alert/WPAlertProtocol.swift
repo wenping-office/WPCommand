@@ -97,15 +97,19 @@ fileprivate var WPAlertBridgeMaskPointer = "WPAlertBridgeMaskPointer"
 
 /// 弹窗桥接状态协议 快速显示时可携带handler处理弹窗状态
 public protocol WPAlertBridgeProtocol : WPAlertProtocol{
+    /// 弹窗状态处理 只处理弹出状态
+    typealias StatusHandler = ((WPAlertBridgeProtocol,WPAlertManager.Progress)->Void)?
+    /// 弹窗蒙层点击处理 只处理didShow后的点击
+    typealias MaskHandler = ((WPAlertBridgeProtocol)->Void)?
     /// 弹窗状态
-    var statusHandlerBlock : ((WPAlertManager.Progress)->Void)? { get set }
+    var statusHandler : StatusHandler { get set }
     /// 蒙层点击
-    var maskHandlerBlock : ((WPAlertBridgeProtocol)->Void)? { get set }
+    var maskHandler : MaskHandler { get set }
 }
 
 public extension WPAlertBridgeProtocol{
     /// 弹窗状态
-    var statusHandlerBlock : ((WPAlertManager.Progress)->Void)? {
+    var statusHandler : StatusHandler {
         get{
             return WPRunTime.get(self, &AlertTargetViewPointer)
         }
@@ -115,7 +119,7 @@ public extension WPAlertBridgeProtocol{
     }
     
     /// 弹窗状态
-    var maskHandlerBlock : ((WPAlertBridgeProtocol)->Void)? {
+    var maskHandler : MaskHandler {
         get{
             return WPRunTime.get(self, &WPAlertBridgeMaskPointer)
         }
@@ -124,14 +128,14 @@ public extension WPAlertBridgeProtocol{
         }
     }
     
-    /// 弹窗状态更新 重写后statusHandlerBlock需要自己调用
+    /// 弹窗状态更新 重写后statusHandler需要自己调用
     func updateStatus(status: WPAlertManager.Progress) {
-        statusHandlerBlock?(status)
+        statusHandler?(self,status)
     }
     
-    /// 蒙层点击 重写maskHandlerBlock需要自己调用
+    /// 蒙层点击 重写maskHandler需要自己调用
     func touchMask() {
-        maskHandlerBlock?(self)
+        maskHandler?(self)
     }
     
     /// 快速显示弹窗
@@ -143,9 +147,9 @@ public extension WPAlertBridgeProtocol{
     func show(in targetView:UIView? = nil,
               option:WPAlertManager.Option = .add,
               by manager:WPAlertManager = WPAlertManager.default,
-              maskHandler : ((WPAlertBridgeProtocol)->Void)? = nil){
+              maskHandler : MaskHandler = nil){
         self.targetView = targetView
-        maskHandlerBlock = maskHandler
+        self.maskHandler = maskHandler
         manager.showNext(self, option: option)
     }
     
@@ -154,8 +158,8 @@ public extension WPAlertBridgeProtocol{
     ///   - manager: 弹窗管理者 必须和显示的时候使用的同一个管理者
     ///   - statusHandler: 弹窗状态处理
     func dismiss(by manager:WPAlertManager = WPAlertManager.default,
-                 statusHandler : ((WPAlertManager.Progress)->Void)? = nil){
-        statusHandlerBlock = statusHandler
+                 statusHandler : StatusHandler = nil){
+        self.statusHandler = statusHandler
         manager.dismiss()
     }
 }
