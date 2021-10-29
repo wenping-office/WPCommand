@@ -89,7 +89,7 @@ public extension WPAlertProtocol{
 fileprivate var WPAlertBridgeStatusPointer = "WPAlertBridgeStatusPointer"
 fileprivate var WPAlertBridgeMaskPointer = "WPAlertBridgeMaskPointer"
 
-/// 弹窗桥接状态协议 快速显示时可携带handler处理弹窗状态
+/// 弹窗桥接状态协议 show时可携带maskHandler处理点击 dismiss时可携带handler处理弹窗状态
 public protocol WPAlertBridgeProtocol : WPAlertProtocol{
     /// 弹窗状态处理 只处理弹出状态
     typealias StatusHandler = ((WPAlertBridgeProtocol,WPAlertManager.Progress)->Void)?
