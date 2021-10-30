@@ -310,6 +310,7 @@ class WPMenuContentTableView: UITableView {
         backgroundColor = .clear
         delegate = self
         dataSource = self
+        separatorStyle = .none
     }
     
     required init?(coder: NSCoder) {

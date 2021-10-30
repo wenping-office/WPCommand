@@ -141,6 +141,19 @@ public extension String{
 }
 
 public extension String{
+    
+    /// 转日期
+    /// - Parameters:
+    ///   - format: 日期格式
+    ///   - timeZone: 时区 默认UTC
+    /// - Returns: 日期
+    func wp_date(_ format:String,
+                   timeZone:TimeZone? = .init(identifier: "UTC"))->Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = timeZone
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: self)
+    }
 
     /// 转日期 默认本地日期
     /// - Parameter format: 日期格式
@@ -185,7 +198,6 @@ public extension String{
         secondsText = seconds > 9 ? "\(seconds)" : "0\(seconds)"
         return "\(hoursText):\(minutesText):\(secondsText)"
     }
-    
     
     /// 加载图片
     /// - Parameter bundle: 包
