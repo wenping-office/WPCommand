@@ -8,7 +8,7 @@
 import UIKit
 import QuartzCore
 
-public extension CAShapeLayer {
+public extension WPSpace where Base : CAShapeLayer {
     
     /// 返回一个选择性缕空圆角layer 注：layer的fillColor需要填充
     /// - Parameters:
@@ -16,9 +16,9 @@ public extension CAShapeLayer {
     ///   - radius: 圆角
     ///   - rect: 矩形
     /// - Returns: layer
-    static func wp_shapefillet(_ corners:[UIRectCorner], radius:CGFloat,in rect:CGRect)->CAShapeLayer{
+    static func shapefillet(_ corners:[UIRectCorner], radius:CGFloat,in rect:CGRect)->CAShapeLayer{
         let defaultPath = UIBezierPath(rect: rect)
-        let cornersPath = UIBezierPath.wp_corner(corners, radius: radius, in: rect)
+        let cornersPath = UIBezierPath.wp.corner(corners, radius: radius, in: rect)
         defaultPath.append(cornersPath)
         let layer = CAShapeLayer()
         layer.path = defaultPath.cgPath

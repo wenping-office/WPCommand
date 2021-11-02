@@ -196,7 +196,7 @@ extension WPAlertManager{
     /// 判断下一个弹窗是否是插入进来的
     private func nextAlertIsInset()->Bool{
         guard
-            let nextItem = alerts.wp_safeGet(of: 1)
+            let nextItem = alerts.wp_get(of: 1)
         else { return false }
         if nextItem.level <= 0 {
             return true

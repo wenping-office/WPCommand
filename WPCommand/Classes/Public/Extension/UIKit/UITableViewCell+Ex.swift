@@ -8,10 +8,10 @@
 
 import UIKit
 
-public extension UITableViewCell{
+public extension WPSpace where Base : UITableViewCell{
     /// 加载的tableView
-    var wp_tableView: UITableView? {
-        return superview as? UITableView
+    var tableView: UITableView? {
+        return base.superview as? UITableView
     }
 }
 

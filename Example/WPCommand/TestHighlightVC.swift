@@ -20,19 +20,18 @@ class TestHighlightVC: WPBaseVC {
         view.backgroundColor = .red
         self.view.addSubview(view)
         
-        let yayer = CAShapeLayer.wp_shapefillet([.bottomLeft], radius: 30, in: view.bounds)
+        let yayer = CAShapeLayer.wp.shapefillet([.bottomLeft], radius: 30, in: view.bounds)
         yayer.fillColor = UIColor.init(0, 0, 0, 0.4).cgColor
         view.layer.addSublayer(yayer)
-        
     }
 
     func layout(in bounds:CGRect)->CAShapeLayer{
         let path = UIBezierPath(rect: bounds)
         let x : CGFloat = bounds.size.width/2.0;
         let y : CGFloat = bounds.size.height/2.0
-        let radius : CGFloat = CGFloat.minimum(x, y) * 0.8
+        let _ : CGFloat = CGFloat.minimum(x, y) * 0.8
 
-        let cycle = UIBezierPath.wp_corner([.bottomLeft], radius: 20, in: bounds)
+        let cycle = UIBezierPath.wp.corner([.bottomLeft], radius: 20, in: bounds)
         path.append(cycle)
         let maskLayer = CAShapeLayer()
 

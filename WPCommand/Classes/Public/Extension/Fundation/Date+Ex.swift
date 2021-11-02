@@ -9,69 +9,68 @@
 import UIKit
 import Foundation
 
-public extension Date{
+public extension WPSpace where Base == Date{
 
     /// 获取当月最大天数
-    var wp_dayInMonth : Int{
-        let date = wp_offSetMonth(1) ?? Date()
-        
-        return date.wp_offSetDay(-date.wp_day)?.wp_day ?? 0
+    var dayInMonth : Int{
+        let date = offSetMonth(1)
+        return date.wp.offSetDay(-date.wp.day).wp.day
     }
 
     /// 当天零点
-    var wp_zero : Date? {
+    var zero : Date? {
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.year,.month,.day], from: self)
+        let components = calendar.dateComponents([.year,.month,.day], from: base)
         return calendar.date(from: components)
     }
     
     /// 年
-    var wp_year : Int{
-      return Calendar.current.component(.year, from: self)
+    var year : Int{
+      return Calendar.current.component(.year, from: base)
     }
     
     /// 月
-    var wp_month : Int{
-      return Calendar.current.component(.month, from: self)
+    var month : Int{
+      return Calendar.current.component(.month, from: base)
     }
     
     /// 日
-    var wp_day : Int{
-      return Calendar.current.component(.day, from: self)
+    var day : Int{
+      return Calendar.current.component(.day, from: base)
     }
     
     /// 时
-    var wp_hour : Int{
-    return Calendar.current.component(.hour, from: self)
+    var hour : Int{
+    return Calendar.current.component(.hour, from: base)
     }
     
     /// 分
-    var wp_minute : Int{
-      return Calendar.current.component(.minute, from: self)
+    var minute : Int{
+      return Calendar.current.component(.minute, from: base)
     }
     
     /// 秒
-    var wp_second : Int{
-      return Calendar.current.component(.second, from: self)
+    var second : Int{
+      return Calendar.current.component(.second, from: base)
     }
     
     /// 获取当前 秒级 时间戳 - 10位
-    var wp_timeStamp : String {
-        let timeInterval: TimeInterval = self.timeIntervalSince1970
+    var timeStamp : String {
+        let timeInterval: TimeInterval = base.timeIntervalSince1970
         let timeStamp = Int(timeInterval)
         return "\(timeStamp)"
     }
     
     /// 获取当前 毫秒级 时间戳 - 13位
-    var wp_milliStamp : String {
-        let timeInterval: TimeInterval = self.timeIntervalSince1970
+    var milliStamp : String {
+        let timeInterval: TimeInterval = base.timeIntervalSince1970
         let millisecond = CLongLong(round(timeInterval*1000))
         return "\(millisecond)"
     }
     
     /// 星期 [0星期天,1星期一,2星期二，已此类推]
-    var wp_weekday : Int {
-        let interval = self.timeIntervalSince1970;
+    var weekday : Int {
+        let interval = base.timeIntervalSince1970;
         let days = Int(interval / 86400);
         return (days - 3) % 7;
     }
@@ -80,7 +79,7 @@ public extension Date{
     var isToDay : Bool {
         let calendar = Calendar.current
         let nowComponents = calendar.dateComponents([.day, .month, .year], from: Date())
-        let selfComponents = calendar.dateComponents([.day, .month, .year], from: self)
+        let selfComponents = calendar.dateComponents([.day, .month, .year], from: base)
         return (selfComponents.year == nowComponents.year) && (selfComponents.month == nowComponents.month) && (selfComponents.day == nowComponents.day)
     }
     
@@ -88,7 +87,7 @@ public extension Date{
     var isToMonth : Bool{
         let calendar = Calendar.current
         let nowComponents = calendar.dateComponents([.month, .year], from: Date())
-        let selfComponents = calendar.dateComponents([.month, .year], from: self)
+        let selfComponents = calendar.dateComponents([.month, .year], from: base)
         return (selfComponents.year == nowComponents.year) && (selfComponents.month == nowComponents.month)
     }
     
@@ -96,105 +95,110 @@ public extension Date{
     var isToYear : Bool{
         let calendar = Calendar.current
         let nowComponents = calendar.dateComponents([.year], from: Date())
-        let selfComponents = calendar.dateComponents([.year], from: self)
+        let selfComponents = calendar.dateComponents([.year], from: base)
         return (selfComponents.year == nowComponents.year)
     }
 }
 
-public extension Date{
+public extension WPSpace where Base == Date{
     
     /// 转日期
     /// - Parameter format: format
     /// - Returns: 结果
-    func wp_format(_ format:String,timerZone:TimeZone = .init(identifier: "UTC")!)->String{
+    func format(_ format:String,
+                timerZone:TimeZone = .init(identifier: "UTC")!)->String{
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = timerZone
         dateFormatter.dateFormat = format
         dateFormatter.locale = Locale(identifier: "en")
-        return dateFormatter.string(from: self)
+        return dateFormatter.string(from: base)
     }
 
     /// 日期转本地时间字符串
     /// - Parameter format: 日期格式
     /// - Returns:
-    func wp_toZh_ChString(_ format:String) -> String{
+    func toZh_ChString(_ format:String) -> String{
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "zh_CN")
         dateFormatter.dateFormat = format
-        return dateFormatter.string(from: self)
+        return dateFormatter.string(from: base)
     }
 }
 
-public extension Date{
-    
+
+public extension WPSpace where Base == Date{
+
     /// 偏移年
     /// - Parameter year: 年
     /// - Returns: 结果
-    func wp_offSetYear(_ year:Int,_ calendar : Calendar = Calendar.current)->Date?{
-        let date = self
-        var comps = calendar.dateComponents([.year], from: date)
+    func offSetYear(_ year:Int,
+                    _ calendar : Calendar = Calendar.current)->Base{
+        var comps = calendar.dateComponents([.year], from: base)
         comps.year = year
-        return calendar.date(byAdding: comps, to: date)
+        return calendar.date(byAdding: comps, to: base) ?? Date()
     }
     
     /// 偏移月
     /// - Parameter month: 月
     /// - Returns: 结果
-    func wp_offSetMonth(_ month:Int,_ calendar : Calendar = Calendar.current)->Date?{
-        let date = self
-        var comps = calendar.dateComponents([.month], from: date)
+    func offSetMonth(_ month:Int,
+                     _ calendar : Calendar = Calendar.current)->Base{
+        var comps = calendar.dateComponents([.month], from: base)
         comps.month = month
-        return calendar.date(byAdding: comps, to: date)
+        return calendar.date(byAdding: comps, to: base) ?? Date()
     }
     
     /// 偏移日
     /// - Parameter day: 日
     /// - Returns: 结果
-    func wp_offSetDay(_ day:Int,_ calendar : Calendar = Calendar.current)->Date?{
-        let date = self
-        var comps = calendar.dateComponents([.day], from: date)
+    func offSetDay(_ day:Int,
+                   _ calendar : Calendar = Calendar.current)->Base{
+        var comps = calendar.dateComponents([.day], from: base)
         comps.day = day
-        return calendar.date(byAdding: comps, to: date)
+
+        return calendar.date(byAdding: comps, to: base) ?? Date()
     }
     
     /// 偏移时
     /// - Parameter hour: 时
     /// - Returns: 结果
-    func wp_offSetHour(_ hour:Int,_ calendar : Calendar = Calendar.current)->Date?{
-        let date = self
-        var comps = calendar.dateComponents([.hour], from: date)
+    func offSetHour(_ hour:Int,
+                    _ calendar : Calendar = Calendar.current)->Base{
+        var comps = calendar.dateComponents([.hour], from: base)
         comps.hour = hour
-        return calendar.date(byAdding: comps, to: date)
+        return calendar.date(byAdding: comps, to: base) ?? Date()
     }
     
     /// 偏移分
     /// - Parameter minute: 分
     /// - Returns: 结果
-    func wp_offSetMinute(_ minute:Int,_ calendar : Calendar = Calendar.current)->Date?{
-        let date = self
-        var comps = calendar.dateComponents([.minute], from: date)
+    func offSetMinute(_ minute:Int,
+                      _ calendar : Calendar = Calendar.current)->Base{
+        var comps = calendar.dateComponents([.minute], from: base)
         comps.minute = minute
-        return calendar.date(byAdding: comps, to: date)
+
+        return calendar.date(byAdding: comps, to: base) ?? Date()
     }
     
     /// 偏移秒
     /// - Parameter second: 秒
     /// - Returns: 结果
-    func wp_offSetSecond(_ second:Int,_ calendar : Calendar = Calendar.current)->Date?{
-        let date = self
-        var comps = calendar.dateComponents([.second], from: date)
+    func offSetSecond(_ second:Int,
+                      _ calendar : Calendar = Calendar.current)->Base{
+        var comps = calendar.dateComponents([.second], from: base)
         comps.second = second
-        return calendar.date(byAdding: comps, to: date)
+        return calendar.date(byAdding: comps, to: base) ?? Date()
     }
 }
 
-public extension Date{
+public extension WPSpace where Base == Date{
     
     /// 获取当前网络时间
     /// - Parameters:
     ///   - success: 成功
     ///   - failed: 失败
-    static func wp_currentInNet(success:(@escaping(Date)->Void),failed:(()->Void)?=nil){
+    static func currentInNet(success:(@escaping(Base)->Void),
+                             failed:(()->Void)?=nil){
         let url = URL(string: "http://www.baidu.com")
         var request = URLRequest(url: url!)
         request.httpMethod = "GET"

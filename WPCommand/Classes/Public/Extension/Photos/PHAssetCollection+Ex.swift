@@ -7,31 +7,31 @@
 
 import Photos
 
-public extension PHAssetCollection{
+public extension WPSpace where Base : PHAssetCollection{
     
     /// 系统所有相册
-    static var wp_AllAssetCollection : PHFetchResult<PHAssetCollection>{
+    static var AllAssetCollection : PHFetchResult<PHAssetCollection>{
         return PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
     }
     
     /// 系统默认相册
-    static var wp_defautAssetCollection : PHAssetCollection{
-        return wp_AllAssetCollection.firstObject!
+    static var defautAssetCollection : PHAssetCollection{
+        return AllAssetCollection.firstObject!
     }
     
     /// 获取系统相册所有符合类型的媒体资源
     /// - Parameter types: 媒体类型
     /// - Parameter condition: 自定义条件 true 为添加  false 为过滤
     /// - Returns: 结果
-    static func wp_allMedia(in types:[PHAssetMediaType],
+    static func allMedia(in types:[PHAssetMediaType],
                             condition:((PHAsset)->Bool)?=nil) -> [PHAsset] {
         var kes : [PHAssetMediaType:Any] = [:]
         types.forEach { elmt in
             kes[elmt] = ""
         }
         var source : [PHAsset] = []
-        PHAssetCollection.wp_AllAssetCollection.enumerateObjects { collection, index, stop in
-            source.append(contentsOf: collection.wp_media(in: types,condition: condition))
+        PHAssetCollection.wp.AllAssetCollection.enumerateObjects { collection, index, stop in
+            source.append(contentsOf: collection.wp.media(in: types,condition: condition))
         }
         return source
     }
@@ -41,7 +41,7 @@ public extension PHAssetCollection{
     ///   - title: 相册标题
     ///   - success: 成功
     ///   - failed: 失败
-    static func wp_create(_ title:String,success:(@escaping(PHAssetCollection,String)->Void),failed:((Error?)->Void)?=nil){
+    static func create(_ title:String,success:(@escaping(PHAssetCollection,String)->Void),failed:((Error?)->Void)?=nil){
         var identifier : String = ""
         var collection : PHAssetCollection?
         PHPhotoLibrary.shared().performChanges({
@@ -61,7 +61,7 @@ public extension PHAssetCollection{
     /// 获取一个自定义相册
     /// - Parameter identifier: 相册唯一标识
     /// - Returns: 结果
-    static func wp_get(in identifier:String)->PHAssetCollection?{
+    static func get(in identifier:String)->PHAssetCollection?{
         return PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil).firstObject
     }
     
@@ -69,14 +69,14 @@ public extension PHAssetCollection{
     /// - Parameter type: 媒体类型
     /// - Parameter condition: 自定义条件 true 为添加  false 为过滤
     /// - Returns: 结果
-    func wp_media(in types:[PHAssetMediaType],
+    func media(in types:[PHAssetMediaType],
                   condition:((PHAsset)->Bool)?=nil)->[PHAsset]{
         var kes : [PHAssetMediaType:Any] = [:]
         types.forEach { elmt in
             kes[elmt] = ""
         }
         var source : [PHAsset] = []
-        let fetchResult =  PHAsset.fetchAssets(in: self, options: nil)
+        let fetchResult = Photos.PHAsset.fetchAssets(in: base, options: nil)
         fetchResult.enumerateObjects { asset, index, sotp in
             if condition != nil {
                 if kes[asset.mediaType] != nil && condition!(asset){

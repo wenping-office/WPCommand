@@ -8,10 +8,10 @@
 
 import UIKit
 
-public extension UICollectionViewCell{
+public extension WPSpace where Base : UICollectionViewCell{
     /// 加载的collectionView
-    var wp_collectionView: UICollectionView? {
-        return superview as? UICollectionView
+    var collectionView: UICollectionView? {
+        return base.superview as? UICollectionView
     }
 }
 

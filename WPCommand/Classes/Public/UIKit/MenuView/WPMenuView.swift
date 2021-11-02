@@ -100,9 +100,9 @@ public extension WPMenuView{
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let bodyHeight = wp_height - navigationHeight
+        let bodyHeight = wp.height - navigationHeight
         if bodyHeight > 0 {
-            contentView.bodyView.setCollectionSize(.init(width: wp_width, height: bodyHeight))
+            contentView.bodyView.setCollectionSize(.init(width: wp.width, height: bodyHeight))
             contentView.reloadData()
         }
     }
@@ -228,7 +228,7 @@ public class WPMenuView: WPBaseView {
             // 设置翻页
             self?.selectedPage(index: index)
             // 设置header头
-            let headerItem = self?.contentView.headerView.datas.wp_safeGet(of: index)
+            let headerItem = self?.contentView.headerView.datas.wp_get(of: index)
             
             guard let self = self else { return }
 
@@ -260,7 +260,7 @@ public class WPMenuView: WPBaseView {
             }
             item.isSelected = false
         })
-        let navItem = contentView.navView.data.wp_safeGet(of: index)
+        let navItem = contentView.navView.data.wp_get(of: index)
         navItem?.isSelected = true
         navItem?.navigationItem.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
         
@@ -270,7 +270,7 @@ public class WPMenuView: WPBaseView {
             }
             item.isSelected = false
         })
-        let bodyItem = contentView.bodyView.data.wp_safeGet(of: index)
+        let bodyItem = contentView.bodyView.data.wp_get(of: index)
         bodyItem?.isSelected = true
         bodyItem?.bodyView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
         
@@ -280,7 +280,7 @@ public class WPMenuView: WPBaseView {
             }
             item.isSelected = false
         }
-        let headItem = contentView.headerView.datas.wp_safeGet(of: index)
+        let headItem = contentView.headerView.datas.wp_get(of: index)
         headItem?.isSelected = true
         headItem?.headerView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
     }
@@ -351,7 +351,7 @@ extension WPMenuContentTableView:UITableViewDelegate,UITableViewDataSource{
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let bodyHeight = wp_height - navigationHeight
+        let bodyHeight = wp.height - navigationHeight
         
         if indexPath.section <= 0{
             switch headerView.headerHeight {

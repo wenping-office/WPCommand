@@ -40,7 +40,7 @@ class WPMenuHeaderView: WPBaseTableViewCell {
     
     /// 设置一个视图
     func setHeaderView(of view:WPMenuHeaderViewProtocol?,complete:@escaping(Bool)->Void){
-        contentView.wp_removeAllSubViewFromSuperview()
+        contentView.wp.removeAllSubViewFromSuperview()
         if let header = view?.menuHeaderView() {
             headerHeight = view?.menuHeaderViewAtHeight() ?? .height(0)
             contentView.addSubview(header)

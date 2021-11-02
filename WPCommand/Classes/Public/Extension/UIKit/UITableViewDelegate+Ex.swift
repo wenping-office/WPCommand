@@ -61,7 +61,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        let item = tableView.wp_source.groups.wp_safeGet(of: indexPath.section)?.items.wp_safeGet(of: indexPath.row)
+        let item = tableView.wp_source.groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row)
         
         if heightForRowAt != nil {
             return heightForRowAt!(tableView,indexPath)
@@ -74,9 +74,9 @@ extension WPTableViewDelegate:UITableViewDelegate{
     
     public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        let group = tableView.wp_source.groups.wp_safeGet(of: indexPath.section)
+        let group = tableView.wp_source.groups.wp_get(of: indexPath.section)
         
-        if let item = group?.items.wp_safeGet(of: indexPath.row){
+        if let item = group?.items.wp_get(of: indexPath.row){
             item.didCommitEditBlock != nil ? item.didCommitEditBlock!(item,group!) : print()
         }
         
@@ -84,7 +84,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
     }
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        let group = tableView.wp_source.groups.wp_safeGet(of:section)
+        let group = tableView.wp_source.groups.wp_get(of:section)
         
         if heightForHeaderInSection != nil {
             return heightForHeaderInSection!(tableView,section)
@@ -97,7 +97,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
     
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
-        let group = tableView.wp_source.groups.wp_safeGet(of:section)
+        let group = tableView.wp_source.groups.wp_get(of:section)
         if heightForFooterInSection != nil {
             return heightForFooterInSection!(tableView,section)
         }else if (group != nil){
@@ -112,7 +112,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
         
         if viewForHeaderInSection != nil {
             return viewForHeaderInSection!(tableView,section)
-        }else if let group = tableView.wp_source.groups.wp_safeGet(of:section){
+        }else if let group = tableView.wp_source.groups.wp_get(of:section){
             var headView : UITableViewHeaderFooterView?
             
             if let idStr = group.headViewReuseIdentifier{
@@ -134,7 +134,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
         
         if viewForFooterInSection != nil {
             return viewForFooterInSection!(tableView,section)
-        }else if let group = tableView.wp_source.groups.wp_safeGet(of:section){
+        }else if let group = tableView.wp_source.groups.wp_get(of:section){
             var foodView : UITableViewHeaderFooterView?
             
             if let idStr = group.footViewReuseIdentifier{
@@ -155,7 +155,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         didSelectRowAt != nil ? didSelectRowAt!(tableView,indexPath) : print()
-        if let item = tableView.wp_source.groups.wp_safeGet(of: indexPath.section)?.items.wp_safeGet(of: indexPath.row){
+        if let item = tableView.wp_source.groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row){
             let cell = tableView.cellForRow(at: indexPath)
             item.didSelectedBlock != nil ? item.didSelectedBlock!(cell!) : print("")
         }
@@ -166,7 +166,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
         
         willDisplayCell != nil ? willDisplayCell!(tableView,cell, indexPath) : print()
         
-        if let item = tableView.wp_source.groups.wp_safeGet(of: indexPath.section)?.items.wp_safeGet(of: indexPath.row){
+        if let item = tableView.wp_source.groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row){
             item.willDisplay != nil ? item.willDisplay!(cell) : print("")
             cell.didSetItemInfo(info: item.info)
         }
@@ -176,7 +176,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
         
         willDisplayHeaderView != nil ? willDisplayHeaderView!(tableView,view,section) : print()
         
-        if let group = tableView.wp_source.groups.wp_safeGet(of:section){
+        if let group = tableView.wp_source.groups.wp_get(of:section){
             let headerView = view as! UITableViewHeaderFooterView
             headerView.reloadGroup(group: group)
             group.headWillDisplayBlock != nil ? group.headWillDisplayBlock!(headerView) : print()
@@ -188,7 +188,7 @@ extension WPTableViewDelegate:UITableViewDelegate{
         
         willDisplayFooterView != nil ? willDisplayFooterView!(tableView,view,section) : print()
         
-        if let group = tableView.wp_source.groups.wp_safeGet(of:section){
+        if let group = tableView.wp_source.groups.wp_get(of:section){
             let footerView = view as! UITableViewHeaderFooterView
             footerView.reloadGroup(group: group)
             group.footWillDisplayBlock != nil ? group.headWillDisplayBlock!(footerView) : print()

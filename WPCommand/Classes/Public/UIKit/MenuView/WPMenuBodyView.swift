@@ -98,12 +98,12 @@ extension WPMenuBodyView:UICollectionViewDelegate{
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offSet = scrollView.contentOffset.x / scrollView.wp_width
+        let offSet = scrollView.contentOffset.x / scrollView.wp.width
         contentOffSet?(offSet)
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let index = Int(scrollView.contentOffset.x / scrollView.wp_width + 0.5)
+        let index = Int(scrollView.contentOffset.x / scrollView.wp.width + 0.5)
         didSelected?(index)
     }
 }
@@ -133,10 +133,10 @@ class WPMenuBodyCell: WPBaseCollectionViewCell {
     func setBodyView(_ view:UIView?){
         bodyView = view
         if let view = view {
-            contentView.wp_removeAllSubViewFromSuperview()
+            contentView.wp.removeAllSubViewFromSuperview()
             contentView.addSubview(view)
         }else{
-            contentView.wp_removeAllSubViewFromSuperview()
+            contentView.wp.removeAllSubViewFromSuperview()
         }
     }
     override func layoutSubviews() {

@@ -16,7 +16,7 @@ public extension Encodable {
     }
     
     /// 转换成string
-    var wp_jsonStr :String? {
+    var wp_jsonString :String? {
         if let bytes = wp_data {
             return String(bytes: bytes, encoding: .utf8)
         }
