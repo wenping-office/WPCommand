@@ -10,8 +10,6 @@ import UIKit
 import RxSwift
 
 open class WPBaseAlertVC: UIViewController {
-    /// 垃圾桶
-    public let disposeBag = DisposeBag()
     /// 蒙板
     public let grayView = UIButton()
     /// 开始动画时间
@@ -56,7 +54,7 @@ open class WPBaseAlertVC: UIViewController {
     open func observeSubViewEvent(){
         grayView.rx.tap.subscribe(onNext: {[weak self]in
             self?.dismiss()
-        }).disposed(by: disposeBag)
+        }).disposed(by: wp_disposeBag)
     }
     /// 显示弹窗
     open func show(){

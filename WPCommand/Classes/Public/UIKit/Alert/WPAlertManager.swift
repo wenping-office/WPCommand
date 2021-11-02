@@ -47,7 +47,7 @@ public class WPAlertManager {
     /// 弹窗弹出的根视图
     private var targetView : UIView{
         if target == nil {
-            return UIApplication.shared.wp_topWindow
+            return UIApplication.shared.wp.topWindow
         }else{
             return target!
         }
