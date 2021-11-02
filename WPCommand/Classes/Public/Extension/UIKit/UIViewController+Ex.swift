@@ -14,10 +14,10 @@ public extension UIViewController{
     /// - Parameters:
     ///   - viewController: 根controllr
     ///   - info: 信息
-    @objc class func wp_show(in viewController:UIViewController,
+    @objc class func show(in viewController:UIViewController,
                           info:Any?=nil,
                           completion: ((UIViewController) -> Void)? = nil){
-        viewController.navigationController?.wp_pushViewController(self.init(), completion: completion)
+        viewController.navigationController?.wp.pushViewController(self.init(), completion: completion)
      }
     
     
@@ -27,7 +27,7 @@ public extension UIViewController{
     ///   - style: 样式
     ///   - info: 信息
     ///   - completion: 完成回调
-    @objc class func wp_present(in viewControl:UIViewController?,
+    class func present(in viewControl:UIViewController?,
                              style:UIModalPresentationStyle = .fullScreen,
                              info:Any?=nil,
                              completion:(()->Void)?=nil){

@@ -133,7 +133,7 @@ extension WPTableViewSource:UITableViewDataSource{
     
     public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
-        let group = groups.wp_safeGet(of:section)
+        let group = groups.wp_get(of:section)
         
         if titleForHeaderInSection != nil {
             return titleForHeaderInSection!(tableView,section)
@@ -145,7 +145,7 @@ extension WPTableViewSource:UITableViewDataSource{
     }
     
     public func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        let group = groups.wp_safeGet(of:section)
+        let group = groups.wp_get(of:section)
         
         if titleForFooterInSection != nil {
             return titleForFooterInSection!(tableView,section)
@@ -157,8 +157,7 @@ extension WPTableViewSource:UITableViewDataSource{
     }
     
     public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        
-        let item = groups.wp_safeGet(of: indexPath.section)?.items.wp_safeGet(of: indexPath.row)
+        let item = groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row)
         
         if editingStyleForRowAt != nil {
             return editingStyleForRowAt!(tableView,indexPath)

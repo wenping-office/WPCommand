@@ -71,6 +71,6 @@ extension NSString: WPRepeatProtocol {
 
 extension Date: WPRepeatProtocol {
     public typealias key = String
-    public var wp_repeatKey: String { get { return self.wp_milliStamp } }
+    public var wp_repeatKey: String { get { return self.wp.milliStamp } }
  }
 

@@ -128,7 +128,7 @@ public extension WPHighlightMaskProtocol{
         
         centerView.frame = frame
         if layer.cornerRadius != 0 {
-            let layer = CAShapeLayer.wp_shapefillet([.allCorners], radius: layer.cornerRadius, in: bounds)
+            let layer = CAShapeLayer.wp.shapefillet([.allCorners], radius: layer.cornerRadius, in: bounds)
             layer.fillColor = color.cgColor
             centerView.layer.addSublayer(layer)
         }

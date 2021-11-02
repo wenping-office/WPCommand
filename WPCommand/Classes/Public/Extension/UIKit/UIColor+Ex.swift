@@ -43,25 +43,24 @@ public extension UIColor{
         
         self.init(red: red, green: green, blue: blue, alpha: 1)
     }
+}
+public extension WPSpace where Base : UIColor{
     
     /// 随机色
-    class var wp_random : UIColor{
+    static var random : UIColor{
         let r = CGFloat(arc4random_uniform(255))
         let g = CGFloat(arc4random_uniform(255))
         let b = CGFloat(arc4random_uniform(255))
-        
         return .init(r, g, b, 255)
     }
-}
 
-public extension UIColor{
     /// 转换成图片
     /// - Returns: 图片
-    func wp_image(size:CGSize = .init(width: 1, height: 1)) -> UIImage?{
+    func image(size:CGSize = .init(width: 1, height: 1)) -> UIImage?{
         let rect = CGRect(x:0,y:0,width:size.width,height:size.height)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()
-        context?.setFillColor(self.cgColor)
+        context?.setFillColor(base.cgColor)
         context!.fill(rect)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -77,7 +76,7 @@ public extension UIColor{
     ///   - beginPoint: 开始渐变点
     ///   - endPoint: 结束渐变点
     ///   - handle: 每一次渐变处理最终的rgb
-   static func wp_transfrom(of beginColor:UIColor,
+   static func transfrom(of beginColor:UIColor,
                    to endColor:UIColor,
                    offset:CGPoint,
                    spacing:CGFloat,
@@ -122,8 +121,6 @@ public extension UIColor{
             handle(cR,cG,cB,cA,alphaA,alphaB)
         }
     }
-
-
 }
 
 

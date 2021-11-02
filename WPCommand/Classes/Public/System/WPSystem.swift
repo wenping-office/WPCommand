@@ -44,13 +44,13 @@ public extension WPSystem{
     /// 当前设备类型
     static var deviceType : DeviceType{
         let modelStr = WPSystem.modelStr
-        if modelStr.wp_isContent("iPhone") {
+        if modelStr.wp.isContent("iPhone") {
             return .iPhone
-        }else if modelStr.wp_isContent("iPod"){
+        }else if modelStr.wp.isContent("iPod"){
             return .iPod
-        }else if modelStr.wp_isContent("iPad"){
+        }else if modelStr.wp.isContent("iPad"){
             return .iPad
-        }else if modelStr.wp_isContent("i386") || modelStr.wp_isContent("x86_64"){
+        }else if modelStr.wp.isContent("i386") || modelStr.wp.isContent("x86_64"){
             return .simulator
         }else{
             return .unknown
@@ -136,11 +136,11 @@ public extension WPSystem{
                 obServer = ob
                 return Disposables.create()
             }
-            var targetFrame : CGRect = view.wp_frameInWidow
+            var targetFrame : CGRect = view.wp.frameInWidow
 
             WPSystem.keyboard.willShow.subscribe(onNext: { value in
                 if targetFrame == .zero{
-                    targetFrame = view.wp_frameInWidow
+                    targetFrame = view.wp.frameInWidow
                 }
                 let keyBoardEnd = (value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero
                 let of = -(targetFrame.maxY - keyBoardEnd.minY)
@@ -317,7 +317,7 @@ public extension WPSystem{
     ///   - phone: 电话
     ///   - failed: 拨打失败
     static func callPhone(phone:String,failed:(()->Void)? = nil){
-        let phoneStr = "tel://" + phone.wp_filterSpace
+        let phoneStr = "tel://" + phone.wp.filterSpace
         if let phoneURL = URL(string: phoneStr), UIApplication.shared.canOpenURL(phoneURL) {
             UIApplication.shared.openURL(phoneURL)
         }else{
@@ -687,19 +687,19 @@ public extension WPSystem{
         
         /// iPhone架构号码
         static var modelPhoneNum : Int{
-            let num = WPSystem.modelStr.wp_filter("iPhone").wp_filter(",")
+            let num = WPSystem.modelStr.wp.filter("iPhone").wp.filter(",")
             return Int.init(num) ?? 0
         }
         
         /// iPod架构号
         static var modeliPodNum : Int{
-            let num = WPSystem.modelStr.wp_filter("iPod").wp_filter(",")
+            let num = WPSystem.modelStr.wp.filter("iPod").wp.filter(",")
             return Int.init(num) ?? 0
         }
         
         /// iPad架构号
         static var modeliPadNum : Int{
-            let num = WPSystem.modelStr.wp_filter("iPad").wp_filter(",")
+            let num = WPSystem.modelStr.wp.filter("iPad").wp.filter(",")
             return Int.init(num) ?? 0
         }
     }

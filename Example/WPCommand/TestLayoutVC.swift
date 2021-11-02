@@ -20,11 +20,12 @@ class TestLayoutVC: WPBaseVC {
 
         })
 
-
+        let obj = NSObject()
+        obj.rx
         
         WPSystem.application.didBecomeActive.subscribe(onNext: {_ in
-            let alert2 = LabTestAlert2()
-            alert2.wp_size = .init(width: 250, height: 250)
+            var alert2 = LabTestAlert2()
+            alert2.wp.size = .init(width: 250, height: 250)
             alert2.show(in: nil, option: .insert(keep: true))
         })
 
@@ -107,7 +108,8 @@ class LabTestAlert: WPBaseView,WPAlertBridgeProtocol,WPEventProtocol {
         lab.text = "测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代码"
         lab.numberOfLines = 0
         addSubview(lab)
-        backgroundColor = .wp_random
+        backgroundColor = UIColor.wp.random
+        
     }
     
     

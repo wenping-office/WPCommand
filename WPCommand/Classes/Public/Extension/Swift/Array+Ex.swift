@@ -31,7 +31,7 @@ public extension Array{
     /// - Parameters:
     ///   - newElmt: 元素
     ///   - index: 索引
-    mutating func wp_safeInset(_ newElmt:Element ,at index:Int){
+    mutating func wp_insert(_ newElmt:Element ,at index:Int){
         if index <= 0 && index < count {
             insert(newElmt, at: index)
         }else if index <= 0{
@@ -43,7 +43,7 @@ public extension Array{
     
     /// 安全移除一个元素
     /// - Parameter index: 索引
-    mutating func wp_safeRemove(at index:Int){
+    mutating func wp_remove(at index:Int){
         if count > index-1 && index >= 0{
             remove(at: index)
         }
@@ -66,7 +66,7 @@ public extension Array{
     /// 安全获取一个元素
     /// - Parameter index: 所有
     /// - Returns: 元素
-    func wp_safeGet(of index:Int)->Element?{
+    func wp_get(of index:Int)->Element?{
         
         if index <= count-1 && index >= 0 {
             return self[index]
@@ -81,15 +81,15 @@ public extension Array{
     ///   - newElmt: 元素
     mutating func wp_exchange(of index:Int,_ newElmt:Element){
         
-        wp_safeRemove(at: index)
+        wp_remove(at: index)
         
-        wp_safeInset(newElmt, at: index)
+        wp_insert(newElmt, at: index)
     }
     
     /// 查找一组符合条件的元素
     /// - Parameter resualtBlock: 条件
     /// - Returns: 结果
-    func wp_elmts(by resualtBlock:@escaping(Element)->Bool)->[Element]{
+    func wp_elmts(of resualtBlock:@escaping(Element)->Bool)->[Element]{
         var res : [Element] = []
         for index in 0..<count {
             let elmt = self[index]
@@ -103,7 +103,7 @@ public extension Array{
     /// 查找某个符合条件的元素
     /// - Parameter resualtBlock: 条件
     /// - Returns: 结果
-    func wp_elmt(by resualtBlock:@escaping(Element)->Bool)->Element?{
+    func wp_elmt(of resualtBlock:@escaping(Element)->Bool)->Element?{
         var res : Element?
         for index in 0..<count {
             let elmt = self[index]
@@ -132,14 +132,14 @@ public extension Array{
     /// 从头部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func wp_fistTo(_ count:Int) -> ArraySlice<Element>{
-        return wp_subArrTo(.init(location: 0, length: count))
+    func wp_first(of count:Int) -> ArraySlice<Element>{
+        return wp_subArray(of: .init(location: 0, length: count))
     }
     
     /// 从尾部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func wp_lastTo(_ count:Int) -> ArraySlice<Element> {
+    func wp_last(of count:Int) -> ArraySlice<Element> {
 
         let location = self.count - count
         if count <= self.count {
@@ -152,7 +152,7 @@ public extension Array{
     /// 截取数组 如果lenght越界 则返回最大的可取范围
     /// - Parameter range: 返回
     /// - Returns: 结果
-    func wp_subArrTo(_ range:NSRange) -> ArraySlice<Element>{
+    func wp_subArray(of range:NSRange) -> ArraySlice<Element>{
         let lenght = range.length
         let maxLenght = self.count - range.location
         if lenght <= maxLenght {
@@ -233,8 +233,156 @@ public extension Array where Element: WPRepeatProtocol{
     }
 }
 
-public extension Array where Element:Hashable{
+public extension WPSpace where Base == Array<Any>{
 
+    /// 过滤元素 返回ture过滤 否则不过滤
+    /// - Parameter resualt: 过滤结果会改变自身 数组应该为可变属性
+    mutating func filter(by resultBlock:@escaping(Base.Element) -> Bool){
+        var result : [Base.Element] = []
+        base.forEach { elmt in
+            if !resultBlock(elmt) {
+                result.append(elmt)
+            }
+        }
+        base = result
+    }
+    
+    /// 安全插入一个元素
+    /// - Parameters:
+    ///   - newElmt: 元素
+    ///   - index: 索引
+    mutating func insert(_ newElmt:Base.Element ,at index:Int){
+        if index <= 0 && index < base.count {
+            base.insert(newElmt, at: index)
+        }else if index <= 0{
+            base.insert(newElmt, at: 0)
+        }else{
+            base.append(newElmt)
+        }
+    }
+    
+    /// 安全移除一个元素
+    /// - Parameter index: 索引
+    mutating func remove(at index:Int){
+        if base.count > index-1 && index >= 0{
+            base.remove(at: index)
+        }
+    }
+    
+    
+    /// 判断是否包含某个元素
+    /// - Parameter resualtBlock: 条件
+    /// - Returns: 结果
+    func wp_isContent(resualtBlock:@escaping(Base.Element)->Bool) -> Bool {
+        for index in 0..<base.count {
+            let elmt = base[index]
+            if resualtBlock(elmt){
+                return true
+            }
+        }
+        return false
+    }
+
+    /// 安全获取一个元素
+    /// - Parameter index: 所有
+    /// - Returns: 元素
+    func wp_get(of index:Int)->Base.Element?{
+        
+        if index <= base.count-1 && index >= 0 {
+            return base[index]
+        }else{
+            return nil
+        }
+    }
+
+    /// 交换元素
+    /// - Parameters:
+    ///   - index: 交换元素的索引
+    ///   - newElmt: 元素
+    mutating func exchange(of index:Int,_ newElmt:Base.Element){
+        
+        remove(at: index)
+        
+        insert(newElmt, at: index)
+    }
+    
+    /// 查找一组符合条件的元素
+    /// - Parameter resualtBlock: 条件
+    /// - Returns: 结果
+    func wp_elmts(of resualtBlock:@escaping(Base.Element)->Bool)->[Base.Element]{
+        var res : [Base.Element] = []
+        for index in 0..<base.count {
+            let elmt = base[index]
+            if resualtBlock(elmt){
+                res.append(elmt)
+            }
+        }
+        return res
+    }
+    
+    /// 查找某个符合条件的元素
+    /// - Parameter resualtBlock: 条件
+    /// - Returns: 结果
+    func wp_elmt(of resualtBlock:@escaping(Base.Element)->Bool)->Base.Element?{
+        var res : Base.Element?
+        for index in 0..<base.count {
+            let elmt = base[index]
+            if resualtBlock(elmt){
+                res = elmt
+                break
+            }
+        }
+        return res
+    }
+    
+    /// 获取某个元素的下标 如果没有则返回空
+    /// - Parameter resualtBlock: 条件block
+    /// - Returns: 结果
+    func wp_index(of resualtBlock:@escaping(Base.Element)->Bool)->UInt?{
+        var index : UInt?
+        for subIndex in 0..<base.count {
+            if resualtBlock(base[subIndex]) {
+                index = UInt(subIndex)
+                break
+            }
+        }
+        return index
+    }
+    
+    /// 从头部开始取值 数量不足则返回所有
+    /// - Parameter count: 个数
+    /// - Returns: 结果
+    func wp_first(of count:Int) -> ArraySlice<Base.Element>{
+        return wp_subArray(of: .init(location: 0, length: count))
+    }
+    
+    /// 从尾部开始取值 数量不足则返回所有
+    /// - Parameter count: 个数
+    /// - Returns: 结果
+    func wp_last(of count:Int) -> ArraySlice<Base.Element> {
+
+        let location = base.count - count
+        if count <= base.count {
+            return base[location..<base.count]
+        }else{
+            return base[0..<base.count]
+        }
+    }
+    
+    /// 截取数组 如果lenght越界 则返回最大的可取范围
+    /// - Parameter range: 返回
+    /// - Returns: 结果
+    func wp_subArray(of range:NSRange) -> ArraySlice<Base.Element>{
+        let lenght = range.length
+        let maxLenght = base.count - range.location
+        if lenght <= maxLenght {
+            let count = range.location + range.length
+            return base[range.location..<count]
+        }else{
+            return base[range.location..<base.count]
+        }
+
+    }
 }
 
 

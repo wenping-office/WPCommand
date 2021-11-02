@@ -43,7 +43,7 @@ open class WPTextView: UITextView {
                 return text
             }else{
                 let highStrCount = text(in: textRange)?.count ?? 0
-                return text.wp_fistTo(text.count - highStrCount)
+                return text.wp.first(of: text.count - highStrCount)
             }
         }else{
             return text

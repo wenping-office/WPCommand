@@ -9,9 +9,9 @@
 import UIKit
 import RxCocoa
 
-public extension UIView{
+public extension WPSpace where Base : UIView{
     /// 从xib加载
-    static func wp_initWithXibName(xib: String) -> Any? {
+    static func initWithXibName(xib: String) -> Any? {
         guard let nibs = Bundle.main.loadNibNamed(xib, owner: nil, options: nil) else {
             return nil
         }
@@ -19,99 +19,100 @@ public extension UIView{
     }
 }
 
-public extension UIView{
+public extension WPSpace where Base : UIView{
     /// 在keyWindow中的位置
-    var wp_frameInWidow : CGRect{
-        return convert(bounds, to: UIApplication.shared.keyWindow)
+    var frameInWidow : CGRect{
+        return base.convert(bounds, to: UIApplication.shared.keyWindow)
     }
+    
     ///将当前视图转为UIImage
-    var wp_image : UIImage{
+    var image : UIImage{
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
         return renderer.image { rendererContext in
-            layer.render(in: rendererContext.cgContext)
+            base.layer.render(in: rendererContext.cgContext)
         }
     }
-    /// copy一个视图
-    var wp_copy : Self{
-        let data = NSKeyedArchiver.archivedData(withRootObject: Self.self)
-        return NSKeyedUnarchiver.unarchiveObject(with: data) as! Self
+
+    var x: CGFloat {
+        get { return base.frame.origin.x }
+        set { base.frame.origin.x = newValue }
     }
     
-    var wp_x: CGFloat {
-        get { return frame.origin.x }
-        set { frame.origin.x = newValue }
+    var y: CGFloat {
+        get { return base.frame.origin.y }
+        set { base.frame.origin.y = newValue }
     }
     
-    var wp_y: CGFloat {
-        get { return frame.origin.y }
-        set { frame.origin.y = newValue }
+    var width: CGFloat {
+        get { return base.frame.size.width }
+        set { base.frame.size.width = newValue }
     }
     
-    var wp_width: CGFloat {
-        get { return frame.size.width }
-        set { frame.size.width = newValue }
+    var height: CGFloat {
+        get { return base.frame.size.height }
+        set { base.frame.size.height = newValue }
     }
     
-    var wp_height: CGFloat {
-        get { return frame.size.height }
-        set { frame.size.height = newValue }
+    var maxX: CGFloat {
+        get { return x + width }
+        set { x = newValue - width }
     }
     
-    var wp_maxX: CGFloat {
-        get { return wp_x + wp_width }
-        set { wp_x = newValue - wp_width }
+    var maxY: CGFloat {
+        get { return y + height }
+        set { y = newValue - height }
     }
     
-    var wp_maxY: CGFloat {
-        get { return wp_y + wp_height }
-        set { wp_y = newValue - wp_height }
+    var centerX: CGFloat {
+        get { return base.center.x }
+        set { base.center.x = newValue }
     }
     
-    var wp_centerX: CGFloat {
-        get { return center.x }
-        set { center.x = newValue }
+    var centerY: CGFloat {
+        get { return base.center.y }
+        set { base.center.y = newValue }
     }
     
-    var wp_centerY: CGFloat {
-        get { return center.y }
-        set { center.y = newValue }
-    }
-    
-    var wp_midX: CGFloat {
-        return wp_width * 0.5
+    var midX: CGFloat {
+        return width * 0.5
     }
     
     var wp_midY: CGFloat {
-        return wp_height * 0.5
+        return height * 0.5
     }
     
-    var wp_size : CGSize{
-        get { return frame.size }
-        set { frame.size = newValue }
+    var size : CGSize{
+        get { return base.frame.size }
+        set { base.frame.size = newValue }
     }
     
-    var wp_orgin : CGPoint{
-        get { return frame.origin }
-        set { frame.origin = newValue }
+    var orgin : CGPoint{
+        get { return base.frame.origin }
+        set { base.frame.origin = newValue }
     }
     
+    var bounds : CGRect{
+        get { return base.bounds }
+        set { base.bounds = newValue }
+    }
+
     /// 是否有添加约束
     var isAddConstraints : Bool{
-        return constraints.count > 0
+        return base.constraints.count > 0
     }
 }
 
-public extension UIView {
+public extension WPSpace where Base : UIView {
     
     /// 平面旋转
     /// - Parameter angle: 角度
-    func wp_rotation2D(angle:CGFloat){
-        transform = CGAffineTransform(rotationAngle: angle)
+    func rotation2D(angle:CGFloat){
+        base.transform = CGAffineTransform(rotationAngle: angle)
     }
     
     @discardableResult
     /// 自身约束
-    func wp_equalLayout(_ attribute: NSLayoutConstraint.Attribute,
+    func equalLayout(_ attribute: NSLayoutConstraint.Attribute,
                         constant: CGFloat) -> NSLayoutConstraint {
         let layout = NSLayoutConstraint(item: self,
                                         attribute: attribute,
@@ -120,7 +121,7 @@ public extension UIView {
                                         attribute: .notAnAttribute,
                                         multiplier:0.0,
                                         constant:constant)
-        addConstraint(layout)
+        base.addConstraint(layout)
         return layout
     }
     
@@ -129,34 +130,34 @@ public extension UIView {
     ///   - corners: 原角点
     ///   - radius: 圆角弧度
     ///   - force: 是否强制 true的话在自身宽高都等于0的时候会调用一次layoutIfNeed
-    func wp_corner(_ corners: [UIRectCorner], radius: CGFloat,force:Bool = false) {
+    func corner(_ corners: [UIRectCorner], radius: CGFloat,force:Bool = false) {
         if corners.count <= 0 { return }
         
         if force && bounds.size == .zero {
-            layoutIfNeeded()
+            base.layoutIfNeeded()
         }
         
-        let maskPath = UIBezierPath.wp_corner(corners, radius: radius, in: bounds)
+        let maskPath = UIBezierPath.wp.corner(corners, radius: radius, in: bounds)
         
-        var maskLayer = layer.mask
-        if layer.mask == nil {
+        var maskLayer = base.layer.mask
+        if base.layer.mask == nil {
             maskLayer = CAShapeLayer()
         }
         maskLayer!.frame = bounds
         (maskLayer as? CAShapeLayer)?.path = maskPath.cgPath
-        layer.mask = maskLayer
+        base.layer.mask = maskLayer
     }
     
     /// 设置边框
-    func wp_boardLine(color: UIColor, top: Bool, right: Bool, bottom: Bool, left: Bool, width: CGFloat) {
+    func boardLine(color: UIColor, top: Bool, right: Bool, bottom: Bool, left: Bool, width: CGFloat) {
         let nameKey = "setBoardLine"
-        layer.sublayers?.forEach { if $0.name == nameKey { $0.removeFromSuperlayer() } }
+        base.layer.sublayers?.forEach { if $0.name == nameKey { $0.removeFromSuperlayer() } }
         
         let boolList = [top, right, bottom, left]
-        let rectList = [CGRect(x: 0, y: 0, width: self.wp_width, height: wp_width),
-                        CGRect(x: wp_width - width, y: 0, width: width, height: wp_height),
-                        CGRect(x: 0, y: wp_height - width, width: self.wp_width, height: wp_width),
-                        CGRect(x: 0, y: 0, width: width, height: wp_height)]
+        let rectList = [CGRect(x: 0, y: 0, width: self.width, height: self.width),
+                        CGRect(x: self.width - width, y: 0, width: width, height: self.height),
+                        CGRect(x: 0, y: self.height - width, width: self.self.width, height: self.width),
+                        CGRect(x: 0, y: 0, width: width, height: self.height)]
         
         for (idx, bo) in boolList.enumerated() {
             if bo {
@@ -164,14 +165,14 @@ public extension UIView {
                 layer.name = nameKey
                 layer.frame = rectList[idx]
                 layer.backgroundColor = color.cgColor
-                self.layer.addSublayer(layer)
+                base.layer.addSublayer(layer)
             }
         }
     }
     
     ///设置渐变背景色，需在设置frame或约束后调用
     @discardableResult
-    func wp_layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor])->CAGradientLayer {
+    func layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor])->CAGradientLayer {
         let layer = CAGradientLayer()
         let sKey = "c-p-p"
         layer.name = sKey
@@ -179,28 +180,28 @@ public extension UIView {
         layer.colors = colors
         layer.endPoint = endPoint
         layer.startPoint = startPoint
-        layer.cornerRadius = self.layer.cornerRadius
-        for oldLayer in self.layer.sublayers ?? [] {
+        layer.cornerRadius = base.layer.cornerRadius
+        for oldLayer in base.layer.sublayers ?? [] {
             if oldLayer.name == sKey {
-                self.layer.replaceSublayer(oldLayer, with: layer)
+                base.layer.replaceSublayer(oldLayer, with: layer)
                 return layer
             }
         }
-        self.layer.insertSublayer(layer, at: 0)
+        base.layer.insertSublayer(layer, at: 0)
         return layer
     }
     
     /// 子视图随机色
-    func wp_subViewRandomColor(){
-        subviews.forEach { subView in
-            subView.backgroundColor = .wp_random
-            backgroundColor = .wp_random
+    func subViewRandomColor(){
+        base.subviews.forEach { subView in
+            subView.backgroundColor = UIColor.wp.random
+            base.backgroundColor = UIColor.wp.random
         }
     }
     
     /// 移除所有子视图
-    func wp_removeAllSubViewFromSuperview(){
-        subviews.forEach { elmt in
+    func removeAllSubViewFromSuperview(){
+        base.subviews.forEach { elmt in
             elmt.removeFromSuperview()
         }
     }
@@ -212,7 +213,7 @@ public extension UIView {
     ///   - lineLength: 长度
     ///   - lineSpacing: 虚线间隔
     ///   - isBottom: 是否是底部
-    func wp_drawDashLine(strokeColor: UIColor,
+    func drawDashLine(strokeColor: UIColor,
                          lineWidth: CGFloat = 1,
                          lineLength: Int = 10,
                          lineSpacing: Int = 5,
@@ -230,25 +231,25 @@ public extension UIView {
         shapeLayer.lineDashPattern = [NSNumber(value: lineLength), NSNumber(value: lineSpacing)]
         
         let path = CGMutablePath()
-        let y = isBottom == true ? self.layer.bounds.height - lineWidth : 0
+        let y = isBottom == true ? base.layer.bounds.height - lineWidth : 0
         path.move(to: CGPoint(x: 0, y: y))
-        path.addLine(to: CGPoint(x: self.layer.bounds.width, y: y))
+        path.addLine(to: CGPoint(x: base.layer.bounds.width, y: y))
         shapeLayer.path = path
-        self.layer.addSublayer(shapeLayer)
+        base.layer.addSublayer(shapeLayer)
     }
     
     /// 显示占位视图
     /// - Parameters:
     ///   - offSetY: 偏移量
     ///   - config: 配置项
-    func wp_showPlaceholder(offSetY:CGFloat=0,
+    func showPlaceholder(offSetY:CGFloat=0,
                             config:@escaping (WPPlaceholderView)->Void){
-        WPGCD.main_Async {[weak self] in
-            guard let self = self else { return }
+        WPGCD.main_Async {
+
             let tag = 10086
             var contetnView : UIView?
             // 先查询是否有占位视图
-            self.subviews.forEach { elmt in
+            base.subviews.forEach { elmt in
                 if elmt.tag == tag{
                     contetnView = elmt
                 }
@@ -258,7 +259,7 @@ public extension UIView {
             }
             
             contetnView?.tag = tag
-            self.addSubview(contetnView!)
+            base.addSubview(contetnView!)
             
             contetnView?.snp.remakeConstraints({ make in
                 make.edges.equalToSuperview()
@@ -275,10 +276,10 @@ public extension UIView {
     }
     
     /// 移除占位视图
-    func wp_removePlaceholder(){
-        WPGCD.main_Async {[weak self] in
+    func removePlaceholder(){
+        WPGCD.main_Async {
             let tag = 10086
-            let contentView = self?.subviews.wp_elmt(by: { elmt in
+            let contentView = base.subviews.wp_elmt(of: { elmt in
                 return elmt.tag == tag
             })
             contentView?.removeFromSuperview()
@@ -287,19 +288,18 @@ public extension UIView {
     
     /// 显示加载小菊花
     /// - Parameter show: 是否显示
-    func wp_loading(is show: Bool,offSetY: CGFloat = 0) {
-        WPGCD.main_Async { [weak self] in
-            guard let self = self else { return }
-            
+    func loading(is show: Bool,offSetY: CGFloat = 0) {
+        WPGCD.main_Async {
+
             let tag = 10087
-            let resualt = self.subviews.wp_isContent { elmt in
+            let resualt = base.subviews.wp_isContent { elmt in
                 return elmt.tag == tag
             }
             if show && !resualt {
                 let lodingView = UIActivityIndicatorView()
                 lodingView.tag = tag
                 lodingView.startAnimating()
-                self.addSubview(lodingView)
+                base.addSubview(lodingView)
                 lodingView.snp.makeConstraints { (make) in
                     make.centerX.equalToSuperview()
                     make.centerY.equalToSuperview().offset(offSetY)
@@ -307,7 +307,7 @@ public extension UIView {
                 }
                 
             }else if !show && resualt{
-                let subLoding = self.subviews.wp_elmt { elmt in
+                let subLoding = base.subviews.wp_elmt { elmt in
                     return elmt.tag == tag
                 }
                 subLoding?.removeFromSuperview()
@@ -320,16 +320,14 @@ public extension UIView {
     /// - Parameters:
     ///   - str: 内容
     ///   - delaySecond: 延迟时间
-    func wp_toast(_ str: String,_ delaySecond:DispatchTime = .now() + 2,offSetY: CGFloat = 0){
-        WPGCD.main_Async {[weak self] in
-            guard let self = self else { return }
-            
+    func toast(_ str: String,_ delaySecond:DispatchTime = .now() + 2,offSetY: CGFloat = 0){
+        WPGCD.main_Async {
             let toastView = WPToastView()
             toastView.titleL.text = str
             toastView.alpha = 0
             
-            self.addSubview(toastView)
-            
+            base.addSubview(toastView)
+
             toastView.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview().offset(offSetY)
@@ -420,5 +418,66 @@ class WPToastView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
+public extension UIView{
+    var wp_x: CGFloat {
+        get { return frame.origin.x }
+        set { frame.origin.x = newValue }
+    }
+    
+    var wp_y: CGFloat {
+        get { return frame.origin.y }
+        set { frame.origin.y = newValue }
+    }
+    
+    var wp_width: CGFloat {
+        get { return frame.size.width }
+        set { frame.size.width = newValue }
+    }
+    
+    var wp_height: CGFloat {
+        get { return frame.size.height }
+        set { frame.size.height = newValue }
+    }
+    
+    var wp_maxX: CGFloat {
+        get { return wp_x + wp_width }
+        set { wp_x = newValue - wp_width }
+    }
+    
+    var wp_maxY: CGFloat {
+        get { return wp_y + wp_height }
+        set { wp_y = newValue - wp_height }
+    }
+    
+    var wp_centerX: CGFloat {
+        get { return center.x }
+        set { center.x = newValue }
+    }
+    
+    var wp_centerY: CGFloat {
+        get { return center.y }
+        set { center.y = newValue }
+    }
+    
+    var wp_midX: CGFloat {
+        return wp_width * 0.5
+    }
+    
+    var wp_midY: CGFloat {
+        return wp_height * 0.5
+    }
+    
+    var wp_size : CGSize{
+        get { return frame.size }
+        set { frame.size = newValue }
+    }
+    
+    var wp_orgin : CGPoint{
+        get { return frame.origin }
+        set { frame.origin = newValue }
     }
 }

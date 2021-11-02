@@ -8,16 +8,16 @@
 import UIKit
 
 
-public extension UIBezierPath {
-    
-    
+public extension WPSpace where Base : UIBezierPath {
     /// 获取一个选择性圆角Path
     /// - Parameters:
     ///   - corners: 圆角方向
     ///   - radius: 圆角
     ///   - rect: 矩形
     /// - Returns: path路径
-    static func wp_corner(_ corners: [UIRectCorner], radius: CGFloat,in rect:CGRect)->UIBezierPath{
+    static func corner(_ corners: [UIRectCorner],
+                       radius: CGFloat,
+                       in rect:CGRect)->UIBezierPath{
         var value : UInt = 0
         corners.forEach { elmt in
             value += elmt.rawValue

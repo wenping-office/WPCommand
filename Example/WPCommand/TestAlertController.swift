@@ -28,6 +28,7 @@ class TestAlertController: WPBaseVC {
         view.backgroundColor = .white
         
         WPAlertManager.default.setAlerts([alert1()]).show()
+
     }
     
     func alert1() -> testAlert {
@@ -43,10 +44,10 @@ class TestAlertController: WPBaseVC {
     }
     
     func alert2() -> testAlert2 {
-        let aler2 = testAlert2()
+        var aler2 = testAlert2()
         aler2.backgroundColor = .yellow
-        aler2.wp_width = 200
-        aler2.wp_height = 200
+        aler2.wp.width = 200
+        aler2.wp.height = 200
         aler2.leftBtn.rx.tap.subscribe(onNext: {
             WPAlertManager.default.dismiss()
         })
@@ -92,8 +93,8 @@ class testAlert2: WPBaseView,WPAlertProtocol {
         return .init(color: .blue, enabled: true, isHidden: false)
     }
     
-    let leftBtn = UIButton()
-    let rightBtn = UIButton()
+    var leftBtn = UIButton()
+    var rightBtn = UIButton()
     
     override func initSubView() {
         
@@ -105,12 +106,11 @@ class testAlert2: WPBaseView,WPAlertProtocol {
         leftBtn.setTitleColor(.black, for: .normal)
         rightBtn.setTitleColor(.black, for: .normal)
         
-       
-        leftBtn.wp_x = 0
-        rightBtn.wp_x = 100
+        leftBtn.wp.x = 0
+        rightBtn.wp.x = 100
         leftBtn.sizeToFit()
         rightBtn.sizeToFit()
-        wp_subViewRandomColor()
+        wp.subViewRandomColor()
     }
     
 }
@@ -146,7 +146,7 @@ class testAlert: WPBaseView,WPAlertProtocol {
             make.left.equalTo(leftBtn.snp.right)
         }
         
-        backgroundColor = .wp_random
+        backgroundColor = UIColor.wp.random
     }
     
 }

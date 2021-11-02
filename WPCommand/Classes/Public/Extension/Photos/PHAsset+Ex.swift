@@ -7,16 +7,16 @@
 
 import Photos
 
-public extension PHAsset{
+public extension WPSpace where Base : PHAsset{
     
     /// 转换成图片data
     /// - Parameters:
     ///   - option: 取出图片的方式
     ///   - complete: 结果
-    func wp_imageData(in option:PHImageRequestOptions? ,
+    func imageData(in option:PHImageRequestOptions? ,
                       resultHandler:@escaping(Data?,String?,UIImage.Orientation,[AnyHashable:Any]?)->Void){
         let imageManager = PHImageManager.default()
-        imageManager.requestImageData(for: self, options: option) { data, str, orientation, info in
+        imageManager.requestImageData(for: base, options: option) { data, str, orientation, info in
             WPGCD.main_Async {
                 resultHandler(data,str,orientation,info)
             }
@@ -29,12 +29,12 @@ public extension PHAsset{
     ///   - contentMode: 图片内容模式
     ///   - option: 选项
     ///   - resultHandler: 结果
-    func wp_image(in size:CGSize,
+    func image(in size:CGSize,
                   contentMode:PHImageContentMode,
                   option:PHImageRequestOptions?,
                   resultHandler:@escaping(UIImage?,[AnyHashable:Any]?)->Void) {
         let imageManager = PHImageManager.default()
-        imageManager.requestImage(for: self, targetSize: size, contentMode: contentMode, options: option) { img, info in
+        imageManager.requestImage(for: base, targetSize: size, contentMode: contentMode, options: option) { img, info in
             WPGCD.main_Async {
                 resultHandler(img,info)
             }
@@ -43,7 +43,7 @@ public extension PHAsset{
     
     /// 获取源图
     /// - Parameter complete: 结果
-    func wp_orginImage(_ complete:@escaping(Data?,String?,UIImage.Orientation,[AnyHashable:Any]?)->Void){
+    func orginImage(_ complete:@escaping(Data?,String?,UIImage.Orientation,[AnyHashable:Any]?)->Void){
         let option = PHImageRequestOptions()
         // 只返回一次结果
         option.isSynchronous = true
@@ -52,7 +52,7 @@ public extension PHAsset{
         // 缩略图的质量为高质量，不管加载时间花多少
         option.deliveryMode = .highQualityFormat
         
-        wp_imageData(in: option, resultHandler: complete)
+        imageData(in: option, resultHandler: complete)
     }
     
     
@@ -61,10 +61,10 @@ public extension PHAsset{
     ///   - size: 尺寸
     ///   - contentModel: 内容模式
     ///   - complete: 结果
-    func wp_placeholderImage(in size:CGSize,
+    func placeholderImage(in size:CGSize,
                              contentModel:PHImageContentMode,
                              complete:@escaping(UIImage?,[AnyHashable:Any]?)->Void){
-        wp_image(in: size, contentMode: contentModel, option: nil) { img, info in
+        image(in: size, contentMode: contentModel, option: nil) { img, info in
             WPGCD.main_Async {
                 complete(img,info)
             }
@@ -73,9 +73,9 @@ public extension PHAsset{
     
     /// 从系统相册中删除
     /// - Parameter complete: 结果
-    func wp_delete(complete:@escaping(Bool,Error?)->Void){
+    func delete(complete:@escaping(Bool,Error?)->Void){
         PHPhotoLibrary.shared().performChanges {
-            PHAssetChangeRequest.deleteAssets([self] as NSFastEnumeration)
+            PHAssetChangeRequest.deleteAssets([base] as NSFastEnumeration)
         } completionHandler: { success, error in
             WPGCD.main_Async {
                 complete(success,error)

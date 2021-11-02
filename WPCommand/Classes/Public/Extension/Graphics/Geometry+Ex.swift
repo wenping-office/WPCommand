@@ -9,43 +9,43 @@ import CoreGraphics
 
 fileprivate let auto = 10086
 
-public extension CGSize{
+public extension WPSpace where Base == CGSize{
    /// 自动高度 只能用于判断
-   static var wp_custom : CGSize{
+   static var custom : CGSize{
        return .init(width: auto, height: auto)
    }
     
     /// 是否是自定义
-    var wp_isCustom : Bool{
-        return self.width == CGFloat(auto) &&
-               self.height == CGFloat(auto)
+    var isCustom : Bool{
+        return base.width == CGFloat(auto) &&
+               base.height == CGFloat(auto)
     }
 }
 
-public extension CGPoint{
+public extension WPSpace where Base == CGPoint{
     /// 自动高度 只能用于判断
-    static var wp_custom : CGPoint{
+    static var custom : CGPoint{
         return .init(x: auto, y: auto)
     }
     
     /// 是否是自定义
-    var wp_isCustom : Bool{
-        return self.x == CGFloat(auto) &&
-               self.y == CGFloat(auto)
+    var isCustom : Bool{
+        return base.x == CGFloat(auto) &&
+               base.y == CGFloat(auto)
     }
 }
 
-public extension CGRect{
+public extension WPSpace where Base == CGRect{
     /// 自动高度 只能用于判断
-    static var wp_custom : CGRect{
+    static var custom : CGRect{
         return .init(x: auto, y: auto, width: auto, height: auto)
     }
     
     /// 是否是自定义
-    var wp_isCustom : Bool{
-        return self.origin.y == CGFloat(auto) &&
-               self.origin.x == CGFloat(auto) &&
-               self.size.width == CGFloat(auto) &&
-               self.size.height == CGFloat(auto)
+    var isCustom : Bool{
+        return base.origin.y == CGFloat(auto) &&
+               base.origin.x == CGFloat(auto) &&
+               base.size.width == CGFloat(auto) &&
+               base.size.height == CGFloat(auto)
     }
 }

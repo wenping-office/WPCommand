@@ -9,9 +9,9 @@
 import UIKit
 import Photos
 
-public extension UIImage {
+public extension WPSpace where Base : UIImage {
     //水印位置枚举
-    enum WPWaterMarkCorner {
+    enum WaterMarkCorner {
         case TopLeft
         case TopRight
         case BottomLeft
@@ -25,11 +25,11 @@ public extension UIImage {
    ///   - margin: 水印边距
    ///   - alpha: 水印透明度
    /// - Returns: 水印图片
-    func wp_waterMarkedImage(waterMarkImage: UIImage , corner: WPWaterMarkCorner = . BottomRight ,
+    func waterMarkedImage(waterMarkImage: UIImage , corner: WaterMarkCorner = . BottomRight ,
         margin: CGPoint = CGPoint (x: 20, y: 20), alpha: CGFloat = 1) -> UIImage? {
             
         var markFrame = CGRect.init(x: 0, y: 0, width: waterMarkImage.size.width, height: waterMarkImage.size.height)
-        let imageSize = self.size
+        let imageSize = base.size
 
             switch corner{
             case . TopLeft :
@@ -47,7 +47,7 @@ public extension UIImage {
 
             // 开始给图片添加图片
             UIGraphicsBeginImageContext (imageSize)
-            draw(in: CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
+            base.draw(in: CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
             waterMarkImage.draw(in: markFrame, blendMode: .normal, alpha: alpha)
             let waterMarkedImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext ()
@@ -56,20 +56,18 @@ public extension UIImage {
     }
 }
 
-public extension UIImage{
-    
-    
+public extension WPSpace where Base : UIImage{
     /// image转PHAsset
-    var wp_PHAsset : PHAsset?{
+    var PHAsset : PHAsset?{
         var localId : String?
 
         try? PHPhotoLibrary.shared().performChangesAndWait {
-            let request = PHAssetChangeRequest.creationRequestForAsset(from: self)
+            let request = PHAssetChangeRequest.creationRequestForAsset(from: base)
             localId = request.placeholderForCreatedAsset?.localIdentifier
         }
         
         if localId != nil{
-            let result = PHAsset.fetchAssets(withLocalIdentifiers: [localId!], options: nil)
+            let result = Photos.PHAsset.fetchAssets(withLocalIdentifiers: [localId!], options: nil)
             return result.firstObject
         }else{
             return nil
@@ -80,8 +78,8 @@ public extension UIImage{
     /// - Parameters:
     ///   - collection: 集合 == 相册
     ///   - complete: 完成回调
-    func wp_saveTo(_ collection : PHAssetCollection,complete:((Bool,PHAsset?,Error?)->Void)?){
-        if let asset = wp_PHAsset {
+    func saveTo(_ collection : PHAssetCollection,complete:((Bool,PHAsset?,Error?)->Void)?){
+        if let asset = PHAsset {
             let arr = [asset]
             
             PHPhotoLibrary.shared().performChanges {
@@ -102,7 +100,7 @@ public extension UIImage{
     /// 转换成phasset
     /// - Parameter img: 图片
     /// - Returns: 结果
-    static func wp_toAsset(_ img:UIImage)->PHAsset?{
+    static func asset(_ img:UIImage)->PHAsset?{
         var localId : String?
 
         try? PHPhotoLibrary.shared().performChangesAndWait {
@@ -111,7 +109,7 @@ public extension UIImage{
         }
 
         if localId != nil{
-            let result = PHAsset.fetchAssets(withLocalIdentifiers: [localId!], options: nil)
+            let result = Photos.PHAsset.fetchAssets(withLocalIdentifiers: [localId!], options: nil)
             return result.firstObject
         }else{
             return nil

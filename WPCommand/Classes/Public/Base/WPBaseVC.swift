@@ -26,7 +26,7 @@ open class WPBaseVC: UIViewController {
     
     /// 导航栏背景视图
     open var navigationBackgroundImage : UIImage{
-        return UIColor.white.wp_image()!
+        return UIColor.white.wp.image()!
     }
     
     /// 导航栏是否透明

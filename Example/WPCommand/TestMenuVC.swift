@@ -43,7 +43,7 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         menuView.bounces = false
 //        menuView.navigationInset = .init(left: 40, right: 30, spacing: 30)
         menuView.setItems(items: items)
-        menuView.backgroundColor = .wp_random
+        menuView.backgroundColor = UIColor.wp.random
     }
     
     override func initSubView() {
@@ -118,7 +118,7 @@ class testBodyView2: UIView,WPMenuBodyViewProtocol {
     }
     
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
-        let view = UIImageView(image: UIColor.red.wp_image())
+        let view = UIImageView(image: UIColor.red.wp.image())
 
         menuView.navigationBackgroundView = view
         switch status {
