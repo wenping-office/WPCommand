@@ -13,8 +13,8 @@ public extension WPSpace where Base == Date{
 
     /// 获取当月最大天数
     var dayInMonth : Int{
-        let date = offSetMonth(1)
-        return date.wp.offSetDay(-date.wp.day).wp.day
+        let date = offSet(month: 1)
+        return date.wp.offSet(day: -date.wp.day).wp.day
     }
 
     /// 当天零点
@@ -131,7 +131,7 @@ public extension WPSpace where Base == Date{
     /// 偏移年
     /// - Parameter year: 年
     /// - Returns: 结果
-    func offSetYear(_ year:Int,
+    func offSet(year:Int,
                     _ calendar : Calendar = Calendar.current)->Base{
         var comps = calendar.dateComponents([.year], from: base)
         comps.year = year
@@ -141,7 +141,7 @@ public extension WPSpace where Base == Date{
     /// 偏移月
     /// - Parameter month: 月
     /// - Returns: 结果
-    func offSetMonth(_ month:Int,
+    func offSet(month:Int,
                      _ calendar : Calendar = Calendar.current)->Base{
         var comps = calendar.dateComponents([.month], from: base)
         comps.month = month
@@ -151,7 +151,7 @@ public extension WPSpace where Base == Date{
     /// 偏移日
     /// - Parameter day: 日
     /// - Returns: 结果
-    func offSetDay(_ day:Int,
+    func offSet(day:Int,
                    _ calendar : Calendar = Calendar.current)->Base{
         var comps = calendar.dateComponents([.day], from: base)
         comps.day = day
@@ -162,7 +162,7 @@ public extension WPSpace where Base == Date{
     /// 偏移时
     /// - Parameter hour: 时
     /// - Returns: 结果
-    func offSetHour(_ hour:Int,
+    func offSet(hour:Int,
                     _ calendar : Calendar = Calendar.current)->Base{
         var comps = calendar.dateComponents([.hour], from: base)
         comps.hour = hour
@@ -172,7 +172,7 @@ public extension WPSpace where Base == Date{
     /// 偏移分
     /// - Parameter minute: 分
     /// - Returns: 结果
-    func offSetMinute(_ minute:Int,
+    func offSet(minute:Int,
                       _ calendar : Calendar = Calendar.current)->Base{
         var comps = calendar.dateComponents([.minute], from: base)
         comps.minute = minute
@@ -183,7 +183,7 @@ public extension WPSpace where Base == Date{
     /// 偏移秒
     /// - Parameter second: 秒
     /// - Returns: 结果
-    func offSetSecond(_ second:Int,
+    func offSet(second:Int,
                       _ calendar : Calendar = Calendar.current)->Base{
         var comps = calendar.dateComponents([.second], from: base)
         comps.second = second
