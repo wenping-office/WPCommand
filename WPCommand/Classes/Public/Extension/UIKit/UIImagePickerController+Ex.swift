@@ -77,10 +77,10 @@ public class WPImagePickerControllerDelegate: NSObject{
 extension WPImagePickerControllerDelegate:UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        didFinishPickingMedia != nil ? didFinishPickingMedia!(picker,info) : print()
+        didFinishPickingMedia?(picker,info)
     }
     
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        didCancel != nil ? didCancel!(picker) : print()
+        didCancel?(picker)
     }
 }

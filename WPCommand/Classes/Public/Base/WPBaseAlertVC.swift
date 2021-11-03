@@ -83,7 +83,7 @@ open class WPBaseAlertVC: UIViewController {
         }, completion: {[weak self] complete in
             if complete,let self = self{
                 
-                completeAnimate != nil ? completeAnimate!() : print()
+                completeAnimate?()
                 self.didDismiss()
             }
         })

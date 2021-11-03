@@ -32,7 +32,7 @@ open class WPCollectionItem: NSObject {
     open var info : Any?{
         didSet{
             guard let info = info  else { return }
-            didSetInfo != nil ? didSetInfo!(info) : print("")
+            didSetInfo?(info)
             didSetInfo(info: info)
             didSetItemInfo(info: info)
         }
@@ -41,7 +41,7 @@ open class WPCollectionItem: NSObject {
     open func didSetInfo(info:Any?){}
     /// 刷新cell的item
     open func update(){
-        uploadItemBlock != nil ? uploadItemBlock!(self) : print()
+        uploadItemBlock?(self)
     }
     
     @objc public func didSetItemInfo(info:Any?){}

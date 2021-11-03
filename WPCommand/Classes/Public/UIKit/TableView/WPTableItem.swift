@@ -41,7 +41,7 @@ open class WPTableItem: NSObject {
     public var info : Any?{
         didSet{
             guard let info = info  else { return }
-            didSetInfo != nil ? didSetInfo!(info) : print("")
+            didSetInfo?(info)
             didSetInfo(info: info)
         }
     }
@@ -63,13 +63,12 @@ open class WPTableItem: NSObject {
     
     /// 刷新itemModel
     public func update(){
-        uploadItemBlock != nil ? uploadItemBlock!(self) : print()
+        uploadItemBlock?(self)
     }
     
     /// 选中当前行
     public func selected(){
-        selectedToSelfBlock != nil ? selectedToSelfBlock!(self) : print()
-        
+        selectedToSelfBlock?(self)
     }
 }
 

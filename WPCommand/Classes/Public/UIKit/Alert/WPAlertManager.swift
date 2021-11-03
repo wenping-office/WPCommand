@@ -643,7 +643,7 @@ class WPAlertManagerMask: UIView {
             make.edges.equalToSuperview()
         }
         contentView.rx.controlEvent(.touchUpInside).subscribe(onNext: {
-            action != nil ? action!() : print()
+            action?()
         }).disposed(by: disposeBag)
     }
     

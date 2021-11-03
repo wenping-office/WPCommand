@@ -120,14 +120,14 @@ public extension WPCollectionAutoLayoutView{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = groups[indexPath.section].items[indexPath.row]
         
-        itemsSelectedBlock != nil ? itemsSelectedBlock!(item) : print("")
-        item.selectedBlock != nil ? item.selectedBlock!(item) : print("")
+        itemsSelectedBlock?(item)
+        item.selectedBlock?(item)
         
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let item = groups[indexPath.section].items[indexPath.row]
-        item.willDisplay != nil ? item.willDisplay!(item,cell) : print("")
+        item.willDisplay?(item,cell)
     }
 
 }

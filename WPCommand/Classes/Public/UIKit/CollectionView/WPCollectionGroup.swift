@@ -24,7 +24,7 @@ open class WPCollectionGroup: NSObject {
     open var uploadGroupBlock : ((WPCollectionGroup)->Void)?
     /// 刷新cell的item
     open func update(){
-        uploadGroupBlock != nil ? uploadGroupBlock!(self) : print()
+        uploadGroupBlock?(self)
     }
 }
 
