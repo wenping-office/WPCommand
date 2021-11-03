@@ -46,7 +46,8 @@ TODO: Add long description of the pod here.
 
   # 依赖系统库
    s.frameworks = 'UIKit',
- 'Photos', 'AssetsLibrary',
+ 'Photos',
+ 'AssetsLibrary',
  'MediaPlayer',
  'CoreTelephony',
  'CoreLocation',
