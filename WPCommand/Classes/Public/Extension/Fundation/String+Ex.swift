@@ -249,7 +249,7 @@ public extension WPSpace where Base == String{
         }
     }
     
-    /// 截取数组 如果lenght越界 则返回最大的可取范围
+    /// 截取子字符串 如果length越界 则返回最大的可取范围
     /// - Parameter range: 返回
     /// - Returns: 结果
     func subString(of range:NSRange) -> Base{
