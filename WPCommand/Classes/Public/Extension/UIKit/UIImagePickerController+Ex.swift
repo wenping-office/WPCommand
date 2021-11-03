@@ -50,7 +50,7 @@ public extension UIImagePickerController{
         if vc != nil {
             vc?.present(picker, animated: true, completion: nil)
         }else{
-            UIApplication.shared.wp_topWindow.rootViewController?.present(picker, animated: true, completion: nil)
+            UIApplication.shared.wp.topWindow.rootViewController?.present(picker, animated: true, completion: nil)
         }
     }
     
@@ -77,10 +77,10 @@ public class WPImagePickerControllerDelegate: NSObject{
 extension WPImagePickerControllerDelegate:UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        didFinishPickingMedia != nil ? didFinishPickingMedia!(picker,info) : print()
+        didFinishPickingMedia?(picker,info)
     }
     
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        didCancel != nil ? didCancel!(picker) : print()
+        didCancel?(picker)
     }
 }

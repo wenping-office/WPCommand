@@ -51,7 +51,7 @@ public extension WPHighlightMaskProtocol{
         
         removeHighlight(of: view)
 
-        let keyView = view != nil ? view : UIApplication.shared.wp_topWindow
+        let keyView = view != nil ? view : UIApplication.shared.wp.topWindow
         let keyViewFrame : CGRect = convert(bounds, to: keyView)
 
         let topView = highlightTopView()
@@ -137,7 +137,7 @@ public extension WPHighlightMaskProtocol{
     /// 从某个视图移除高亮视图
     func removeHighlight(of view:UIView? = nil,
                                    completion:((WPHighlightMaskProtocol)->Void)? = nil){
-        let keyView = view != nil ? view : UIApplication.shared.wp_topWindow
+        let keyView = view != nil ? view : UIApplication.shared.wp.topWindow
         keyView?.subviews.forEach({ elmt in
             let highView = elmt as? WPHighlightViewProtocol
             highView?.removeFromSuperview()

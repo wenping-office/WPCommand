@@ -11,8 +11,6 @@ import RxSwift
 import RxCocoa
 
 open class WPBaseAlert: UIView {
-    /// 垃圾桶
-    public let disposeBag = DisposeBag()
     /// 显示的根视图
     open var rootView : UIView?{
         didSet{
@@ -60,7 +58,7 @@ open class WPBaseAlert: UIView {
     open func observeSubViewEvent(){
         grayView.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] in
             self?.dismiss()
-        }).disposed(by: disposeBag)
+        }).disposed(by: wp_disposeBag)
     }
     /// 显示弹窗
     open func show(){
@@ -89,7 +87,7 @@ open class WPBaseAlert: UIView {
             self?.superview?.layoutIfNeeded()
         }, completion: {[weak self] complete in
             if complete,let self = self{
-                completeAnimate != nil ? completeAnimate!() : print()
+                completeAnimate?()
                 self.didDismiss()
                 self.removeFromSuperview()
             }

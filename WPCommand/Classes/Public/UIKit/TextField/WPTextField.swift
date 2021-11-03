@@ -43,7 +43,8 @@ open class WPTextField: UITextField {
                 return text
             }else{
                 let highStrCount = text(in: textRange)?.count ?? 0
-                return text?.wp.first(of: text?.count ?? 0 - highStrCount)
+                let maxCount = text?.count ?? 0
+                return text?.wp.first(of: maxCount - highStrCount)
             }
         }else{
             return text

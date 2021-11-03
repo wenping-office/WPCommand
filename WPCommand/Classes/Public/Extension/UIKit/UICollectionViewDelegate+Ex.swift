@@ -117,9 +117,9 @@ extension WPCollectionViewDelegate:UICollectionViewDelegateFlowLayout{
 extension WPCollectionViewDelegate:UICollectionViewDelegate{
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        didSelectItemAt != nil ? didSelectItemAt!(collectionView,indexPath) : print()
+        didSelectItemAt?(collectionView,indexPath)
         if let item = collectionView.wp_source.groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row){
-            item.selectedBlock != nil ? item.selectedBlock!(item) : print()
+            item.selectedBlock?(item)
         }
     }
 }

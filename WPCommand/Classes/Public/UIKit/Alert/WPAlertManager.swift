@@ -47,7 +47,7 @@ public class WPAlertManager {
     /// 弹窗弹出的根视图
     private var targetView : UIView{
         if target == nil {
-            return UIApplication.shared.wp_topWindow
+            return UIApplication.shared.wp.topWindow
         }else{
             return target!
         }
@@ -643,7 +643,7 @@ class WPAlertManagerMask: UIView {
             make.edges.equalToSuperview()
         }
         contentView.rx.controlEvent(.touchUpInside).subscribe(onNext: {
-            action != nil ? action!() : print()
+            action?()
         }).disposed(by: disposeBag)
     }
     

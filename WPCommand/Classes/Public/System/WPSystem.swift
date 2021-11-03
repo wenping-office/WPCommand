@@ -321,7 +321,7 @@ public extension WPSystem{
         if let phoneURL = URL(string: phoneStr), UIApplication.shared.canOpenURL(phoneURL) {
             UIApplication.shared.openURL(phoneURL)
         }else{
-            failed != nil ? failed!() : print("")
+            failed?()
         }
     }
     
@@ -423,13 +423,13 @@ public extension WPSystem{
     static func isOpenNet(open:(()->Void)?=nil,close:(()->Void)?=nil)->Bool{
         let mainThreeOpen = {
             WPGCD.main_Async {
-                open != nil ? open!() : print()
+                open?()
             }
         }
         
         let mainThreeClose = {
             WPGCD.main_Async {
-                close != nil ? close!() : print()
+                close?()
             }
         }
         
