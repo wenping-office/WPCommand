@@ -135,21 +135,8 @@ public extension WPSpace where Base == String{
     }
 }
 
-public extension WPSpace where Base == String{
-    
-    /// 转日期
-    /// - Parameters:
-    ///   - format: 日期格式
-    ///   - timeZone: 时区 默认UTC
-    /// - Returns: 日期
-    func date(_ format:String,
-                   timeZone:TimeZone? = .init(identifier: "UTC"))->Date?{
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = timeZone
-        dateFormatter.dateFormat = format
-        return dateFormatter.date(from: base)
-    }
-
+// 不要的扩展
+public extension  WPSpace where Base == String{
     /// 转日期 默认本地日期
     /// - Parameter format: 日期格式
     /// - Parameter locale: 默认zh_CN
@@ -173,12 +160,28 @@ public extension WPSpace where Base == String{
         dateFormatter.dateFormat = format
         return dateFormatter.date(from: base)
     }
+}
+
+public extension WPSpace where Base == String{
+    
+    /// 转日期
+    /// - Parameters:
+    ///   - format: 日期格式
+    ///   - timeZone: 时区 默认UTC
+    /// - Returns: 日期
+    func date(_ format:String,
+                   timeZone:TimeZone? = .init(identifier: "UTC"))->Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = timeZone
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: base)
+    }
     
     /// 秒转 00:00:00
     /// - Parameter time: 秒级时间戳
-    static func toHourMin(time: Int64) -> String
+    static func hourMin(second: Int64) -> String
     {
-        let allTime: Int64 = Int64(time)
+        let allTime: Int64 = Int64(second)
         var hours = 0
         var minutes = 0
         var seconds = 0
