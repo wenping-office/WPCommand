@@ -27,3 +27,51 @@ public extension NSObject {
         }
     }
 }
+
+public extension WPSpace where Base : NSObject{
+    
+    /// 懒加载垃圾袋
+    var disposeBag : DisposeBag{
+        set{
+            base.wp_disposeBag = newValue
+        }
+        get{
+            return base.wp_disposeBag
+        }
+    }
+    
+    /// 当前keyWindow
+    var keyWindow : UIWindow?{
+        return UIApplication.shared.windows.wp_elmt { elmt in
+            return elmt.windowLevel == .normal
+        }
+    }
+    
+    /// 当前KeyController
+    var keyController : UIViewController?{
+        func getRootVC(_ rootVc:UIViewController?)->UIViewController? {
+         
+            if let presentedVC = rootVc?.presentedViewController {
+                return getRootVC(presentedVC)
+            }
+            if let tabBarVC = rootVc as? UITabBarController,
+               let selectedVC = tabBarVC.selectedViewController {
+                return getRootVC(selectedVC)
+            }
+            if let navigationVC = rootVc as? UINavigationController,
+               let visibleVC = navigationVC.visibleViewController {
+                return getRootVC(visibleVC)
+            }
+            if let pageVC = rootVc as? UIPageViewController,
+                pageVC.viewControllers?.count == 1 {
+                return getRootVC(pageVC.viewControllers?.first)
+            }
+
+            for subview in rootVc?.view?.subviews ?? [] {
+                return getRootVC(subview.next as? UIViewController)
+            }
+            return rootVc
+        }
+        return getRootVC(keyWindow?.rootViewController)
+    }
+}

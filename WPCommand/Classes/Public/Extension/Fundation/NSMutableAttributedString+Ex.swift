@@ -9,7 +9,7 @@ import UIKit
 
 
 public extension WPSpace where Base == String{
-    /// 一个可变富文本
+    /// 可变富文本
     var attributed : WPSpace<NSMutableAttributedString>{
         return .init(NSMutableAttributedString(string: base))
     }
@@ -48,12 +48,12 @@ public extension WPSpace where Base : NSMutableAttributedString{
     /// - Parameters:
     ///   - numberFont: 字体
     /// - Returns: 结果
-    func numberFont(_ numberFont:UIFont) -> Self {
+    func alphanumeric(font:UIFont) -> Self {
         do {
             let regular = try NSRegularExpression(pattern: "[a-zA-Z0-9(:/%)]+", options: .caseInsensitive)
             let results = regular.matches(in: base.string, options: .reportProgress, range: NSRange(location: 0, length: base.string.count))
             for result in results {
-                base.addAttributes([.font:numberFont], range: result.range)
+                base.addAttributes([.font:font], range: result.range)
             }
         } catch {
             return self

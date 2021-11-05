@@ -46,8 +46,6 @@ class ViewController: UIViewController {
             group.items.append(item)
         }
         tableView.wp.dataSource.groups = [group]
-        tableView.wp.delegate.didZoom
-
 
         let presions = [Presion.init(id: "123", name: "qqq"),Presion.init(id: "234", name: "rew")]
         let name = presions.map { $0.name }
