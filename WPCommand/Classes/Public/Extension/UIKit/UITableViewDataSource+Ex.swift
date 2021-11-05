@@ -15,7 +15,7 @@ public extension UITableView{
     var wp_source : WPTableViewSource{
         set{
             WPRunTime.set(self, newValue, &WPTableViewDataSourcePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            delegate = self.wp_delegate as? UITableViewDelegate
+            delegate = self.wp_delegate
             dataSource = newValue
         }
         get{
@@ -26,6 +26,13 @@ public extension UITableView{
             }
             return source
         }
+    }
+}
+
+public extension WPSpace where Base : UITableView{
+    /// 桥接数据源
+    var dataSource : WPTableViewSource{
+        return base.wp_source
     }
 }
 

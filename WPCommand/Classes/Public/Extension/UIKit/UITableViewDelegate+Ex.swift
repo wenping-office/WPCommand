@@ -9,12 +9,12 @@ import UIKit
 
 fileprivate var WPTableViewDelegatePointer = "WPTableViewDelegatePointer"
 
-public extension UITableView{
+extension UITableView{
     
-    override var wp_delegate: WPScrollViewDelegate{
+    var wp_delegate: WPTableViewDelegate{
         set{
             WPRunTime.set(self, newValue, &WPTableViewDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            delegate = newValue as? UITableViewDelegate
+            delegate = newValue
         }
         get{
             guard let wp_delegate : WPTableViewDelegate = WPRunTime.get(self, &WPTableViewDelegatePointer) else {
@@ -25,10 +25,12 @@ public extension UITableView{
             return wp_delegate
         }
     }
-    
+}
+
+public extension WPSpace where Base : UITableView{
     /// 桥接代理
-    var wp_bridgeDelegate : WPTableViewDelegate{
-        return wp_delegate as! WPTableViewDelegate
+    var delegate : WPTableViewDelegate{
+        return base.wp_delegate
     }
 }
 

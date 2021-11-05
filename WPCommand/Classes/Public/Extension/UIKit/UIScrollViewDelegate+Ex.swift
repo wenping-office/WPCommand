@@ -11,21 +11,21 @@ fileprivate var WPScrollViewDelegatePointer = "WPScrollViewSourcePointer"
 
 public extension UIScrollView{
     
-    /// 代理
-    @objc var wp_delegate : WPScrollViewDelegate{
-        set{
-            WPRunTime.set(self, newValue, &WPScrollViewDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            delegate = newValue
-        }
-        get{
-            guard let wp_delegate : WPScrollViewDelegate = WPRunTime.get(self, &WPScrollViewDelegatePointer) else {
-                let wp_delegate = WPScrollViewDelegate()
-                self.wp_delegate = wp_delegate
-                return wp_delegate
-            }
-            return wp_delegate
-        }
-    }
+//    /// 代理
+//    @objc var wp_delegate : WPScrollViewDelegate{
+//        set{
+//            WPRunTime.set(self, newValue, &WPScrollViewDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+//            delegate = newValue
+//        }
+//        get{
+//            guard let wp_delegate : WPScrollViewDelegate = WPRunTime.get(self, &WPScrollViewDelegatePointer) else {
+//                let wp_delegate = WPScrollViewDelegate()
+//                self.wp_delegate = wp_delegate
+//                return wp_delegate
+//            }
+//            return wp_delegate
+//        }
+//    }
     
 }
 

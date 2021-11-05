@@ -10,13 +10,12 @@ import UIKit
 fileprivate var WPCollectionViewSourcePointer = "WPCollectionViewSourcePointer"
 
 /// 扩展数据源
-public extension UICollectionView{
-
+extension UICollectionView{
     /// 数据源
     var wp_source : WPCollectionViewSource{
         set{
             WPRunTime.set(self, newValue, &WPCollectionViewSourcePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            delegate = self.wp_delegate as? UICollectionViewDelegate
+            delegate = self.wp_delegate
             dataSource = newValue
         }
         get{
@@ -27,6 +26,14 @@ public extension UICollectionView{
             }
           return source
         }
+    }
+}
+
+public extension WPSpace where Base : UICollectionView{
+    
+    /// 桥接代理
+    var dataSource : WPCollectionViewSource{
+        return base.wp_source
     }
 }
 

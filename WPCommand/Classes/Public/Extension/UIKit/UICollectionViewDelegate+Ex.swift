@@ -9,12 +9,12 @@ import UIKit
 
 fileprivate var WPCollectionDelegatePointer = "WPCollectionDelegatePointer"
 
-public extension UICollectionView{
+extension UICollectionView{
     
-    override var wp_delegate: WPScrollViewDelegate{
+    var wp_delegate: WPCollectionViewDelegate{
         set{
             WPRunTime.set(self, newValue, &WPCollectionDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            delegate = newValue as? UICollectionViewDelegate
+            delegate = newValue
         }
         get{
             guard let wp_delegate : WPCollectionViewDelegate = WPRunTime.get(self, &WPCollectionDelegatePointer) else {
@@ -25,10 +25,13 @@ public extension UICollectionView{
             return wp_delegate
         }
     }
-    
+}
+
+public extension WPSpace where Base : UICollectionView{
+     
     /// 桥接代理
-    var wp_bridgeDelegate : WPCollectionViewDelegate{
-        return wp_delegate as! WPCollectionViewDelegate
+    var delegate : WPCollectionViewDelegate{
+        return base.wp_delegate
     }
 }
 

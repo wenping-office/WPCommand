@@ -18,6 +18,10 @@ extension Int:   WPRepeatProtocol {
     public typealias key = Self
     public var wp_repeatKey: Int { get { return self } } }
 
+extension Int8:   WPRepeatProtocol {
+    public typealias key = Self
+    public var wp_repeatKey: Int8 { get { return self } } }
+
 extension Int16: WPRepeatProtocol {
     public typealias key = Self
     public var wp_repeatKey: Int16 { get { return self } }

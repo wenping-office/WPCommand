@@ -8,8 +8,11 @@
 import UIKit
 import RxSwift
 
-public struct WPSpace<Base> {
 
+/// 命名空间
+public struct WPSpace<Base> {
+    
+    /// 命名空间类
     public var base: Base
 
     public init(_ base: Base) {
@@ -17,6 +20,7 @@ public struct WPSpace<Base> {
     }
 }
 
+/// 命名空间协议
 public protocol WPSpaceProtocol {
     
     associatedtype Base
@@ -26,6 +30,7 @@ public protocol WPSpaceProtocol {
     static var wp: Base.Type { get set }
 }
 
+/// 命名空间实现
 public extension WPSpaceProtocol {
 
     static var wp: WPSpace<Self>.Type {
