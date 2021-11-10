@@ -131,13 +131,19 @@ public extension WPSpace where Base == Date{
     /// 转日期
     /// - Parameter format: format
     /// - Parameter timerZone: 时区
+    /// - Parameter locale: 默认中国
     /// - Returns: 结果
     func string(_ format:String,
-                timerZone:TimeZone = .init(identifier: "UTC")!)->String{
+                timerZone:TimeZone? = .init(identifier: "UTC")!,
+                locale : Locale? = Locale.current)->String{
         let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = timerZone
+        if timerZone != nil{
+            dateFormatter.timeZone = timerZone
+        }
+        if locale != nil {
+            dateFormatter.locale = locale
+        }
         dateFormatter.dateFormat = format
-        dateFormatter.locale = Locale(identifier: "en")
         return dateFormatter.string(from: base)
     }
 }

@@ -8,21 +8,15 @@
 
 import UIKit
 
-public extension WPSpace where Base : UICollectionViewCell{
+public extension WPSpace where Base: UICollectionViewCell {
     /// 加载的collectionView
     var collectionView: UICollectionView? {
         return base.superview as? UICollectionView
     }
 }
 
-extension UICollectionViewCell{
-    
+extension UICollectionViewCell {
     /// 已赋值item后调用
     /// - Parameter item: item模型
-    @objc open func didSetItem(item:WPCollectionItem){}
-
+    @objc open func didSetItem(item: WPCollectionItem) {}
 }
-
-
-
-

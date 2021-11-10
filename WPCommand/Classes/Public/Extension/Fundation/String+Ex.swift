@@ -6,39 +6,38 @@
 //  Copyright © 2021 CocoaPods. All rights reserved.
 //
 
-import UIKit
 import CommonCrypto
+import UIKit
 
-public extension WPSpace where Base == String{
-    
+public extension WPSpace where Base == String {
     /// 当前app版本
-    static var appVersion : Base?{
+    static var appVersion: Base? {
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? Base
     }
     
     /// 当前appBuild版本
-    static var appBuildVersion : Base?{
+    static var appBuildVersion: Base? {
         return Bundle.main.infoDictionary?["CFBundleVersion"] as? Base
     }
         
     /// 当前app的包标识符
-    static var appIdentifier : Base?{
+    static var appIdentifier: Base? {
         return Bundle.main.infoDictionary?["CFBundleIdentifier"] as? Base
     }
     
     /// 当前app的包名
-    static var appName : Base?{
+    static var appName: Base? {
         return Bundle.main.infoDictionary?["CFBundleDisplayName"] as? Base
     }
     
     /// 是否是邮箱
-    var isEmail : Bool {
+    var isEmail: Bool {
         let predicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
         return predicate.evaluate(with: base)
     }
     
     /// 是否全中文
-    var isChinese : Bool {
+    var isChinese: Bool {
         let predicate = NSPredicate(format: "SELF MATCHES %@", "^[\\u4E00-\\u9FA5]+$")
         return predicate.evaluate(with: base)
     }
@@ -56,18 +55,18 @@ public extension WPSpace where Base == String{
     }
     
     /// 小数位数
-    var minNumCount : Int {
+    var minNumCount: Int {
         if base.contains(".") {
             let separatedArray = base.components(separatedBy: ".")
             let numberStr = separatedArray.last
             return numberStr?.count ?? 0
-        }else{
+        } else {
             return -base.count
         }
     }
 
     /// 加载一个bundle
-    var bundle : Bundle?{
+    var bundle: Bundle? {
         var bundle: Bundle?
         if let url = Bundle.main.url(forResource: base, withExtension: "bundle") {
             bundle = Bundle(url: url)
@@ -76,7 +75,7 @@ public extension WPSpace where Base == String{
     }
 
     /// 加密成md5字符串
-    var md5 : Base{
+    var md5: Base {
         let str = base.cString(using: Base.Encoding.utf8)
         let strLen = CUnsignedInt(base.lengthOfBytes(using: Base.Encoding.utf8))
         let digestLen = Int(CC_MD5_DIGEST_LENGTH)
@@ -91,19 +90,19 @@ public extension WPSpace where Base == String{
     }
     
     /// mainBundle中的图片
-    var image : UIImage{
-        return UIImage.init(named: base) ?? UIImage()
+    var image: UIImage {
+        return UIImage(named: base) ?? UIImage()
     }
     
     /// 加密成base64字符串
-    var wp_base64 : String?{
+    var wp_base64: String? {
         let da = base.data(using: String.Encoding.utf8)
         return da?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
     }
 
     /// 生成二维码图片
     /// - Returns: 二维码图片
-    var qrImage : UIImage?{
+    var qrImage: UIImage? {
         let data = base.data(using: Base.Encoding.ascii)
         guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
         filter.setValue(data, forKey: "inputMessage")
@@ -114,37 +113,38 @@ public extension WPSpace where Base == String{
     
     /// 过滤表情
     /// - Returns: 结果
-    var filterEmoji : Base{
+    var filterEmoji: Base {
         if base == "➊" || base == "➋" || base == "➌" || base == "➍" || base == "➎" || base == "➏" || base == "➐" || base == "➑" || base == "➒" {
             return base
         }
-        let regex = try!NSRegularExpression.init(pattern: "[^\\u0020-\\u007E\\u00A0-\\u00BE\\u2E80-\\uA4CF\\uF900-\\uFAFF\\uFE30-\\uFE4F\\uFF00-\\uFFEF\\u0080-\\u009F\\u2000-\\u201f\r\n]", options: .caseInsensitive)
+        let regex = try! NSRegularExpression(pattern: "[^\\u0020-\\u007E\\u00A0-\\u00BE\\u2E80-\\uA4CF\\uF900-\\uFAFF\\uFE30-\\uFE4F\\uFF00-\\uFFEF\\u0080-\\u009F\\u2000-\\u201f\r\n]", options: .caseInsensitive)
         
-        let modifiedString = regex.stringByReplacingMatches(in: base, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange.init(location: 0, length: base.count), withTemplate: "")
+        let modifiedString = regex.stringByReplacingMatches(in: base, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length: base.count), withTemplate: "")
         return modifiedString
     }
     
     /// 过滤空格
-    var filterSpace : Base{
+    var filterSpace: Base {
         return filter(" ")
     }
     
     /// 过滤换行
-    var filterLineFeed : Base{
+    var filterLineFeed: Base {
         return filter("\n")
     }
 }
 
 // 不要的扩展
-public extension  WPSpace where Base == String{
+public extension WPSpace where Base == String {
     /// 转日期 默认本地日期
     /// - Parameter format: 日期格式
     /// - Parameter locale: 默认zh_CN
     /// - parameter timeZone: 默认当前时区
     /// - Returns: 日期
-    func toDate(_ format:String,
-                   locale:Locale? = Locale(identifier: "zh_CN"),
-                   timeZone:TimeZone? = TimeZone.current)->Date?{
+    func toDate(_ format: String,
+                locale: Locale? = Locale(identifier: "zh_CN"),
+                timeZone: TimeZone? = TimeZone.current) -> Date?
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = timeZone
         dateFormatter.dateFormat = format
@@ -154,23 +154,23 @@ public extension  WPSpace where Base == String{
     /// 字符串转本地日期
     /// - Parameter format: 解码规则
     /// - Returns:
-    func toZh_ChDate(_ format:String)->Date?{
-        let dateFormatter = DateFormatter.init()
+    func toZh_ChDate(_ format: String) -> Date? {
+        let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "zh_CN")
         dateFormatter.dateFormat = format
         return dateFormatter.date(from: base)
     }
 }
 
-public extension WPSpace where Base == String{
-    
+public extension WPSpace where Base == String {
     /// 转日期
     /// - Parameters:
     ///   - format: 日期格式
     ///   - timeZone: 时区 默认UTC
     /// - Returns: 日期
-    func date(_ format:String,
-                   timeZone:TimeZone? = .init(identifier: "UTC"))->Date?{
+    func date(_ format: String,
+              timeZone: TimeZone? = .init(identifier: "UTC")) -> Date?
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = timeZone
         dateFormatter.dateFormat = format
@@ -179,9 +179,8 @@ public extension WPSpace where Base == String{
     
     /// 秒转 00:00:00
     /// - Parameter time: 秒级时间戳
-    static func hourMin(second: Int64) -> String
-    {
-        let allTime: Int64 = Int64(second)
+    static func hourMin(second: Int64) -> String {
+        let allTime = Int64(second)
         var hours = 0
         var minutes = 0
         var seconds = 0
@@ -207,26 +206,26 @@ public extension WPSpace where Base == String{
     /// 过滤字符串
     /// - Parameter str: 关键字
     /// - Returns: 过滤后的结果
-    func filter(_ str:String)->Base{
+    func filter(_ str: String) -> Base {
         return base.replacingOccurrences(of: str, with: "", options: .literal, range: nil)
     }
     
     /// 返回子字符串在当前字符串的位置 如果有多个将会找最后一个
     /// - Parameter str: 关键字
-    func of(_ keyword: Base)->NSRange{
+    func of(_ keyword: Base) -> NSRange {
         return (base as NSString).range(of: keyword)
     }
     
     /// 判断是否包含某个字符串
     /// - Parameter keyword: 关键字
     /// - Returns: 结果
-    func isContent(_ keyword:String)->Bool{
+    func isContent(_ keyword: String) -> Bool {
         let resualt = of(keyword)
         return resualt.length != 0
     }
     
     /// 复制到粘贴版
-    func sopyToPasteboard(){
+    func sopyToPasteboard() {
         let pasteboard = UIPasteboard.general
         pasteboard.string = base
     }
@@ -234,20 +233,19 @@ public extension WPSpace where Base == String{
     /// 从头部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func first(of count:Int) -> Base{
+    func first(of count: Int) -> Base {
         return subString(of: .init(location: 0, length: count))
     }
     
     /// 从尾部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func last(of count:Int) -> Base {
-
+    func last(of count: Int) -> Base {
         let location = base.count - count
         if count <= base.count {
             return subString(of: .init(location: location, length: base.count))
 
-        }else{
+        } else {
             return subString(of: .init(location: 0, length: base.count))
         }
     }
@@ -255,16 +253,15 @@ public extension WPSpace where Base == String{
     /// 截取子字符串 如果length越界 则返回最大的可取范围
     /// - Parameter range: 返回
     /// - Returns: 结果
-    func subString(of range:NSRange) -> Base{
+    func subString(of range: NSRange) -> Base {
         let lenght = range.length
         let maxLenght = base.count - range.location
         if lenght <= maxLenght {
             let count = range.location + range.length
             return (base as NSString).substring(with: .init(location: range.location, length: count))
-        }else{
+        } else {
             return (base as NSString).substring(with: .init(location: range.location, length: base.count))
         }
-
     }
     
     /// 获取文字的高度
@@ -272,13 +269,12 @@ public extension WPSpace where Base == String{
     ///   - font: 字体
     ///   - maxWidth: 最大的宽
     /// - Returns: 高
-    func height(_ font:UIFont,maxWidth:CGFloat) -> CGFloat {
+    func height(_ font: UIFont, maxWidth: CGFloat) -> CGFloat {
+        let size = CGSize(width: maxWidth, height: CGFloat(MAXFLOAT))
 
-        let size = CGSize.init(width: maxWidth, height:  CGFloat(MAXFLOAT))
+        let dic = [NSAttributedString.Key.font: font] // swift 3.0
 
-        let dic = [NSAttributedString.Key.font:font] // swift 3.0
-
-        let strSize = base.boundingRect(with: size, options: [.usesLineFragmentOrigin], attributes: dic, context:nil).size
+        let strSize = base.boundingRect(with: size, options: [.usesLineFragmentOrigin], attributes: dic, context: nil).size
 
         return ceil(strSize.height) + 1
     }
@@ -288,15 +284,14 @@ public extension WPSpace where Base == String{
     ///   - font: 字体
     ///   - maxHeight: 最大的高
     /// - Returns: 宽
-    func width(_ font:UIFont,_ maxHeight:CGFloat) -> CGFloat {
+    func width(_ font: UIFont, _ maxHeight: CGFloat) -> CGFloat {
+        let size = CGSize(width: CGFloat(MAXFLOAT), height: maxHeight)
 
-        let size = CGSize.init(width: CGFloat(MAXFLOAT), height: maxHeight)
-
-        let dic = [NSAttributedString.Key.font:font] // swift 3.0
+        let dic = [NSAttributedString.Key.font: font] // swift 3.0
 
         let cString = base.cString(using: Base.Encoding.utf8)
-        let str = String.init(cString: cString!, encoding: Base.Encoding.utf8)
-        let strSize = str?.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: dic, context:nil).size
+        let str = String(cString: cString!, encoding: Base.Encoding.utf8)
+        let strSize = str?.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: dic, context: nil).size
         return strSize?.width ?? 0
     }
 }

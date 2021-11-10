@@ -7,44 +7,44 @@
 
 import UIKit
 
-class WPMenuBodyViewItem:WPMenuView.Item {
+class WPMenuBodyViewItem: WPMenuView.Item {
     /// 展示的视图
-    var bodyView : WPMenuBodyViewProtocol?{
-        didSet{
+    var bodyView: WPMenuBodyViewProtocol? {
+        didSet {
             isAddToSuperView = false
         }
     }
+
     /// 是否加入到视图
     var isAddToSuperView = false
     /// 重用标识符
-    var reuseIdentifier : String{
+    var reuseIdentifier: String {
         return NSStringFromClass(WPMenuBodyCell.self) + index.description
     }
-    
-    init(index:Int,
-         bodyView:WPMenuBodyViewProtocol?) {
+
+    init(index: Int,
+         bodyView: WPMenuBodyViewProtocol?)
+    {
         super.init(index: index)
         self.bodyView = bodyView
     }
 }
 
 /// 菜单视图
-class WPMenuBodyView: UITableViewCell{
-
+class WPMenuBodyView: UITableViewCell {
     let layout = UICollectionViewFlowLayout()
     /// 内容视图
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     /// 当前数据源
-    var data : [WPMenuBodyViewItem] = []
+    var data: [WPMenuBodyViewItem] = []
     /// 内容滚动回调
-    var contentOffSet : ((CGFloat)->Void)?
+    var contentOffSet: ((CGFloat) -> Void)?
     /// 当前滚动到的索引
-    var didSelected : ((Int)->Void)?
+    var didSelected: ((Int) -> Void)?
     /// 是否执行选中动画
     var selectedAnimate = false
-    
 
-    init(){
+    init() {
         super.init(style: .default, reuseIdentifier: nil)
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
@@ -60,59 +60,59 @@ class WPMenuBodyView: UITableViewCell{
             make.edges.equalToSuperview()
         }
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     /// 注册视图
     func registerCell() {
-        data.forEach {[weak self] elmt in
+        data.forEach { [weak self] elmt in
             self?.collectionView.register(WPMenuBodyCell.self, forCellWithReuseIdentifier: elmt.reuseIdentifier)
         }
     }
-    
+
     /// 设置内容size
-    func setCollectionSize(_ size:CGSize){
+    func setCollectionSize(_ size: CGSize) {
         layout.itemSize = size
         collectionView.reloadData()
     }
-    
+
     /// 选中一页
     /// - Parameter index: 索引
-    func selected(_ index:Int){
+    func selected(_ index: Int) {
         collectionView.scrollToItem(at: .init(row: index, section: 0), at: .left, animated: selectedAnimate)
     }
 }
 
-extension WPMenuBodyView:UICollectionViewDelegate{
-
+extension WPMenuBodyView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let item = data[indexPath.row]
         let cell = cell as? WPMenuBodyCell
-        
+
         if !item.isAddToSuperView {
             cell?.setBodyView(item.bodyView?.menuBodyView())
             item.isAddToSuperView = true
         }
     }
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offSet = scrollView.contentOffset.x / scrollView.wp.width
         contentOffSet?(offSet)
     }
-    
+
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let index = Int(scrollView.contentOffset.x / scrollView.wp.width + 0.5)
         didSelected?(index)
     }
 }
 
-extension WPMenuBodyView:UICollectionViewDataSource{
+extension WPMenuBodyView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return data.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = data[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: item.reuseIdentifier, for: indexPath)
@@ -120,25 +120,25 @@ extension WPMenuBodyView:UICollectionViewDataSource{
     }
 }
 
-
 class WPMenuBodyCell: WPBaseCollectionViewCell {
     /// 内容视图
-    var bodyView : UIView?
-    
+    var bodyView: UIView?
+
     override func initSubView() {
         backgroundColor = .clear
     }
 
     /// 添加一个视图
-    func setBodyView(_ view:UIView?){
+    func setBodyView(_ view: UIView?) {
         bodyView = view
         if let view = view {
             contentView.wp.removeAllSubViewFromSuperview()
             contentView.addSubview(view)
-        }else{
+        } else {
             contentView.wp.removeAllSubViewFromSuperview()
         }
     }
+
     override func layoutSubviews() {
         super.layoutSubviews()
         bodyView?.frame = bounds

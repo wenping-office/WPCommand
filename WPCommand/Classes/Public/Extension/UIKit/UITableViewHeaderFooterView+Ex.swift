@@ -8,13 +8,8 @@
 
 import UIKit
 
-extension UITableViewHeaderFooterView : WPTableHeaderFooterViewlProtocol{
-
+extension UITableViewHeaderFooterView: WPTableHeaderFooterViewlProtocol {
     /// 加载group 每次显示时都会调用一次
     /// - Parameter group: 模型
     @objc open func reloadGroup(group: WPTableGroup) {}
 }
-
-
-
-

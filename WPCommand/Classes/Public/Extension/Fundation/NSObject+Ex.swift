@@ -5,20 +5,19 @@
 //  Created by WenPing on 2021/9/28.
 //
 
-import UIKit
 import RxSwift
+import UIKit
 
-fileprivate var wp_disposeBagPointer = "wp_disposeBag"
+private var wp_disposeBagPointer = "wp_disposeBag"
 
 public extension NSObject {
-
     /// 懒加载垃圾桶
     var wp_disposeBag: DisposeBag {
         set {
             WPRunTime.set(self, newValue, &wp_disposeBagPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            guard let disposeBag: DisposeBag =  WPRunTime.get(self, &wp_disposeBagPointer) else {
+            guard let disposeBag: DisposeBag = WPRunTime.get(self, &wp_disposeBagPointer) else {
                 let bag = DisposeBag()
                 self.wp_disposeBag = bag
                 return bag
@@ -28,50 +27,61 @@ public extension NSObject {
     }
 }
 
-public extension WPSpace where Base : NSObject{
-    
+public extension WPSpace where Base: NSObject {
     /// 懒加载垃圾袋
-    var disposeBag : DisposeBag{
-        set{
+    var disposeBag: DisposeBag {
+        set {
             base.wp_disposeBag = newValue
         }
-        get{
+        get {
             return base.wp_disposeBag
         }
     }
     
     /// 当前keyWindow
-    var keyWindow : UIWindow?{
+    static var keyWindow : UIWindow?{
+        return NSObject().wp.keyWindow
+    }
+    
+    /// 当前KeyController
+    static var keyController: UIViewController? {
+        return NSObject().wp.keyController
+    }
+    
+    /// 当前keyWindow
+    var keyWindow: UIWindow? {
         return UIApplication.shared.windows.wp_elmt { elmt in
-            return elmt.windowLevel == .normal
+            elmt.windowLevel == .normal
         }
     }
     
     /// 当前KeyController
-    var keyController : UIViewController?{
-        func getRootVC(_ rootVc:UIViewController?)->UIViewController? {
-         
-            if let presentedVC = rootVc?.presentedViewController {
-                return getRootVC(presentedVC)
+    var keyController: UIViewController? {
+        func rootVC(vc: UIViewController?) -> UIViewController? {
+            
+            if let presentedVC = vc?.presentedViewController { return rootVC(vc: presentedVC) }
+            
+            if let tabBarVC = vc as? UITabBarController,
+               let selectedVC = tabBarVC.selectedViewController{
+                return rootVC(vc: selectedVC)
             }
-            if let tabBarVC = rootVc as? UITabBarController,
-               let selectedVC = tabBarVC.selectedViewController {
-                return getRootVC(selectedVC)
+            if let navigationVC = vc as? UINavigationController,
+               let visibleVC = navigationVC.visibleViewController{
+                return rootVC(vc: visibleVC)
             }
-            if let navigationVC = rootVc as? UINavigationController,
-               let visibleVC = navigationVC.visibleViewController {
-                return getRootVC(visibleVC)
-            }
-            if let pageVC = rootVc as? UIPageViewController,
-                pageVC.viewControllers?.count == 1 {
-                return getRootVC(pageVC.viewControllers?.first)
+            if let pageVC = vc as? UIPageViewController,
+               pageVC.viewControllers?.count == 1{
+                return rootVC(vc: pageVC.viewControllers?.first)
             }
 
-            for subview in rootVc?.view?.subviews ?? [] {
-                return getRootVC(subview.next as? UIViewController)
+            for elmt in vc?.view?.subviews ?? [] {
+                if let childViewController = elmt.next as? UIViewController {
+                    return rootVC(vc: childViewController)
+                }
             }
-            return rootVc
+            return vc
         }
-        return getRootVC(keyWindow?.rootViewController)
+        return rootVC(vc: keyWindow?.rootViewController)
     }
+    
 }

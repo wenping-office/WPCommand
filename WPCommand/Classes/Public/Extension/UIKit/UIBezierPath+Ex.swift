@@ -7,8 +7,7 @@
 
 import UIKit
 
-
-public extension WPSpace where Base : UIBezierPath {
+public extension WPSpace where Base: UIBezierPath {
     /// 获取一个选择性圆角Path
     /// - Parameters:
     ///   - corners: 圆角方向
@@ -17,8 +16,9 @@ public extension WPSpace where Base : UIBezierPath {
     /// - Returns: path路径
     static func corner(_ corners: [UIRectCorner],
                        radius: CGFloat,
-                       in rect:CGRect)->UIBezierPath{
-        var value : UInt = 0
+                       in rect: CGRect) -> UIBezierPath
+    {
+        var value: UInt = 0
         corners.forEach { elmt in
             value += elmt.rawValue
         }

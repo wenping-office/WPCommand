@@ -6,10 +6,10 @@
 //  Copyright © 2021 CocoaPods. All rights reserved.
 //
 
-import UIKit
 import RxCocoa
+import UIKit
 
-public extension WPSpace where Base : UIView{
+public extension WPSpace where Base: UIView {
     /// 从xib加载
     static func initWithXibName(xib: String) -> Any? {
         guard let nibs = Bundle.main.loadNibNamed(xib, owner: nil, options: nil) else {
@@ -19,14 +19,14 @@ public extension WPSpace where Base : UIView{
     }
 }
 
-public extension WPSpace where Base : UIView{
+public extension WPSpace where Base: UIView {
     /// 在keyWindow中的位置
-    var frameInWidow : CGRect{
+    var frameInWidow: CGRect {
         return base.convert(bounds, to: UIApplication.shared.keyWindow)
     }
     
-    ///将当前视图转为UIImage
-    var image : UIImage{
+    /// 将当前视图转为UIImage
+    var image: UIImage {
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
         return renderer.image { rendererContext in
             base.layer.render(in: rendererContext.cgContext)
@@ -81,46 +81,46 @@ public extension WPSpace where Base : UIView{
         return height * 0.5
     }
     
-    var size : CGSize{
+    var size: CGSize {
         get { return base.frame.size }
         set { base.frame.size = newValue }
     }
     
-    var orgin : CGPoint{
+    var orgin: CGPoint {
         get { return base.frame.origin }
         set { base.frame.origin = newValue }
     }
     
-    var bounds : CGRect{
+    var bounds: CGRect {
         get { return base.bounds }
         set { base.bounds = newValue }
     }
 
     /// 是否有添加约束
-    var isAddConstraints : Bool{
+    var isAddConstraints: Bool {
         return base.constraints.count > 0
     }
 }
 
-public extension WPSpace where Base : UIView {
-    
+public extension WPSpace where Base: UIView {
     /// 平面旋转
     /// - Parameter angle: 角度
-    func rotation2D(angle:CGFloat){
+    func rotation2D(angle: CGFloat) {
         base.transform = CGAffineTransform(rotationAngle: angle)
     }
     
     @discardableResult
     /// 自身约束
     func equalLayout(_ attribute: NSLayoutConstraint.Attribute,
-                        constant: CGFloat) -> NSLayoutConstraint {
+                     constant: CGFloat) -> NSLayoutConstraint
+    {
         let layout = NSLayoutConstraint(item: self,
                                         attribute: attribute,
                                         relatedBy: .equal,
                                         toItem: nil,
                                         attribute: .notAnAttribute,
-                                        multiplier:0.0,
-                                        constant:constant)
+                                        multiplier: 0.0,
+                                        constant: constant)
         base.addConstraint(layout)
         return layout
     }
@@ -130,10 +130,10 @@ public extension WPSpace where Base : UIView {
     ///   - corners: 原角点
     ///   - radius: 圆角弧度
     ///   - force: 是否强制 true的话在自身宽高都等于0的时候会调用一次layoutIfNeed
-    func corner(_ corners: [UIRectCorner], radius: CGFloat,force:Bool = false) {
+    func corner(_ corners: [UIRectCorner], radius: CGFloat, force: Bool = false) {
         if corners.count <= 0 { return }
         
-        if force && bounds.size == .zero {
+        if force, bounds.size == .zero {
             base.layoutIfNeeded()
         }
         
@@ -161,7 +161,7 @@ public extension WPSpace where Base : UIView {
         
         for (idx, bo) in boolList.enumerated() {
             if bo {
-                let layer: CALayer = CALayer()
+                let layer = CALayer()
                 layer.name = nameKey
                 layer.frame = rectList[idx]
                 layer.backgroundColor = color.cgColor
@@ -170,9 +170,9 @@ public extension WPSpace where Base : UIView {
         }
     }
     
-    ///设置渐变背景色，需在设置frame或约束后调用
+    /// 设置渐变背景色，需在设置frame或约束后调用
     @discardableResult
-    func layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor])->CAGradientLayer {
+    func layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor]) -> CAGradientLayer {
         let layer = CAGradientLayer()
         let sKey = "c-p-p"
         layer.name = sKey
@@ -192,7 +192,7 @@ public extension WPSpace where Base : UIView {
     }
     
     /// 子视图随机色
-    func subViewRandomColor(){
+    func subViewRandomColor() {
         base.subviews.forEach { subView in
             subView.backgroundColor = UIColor.wp.random
             base.backgroundColor = UIColor.wp.random
@@ -200,7 +200,7 @@ public extension WPSpace where Base : UIView {
     }
     
     /// 移除所有子视图
-    func removeAllSubViewFromSuperview(){
+    func removeAllSubViewFromSuperview() {
         base.subviews.forEach { elmt in
             elmt.removeFromSuperview()
         }
@@ -214,10 +214,11 @@ public extension WPSpace where Base : UIView {
     ///   - lineSpacing: 虚线间隔
     ///   - isBottom: 是否是底部
     func drawDashLine(strokeColor: UIColor,
-                         lineWidth: CGFloat = 1,
-                         lineLength: Int = 10,
-                         lineSpacing: Int = 5,
-                         isBottom: Bool = true) {
+                      lineWidth: CGFloat = 1,
+                      lineLength: Int = 10,
+                      lineSpacing: Int = 5,
+                      isBottom: Bool = true)
+    {
         let shapeLayer = CAShapeLayer()
         shapeLayer.bounds = self.bounds
         shapeLayer.anchorPoint = CGPoint(x: 0, y: 0)
@@ -227,7 +228,7 @@ public extension WPSpace where Base : UIView {
         shapeLayer.lineWidth = lineWidth
         shapeLayer.lineJoin = CAShapeLayerLineJoin.round
         
-        //每一段虚线长度 和 每两段虚线之间的间隔
+        // 每一段虚线长度 和 每两段虚线之间的间隔
         shapeLayer.lineDashPattern = [NSNumber(value: lineLength), NSNumber(value: lineSpacing)]
         
         let path = CGMutablePath()
@@ -242,15 +243,15 @@ public extension WPSpace where Base : UIView {
     /// - Parameters:
     ///   - offSetY: 偏移量
     ///   - config: 配置项
-    func showPlaceholder(offSetY:CGFloat=0,
-                            config:@escaping (WPPlaceholderView)->Void){
+    func showPlaceholder(offSetY: CGFloat = 0,
+                         config: @escaping (WPPlaceholderView) -> Void)
+    {
         WPGCD.main_Async {
-
             let tag = 10086
-            var contetnView : UIView?
+            var contetnView: UIView?
             // 先查询是否有占位视图
             base.subviews.forEach { elmt in
-                if elmt.tag == tag{
+                if elmt.tag == tag {
                     contetnView = elmt
                 }
             }
@@ -261,9 +262,9 @@ public extension WPSpace where Base : UIView {
             contetnView?.tag = tag
             base.addSubview(contetnView!)
             
-            contetnView?.snp.remakeConstraints({ make in
+            contetnView?.snp.remakeConstraints { make in
                 make.edges.equalToSuperview()
-            })
+            }
             
             let placeholderView = WPPlaceholderView()
             config(placeholderView)
@@ -276,11 +277,11 @@ public extension WPSpace where Base : UIView {
     }
     
     /// 移除占位视图
-    func removePlaceholder(){
+    func removePlaceholder() {
         WPGCD.main_Async {
             let tag = 10086
             let contentView = base.subviews.wp_elmt(of: { elmt in
-                return elmt.tag == tag
+                elmt.tag == tag
             })
             contentView?.removeFromSuperview()
         }
@@ -288,31 +289,29 @@ public extension WPSpace where Base : UIView {
     
     /// 显示加载小菊花
     /// - Parameter show: 是否显示
-    func loading(is show: Bool,offSetY: CGFloat = 0) {
+    func loading(is show: Bool, offSetY: CGFloat = 0) {
         WPGCD.main_Async {
-
             let tag = 10087
             let resualt = base.subviews.wp_isContent { elmt in
-                return elmt.tag == tag
+                elmt.tag == tag
             }
-            if show && !resualt {
+            if show, !resualt {
                 let lodingView = UIActivityIndicatorView()
                 lodingView.tag = tag
                 lodingView.startAnimating()
                 base.addSubview(lodingView)
-                lodingView.snp.makeConstraints { (make) in
+                lodingView.snp.makeConstraints { make in
                     make.centerX.equalToSuperview()
                     make.centerY.equalToSuperview().offset(offSetY)
                     make.width.height.equalTo(20)
                 }
                 
-            }else if !show && resualt{
+            } else if !show, resualt {
                 let subLoding = base.subviews.wp_elmt { elmt in
-                    return elmt.tag == tag
+                    elmt.tag == tag
                 }
                 subLoding?.removeFromSuperview()
             }
-            
         }
     }
     
@@ -320,7 +319,7 @@ public extension WPSpace where Base : UIView {
     /// - Parameters:
     ///   - str: 内容
     ///   - delaySecond: 延迟时间
-    func toast(_ str: String,_ delaySecond:DispatchTime = .now() + 2,offSetY: CGFloat = 0){
+    func toast(_ str: String, _ delaySecond: DispatchTime = .now() + 2, offSetY: CGFloat = 0) {
         WPGCD.main_Async {
             let toastView = WPToastView()
             toastView.titleL.text = str
@@ -335,16 +334,16 @@ public extension WPSpace where Base : UIView {
             
             UIView.animate(withDuration: 0.2, animations: {
                 toastView.alpha = 1
-            },completion: {isRes in
-                if isRes{
-                    DispatchQueue.main.asyncAfter(deadline: delaySecond, execute: {
+            }, completion: { isRes in
+                if isRes {
+                    DispatchQueue.main.asyncAfter(deadline: delaySecond) {
                         UIView.animate(withDuration: 0.5, animations: {
                             toastView.alpha = 0
-                        },completion: { isRes in
+                        }, completion: { _ in
                             toastView.removeFromSuperview()
                         })
-                    })
-                }else{
+                    }
+                } else {
                     toastView.removeFromSuperview()
                 }
             })
@@ -353,7 +352,6 @@ public extension WPSpace where Base : UIView {
 }
 
 open class WPPlaceholderView: UIView {
-    
     /// 标题
     public let titleL = UILabel()
     /// 描述
@@ -384,7 +382,8 @@ open class WPPlaceholderView: UIView {
         }
     }
     
-    required public init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
@@ -413,16 +412,15 @@ class WPToastView: UIView {
             make.left.top.equalTo(20)
             make.bottom.right.equalTo(-20)
         }
-        
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
-
-public extension UIView{
+public extension UIView {
     var wp_x: CGFloat {
         get { return frame.origin.x }
         set { frame.origin.x = newValue }
@@ -471,12 +469,12 @@ public extension UIView{
         return wp_height * 0.5
     }
     
-    var wp_size : CGSize{
+    var wp_size: CGSize {
         get { return frame.size }
         set { frame.size = newValue }
     }
     
-    var wp_orgin : CGPoint{
+    var wp_orgin: CGPoint {
         get { return frame.origin }
         set { frame.origin = newValue }
     }

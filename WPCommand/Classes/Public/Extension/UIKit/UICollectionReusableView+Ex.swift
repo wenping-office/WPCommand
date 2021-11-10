@@ -8,13 +8,8 @@
 
 import UIKit
 
-extension UICollectionReusableView : WPCollectionReusableViewProtocol{
-    
+extension UICollectionReusableView: WPCollectionReusableViewProtocol {
     /// 扩展一个即将获得group方法
     /// - Parameter model: 模型
     @objc open func didSetHeaderFooterModel(model: WPCollectionGroup) {}
 }
-
-
-
-
