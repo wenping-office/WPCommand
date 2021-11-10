@@ -7,19 +7,18 @@
 
 import UIKit
 
-public extension WPSpace where Base : UIApplication{
-    
+public extension WPSpace where Base: UIApplication {
     /// 当前最上面的window
-     var topWindow : UIWindow {
-        guard let window = UIApplication.shared.windows.reversed().filter({$0.windowLevel == UIWindow.Level.normal}).first else {
+    var topWindow: UIWindow {
+        guard let window = UIApplication.shared.windows.reversed().filter({ $0.windowLevel == UIWindow.Level.normal }).first else {
             return UIWindow()
         }
         return window
     }
-    
+
     /// 当前最上层window
-    static var topWindow : UIWindow{
-        guard let window = UIApplication.shared.windows.reversed().filter({$0.windowLevel == UIWindow.Level.normal}).first else {
+    static var topWindow: UIWindow {
+        guard let window = UIApplication.shared.windows.reversed().filter({ $0.windowLevel == UIWindow.Level.normal }).first else {
             return UIWindow()
         }
         return window

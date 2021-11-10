@@ -100,7 +100,18 @@ public extension WPSpace where Base == Date{
     }
 }
 
+// 不要的扩展
 public extension WPSpace where Base == Date{
+    
+    /// 日期转本地时间字符串
+    /// - Parameter format: 日期格式
+    /// - Returns:
+    func toZh_ChString(_ format:String) -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "zh_CN")
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: base)
+    }
     
     /// 转日期
     /// - Parameter format: format
@@ -113,18 +124,29 @@ public extension WPSpace where Base == Date{
         dateFormatter.locale = Locale(identifier: "en")
         return dateFormatter.string(from: base)
     }
+}
 
-    /// 日期转本地时间字符串
-    /// - Parameter format: 日期格式
-    /// - Returns:
-    func toZh_ChString(_ format:String) -> String{
+public extension WPSpace where Base == Date{
+    
+    /// 转日期
+    /// - Parameter format: format
+    /// - Parameter timerZone: 时区
+    /// - Parameter locale: 默认中国
+    /// - Returns: 结果
+    func string(_ format:String,
+                timerZone:TimeZone? = .init(identifier: "UTC")!,
+                locale : Locale? = Locale.current)->String{
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "zh_CN")
+        if timerZone != nil{
+            dateFormatter.timeZone = timerZone
+        }
+        if locale != nil {
+            dateFormatter.locale = locale
+        }
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: base)
     }
 }
-
 
 public extension WPSpace where Base == Date{
 

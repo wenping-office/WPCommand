@@ -7,12 +7,12 @@
 
 import UIKit
 
-public extension WPMenuView{
-    enum HeaderHeightOption{
+public extension WPMenuView {
+    enum HeaderHeightOption {
         /// 使用autolayout自动布局高度
         case autoLayout
         /// 硬性条件高度
-        case height(_ height:CGFloat)
+        case height(_ height: CGFloat)
     }
     
     enum MenuViewStatus {
@@ -35,12 +35,13 @@ public extension WPMenuView{
     
     /// 导航栏item内边距
     struct NavigationInset {
-        var left : CGFloat = 0
-        var right : CGFloat = 0
-        var spacing : CGFloat = 0
-        public init (left:CGFloat,
-                     right:CGFloat,
-                     spacing:CGFloat){
+        var left: CGFloat = 0
+        var right: CGFloat = 0
+        var spacing: CGFloat = 0
+        public init(left: CGFloat,
+                    right: CGFloat,
+                    spacing: CGFloat)
+        {
             self.left = left
             self.right = right
             self.spacing = spacing
@@ -48,41 +49,39 @@ public extension WPMenuView{
     }
 }
 
-public protocol WPMenuViewChildViewProtocol:NSObjectProtocol{
+public protocol WPMenuViewChildViewProtocol: NSObjectProtocol {
     /// 子视图状态更新
-    func menuViewChildViewUpdateStatus(menuView:WPMenuView,status:WPMenuView.MenuViewStatus)
+    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus)
 }
 
-public extension WPMenuViewChildViewProtocol{
+public extension WPMenuViewChildViewProtocol {
     /// 子视图状态更新
-    func menuViewChildViewUpdateStatus(menuView:WPMenuView,status:WPMenuView.MenuViewStatus){}
+    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {}
 }
 
-extension WPMenuView{
+extension WPMenuView {
     class Item {
         /// 当前item索引
-        let index : Int
+        let index: Int
         /// 是否被选中
         var isSelected = false
         
-        init(index:Int) {
+        init(index: Int) {
             self.index = index
         }
     }
 }
 
 /// 菜单视图，table滚动样式
-public extension WPMenuView{
-    
+public extension WPMenuView {
     /// 添加一组item
     /// - Parameter items: items
-    func setItems(items:[WPMenuNavigationViewProtocol]){
+    func setItems(items: [WPMenuNavigationViewProtocol]) {
+        var headItems: [WPMenuHeaderViewItem] = []
+        var navItems: [WPMenuNavigationItem] = []
+        var bodyItems: [WPMenuBodyViewItem] = []
         
-        var headItems : [WPMenuHeaderViewItem] = []
-        var navItems : [WPMenuNavigationItem] = []
-        var bodyItems : [WPMenuBodyViewItem] = []
-        
-        for index in 0..<items.count {
+        for index in 0 ..< items.count {
             let haederItem = WPMenuHeaderViewItem(index: index, headerView: self.dataSource?.menuHeaderViewForIndex(index: index))
             let bodyItem = WPMenuBodyViewItem(index: index, bodyView: self.dataSource?.menuBodyViewForIndex(index: index))
             let navItem = WPMenuNavigationItem(size: .init(width: items[index].menuItemWidth(), height: navigationHeight), index: index, item: items[index])
@@ -111,11 +110,11 @@ public extension WPMenuView{
 /// 菜单视图
 public class WPMenuView: WPBaseView {
     /// 导航条高度
-    private let navigationHeight : CGFloat
+    private let navigationHeight: CGFloat
     /// 内容视图
-    private let contentView : WPMenuContentTableView
+    private let contentView: WPMenuContentTableView
     /// 导航栏选中动画样式
-    private var navSelectedStyle : UICollectionView.ScrollPosition{
+    private var navSelectedStyle: UICollectionView.ScrollPosition {
         switch navigationSelectedStyle {
         case .none:
             break
@@ -128,66 +127,72 @@ public class WPMenuView: WPBaseView {
         }
         return .bottom
     }
+
     /// 数据源
-    public weak var dataSource : WPMenuViewDataSource?
+    public weak var dataSource: WPMenuViewDataSource?
     /// 代理
-    public weak var delegate : WPMenuViewDelegate?
+    public weak var delegate: WPMenuViewDelegate?
     /// 身体视图是否执行选中动画
-    public var bodyViewSelecteAnimate : Bool{
-        set{
+    public var bodyViewSelecteAnimate: Bool {
+        set {
             contentView.bodyView.selectedAnimate = newValue
         }
-        get{
+        get {
             return contentView.bodyView.selectedAnimate
         }
     }
+
     /// 导航栏选中样式
-    public var navigationSelectedStyle:NavigationSelectedStyle = .center
+    public var navigationSelectedStyle: NavigationSelectedStyle = .center
     /// 头部视图
-    public var headerView : UIView? {
-        set{
+    public var headerView: UIView? {
+        set {
             contentView.tableHeaderView = newValue
         }
-        get{
+        get {
             return contentView.tableFooterView
         }
     }
+
     /// 尾巴部视图
-    public var footerView : UIView?{
-        set{
+    public var footerView: UIView? {
+        set {
             contentView.tableFooterView = newValue
         }
-        get{
+        get {
             return contentView.tableFooterView
         }
     }
+
     /// 弹簧效果
-    public var bounces : Bool{
-        set{
+    public var bounces: Bool {
+        set {
             contentView.bounces = newValue
         }
-        get{
+        get {
             return contentView.bounces
         }
     }
+
     /// 导航栏背景视图
-    public var navigationBackgroundView:UIView?{
-        set{
+    public var navigationBackgroundView: UIView? {
+        set {
             if newValue == nil {
                 let cleraView = UIView()
                 cleraView.backgroundColor = .clear
                 contentView.navView.backgroundView = cleraView
-            }else{
+            } else {
                 contentView.navView.backgroundView = newValue
             }
         }
-        get{
+        get {
             return contentView.navView.backgroundView
         }
     }
+
     /// 导航栏item内边距
-    public var navigationInset : NavigationInset = .init(left: 0, right: 0, spacing: 0){
-        didSet{
+    public var navigationInset: NavigationInset = .init(left: 0, right: 0, spacing: 0) {
+        didSet {
             contentView.navView.layout.minimumInteritemSpacing = navigationInset.spacing
             contentView.navView.collectionView.contentInset = .init(top: 0,
                                                                     left: navigationInset.left,
@@ -196,17 +201,18 @@ public class WPMenuView: WPBaseView {
         }
     }
     
-    public init(navigationHeight:CGFloat) {
+    public init(navigationHeight: CGFloat) {
         self.navigationHeight = navigationHeight
         contentView = .init(navigationHeight: navigationHeight, style: .plain)
         super.init(frame: .zero)
     }
     
-    required public init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func initSubView() {
+    override public func initSubView() {
         contentView.estimatedRowHeight = 0.0
         contentView.estimatedSectionHeaderHeight = 0
         contentView.estimatedSectionFooterHeight = 0
@@ -216,13 +222,11 @@ public class WPMenuView: WPBaseView {
         }
     }
     
-    public override func observeSubViewEvent() {
-        
-        contentView.bodyView.contentOffSet = { offset in
-
+    override public func observeSubViewEvent() {
+        contentView.bodyView.contentOffSet = { _ in
         }
         
-        contentView.bodyView.didSelected = {[weak self] index in
+        contentView.bodyView.didSelected = { [weak self] index in
             // 代理回掉
             self?.delegate?.menuViewDidSelected(index: index)
             // 设置翻页
@@ -235,17 +239,17 @@ public class WPMenuView: WPBaseView {
             // 导航条item滚动到当前
             if self.navigationSelectedStyle != .none {
                 self.contentView.navView.collectionView.scrollToItem(at: .init(row: index, section: 0), at: self.navSelectedStyle, animated: true)
-            }else{
+            } else {
                 self.contentView.navView.collectionView.scrollToItem(at: .init(row: index, section: 0), at: self.navSelectedStyle, animated: false)
             }
             
             // 选中headr
-            self.contentView.headerView.setHeaderView(of: headerItem?.headerView, complete: {[weak self] _ in
+            self.contentView.headerView.setHeaderView(of: headerItem?.headerView, complete: { [weak self] _ in
                 self?.contentView.reloadData()
             })
         }
         
-        contentView.navView.didSelected = {[weak self] index in
+        contentView.navView.didSelected = { [weak self] index in
             self?.contentView.bodyView.selected(index)
             self?.contentView.bodyView.didSelected?(index)
         }
@@ -253,29 +257,29 @@ public class WPMenuView: WPBaseView {
     
     /// 选中一页内部使用
     /// - Parameter index:
-    private func selectedPage(index:Int){
-        contentView.navView.data.forEach({ item in
-            if item.isSelected{
+    private func selectedPage(index: Int) {
+        contentView.navView.data.forEach { item in
+            if item.isSelected {
                 item.navigationItem.menuViewChildViewUpdateStatus(menuView: self, status: .normal)
             }
             item.isSelected = false
-        })
+        }
         let navItem = contentView.navView.data.wp_get(of: index)
         navItem?.isSelected = true
         navItem?.navigationItem.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
         
-        contentView.bodyView.data.forEach({ item in
-            if item.isSelected{
+        contentView.bodyView.data.forEach { item in
+            if item.isSelected {
                 item.bodyView?.menuViewChildViewUpdateStatus(menuView: self, status: .normal)
             }
             item.isSelected = false
-        })
+        }
         let bodyItem = contentView.bodyView.data.wp_get(of: index)
         bodyItem?.isSelected = true
         bodyItem?.bodyView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
         
         contentView.headerView.datas.forEach { item in
-            if item.isSelected{
+            if item.isSelected {
                 item.headerView?.menuViewChildViewUpdateStatus(menuView: self, status: .normal)
             }
             item.isSelected = false
@@ -286,25 +290,24 @@ public class WPMenuView: WPBaseView {
     }
 }
 
-public extension WPMenuView{
-    
+public extension WPMenuView {
     /// 选中一个item
-    func selected(_ index:Int){
+    func selected(_ index: Int) {
         contentView.navView.didSelected?(index)
     }
 }
 
 class WPMenuContentTableView: UITableView {
     /// 导航条高度
-    let navigationHeight : CGFloat
+    let navigationHeight: CGFloat
     /// 头部视图
     let headerView = WPMenuHeaderView()
     /// 菜单视图
     let bodyView = WPMenuBodyView()
     /// 当前导航视图
-    let navView : WPMenuNavigationView = WPMenuNavigationView()
+    let navView = WPMenuNavigationView()
     
-    init(navigationHeight:CGFloat, style: UITableView.Style) {
+    init(navigationHeight: CGFloat, style: UITableView.Style) {
         self.navigationHeight = navigationHeight
         super.init(frame: .zero, style: style)
         backgroundColor = .clear
@@ -313,14 +316,13 @@ class WPMenuContentTableView: UITableView {
         separatorStyle = .none
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
-
-extension WPMenuContentTableView:UITableViewDelegate,UITableViewDataSource{
-    
+extension WPMenuContentTableView: UITableViewDelegate, UITableViewDataSource {
     public func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -330,7 +332,6 @@ extension WPMenuContentTableView:UITableViewDelegate,UITableViewDataSource{
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         switch indexPath.section {
         case 0:
             return headerView
@@ -346,29 +347,25 @@ extension WPMenuContentTableView:UITableViewDelegate,UITableViewDataSource{
     }
     
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
         return section <= 0 ? nil : navView
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let bodyHeight = wp.height - navigationHeight
         
-        if indexPath.section <= 0{
+        if indexPath.section <= 0 {
             switch headerView.headerHeight {
             case .autoLayout:
                 return UITableView.automaticDimension
             case .height(let height):
                 return height
             }
-        }else if indexPath.section == 1{
+        } else if indexPath.section == 1 {
             return bodyHeight <= 0 ? 0 : bodyHeight
-        }else{
+        } else {
             return 0
         }
     }
 }
-
-
-
 
 

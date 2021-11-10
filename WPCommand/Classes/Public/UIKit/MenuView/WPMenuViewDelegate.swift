@@ -7,16 +7,14 @@
 
 import UIKit
 
-public protocol WPMenuViewDelegate:NSObjectProtocol {
-    
+public protocol WPMenuViewDelegate: NSObjectProtocol {
     /// 选中一个索引后调用
     /// - Parameter index: 索引
-    func menuViewDidSelected(index:Int)
+    func menuViewDidSelected(index: Int)
 }
 
-public extension WPMenuViewDelegate{
-    
+public extension WPMenuViewDelegate {
     /// 选中一个索引后调用
     /// - Parameter index: 索引
-    func menuViewDidSelected(index:Int){}
+    func menuViewDidSelected(index: Int) {}
 }

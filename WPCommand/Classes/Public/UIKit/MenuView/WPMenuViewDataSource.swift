@@ -7,17 +7,16 @@
 
 import UIKit
 
-public protocol WPMenuViewDataSource:NSObjectProtocol{
-
+public protocol WPMenuViewDataSource: NSObjectProtocol {
     /// 当前索引返回的视图
     /// - Parameter index: 索引
-    func menuBodyViewForIndex(index:Int) -> WPMenuBodyViewProtocol
-    
+    func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol
+
     /// 返回当前页面的headerView
     /// - Parameter index: 索引
-    func menuHeaderViewForIndex(index:Int) -> WPMenuHeaderViewProtocol?
+    func menuHeaderViewForIndex(index: Int) -> WPMenuHeaderViewProtocol?
 }
 
-public extension WPMenuViewDataSource{
-    func menuHeaderViewForIndex(index:Int) -> WPMenuHeaderViewProtocol?{ return nil }
+public extension WPMenuViewDataSource {
+    func menuHeaderViewForIndex(index: Int) -> WPMenuHeaderViewProtocol? { return nil }
 }

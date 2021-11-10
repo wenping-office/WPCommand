@@ -7,26 +7,24 @@
 
 import UIKit
 
-fileprivate var WPCollectionGroupPointer = "WPCollectionGroupPointer"
+private var WPCollectionGroupPointer = "WPCollectionGroupPointer"
 
 /// group协议
-protocol WPCollectionReusableViewProtocol : NSObjectProtocol,UICollectionReusableView{
-    
+protocol WPCollectionReusableViewProtocol: NSObjectProtocol, UICollectionReusableView {
     /// 即将加载group
     /// - Parameter model: 模型
-    func didSetHeaderFooterModel(model:WPCollectionGroup)
-    
+    func didSetHeaderFooterModel(model: WPCollectionGroup)
+
     /// group模型
-    var group : WPCollectionGroup?{ get set}
+    var group: WPCollectionGroup? { get set }
 }
 
-extension WPCollectionReusableViewProtocol{
-    
-    var group : WPCollectionGroup? {
-        get{
+extension WPCollectionReusableViewProtocol {
+    var group: WPCollectionGroup? {
+        get {
             return WPRunTime.get(self, &WPCollectionGroupPointer)
         }
-        set{
+        set {
             WPRunTime.set(self, newValue, &WPCollectionGroupPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }

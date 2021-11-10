@@ -7,9 +7,8 @@
 
 import UIKit
 
-open class WPBaseView: UIView{
-    
-    public override init(frame: CGRect) {
+open class WPBaseView: UIView {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         initSubView()
         initSubViewLayout()
@@ -17,19 +16,20 @@ open class WPBaseView: UIView{
         bindViewModel()
     }
     
-    required public init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // 绑定模型
-    open func bindViewModel(){}
+    open func bindViewModel() {}
     
     // 监听视图事件
-    open func observeSubViewEvent(){}
+    open func observeSubViewEvent() {}
     
     // 初始化视图布局
-    open func initSubViewLayout(){}
+    open func initSubViewLayout() {}
     
     // 初始化视图
-    open func initSubView(){}
+    open func initSubView() {}
 }

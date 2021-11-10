@@ -7,15 +7,14 @@
 
 import Photos
 
-public extension WPSpace where Base : PHAssetCollection{
-    
+public extension WPSpace where Base: PHAssetCollection {
     /// 系统所有相册
-    static var AllAssetCollection : PHFetchResult<PHAssetCollection>{
+    static var AllAssetCollection: PHFetchResult<PHAssetCollection> {
         return PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
     }
     
     /// 系统默认相册
-    static var defautAssetCollection : PHAssetCollection{
+    static var defautAssetCollection: PHAssetCollection {
         return AllAssetCollection.firstObject!
     }
     
@@ -23,15 +22,16 @@ public extension WPSpace where Base : PHAssetCollection{
     /// - Parameter types: 媒体类型
     /// - Parameter condition: 自定义条件 true 为添加  false 为过滤
     /// - Returns: 结果
-    static func allMedia(in types:[PHAssetMediaType],
-                            condition:((PHAsset)->Bool)?=nil) -> [PHAsset] {
-        var kes : [PHAssetMediaType:Any] = [:]
+    static func allMedia(in types: [PHAssetMediaType],
+                         condition: ((PHAsset)->Bool)? = nil)->[PHAsset]
+    {
+        var kes: [PHAssetMediaType: Any] = [:]
         types.forEach { elmt in
             kes[elmt] = ""
         }
-        var source : [PHAsset] = []
-        PHAssetCollection.wp.AllAssetCollection.enumerateObjects { collection, index, stop in
-            source.append(contentsOf: collection.wp.media(in: types,condition: condition))
+        var source: [PHAsset] = []
+        PHAssetCollection.wp.AllAssetCollection.enumerateObjects { collection, _, _ in
+            source.append(contentsOf: collection.wp.media(in: types, condition: condition))
         }
         return source
     }
@@ -41,17 +41,17 @@ public extension WPSpace where Base : PHAssetCollection{
     ///   - title: 相册标题
     ///   - success: 成功
     ///   - failed: 失败
-    static func create(_ title:String,success:(@escaping(PHAssetCollection,String)->Void),failed:((Error?)->Void)?=nil){
-        var identifier : String = ""
-        var collection : PHAssetCollection?
+    static func create(_ title: String, success: @escaping (PHAssetCollection, String)->Void, failed: ((Error?)->Void)? = nil) {
+        var identifier: String = ""
+        var collection: PHAssetCollection?
         PHPhotoLibrary.shared().performChanges({
             identifier = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: title).placeholderForCreatedAssetCollection.localIdentifier
-        },completionHandler:{ (isHandle, error) in
+        }, completionHandler: { _, error in
             collection = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil).firstObject
             WPGCD.main_Async {
                 if collection != nil {
                     success(collection!, identifier)
-                }else{
+                } else {
                     failed?(error)
                 }
             }
@@ -61,7 +61,7 @@ public extension WPSpace where Base : PHAssetCollection{
     /// 获取一个自定义相册
     /// - Parameter identifier: 相册唯一标识
     /// - Returns: 结果
-    static func get(in identifier:String)->PHAssetCollection?{
+    static func get(in identifier: String)->PHAssetCollection? {
         return PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil).firstObject
     }
     
@@ -69,26 +69,26 @@ public extension WPSpace where Base : PHAssetCollection{
     /// - Parameter type: 媒体类型
     /// - Parameter condition: 自定义条件 true 为添加  false 为过滤
     /// - Returns: 结果
-    func media(in types:[PHAssetMediaType],
-                  condition:((PHAsset)->Bool)?=nil)->[PHAsset]{
-        var kes : [PHAssetMediaType:Any] = [:]
+    func media(in types: [PHAssetMediaType],
+               condition: ((PHAsset)->Bool)? = nil)->[PHAsset]
+    {
+        var kes: [PHAssetMediaType: Any] = [:]
         types.forEach { elmt in
             kes[elmt] = ""
         }
-        var source : [PHAsset] = []
+        var source: [PHAsset] = []
         let fetchResult = Photos.PHAsset.fetchAssets(in: base, options: nil)
-        fetchResult.enumerateObjects { asset, index, sotp in
+        fetchResult.enumerateObjects { asset, _, _ in
             if condition != nil {
-                if kes[asset.mediaType] != nil && condition!(asset){
+                if kes[asset.mediaType] != nil, condition!(asset) {
                     source.append(asset)
                 }
-            }else{
-                if kes[asset.mediaType] != nil{
+            } else {
+                if kes[asset.mediaType] != nil {
                     source.append(asset)
                 }
             }
         }
         return source
     }
-    
 }

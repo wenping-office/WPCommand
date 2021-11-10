@@ -8,15 +8,14 @@
 
 import UIKit
 
-public extension WPSpace where Base : UINavigationController{
-    
+public extension WPSpace where Base: UINavigationController {
     /// 返回到栈里的某一个controller
     /// - Parameters:
     ///   - type: vc类型
     ///   - completion: 完成回调
-    func popToViewController<T:UIViewController>(_ type:T.Type,completion:((T)->Void?)?=nil){
+    func popToViewController<T: UIViewController>(_ type: T.Type, completion: ((T)->Void?)? = nil) {
         let targetControl = base.viewControllers.wp_elmt(of: { elmt in
-            return elmt.isKind(of: type)
+            elmt.isKind(of: type)
         })
         guard
             let control = targetControl
@@ -29,10 +28,10 @@ public extension WPSpace where Base : UINavigationController{
     /// - Parameters:
     ///   - animated: 是否显示动画
     ///   - completion: 完成回调
-    func popViewController(animated:Bool = true,completion:((UIViewController)->Void?)?=nil){
+    func popViewController(animated: Bool = true, completion: ((UIViewController)->Void?)? = nil) {
         if base.viewControllers.count <= 1 { return }
-        if let viewController = base.viewControllers.wp_get(of: base.viewControllers.count - 2){
-            let pushCompletion : ()->Void = {
+        if let viewController = base.viewControllers.wp_get(of: base.viewControllers.count - 2) {
+            let pushCompletion: ()->Void = {
                 completion?(viewController)
             }
 
@@ -47,9 +46,9 @@ public extension WPSpace where Base : UINavigationController{
     /// - Parameters:
     ///   - animated: 是否显示动画
     ///   - completion: 完成回调
-    func popToRootViewController(animated:Bool = true,completion:((UIViewController)->Void?)?=nil){
-        if let viewController = base.viewControllers.first{
-            let pushCompletion : ()->Void = {
+    func popToRootViewController(animated: Bool = true, completion: ((UIViewController)->Void?)? = nil) {
+        if let viewController = base.viewControllers.first {
+            let pushCompletion: ()->Void = {
                 completion?(viewController)
             }
             
@@ -63,15 +62,15 @@ public extension WPSpace where Base : UINavigationController{
     /// push到新的controller
     /// - Parameters:
     ///   - viewController: controller
+    ///   - animated: 是否显示动画
     ///   - completion: 完成回调
-    func pushViewController<T:UIViewController>(_ viewController: T, completion: ((T) -> Void)? = nil) {
-        let pushCompletion : ()->Void = {
+    func pushViewController<T: UIViewController>(_ viewController: T, animated: Bool = true, completion: ((T)->Void)? = nil) {
+        let pushCompletion: ()->Void = {
             completion?(viewController)
         }
         CATransaction.begin()
         CATransaction.setCompletionBlock(pushCompletion)
-        base.pushViewController(viewController, animated: true)
+        base.pushViewController(viewController, animated: animated)
         CATransaction.commit()
     }
-    
 }

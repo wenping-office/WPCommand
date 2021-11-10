@@ -18,54 +18,55 @@ public extension WPTextView {
 }
 
 open class WPTextView: UITextView {
-    
     /// 过滤字符 只能单个字符过滤 例如[""]
-    public var keyWords : [String] = []{
-        didSet{
+    public var keyWords: [String] = [] {
+        didSet {
             createKeyWordkeys()
         }
     }
+
     /// 内容改变
-    public var textChange : ((WPTextView)->Void)?{
-        didSet{
+    public var textChange: ((WPTextView) -> Void)? {
+        didSet {
             textChange?(self)
         }
     }
+
     /// 输入模式
-    public var mode : WPTextView.InputMode
+    public var mode: WPTextView.InputMode
     /// 最大输入字符数
     public var maxCount = Int.max
     /// 过滤高亮后的text
-    public var filterText : String!{
-
+    public var filterText: String! {
         if let textRange = markedTextRange {
             if textRange.isEmpty {
                 return text
-            }else{
+            } else {
                 let highStrCount = text(in: textRange)?.count ?? 0
                 return text.wp.first(of: text.count - highStrCount)
             }
-        }else{
+        } else {
             return text
         }
     }
-    /// 是否禁用全选功能
-    public var isSelectAllEnabled : Bool = false
-    /// 是否禁用选中功能
-    public var isSelectEnabled : Bool = false
-    /// 是否禁用粘贴功能
-    public var isPasteEnabled : Bool = false
-    /// 是否禁用复制功能
-    public var isCopyEnabled : Bool = false
-    /// 是否禁用分享功能
-    public var isShareEnabled : Bool = true
-    /// 是否禁用删除功能
-    public var isDeleteEnabled : Bool = false
-    /// 私有api 关键字的key
-    private var keyWordKeys : [String:String] = [:]
 
-    open override var text: String!{
-        didSet{
+    /// 是否禁用全选功能
+    public var isSelectAllEnabled: Bool = false
+    /// 是否禁用选中功能
+    public var isSelectEnabled: Bool = false
+    /// 是否禁用粘贴功能
+    public var isPasteEnabled: Bool = false
+    /// 是否禁用复制功能
+    public var isCopyEnabled: Bool = false
+    /// 是否禁用分享功能
+    public var isShareEnabled: Bool = true
+    /// 是否禁用删除功能
+    public var isDeleteEnabled: Bool = false
+    /// 私有api 关键字的key
+    private var keyWordKeys: [String: String] = [:]
+
+    override open var text: String! {
+        didSet {
             textChange?(self)
         }
     }
@@ -74,7 +75,7 @@ open class WPTextView: UITextView {
     /// - Parameters:
     ///   - inputMode: 输入模式
     ///   - keywords: 关键字
-    public init(inputMode:InputMode,_ keywords:[String]=[]) {
+    public init(inputMode: InputMode, _ keywords: [String] = []) {
         self.mode = inputMode
         super.init(frame: .zero, textContainer: nil)
         self.keyWords = keywords
@@ -82,61 +83,59 @@ open class WPTextView: UITextView {
         createKeyWordkeys()
     }
     
-    required public init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     /// 创建关键字key
-    private func createKeyWordkeys(){
+    private func createKeyWordkeys() {
         keyWordKeys.removeAll()
         keyWords.forEach { elmt in
             keyWordKeys[elmt] = ""
         }
     }
     
-    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         let actionStr = action.description
         if actionStr == "selectAll:" {
             return isSelectAllEnabled ? false : super.canPerformAction(action, withSender: sender)
-        }else if actionStr == "copy:"{
+        } else if actionStr == "copy:" {
             return isCopyEnabled ? false : super.canPerformAction(action, withSender: sender)
-        }else if actionStr == "paste:"{
+        } else if actionStr == "paste:" {
             return isPasteEnabled ? false : super.canPerformAction(action, withSender: sender)
-        }else if actionStr == "select:"{
+        } else if actionStr == "select:" {
             return isSelectEnabled ? false : super.canPerformAction(action, withSender: sender)
-        }else if actionStr == "delete:"{
+        } else if actionStr == "delete:" {
             return isDeleteEnabled ? false : super.canPerformAction(action, withSender: sender)
-        }else if actionStr == "_share:"{
+        } else if actionStr == "_share:" {
             return isShareEnabled ? false : super.canPerformAction(action, withSender: sender)
-        }else{
+        } else {
             return super.canPerformAction(action, withSender: sender)
         }
     }
 }
 
-extension WPTextView:UITextViewDelegate{
-    
+extension WPTextView: UITextViewDelegate {
     public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        
         if keyWords.count != 0 {
             let res = keyWordKeys[text]
             if mode == .filter {
                 if res != nil {
                     return false
-                }else{
+                } else {
                     return true
                 }
-            }else{
-                if text == ""{ // 删除键
+            } else {
+                if text == "" { // 删除键
                     return true
-                }else if res != nil {
+                } else if res != nil {
                     return true
-                }else{
+                } else {
                     return false
                 }
             }
-        }else{
+        } else {
             return true
         }
     }
@@ -147,7 +146,7 @@ extension WPTextView:UITextViewDelegate{
         let pos = textView.position(from: textView.beginningOfDocument, offset: 0)
         
         /// 如果在变化中是高亮部分在变，就不要计算字符了
-        if (selectedRange != nil) && (pos != nil) {
+        if selectedRange != nil, pos != nil {
             textChange?(self)
             return
         }
@@ -156,5 +155,4 @@ extension WPTextView:UITextViewDelegate{
         }
         textChange?(self)
     }
-    
 }

@@ -7,32 +7,30 @@
 
 import UIKit
 
-open class WPBaseTableViewCell: UITableViewCell{
-    
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+open class WPBaseTableViewCell: UITableViewCell {
+    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         initSubView()
         initSubViewLayout()
         observeSubViewEvent()
         bindViewModel()
     }
-    
-    required public init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // 绑定模型
-    open func bindViewModel(){}
-    
+    open func bindViewModel() {}
+
     // 监听视图事件
-    open func observeSubViewEvent(){}
-    
+    open func observeSubViewEvent() {}
+
     // 初始化视图布局
-    open func initSubViewLayout(){}
-    
+    open func initSubViewLayout() {}
+
     // 初始化视图
-    open func initSubView(){}
+    open func initSubView() {}
 }
-
-
 

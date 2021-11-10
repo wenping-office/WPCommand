@@ -7,40 +7,45 @@
 
 import UIKit
 
-fileprivate var WPCollectionViewSourcePointer = "WPCollectionViewSourcePointer"
+private var WPCollectionViewSourcePointer = "WPCollectionViewSourcePointer"
 
 /// 扩展数据源
-public extension UICollectionView{
-
+extension UICollectionView {
     /// 数据源
-    var wp_source : WPCollectionViewSource{
-        set{
+    var wp_source: WPCollectionViewSource {
+        set {
             WPRunTime.set(self, newValue, &WPCollectionViewSourcePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            delegate = self.wp_delegate as? UICollectionViewDelegate
+            delegate = self.wp_delegate
             dataSource = newValue
         }
-        get{
-            guard let source : WPCollectionViewSource = WPRunTime.get(self, &WPCollectionViewSourcePointer) else {
+        get {
+            guard let source: WPCollectionViewSource = WPRunTime.get(self, &WPCollectionViewSourcePointer) else {
                 let wp_source = WPCollectionViewSource(collectionView: self)
                 self.wp_source = wp_source
                 return wp_source
             }
-          return source
+            return source
         }
     }
 }
 
+public extension WPSpace where Base: UICollectionView {
+    /// 桥接代理
+    var dataSource: WPCollectionViewSource {
+        return base.wp_source
+    }
+}
+
 open class WPCollectionViewSource: WPScrollViewDelegate {
+    weak var collectionView: UICollectionView!
     
-    weak var collectionView : UICollectionView!
-    
-    init(collectionView : UICollectionView) {
+    init(collectionView: UICollectionView) {
         self.collectionView = collectionView
         super.init()
     }
 
     /// 数据源
-    public var groups : [WPCollectionGroup] = []
+    public var groups: [WPCollectionGroup] = []
     
     /// cellClass
     public var cellClass: AnyClass = UICollectionViewCell.self
@@ -49,7 +54,7 @@ open class WPCollectionViewSource: WPScrollViewDelegate {
     public var headerFooterClass: AnyClass = UICollectionReusableView.self
 }
 
-extension WPCollectionViewSource : UICollectionViewDataSource{
+extension WPCollectionViewSource: UICollectionViewDataSource {
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return groups.count
     }
@@ -59,7 +64,6 @@ extension WPCollectionViewSource : UICollectionViewDataSource{
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(self.cellClass), for: indexPath)
         let item = groups[indexPath.section].items[indexPath.row]
         
@@ -76,13 +80,11 @@ extension WPCollectionViewSource : UICollectionViewDataSource{
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NSStringFromClass(headerFooterClass), for: indexPath)
         
         let group = groups[indexPath.section]
         
-        group.uploadGroupBlock = { group in
-
+        group.uploadGroupBlock = { _ in
         }
         view.group = group
         view.didSetHeaderFooterModel(model: group)

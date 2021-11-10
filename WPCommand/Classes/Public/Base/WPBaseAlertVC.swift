@@ -6,25 +6,25 @@
 //  Copyright © 2021 CocoaPods. All rights reserved.
 //
 
-import UIKit
 import RxSwift
+import UIKit
 
 open class WPBaseAlertVC: UIViewController {
     /// 蒙板
     public let grayView = UIButton()
     /// 开始动画时间
-    open var startDuration : CGFloat { return 0.3}
+    open var startDuration: CGFloat { return 0.3 }
     /// 结束动画时间
-    open var endDuration : CGFloat { return 0.3}
+    open var endDuration: CGFloat { return 0.3 }
     /// 蒙板颜色
-    open var maskColor : UIColor {return UIColor.init(0, 0, 0,0.15)}
+    open var maskColor: UIColor { return UIColor(0, 0, 0, 0.15) }
     
-    open override func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         show()
     }
     
-    required public init() {
+    public required init() {
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .overCurrentContext
         view.backgroundColor = .clear
@@ -33,76 +33,78 @@ open class WPBaseAlertVC: UIViewController {
         observeSubViewEvent()
     }
     
-    required public init?(coder: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     /// 初始化试图
-    open func initSubView(){
-        
+    open func initSubView() {
         grayView.backgroundColor = .clear
         view.addSubview(grayView)
-        
     }
+
     /// 初始化视图布局
-    open func initSubViewLayout(){
+    open func initSubViewLayout() {
         grayView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
+
     /// 监听子控件事件
-    open func observeSubViewEvent(){
-        grayView.rx.tap.subscribe(onNext: {[weak self]in
+    open func observeSubViewEvent() {
+        grayView.rx.tap.subscribe(onNext: { [weak self] in
             self?.dismiss()
         }).disposed(by: wp_disposeBag)
     }
+
     /// 显示弹窗
-    open func show(){
+    open func show() {
         willShow()
         
         showToLoacton()
-        UIView.animate(withDuration: TimeInterval(startDuration), animations: {[weak self]in
+        UIView.animate(withDuration: TimeInterval(startDuration), animations: { [weak self] in
             self?.showToAnimates()
             self?.grayView.backgroundColor = self?.maskColor
             self?.view.layoutIfNeeded()
             
-        }, completion: {[weak self] complete in
-            if complete{
+        }, completion: { [weak self] complete in
+            if complete {
                 self?.didShow()
             }
         })
     }
+
     /// 隐藏弹窗
-    open func dismiss(completeAnimate:(()->Void)?=nil){
+    open func dismiss(completeAnimate: (() -> Void)? = nil) {
         willDismiss()
         dismissToLocation()
-        UIView.animate(withDuration: TimeInterval(endDuration), animations: {[weak self]in
+        UIView.animate(withDuration: TimeInterval(endDuration), animations: { [weak self] in
             self?.grayView.backgroundColor = .clear
             self?.dismissToAnimates()
             self?.view.layoutIfNeeded()
-        }, completion: {[weak self] complete in
-            if complete,let self = self{
-                
+        }, completion: { [weak self] complete in
+            if complete, let self = self {
                 completeAnimate?()
                 self.didDismiss()
             }
         })
     }
+
     /// 子类重写弹出的结束位置
-    open func showToLoacton(){}
+    open func showToLoacton() {}
     /// 子类重写收回的结束位置
-    open func dismissToLocation(){}
+    open func dismissToLocation() {}
     /// 子类重写 将要收回回掉
-    open func willDismiss(){}
+    open func willDismiss() {}
     /// 子类重写收回回掉
-    open func didDismiss(){}
+    open func didDismiss() {}
     /// 子类重写 将要显示回调
-    open func willShow(){}
+    open func willShow() {}
     /// 子类重写弹出后回掉
-    open func didShow(){}
+    open func didShow() {}
     /// 子类重写动画正在执信
-    open func showToAnimates(){}
+    open func showToAnimates() {}
     /// 子类重写动画正在执行
-    open func dismissToAnimates(){}
-    
+    open func dismissToAnimates() {}
 }

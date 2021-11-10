@@ -7,25 +7,23 @@
 
 import UIKit
 
-fileprivate var WPTableGroupPointer = "WPTableGroupPointer"
+private var WPTableGroupPointer = "WPTableGroupPointer"
 
-public protocol WPTableHeaderFooterViewlProtocol : NSObjectProtocol,UITableViewHeaderFooterView{
-    
+public protocol WPTableHeaderFooterViewlProtocol: NSObjectProtocol, UITableViewHeaderFooterView {
     /// 加载模型时调用
     /// - Parameter group: group模型
-    func reloadGroup(group:WPTableGroup)
-    
+    func reloadGroup(group: WPTableGroup)
+
     /// group模型
-    var group : WPTableGroup?{ get set}
+    var group: WPTableGroup? { get set }
 }
 
-extension WPTableHeaderFooterViewlProtocol{
-    
-    public var group : WPTableGroup? {
-        get{
+public extension WPTableHeaderFooterViewlProtocol {
+    var group: WPTableGroup? {
+        get {
             return WPRunTime.get(self, &WPTableGroupPointer)
         }
-        set{
+        set {
             return WPRunTime.set(self, newValue, &WPTableGroupPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
