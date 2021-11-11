@@ -41,6 +41,7 @@ class WPMenuNavigationView: UITableViewHeaderFooterView {
         super.init(reuseIdentifier: reuseIdentifier)
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 0
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = .clear

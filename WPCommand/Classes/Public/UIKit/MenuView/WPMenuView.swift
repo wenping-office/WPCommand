@@ -7,6 +7,82 @@
 
 import UIKit
 
+public extension WPMenuView{
+    /// 身体视图是否执行选中动画
+    var bodyViewSelecteAnimate: Bool {
+        set {
+            contentView.bodyView.selectedAnimate = newValue
+        }
+        get {
+            return contentView.bodyView.selectedAnimate
+        }
+    }
+    /// 头部视图
+    var headerView: UIView? {
+        set {
+            contentView.tableHeaderView = newValue
+        }
+        get {
+            return contentView.tableFooterView
+        }
+    }
+
+    /// 尾巴部视图
+    var footerView: UIView? {
+        set {
+            contentView.tableFooterView = newValue
+        }
+        get {
+            return contentView.tableFooterView
+        }
+    }
+
+    /// 弹簧效果
+    var bounces: Bool {
+        set {
+            contentView.bounces = newValue
+        }
+        get {
+            return contentView.bounces
+        }
+    }
+
+    /// 导航栏背景视图
+    var navigationBackgroundView: UIView? {
+        set {
+            if newValue == nil {
+                let cleraView = UIView()
+                cleraView.backgroundColor = .clear
+                contentView.navView.backgroundView = cleraView
+            } else {
+                contentView.navView.backgroundView = newValue
+            }
+        }
+        get {
+            return contentView.navView.backgroundView
+        }
+    }
+    
+    /// 是否显示水平底部滑动条
+    var showsHorizontalScrollIndicator: Bool{
+        set{
+            contentView.bodyView.collectionView.showsHorizontalScrollIndicator = newValue
+        }
+        get{
+            return contentView.bodyView.collectionView.showsHorizontalScrollIndicator
+        }
+    }
+    /// 是否显示垂直滑动条
+    var showsVerticalScrollIndicator: Bool{
+        set{
+            contentView.showsVerticalScrollIndicator = newValue
+        }
+        get{
+            return contentView.showsVerticalScrollIndicator
+        }
+    }
+}
+
 public extension WPMenuView {
     enum HeaderHeightOption {
         /// 使用autolayout自动布局高度
@@ -76,15 +152,15 @@ extension WPMenuView {
 public extension WPMenuView {
     /// 添加一组item
     /// - Parameter items: items
-    func setItems(items: [WPMenuNavigationViewProtocol]) {
+    func setNavigation(_ navigationitems: [WPMenuNavigationViewProtocol]) {
         var headItems: [WPMenuHeaderViewItem] = []
         var navItems: [WPMenuNavigationItem] = []
         var bodyItems: [WPMenuBodyViewItem] = []
         
-        for index in 0 ..< items.count {
+        for index in 0 ..< navigationitems.count {
             let haederItem = WPMenuHeaderViewItem(index: index, headerView: self.dataSource?.menuHeaderViewForIndex(index: index))
             let bodyItem = WPMenuBodyViewItem(index: index, bodyView: self.dataSource?.menuBodyViewForIndex(index: index))
-            let navItem = WPMenuNavigationItem(size: .init(width: items[index].menuItemWidth(), height: navigationHeight), index: index, item: items[index])
+            let navItem = WPMenuNavigationItem(size: .init(width: navigationitems[index].menuItemWidth(), height: navigationHeight), index: index, item: navigationitems[index])
             bodyItems.append(bodyItem)
             navItems.append(navItem)
             headItems.append(haederItem)
@@ -113,6 +189,8 @@ public class WPMenuView: WPBaseView {
     private let navigationHeight: CGFloat
     /// 内容视图
     private let contentView: WPMenuContentTableView
+    /// 导航栏选中样式
+    public var navigationSelectedStyle: NavigationSelectedStyle = .center
     /// 导航栏选中动画样式
     private var navSelectedStyle: UICollectionView.ScrollPosition {
         switch navigationSelectedStyle {
@@ -132,68 +210,10 @@ public class WPMenuView: WPBaseView {
     public weak var dataSource: WPMenuViewDataSource?
     /// 代理
     public weak var delegate: WPMenuViewDelegate?
-    /// 身体视图是否执行选中动画
-    public var bodyViewSelecteAnimate: Bool {
-        set {
-            contentView.bodyView.selectedAnimate = newValue
-        }
-        get {
-            return contentView.bodyView.selectedAnimate
-        }
-    }
-
-    /// 导航栏选中样式
-    public var navigationSelectedStyle: NavigationSelectedStyle = .center
-    /// 头部视图
-    public var headerView: UIView? {
-        set {
-            contentView.tableHeaderView = newValue
-        }
-        get {
-            return contentView.tableFooterView
-        }
-    }
-
-    /// 尾巴部视图
-    public var footerView: UIView? {
-        set {
-            contentView.tableFooterView = newValue
-        }
-        get {
-            return contentView.tableFooterView
-        }
-    }
-
-    /// 弹簧效果
-    public var bounces: Bool {
-        set {
-            contentView.bounces = newValue
-        }
-        get {
-            return contentView.bounces
-        }
-    }
-
-    /// 导航栏背景视图
-    public var navigationBackgroundView: UIView? {
-        set {
-            if newValue == nil {
-                let cleraView = UIView()
-                cleraView.backgroundColor = .clear
-                contentView.navView.backgroundView = cleraView
-            } else {
-                contentView.navView.backgroundView = newValue
-            }
-        }
-        get {
-            return contentView.navView.backgroundView
-        }
-    }
-
     /// 导航栏item内边距
     public var navigationInset: NavigationInset = .init(left: 0, right: 0, spacing: 0) {
         didSet {
-            contentView.navView.layout.minimumInteritemSpacing = navigationInset.spacing
+            contentView.navView.layout.minimumLineSpacing = navigationInset.spacing
             contentView.navView.collectionView.contentInset = .init(top: 0,
                                                                     left: navigationInset.left,
                                                                     bottom: 0,
@@ -216,6 +236,8 @@ public class WPMenuView: WPBaseView {
         contentView.estimatedRowHeight = 0.0
         contentView.estimatedSectionHeaderHeight = 0
         contentView.estimatedSectionFooterHeight = 0
+        contentView.showsHorizontalScrollIndicator = false
+        contentView.showsVerticalScrollIndicator = false
         addSubview(contentView)
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()

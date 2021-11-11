@@ -53,6 +53,8 @@ class WPMenuBodyView: UITableViewCell {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.isPagingEnabled = true
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
         selectionStyle = .none
         backgroundColor = .clear
         contentView.addSubview(collectionView)
