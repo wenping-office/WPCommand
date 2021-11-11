@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WPBaseCollectionViewCell: UICollectionViewCell {
+open class WPBaseCollectionViewCell: UICollectionViewCell {
     override public init(frame: CGRect) {
         super.init(frame: frame)
         initSubView()

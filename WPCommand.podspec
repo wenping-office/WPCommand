@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
-  s.version          = '0.2.3'
+  s.version          = '0.2.4'
   # 介绍
   s.summary          = '基础库工具类、队列Alert,TextView、TextField、等'
 

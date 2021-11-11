@@ -128,33 +128,34 @@ public extension Array {
     /// 从头部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func wp_first(of count: Int)->ArraySlice<Element> {
+    func wp_first(of count: Int)->[Element] {
         return wp_subArray(of: .init(location: 0, length: count))
     }
     
     /// 从尾部开始取值 数量不足则返回所有
     /// - Parameter count: 个数
     /// - Returns: 结果
-    func wp_last(of count: Int)->ArraySlice<Element> {
+    func wp_last(of count: Int)->[Element] {
         let location = self.count - count
         if count <= self.count {
-            return self[location..<self.count]
+            return Array(self[location..<self.count])
+                
         } else {
-            return self[0..<self.count]
+            return Array(self[0..<self.count])
         }
     }
     
     /// 截取数组 如果lenght越界 则返回最大的可取范围
     /// - Parameter range: 返回
     /// - Returns: 结果
-    func wp_subArray(of range: NSRange)->ArraySlice<Element> {
+    func wp_subArray(of range: NSRange)->[Element] {
         let lenght = range.length
         let maxLenght = self.count - range.location
         if lenght <= maxLenght {
             let count = range.location + range.length
-            return self[range.location..<count]
+            return Array(self[range.location..<count])
         } else {
-            return self[range.location..<self.count]
+            return Array(self[range.location..<self.count])
         }
     }
 }
