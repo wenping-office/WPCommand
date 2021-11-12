@@ -73,7 +73,7 @@ public extension WPSystem {
             return .unknown
         }
     }
-
+    
     /// 型号
     static var modelStr: String {
         var systemInfo = utsname()
@@ -107,32 +107,32 @@ public extension WPSystem {
         public var willShow: Observable<Notification> {
             return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
         }
-
+        
         /// 键盘已经显示通知
         public var didShow: Observable<Notification> {
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification)
         }
-
+        
         /// 键盘将要收回通知
         public var willHide: Observable<Notification> {
             return NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
         }
-
+        
         /// 键盘已经收回通知
         public var didHide: Observable<Notification> {
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification)
         }
-
+        
         /// 键盘高度改变通知
         public var willChangeFrame: Observable<Notification> {
             return NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification)
         }
-
+        
         /// 键盘高度已经改变通知
         public var didChangeFrame: Observable<Notification> {
             return NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification)
         }
-
+        
         /// 获取目标视图与键盘顶部的Y轴差值 0 键盘收回 正数代表被键盘覆盖的差值 负数代表没有被键盘覆盖的差值
         /// - Parameters:
         ///   - veiw: 目标视图
@@ -145,7 +145,7 @@ public extension WPSystem {
                 return Disposables.create()
             }
             var targetFrame: CGRect = view.wp.frameInWidow
-
+            
             WPSystem.keyboard.willShow.subscribe(onNext: { value in
                 if targetFrame == .zero {
                     targetFrame = view.wp.frameInWidow
@@ -154,7 +154,7 @@ public extension WPSystem {
                 let of = -(targetFrame.maxY - keyBoardEnd.minY)
                 obServer?.onNext(of)
             }).disposed(by: bag)
-
+            
             WPSystem.keyboard.willHide.subscribe(onNext: { _ in
                 obServer?.onNext(0)
             }).disposed(by: bag)
@@ -215,7 +215,7 @@ public extension WPSystem {
                 return true
             }
         }
-
+        
         /// 比例
         public enum Proportion {
             /// 4:3屏幕
@@ -295,7 +295,7 @@ public extension WPSystem {
                     }
                 }
             }
-
+            
             /// 结束捕捉重力方向
             public func closeCatch() {
                 motionManager.stopDeviceMotionUpdates()
@@ -303,6 +303,8 @@ public extension WPSystem {
         }
     }
 }
+
+let locationManager = CLLocationManager()
 
 public extension WPSystem {
     /// 打开系统设置页面
@@ -331,7 +333,7 @@ public extension WPSystem {
         }
     }
     
-    /// 检测是否开启定位权限
+    /// 判断是否开启定位权限
     /// - Parameters:
     ///   - open: 开启
     ///   - close: 关闭
@@ -346,6 +348,33 @@ public extension WPSystem {
             close?()
         }
         return resault
+    }
+    
+    /// 检测是否开启定位权限、如果没有开启权限请求授权并且继续执行闭包任务
+    /// - Parameters:
+    ///   - open: 开启时执行的任务
+    ///   - close: 关闭时执行任务
+    static func isOpenLocationAutoTask(open: (()->Void)? = nil, close: (()->Void)? = nil) {
+        let authStatus = CLLocationManager.authorizationStatus()
+        let resault = (authStatus != .restricted && authStatus != .denied)
+        if authStatus == .notDetermined {
+            locationManager.requestWhenInUseAuthorization()
+            locationManager.wp.delegate.didChangeAuthorizationBlock = { _, state in
+                WPGCD.main_Async {
+                    if state == .authorizedAlways || state == .authorizedWhenInUse {
+                        open?()
+                    } else {
+                        close?()
+                    }
+                }
+            }
+        } else {
+            if resault {
+                open?()
+            } else {
+                close?()
+            }
+        }
     }
     
     /// 检测是否开启相册权限
@@ -471,7 +500,7 @@ public extension WPSystem {
         /// 未知
         case unknown
     }
-
+    
     enum DeviceModel {
         case iPhone4
         case iPhone4S

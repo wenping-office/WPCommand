@@ -23,7 +23,7 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         return testHeader()
     }
     
-    func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol {
+    func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol? {
         if index == 0 {
             return testBodyView2()
         }else if index == 4{
@@ -42,7 +42,7 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
 
         menuView.bounces = false
 //        menuView.navigationInset = .init(left: 40, right: 30, spacing: 30)
-        menuView.setItems(items: items)
+//        menuView.setItems(items: items)
         menuView.backgroundColor = UIColor.wp.random
     }
     

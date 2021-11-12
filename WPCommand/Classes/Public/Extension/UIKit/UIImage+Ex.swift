@@ -80,16 +80,20 @@ public extension WPSpace where Base: UIImage {
     ///   - complete: 完成回调
     func saveTo(_ collection: PHAssetCollection, complete: ((Bool, PHAsset?, Error?) -> Void)?) {
         if let asset = PHAsset {
-            let arr = [asset]
-
-            PHPhotoLibrary.shared().performChanges {
-                let request = PHAssetCollectionChangeRequest(for: collection)
-                request?.addAssets(arr as NSFastEnumeration)
-            } completionHandler: { isSuccess, error in
-                WPGCD.main_Async {
-                    complete?(isSuccess, asset, error)
+            WPSystem.isOpenAlbum(open: {
+                let arr = [asset]
+                PHPhotoLibrary.shared().performChanges {
+                    let request = PHAssetCollectionChangeRequest(for: collection)
+                    request?.addAssets(arr as NSFastEnumeration)
+                } completionHandler: { isSuccess, error in
+                    WPGCD.main_Async {
+                        complete?(isSuccess, asset, error)
+                    }
                 }
-            }
+            }, close: {
+                let error = NSError(domain: "没有相册权限", code: -101, userInfo: nil) as Error
+                complete?(false, nil, error)
+            })
         } else {
             let error = NSError(domain: "图片转换失败", code: -100, userInfo: nil) as Error
             complete?(false, nil, error)
