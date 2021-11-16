@@ -34,7 +34,7 @@ open class WPLatticeView<cellT: WPLatticeCell, itemT: WPLatticeItem>: UIView {
         return count % col == 0 ? count / col : count / col + 1
     }
     
-    /// 是否显示"+"号
+    /// 是否显示占位
     public var isShowPlaceholder = false {
         didSet {
             var searchResualt = false
@@ -54,9 +54,6 @@ open class WPLatticeView<cellT: WPLatticeCell, itemT: WPLatticeItem>: UIView {
             contentView.reloadData()
         }
     }
-
-    /// “+” 号图片
-    public var plusImage: UIImage?
     /// 多少列
     public let col: Int
     /// 内容间距
@@ -77,7 +74,6 @@ open class WPLatticeView<cellT: WPLatticeCell, itemT: WPLatticeItem>: UIView {
     ///   - maxWidth: 最大的宽
     ///   - itemHeight: 每个小格的高
     ///   - maxCount: 总共显示多少个
-    ///   - plusImage: 如过 isShowPlaceholder 是 true 的话 加载的图片
     ///   - action: 点击了每一个小格的动作
     public init(col: Int, padding: CGFloat, maxWidth: CGFloat, itemHeight: CGFloat, maxCount: Int, action: ((_ item: itemT)->Void)? = nil) {
         self.col = col
@@ -101,7 +97,7 @@ open class WPLatticeView<cellT: WPLatticeCell, itemT: WPLatticeItem>: UIView {
     
     /// 添加一组subItem
     /// - Parameter Lattices: 一组Item
-    public func set(lattices: [itemT]) {
+    public func set(_ lattices: [itemT]) {
         let totalCount = lattices.count + contentGroup.items.count + (isShowPlaceholder ? -1 : 0)
         if totalCount > maxCount { print("WPLatticeView 超过了最大数量"); return }
         for item in lattices {

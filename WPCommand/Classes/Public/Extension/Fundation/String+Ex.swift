@@ -243,8 +243,7 @@ public extension WPSpace where Base == String {
     func last(of count: Int) -> Base {
         let location = base.count - count
         if count <= base.count {
-            return subString(of: .init(location: location, length: base.count))
-
+            return subString(of: .init(location: location, length: count))
         } else {
             return subString(of: .init(location: 0, length: base.count))
         }
@@ -257,8 +256,7 @@ public extension WPSpace where Base == String {
         let lenght = range.length
         let maxLenght = base.count - range.location
         if lenght <= maxLenght {
-            let count = range.location + range.length
-            return (base as NSString).substring(with: .init(location: range.location, length: count))
+            return (base as NSString).substring(with: range)
         } else {
             return (base as NSString).substring(with: .init(location: range.location, length: base.count))
         }
