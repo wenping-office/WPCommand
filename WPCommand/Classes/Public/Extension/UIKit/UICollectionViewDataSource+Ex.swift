@@ -78,9 +78,9 @@ open class WPCollectionViewSource: WPScrollViewDelegate {
         var key: (key: String, isHeader: Bool) = ("", false)
 
         if kind == UICollectionView.elementKindSectionHeader {
-            key = (NSStringFromClass(group.headViewClass), true)
+            key = (NSStringFromClass(group.headViewClass) + "header", true)
         } else {
-            key = (NSStringFromClass(group.footViewClass), false)
+            key = (NSStringFromClass(group.footViewClass) + "footer", false)
         }
 
         let resualt = (viewIdentifiers[key.key] != nil)
@@ -94,7 +94,7 @@ open class WPCollectionViewSource: WPScrollViewDelegate {
                                         forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: id)
                 viewIdentifiers[key.key] = id
             } else {
-                collectionView.register(group.headViewClass,
+                collectionView.register(group.footViewClass,
                                         forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: id)
                 viewIdentifiers[key.key] = id
             }
@@ -129,6 +129,7 @@ extension WPCollectionViewSource: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let group = groups[indexPath.section]
         let view = supplementaryView(kind: kind, group: group, indexPath: indexPath)
+        view.backgroundColor = .orange
         group.uploadGroupBlock = { _ in
         }
         view.group = group
