@@ -38,7 +38,7 @@ public extension WPSpace where Base: UICollectionView {
 
 open class WPCollectionViewSource: WPScrollViewDelegate {
     weak var collectionView: UICollectionView!
-    
+
     init(collectionView: UICollectionView) {
         self.collectionView = collectionView
         super.init()
@@ -46,44 +46,89 @@ open class WPCollectionViewSource: WPScrollViewDelegate {
 
     /// 数据源
     public var groups: [WPCollectionGroup] = []
+
+    /// 缓存标识符池
+    private var identifiers: [String: String] = [:]
     
-    /// cellClass
-    public var cellClass: AnyClass = UICollectionViewCell.self
-    
-    /// headerFooterClass
-    public var headerFooterClass: AnyClass = UICollectionReusableView.self
+    /// 缓存标识符池
+    private var viewIdentifiers: [String: String] = [:]
+
+    /// 获取一个cell
+    private func reusableCell(cellClass: UICollectionViewCell.Type,
+                              indexPath: IndexPath) -> UICollectionViewCell
+    {
+        let key = NSStringFromClass(cellClass)
+        let resualt = (identifiers[key] != nil)
+        var id: String!
+        if resualt {
+            id = identifiers[key]
+        } else {
+            id = String.wp.random(length: 20)
+            collectionView.register(cellClass, forCellWithReuseIdentifier: id)
+            identifiers[key] = id
+        }
+
+        return collectionView.dequeueReusableCell(withReuseIdentifier: id, for: indexPath)
+    }
+
+    private func supplementaryView(kind: String,
+                                   group: WPCollectionGroup,
+                                   indexPath: IndexPath) -> UICollectionReusableView
+    {
+        var key: (key: String, isHeader: Bool) = ("", false)
+
+        if kind == UICollectionView.elementKindSectionHeader {
+            key = (NSStringFromClass(group.headViewClass), true)
+        } else {
+            key = (NSStringFromClass(group.footViewClass), false)
+        }
+
+        let resualt = (viewIdentifiers[key.key] != nil)
+        var id: String!
+        if resualt {
+            id = viewIdentifiers[key.key]
+        } else {
+            id = String.wp.random(length: 20)
+            if key.isHeader {
+                collectionView.register(group.headViewClass,
+                                        forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: id)
+                viewIdentifiers[key.key] = id
+            } else {
+                collectionView.register(group.headViewClass,
+                                        forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: id)
+                viewIdentifiers[key.key] = id
+            }
+        }
+
+        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath)
+    }
 }
 
 extension WPCollectionViewSource: UICollectionViewDataSource {
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return groups.count
     }
-    
+
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return groups[section].items.count
     }
-    
+
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(self.cellClass), for: indexPath)
         let item = groups[indexPath.section].items[indexPath.row]
-        
+        let cell = reusableCell(cellClass: item.cellClass, indexPath: indexPath)
         item.uploadItemBlock = { item in
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.didSetItem(item: item)
         }
-        
         cell.item = item
         cell.item?.indexPath = indexPath
         cell.didSetItem(item: item)
-        
         return cell
     }
-    
+
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: NSStringFromClass(headerFooterClass), for: indexPath)
-        
         let group = groups[indexPath.section]
-        
+        let view = supplementaryView(kind: kind, group: group, indexPath: indexPath)
         group.uploadGroupBlock = { _ in
         }
         view.group = group

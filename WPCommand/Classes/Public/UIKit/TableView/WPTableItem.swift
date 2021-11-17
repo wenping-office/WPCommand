@@ -11,8 +11,9 @@ open class WPTableItem: NSObject {
     public var reuseIdentifier: String {
         return NSStringFromClass(cellClass)
     }
-
-    public let cellClass: AnyClass
+    
+    /// cell类型
+    public let cellClass: UITableViewCell.Type
     /// cell状态
     public var viewStatus = UIControl.State.normal
     /// 这行的indexpath
