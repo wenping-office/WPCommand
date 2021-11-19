@@ -56,12 +56,7 @@ public class WPAlertManager {
     /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
-            let view = UIApplication.wp.keyWindow?.rootViewController?.view
-            if view != nil {
-                return view!
-            } else {
-                return UIApplication.shared.wp.topWindow
-            }
+            return UIApplication.shared.wp.topWindow
         } else {
             return target!
         }
@@ -652,8 +647,6 @@ public extension WPAlertManager {
 
 /// 蒙板视图
 class WPAlertManagerMask: UIView {
-    /// 适配键盘滑动
-    let keyScrollView = UIScrollView()
     /// 蒙板视图
     let contentView = UIButton()
     /// 蒙板info

@@ -27,6 +27,7 @@ class TestLayoutVC: WPBaseVC {
 
         WPGCD.main_asyncAfter(.now() + 3, task: {
             FrameAlert().show(in: self.view)
+            
         })
     }
 
