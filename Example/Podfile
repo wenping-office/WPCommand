@@ -5,6 +5,7 @@ platform :ios, '10.0'
 target 'WPCommand_Example' do
   pod 'WPCommand', :path => '../'
   pod 'MJRefresh'
+  pod 'IQKeyboardManagerSwift'
 
   target 'WPCommand_Tests' do
     inherit! :search_paths

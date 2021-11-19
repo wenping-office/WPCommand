@@ -16,6 +16,12 @@ public extension WPAlertManager {
         /// 添加到下一个弹窗
         case add
     }
+
+    /// 布局方式
+    enum LayoutOption {
+        case frame(size: CGSize)
+        case layout
+    }
 }
 
 /// 弹窗队列弹出实现WPAlertProtocol协议的弹窗，可弹出一组弹窗或插入式弹窗，也可自定义一个manager自己管理一组弹窗
@@ -30,7 +36,8 @@ public class WPAlertManager {
         var isInterruptInset = false
         /// 目标视图
         weak var target: UIView?
-
+        /// 布局方式
+        var layoutOption: LayoutOption?
         init(alert: WPAlertProtocol, level: Int) {
             self.alert = alert
             self.level = level
@@ -49,7 +56,12 @@ public class WPAlertManager {
     /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
-            return UIApplication.shared.wp.topWindow
+            let view = UIApplication.wp.keyWindow?.rootViewController?.view
+            if view != nil {
+                return view!
+            } else {
+                return UIApplication.shared.wp.topWindow
+            }
         } else {
             return target!
         }
@@ -206,7 +218,7 @@ extension WPAlertManager {
     }
     
     /// 移动一个item并插入到插入数组的第一个
-    private func moveItemToFist(_ item: WPAlertManager.AlertItem) {
+    private func moveItemToFist(_ item: AlertItem) {
         currentAlert = nil
         item.alert.removeFromSuperview()
         
@@ -223,7 +235,7 @@ extension WPAlertManager {
     /// insert 是否强制
     private func alertAnimate(isShow: Bool, option: Option) {
         if let item = currentAlert {
-            var isAutoLayout = false
+            var layoutOption: LayoutOption = .layout
             if isShow {
                 if target == nil, item.target == nil {
                 } else {
@@ -231,14 +243,15 @@ extension WPAlertManager {
                 }
                 addMask(info: item.alert.maskInfo())
                 targetView.insertSubview(item.alert, at: 1000)
-                isAutoLayout = resetFrame(item.alert)
+                layoutOption = resetFrame(item)
                 
-                if item.alert.wp_size == .zero {
-                    isAutoLayout = true
+                switch layoutOption {
+                case .layout:
                     item.alert.superview?.layoutIfNeeded()
-                    
                     autoLayoutBeginBlock?()
+                default: break
                 }
+
                 maskView?.maskInfo = item.alert.maskInfo()
                 item.alert.updateStatus(status: .willShow)
                 currentAlertProgress = .willShow
@@ -259,16 +272,14 @@ extension WPAlertManager {
             
             let animatesBolok: ()->Void = { [weak self] in
                 guard let self = self else { return }
-                
                 item.alert.transform = CGAffineTransform.identity
-                
                 if isShow {
-                    if isAutoLayout {
+                    switch layoutOption {
+                    case .layout:
                         item.alert.superview?.layoutIfNeeded()
-                    } else {
+                    case .frame:
                         item.alert.frame = self.currentAlertBeginFrame
                     }
-                    
                     item.alert.alpha = 1
                     self.maskView?.alpha = 1
                 } else {
@@ -287,7 +298,7 @@ extension WPAlertManager {
                     if isShow {
                         item.isInterruptInset = false
                         self?.autoLayoutBeginBlock = nil
-                        self?.resetEndFrame(item.alert)
+                        self?.resetEndFrame(item)
                         item.alert.updateStatus(status: .didShow)
                         self?.currentAlertProgress = .didShow
                     } else {
@@ -330,170 +341,193 @@ extension WPAlertManager {
     }
     
     /// 计算弹窗的位置
-    private func resetFrame(_ alert: WPAlertProtocol)->Bool {
-        let alertW: CGFloat = alert.wp_width
-        let alertH: CGFloat = alert.wp_height
+    private func resetFrame(_ item: AlertItem)->LayoutOption {
+        switch item.layoutOption {
+        case .frame(let size):
+            item.alert.transform = CGAffineTransform.identity
+            item.alert.frame = .init(x: 0, y: 0, width: size.width, height: size.height)
+        default: break
+        }
+
+        let alertW: CGFloat = item.alert.wp_width
+        let alertH: CGFloat = item.alert.wp_height
         let maxW: CGFloat = targetView.wp_width
         let maxH: CGFloat = targetView.wp_height
         let center: CGPoint = .init(x: (maxW - alertW) * 0.5, y: (maxH - alertH) * 0.5)
         var beginF: CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
-        let isAutoLayout = alert.wp_size == .zero
+        if item.layoutOption == nil {
+            item.layoutOption = (item.alert.wp_size == .zero) ? .layout : .frame(size: item.alert.wp_size)
+        }
         
-        switch alert.alertInfo().startLocation {
+        switch item.alert.alertInfo().startLocation {
         case .top(let offset):
-            beginF.origin.x = center.x + offset.x
-            beginF.origin.y = 0 + offset.y
-            alert.wp_x = center.x + offset.x
-            alert.wp_y = -alertH + offset.y
-            if isAutoLayout {
-                alert.snp.remakeConstraints { make in
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
                     make.centerX.equalToSuperview().offset(offset.x)
                     make.bottom.equalTo(targetView.snp.top)
                 }
                 autoLayoutBeginBlock = {
-                    alert.snp.remakeConstraints { make in
+                    item.alert.snp.remakeConstraints { make in
                         make.centerX.equalToSuperview().offset(offset.x)
                         make.top.equalToSuperview().offset(offset.y)
                     }
                 }
+            case .frame:
+                beginF.origin.x = center.x + offset.x
+                beginF.origin.y = 0 + offset.y
+                item.alert.wp_x = center.x + offset.x
+                item.alert.wp_y = -alertH + offset.y
             }
         case .topWidthToFill(let offsetY):
-            alert.snp.remakeConstraints { make in
+            item.alert.snp.remakeConstraints { make in
                 make.left.right.equalToSuperview()
                 make.bottom.equalTo(targetView.snp.top)
             }
             autoLayoutBeginBlock = {
-                alert.snp.remakeConstraints { make in
+                item.alert.snp.remakeConstraints { make in
                     make.top.equalToSuperview().offset(offsetY)
                 }
             }
         case .left(let offset):
-            beginF.origin.x = 0 + offset.x
-            beginF.origin.y = center.y + offset.y
-            alert.wp_x = -alertW + offset.x
-            alert.wp_y = center.y + offset.y
-            if isAutoLayout {
-                alert.snp.remakeConstraints { make in
+
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
                     make.right.equalTo(targetView.snp.left)
                     make.centerY.equalToSuperview().offset(offset.y)
                 }
                 autoLayoutBeginBlock = {
-                    alert.snp.remakeConstraints { make in
+                    item.alert.snp.remakeConstraints { make in
                         make.centerY.equalToSuperview().offset(offset.y)
                         make.left.equalToSuperview().offset(offset.x)
                     }
                 }
+            case .frame:
+                beginF.origin.x = 0 + offset.x
+                beginF.origin.y = center.y + offset.y
+                item.alert.wp_x = -alertW + offset.x
+                item.alert.wp_y = center.y + offset.y
             }
+
         case .leftHeightToFill(let offsetX):
-            alert.snp.remakeConstraints { make in
+            item.alert.snp.remakeConstraints { make in
                 make.right.equalTo(targetView.snp.left)
                 make.top.bottom.equalToSuperview()
             }
             autoLayoutBeginBlock = {
-                alert.snp.remakeConstraints { make in
+                item.alert.snp.remakeConstraints { make in
                     make.top.bottom.equalToSuperview()
                     make.left.equalToSuperview().offset(offsetX)
                 }
             }
         case .bottom(let offset):
-            beginF.origin.x = center.x + offset.x
-            beginF.origin.y = maxH - alertH + offset.y
-            alert.wp_x = center.x + offset.x
-            alert.wp_y = maxH + offset.y
-            if isAutoLayout {
-                alert.snp.remakeConstraints { make in
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
                     make.top.equalTo(targetView.snp.bottom)
                     make.centerX.equalToSuperview().offset(offset.x)
                 }
                 autoLayoutBeginBlock = {
-                    alert.snp.remakeConstraints { make in
+                    item.alert.snp.remakeConstraints { make in
                         make.bottom.equalToSuperview().offset(offset.y)
                         make.centerX.equalToSuperview().offset(offset.x)
                     }
                 }
+            case .frame:
+                beginF.origin.x = center.x + offset.x
+                beginF.origin.y = maxH - alertH + offset.y
+                item.alert.wp_x = center.x + offset.x
+                item.alert.wp_y = maxH + offset.y
             }
+
         case .bottomWidthToFill(let offsetY):
-            alert.snp.remakeConstraints { make in
+            item.alert.snp.remakeConstraints { make in
                 make.top.equalTo(targetView.snp.bottom)
                 make.left.right.equalToSuperview()
             }
             autoLayoutBeginBlock = {
-                alert.snp.remakeConstraints { make in
+                item.alert.snp.remakeConstraints { make in
                     make.bottom.equalToSuperview().offset(offsetY)
                     make.left.right.equalToSuperview()
                 }
             }
         case .right(let offset):
-            beginF.origin.x = maxW - alertW + offset.x
-            beginF.origin.y = center.y + offset.y
-            alert.wp_y = center.y + offset.y
-            alert.wp_x = maxW + offset.x
-            if isAutoLayout {
-                alert.snp.remakeConstraints { make in
+            
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
                     make.left.equalTo(targetView.snp.right)
                     make.centerY.equalToSuperview().offset(offset.y)
                 }
                 autoLayoutBeginBlock = {
-                    alert.snp.remakeConstraints { make in
+                    item.alert.snp.remakeConstraints { make in
                         make.right.equalToSuperview().offset(offset.x)
                         make.centerY.equalToSuperview().offset(offset.y)
                     }
                 }
+            case .frame:
+                beginF.origin.x = maxW - alertW + offset.x
+                beginF.origin.y = center.y + offset.y
+                item.alert.wp_y = center.y + offset.y
+                item.alert.wp_x = maxW + offset.x
             }
         case .rightHeightToFill(let offsetY):
-            alert.snp.remakeConstraints { make in
+            item.alert.snp.remakeConstraints { make in
                 make.left.equalTo(targetView.snp.right)
                 make.top.bottom.equalToSuperview()
             }
             autoLayoutBeginBlock = {
-                alert.snp.remakeConstraints { make in
+                item.alert.snp.remakeConstraints { make in
                     make.right.equalToSuperview().offset(offsetY)
                     make.top.bottom.equalToSuperview()
                 }
             }
         case .center(let offSet):
-            beginF.origin.x = center.x + offSet.x
-            beginF.origin.y = center.y + offSet.y
-            alert.alpha = 0
-            alert.wp_orgin = beginF.origin
-            alert.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-            if isAutoLayout {
-                alert.snp.remakeConstraints { make in
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
                     make.centerX.equalToSuperview().offset(offSet.x)
                     make.centerY.equalToSuperview().offset(offSet.y)
                 }
+            case .frame:
+                beginF.origin.x = center.x + offSet.x
+                beginF.origin.y = center.y + offSet.y
+                item.alert.alpha = 0
+                item.alert.wp_orgin = beginF.origin
             }
+            item.alert.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
         }
         
         currentAlertBeginFrame = beginF
         
-        return isAutoLayout
+        return item.layoutOption!
     }
     
     /// 计算弹窗结束位置
-    private func resetEndFrame(_ alert: WPAlertProtocol) {
-        let alertW: CGFloat = alert.wp_width
-        let alertH: CGFloat = alert.wp_height
+    private func resetEndFrame(_ item: AlertItem) {
+        let alertW: CGFloat = item.alert.wp_width
+        let alertH: CGFloat = item.alert.wp_height
         let maxW: CGFloat = targetView.wp_width
         let maxH: CGFloat = targetView.wp_height
         var endF: CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
-        switch alert.alertInfo().stopLocation {
+        switch item.alert.alertInfo().stopLocation {
         case .top:
-            endF.origin.x = alert.wp_x
+            endF.origin.x = item.alert.wp_x
             endF.origin.y = -alertH
         case .left:
             endF.origin.x = -alertW
-            endF.origin.y = alert.wp_y
+            endF.origin.y = item.alert.wp_y
         case .bottom:
-            endF.origin.x = alert.wp_x
+            endF.origin.x = item.alert.wp_x
             endF.origin.y = maxH
         case .right:
             endF.origin.x = maxW
-            endF.origin.y = alert.wp_y
+            endF.origin.y = item.alert.wp_y
         case .center:
-            endF.origin = alert.wp_orgin
+            endF.origin = item.alert.wp_orgin
         }
         
         currentAlertEndFrame = endF
@@ -618,12 +652,10 @@ public extension WPAlertManager {
 
 /// 蒙板视图
 class WPAlertManagerMask: UIView {
-    /// 垃圾桶
-    let disposeBag = DisposeBag()
-    
+    /// 适配键盘滑动
+    let keyScrollView = UIScrollView()
     /// 蒙板视图
     let contentView = UIButton()
-    
     /// 蒙板info
     var maskInfo: WPAlertManager.Mask {
         didSet {
@@ -636,14 +668,14 @@ class WPAlertManagerMask: UIView {
     init(maskInfo: WPAlertManager.Mask, action: (()->Void)?) {
         self.maskInfo = maskInfo
         super.init(frame: .zero)
-        
+
         addSubview(contentView)
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         contentView.rx.controlEvent(.touchUpInside).subscribe(onNext: {
             action?()
-        }).disposed(by: disposeBag)
+        }).disposed(by: wp.disposeBag)
     }
     
     @available(*, unavailable)

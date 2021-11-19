@@ -118,9 +118,7 @@ class testBodyView2: UIView,WPMenuBodyViewProtocol {
     }
     
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
-        let view = UIImageView(image: UIColor.red.wp.image())
-
-        menuView.navigationBackgroundView = view
+        
         switch status {
         case .normal:
             backgroundColor = .white
@@ -198,7 +196,7 @@ class testTableVC: UITableView,WPMenuBodyViewProtocol,UITableViewDataSource,UITa
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
         let view = UIView()
         view.backgroundColor = .clear
-        menuView.navigationBackgroundView = nil
+        
     }
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true

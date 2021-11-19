@@ -12,119 +12,97 @@ import RxSwift
 
 class TestLayoutVC: WPBaseVC {
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        let alert = LabTestAlert()
-        alert.show(in: self.view,maskHandler: { alert in
-
-        })
-
-        let obj = NSObject()
-        obj.rx
-        
-        WPSystem.application.didBecomeActive.subscribe(onNext: {_ in
-            var alert2 = LabTestAlert2()
-            alert2.wp.size = .init(width: 250, height: 250)
-            alert2.show(in: nil, option: .insert(keep: true))
-        })
-
-//        WPGCD.main_asyncAfter(.now() + 4, task: {
-//            let alert2 = LabTestAlert2()
-//            alert2.wp_size = .init(width: 250, height: 250)
-//            alert2.show(in: self.view, option: .default)
-//        })
-//
-//        WPGCD.main_asyncAfter(.now() + 8, task: {
-//            let alert2 = LabTestAlert3()
-//            alert2.wp_size = .init(width: 100, height: 150)
-//            alert2.backgroundColor = .red
-//            alert2.show(in: nil, option: .default)
-//        })
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-
-
-    }
-
-}
-
-
-class LabTestAlert3: LabTestAlert2 {
-    deinit {
-        print("红色色释放了")
-    }
-}
-
-class LabTestAlert2: WPBaseView,WPAlertProtocol {
-    let lab = UILabel()
-    
-    override func initSubView() {
-        lab.text = "弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2弹窗2"
-        lab.numberOfLines = 0
-        addSubview(lab)
-        backgroundColor = .yellow
-    }
-    
-    override func initSubViewLayout() {
-        lab.snp.makeConstraints { make in
-            make.top.left.right.bottom.equalToSuperview()
-            make.width.lessThanOrEqualTo(300)
-        }
-    }
-    
-    func alertInfo() -> WPAlertManager.Alert {
-        return .init(.bounces, startLocation: .bottom(.zero), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
-    }
-    
-    func touchMask() {
-        WPAlertManager.default.dismiss()
-    }
-    
-    deinit {
-        print("黄色释放了")
-    }
-
-}
-
-
-class LabTestAlert: WPBaseView,WPAlertBridgeProtocol,WPEventProtocol {
-    
-    var event: Event = .init()
-    
-    struct Event{
-        /// 点击事件
-        let obj = PublishSubject<Void>.init()
-        /// 长安事件
-        let obj2 = PublishSubject<Void>.init()
-    }
-    
-    let lab = UILabel()
-    
-    override func initSubView() {
-        lab.text = "测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代测试代码测试代码测试代码测试代码测试代码测试代码测试代码测试代码"
-        lab.numberOfLines = 0
-        addSubview(lab)
-        backgroundColor = UIColor.wp.random
         
+        let label = UILabel ()
+        label.textColor = .black
+        label.text = "测试代码"
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(120)
+        }
+
+        WPGCD.main_asyncAfter(.now() + 3, task: {
+            FrameAlert().show(in: self.view)
+        })
+    }
+
+}
+
+class FrameAlert:WPBaseView,WPAlertProtocol {
+    
+    let btn = UIButton()
+    let field = UITextView()
+
+    override init(frame: CGRect) {
+        super.init(frame: .init(x: 0, y: 0, width: 250, height: 250))
     }
     
+    override func initSubView() {
+        btn.backgroundColor = .wp.random
+        btn.setTitle("frame", for: .normal)
+        addSubview(btn)
+        addSubview(field)
+
+        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: { _ in
+            let layoutAlert = LayoutAlert()
+            layoutAlert.show(option: .insert(keep: true))
+        }).disposed(by: wp.disposeBag)
+        field.backgroundColor = .red
+    }
     
     override func initSubViewLayout() {
-        lab.snp.makeConstraints { make in
-            make.top.left.right.bottom.equalToSuperview()
-            make.width.lessThanOrEqualTo(300)
+        btn.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        field.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.height.equalTo(50)
+            make.centerY.equalToSuperview().offset(50)
         }
     }
     
-    func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .center(.init(x: 0, y: -200)), startDuration: 0.3, stopLocation: .center, stopDuration: 0.3)
+    func updateStatus(status: WPAlertManager.Progress) {
+        if status == .willShow {
+            field.becomeFirstResponder()
+        }
     }
 
-    deinit {
-        print("蓝色释放了")
+    func touchMask() {
+        field.resignFirstResponder()
+        dismiss()
+    }
+    
+    func alertInfo() -> WPAlertManager.Alert {
+        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.5, stopLocation: .bottom, stopDuration: 0.5)
+    }
+    
+    func maskInfo() -> WPAlertManager.Mask {
+        return .init(color: .red, enabled: false, isHidden: true)
+    }
+}
+
+class LayoutAlert:WPBaseView,WPAlertProtocol{
+
+    let btn = UIButton()
+    
+    override func initSubView() {
+        btn.backgroundColor = .wp.random
+        btn.setTitle("Layout", for: .normal)
+        addSubview(btn)
+        
+        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] _ in
+            self?.dismiss()
+        }).disposed(by: wp.disposeBag)
+    }
+    
+    override func initSubViewLayout() {
+        btn.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.size.equalTo(CGSize.init(width: 200, height: 200))
+        }
     }
 }
