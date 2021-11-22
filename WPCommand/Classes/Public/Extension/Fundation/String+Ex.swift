@@ -195,6 +195,21 @@ public extension WPSpace where Base == String {
         secondsText = seconds > 9 ? "\(seconds)" : "0\(seconds)"
         return "\(hoursText):\(minutesText):\(secondsText)"
     }
+
+    /// 生成随机数字+字母字符串
+    /// - Parameter length: 字符串长度
+    /// - Returns: 结果
+    static func random(length: Int) -> String {
+        let letters: NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let len = UInt32(letters.length)
+        var randomString = ""
+        for _ in 0 ..< length {
+            let rand = arc4random_uniform(len)
+            var nextChar = letters.character(at: Int(rand))
+            randomString += NSString(characters: &nextChar, length: 1) as String
+        }
+        return randomString
+    }
     
     /// 加载图片
     /// - Parameter bundle: 包

@@ -63,7 +63,7 @@ public extension WPAlertProtocol {
 }
 
 public extension WPAlertProtocol {
-    /// 快速显示弹窗
+    /// 快速显示弹窗默认显示在window上，注：如果接入了IQkeyboard想适配键盘显示在View上，如果想要全屏那么显示在keyWindow?.rootViewController?.view上
     /// - Parameters:
     ///   - targetView: 弹窗根视图
     ///   - option: 选项 默认添加到下一个
@@ -129,7 +129,7 @@ public extension WPAlertBridgeProtocol {
         maskHandler?(self)
     }
 
-    /// 快速显示弹窗
+    /// 快速显示弹窗默认显示在window上，注：如果接入了IQkeyboard想适配键盘显示在View上，如果想要全屏那么显示在keyWindow?.rootViewController?.view上
     /// - Parameters:
     ///   - targetView: 根视图
     ///   - option: 选项 默认添加到下一个

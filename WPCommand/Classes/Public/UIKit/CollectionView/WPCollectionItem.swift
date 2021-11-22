@@ -15,22 +15,24 @@ open class WPCollectionItem: NSObject {
         case selected
     }
 
+    /// cell
+    public var cellClass : UICollectionViewCell.Type = UICollectionViewCell.self
     /// 尺寸
-    open var itemSize = CGSize.zero
+    public var itemSize = CGSize.init(width: 50, height: 50)
     /// 当前状态
-    open var status = WPCollectionItem.status.normal
+    public var status = WPCollectionItem.status.normal
     /// 选中block
-    open var selectedBlock: ((_ item: WPCollectionItem) -> Void)?
+    public var selectedBlock: ((_ item: WPCollectionItem) -> Void)?
     /// 即将显示
-    open var willDisplay: ((_ item: WPCollectionItem, _ cell: UICollectionViewCell) -> Void)?
+    public var willDisplay: ((_ item: WPCollectionItem, _ cell: UICollectionViewCell) -> Void)?
     /// indexPath
-    open var indexPath = IndexPath(item: 0, section: 0)
+    public var indexPath = IndexPath(item: 0, section: 0)
     /// 设置完info后回调
-    open var didSetInfo: ((Any?) -> Void)?
+    public var didSetInfo: ((Any?) -> Void)?
     /// 刷新Item
-    open var uploadItemBlock: ((WPCollectionItem) -> Void)?
+    public var uploadItemBlock: ((WPCollectionItem) -> Void)?
     /// 附件
-    open var info: Any? {
+    public var info: Any? {
         didSet {
             guard let info = info else { return }
             didSetInfo?(info)
@@ -40,12 +42,13 @@ open class WPCollectionItem: NSObject {
     }
 
     /// 设置完Info后调用
-    open func didSetInfo(info: Any?) {}
+    public func didSetInfo(info: Any?) {}
     /// 刷新cell的item
-    open func update() {
+    public func update() {
         uploadItemBlock?(self)
     }
-
+    
+    /// 已经获取itemInfo
     @objc public func didSetItemInfo(info: Any?) {}
 }
 

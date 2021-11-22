@@ -27,6 +27,8 @@ class WPMenuNavigationView: UITableViewHeaderFooterView {
     let layout = UICollectionViewFlowLayout()
     /// 内容视图
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    /// 背景视图
+    let backView = UIView()
     /// 当前数据源
     var data: [WPMenuNavigationItem] = [] {
         didSet {
@@ -47,7 +49,6 @@ class WPMenuNavigationView: UITableViewHeaderFooterView {
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
         collectionView.delegate = self
-        let backView = UIView()
         backView.backgroundColor = .clear
         backgroundView = backView
         contentView.addSubview(collectionView)

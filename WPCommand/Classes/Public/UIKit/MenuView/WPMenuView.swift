@@ -26,7 +26,6 @@ public extension WPMenuView{
             return contentView.tableFooterView
         }
     }
-
     /// 尾巴部视图
     var footerView: UIView? {
         set {
@@ -36,7 +35,6 @@ public extension WPMenuView{
             return contentView.tableFooterView
         }
     }
-
     /// 弹簧效果
     var bounces: Bool {
         set {
@@ -46,23 +44,12 @@ public extension WPMenuView{
             return contentView.bounces
         }
     }
-
     /// 导航栏背景视图
-    var navigationBackgroundView: UIView? {
-        set {
-            if newValue == nil {
-                let cleraView = UIView()
-                cleraView.backgroundColor = .clear
-                contentView.navView.backgroundView = cleraView
-            } else {
-                contentView.navView.backgroundView = newValue
-            }
-        }
+    var navigationBackgroundView: UIView{
         get {
-            return contentView.navView.backgroundView
+            return contentView.navView.backView
         }
     }
-    
     /// 是否显示水平底部滑动条
     var showsHorizontalScrollIndicator: Bool{
         set{
@@ -80,6 +67,10 @@ public extension WPMenuView{
         get{
             return contentView.showsVerticalScrollIndicator
         }
+    }
+    /// 可以用来设置上下拉刷新 不可单独设置代理和
+    var tableView:UITableView{
+        return contentView
     }
 }
 

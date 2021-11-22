@@ -88,11 +88,32 @@ public class WPTableViewSource: NSObject {
     }
 
     /// 这一行的编辑样式
-    var editingStyleForRowAt: ((UITableView, IndexPath) -> UITableViewCell.EditingStyle)?
+    public var editingStyleForRowAt: ((UITableView, IndexPath) -> UITableViewCell.EditingStyle)?
     /// 这一组header的标题
-    var titleForHeaderInSection: ((UITableView, Int) -> String?)?
+    public var titleForHeaderInSection: ((UITableView, Int) -> String?)?
     /// 这一组Footer的标题
-    var titleForFooterInSection: ((UITableView, Int) -> String?)?
+    public var titleForFooterInSection: ((UITableView, Int) -> String?)?
+    
+    /// 缓存标识符池
+    private var identifiers: [String: String] = [:]
+    
+    /// 获取一个cell
+    private func reusableCell(cellClass: UITableViewCell.Type,
+                              indexPath: IndexPath) -> UITableViewCell
+    {
+        let key = NSStringFromClass(cellClass)
+        let resualt = (identifiers[key] != nil)
+        var id: String!
+        if resualt {
+            id = identifiers[key]
+        } else {
+            id = String.wp.random(length: 20)
+            tableView.register(cellClass, forCellReuseIdentifier: id)
+            identifiers[key] = id
+        }
+
+        return tableView.dequeueReusableCell(withIdentifier: id, for: indexPath)
+    }
 }
 
 extension WPTableViewSource: UITableViewDataSource {
@@ -107,21 +128,13 @@ extension WPTableViewSource: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = groups[indexPath.section].items[indexPath.row]
-        var cell = tableView.dequeueReusableCell(withIdentifier: item.reuseIdentifier)
         
+        let cell = reusableCell(cellClass: item.cellClass, indexPath: indexPath)
+        cell.item = item
         item.uploadItemBlock = { item in
             let cell = tableView.cellForRow(at: indexPath)
             cell?.didSetItem(item: item)
         }
-        
-        if cell == nil {
-            tableView.register(item.cellClass, forCellReuseIdentifier: item.reuseIdentifier)
-            cell = tableView.dequeueReusableCell(withIdentifier: item.reuseIdentifier)
-            cell?.item = item
-        } else {
-            cell?.item = item
-        }
-        
         item.selectedToSelfBlock = { item in
             guard
                 let indexPath = item.indexPath
@@ -130,9 +143,9 @@ extension WPTableViewSource: UITableViewDataSource {
         }
         
         item.indexPath = indexPath
-        cell?.didSetItemInfo(info: cell?.item?.info)
-        cell?.didSetItem(item: item)
-        return cell!
+        cell.didSetItemInfo(info: cell.item?.info)
+        cell.didSetItem(item: item)
+        return cell
     }
     
     public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

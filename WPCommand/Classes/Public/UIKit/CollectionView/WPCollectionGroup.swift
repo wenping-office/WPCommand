@@ -8,22 +8,27 @@
 import UIKit
 
 open class WPCollectionGroup: NSObject {
+
+    /// 头部class
+    public let headViewClass : UICollectionReusableView.Type = UICollectionReusableView.self
+    /// 尾部class
+    public let footViewClass : UICollectionReusableView.Type = UICollectionReusableView.self
     /// 单组数据
-    open var items: [WPCollectionItem] = []
+    public var items: [WPCollectionItem] = []
     /// 每一组边距
-    open var groupEdgeInsets = UIEdgeInsets.zero
+    public var groupEdgeInsets = UIEdgeInsets.zero
     /// 每一组item间距
-    open var minimumInteritemSpacing: CGFloat = 0.0
+    public var minimumInteritemSpacing: CGFloat = 0.0
     /// 每一组item间距
-    open var minimumLineSpacing: CGFloat = 0.0
+    public var minimumLineSpacing: CGFloat = 0.0
     /// 每一组headerSize
-    open var headerSize = CGSize.zero
+    public var headerSize = CGSize.zero
     /// 每一组footerSize
-    open var footerSize = CGSize.zero
+    public var footerSize = CGSize.zero
     /// 刷新group
-    open var uploadGroupBlock: ((WPCollectionGroup) -> Void)?
+    public var uploadGroupBlock: ((WPCollectionGroup) -> Void)?
     /// 刷新cell的item
-    open func update() {
+    public func update() {
         uploadGroupBlock?(self)
     }
 }
