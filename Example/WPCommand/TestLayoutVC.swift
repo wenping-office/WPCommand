@@ -24,21 +24,15 @@ class TestLayoutVC: WPBaseVC {
             make.centerX.equalToSuperview()
             make.top.equalTo(120)
         }
-        FrameAlert().show()
+//        FrameAlert().show()
         
-        WPGCD.main_asyncAfter(.now() + 1, task: {
-            LayoutAlert("1").show(option: .insert(keep: true))
-
-            WPGCD.main_asyncAfter(.now() + 1.5, task: {
-                LayoutAlert("2").show(option: .insert(keep: true))
-                
-                WPGCD.main_asyncAfter(.now() + 1, task: {
-                    LayoutAlert("3").show(option: .insert(keep: true))
-                })
+       
+        
+        for index in 0...10 {
+            WPGCD.main_asyncAfter(.now() + TimeInterval(index), task: {
+                LayoutAlert(index.description).show(option: .insert(keep: true))
             })
-        })
-        
-        
+        }
 
        
     }
@@ -102,7 +96,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .bottom(.zero), startDuration: 2, stopLocation: .bottom, stopDuration: 0.2)
+        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.2, stopLocation: .bottom, stopDuration: 0.2)
     }
     
     deinit {
@@ -138,6 +132,6 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .center(.zero), startDuration: 2, stopLocation: .bottom, stopDuration: 0.2)
+        return .init(.default, startLocation: .center(.zero), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.2)
     }
 }
