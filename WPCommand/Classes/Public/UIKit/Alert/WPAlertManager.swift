@@ -142,7 +142,7 @@ public class WPAlertManager {
             switch option {
             case .add:
                break
-            case .insert(let keep): 
+            case .insert(let keep):
                 switch currentAlert!.state {
                 case .willShow:
                     currentAlert?.stateChange = {[weak self] state in
@@ -150,6 +150,7 @@ public class WPAlertManager {
                             self?.currentAlert?.isInterruptInset = keep
                             self?.alertAnimate(isShow: false, option: option)
                         }
+                        self?.currentAlert?.stateChange = nil
                     }
                 case .didShow:
                     currentAlert?.stateChange = nil

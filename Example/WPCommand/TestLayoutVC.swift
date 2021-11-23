@@ -25,6 +25,22 @@ class TestLayoutVC: WPBaseVC {
             make.top.equalTo(120)
         }
         FrameAlert().show()
+        
+        WPGCD.main_asyncAfter(.now() + 1, task: {
+            LayoutAlert("1").show(option: .insert(keep: true))
+
+            WPGCD.main_asyncAfter(.now() + 1.5, task: {
+                LayoutAlert("2").show(option: .insert(keep: true))
+                
+                WPGCD.main_asyncAfter(.now() + 1, task: {
+                    LayoutAlert("3").show(option: .insert(keep: true))
+                })
+            })
+        })
+        
+        
+
+       
     }
 }
 
@@ -72,12 +88,10 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
             print("frame didShow")
         case .willPop:
             print("frame willPop")
-//            LayoutAlert().show(option: .insert(keep: false))
         case .didPop:
             print("frame didPop")
         case .remove:
             print("frame remove")
-            LayoutAlert().show(option: .insert(keep: false))
         case .unknown:
             print("frame unknown")
         }
@@ -88,7 +102,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.5, stopLocation: .bottom, stopDuration: 0.5)
+        return .init(.default, startLocation: .bottom(.zero), startDuration: 2, stopLocation: .bottom, stopDuration: 0.2)
     }
     
     deinit {
@@ -101,6 +115,11 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
 
     let btn = UIButton()
     
+    init(_ string:String) {
+        super.init(frame: .zero)
+        btn.setTitle("Layout" + string, for: .normal)
+    }
+
     override func initSubView() {
         btn.backgroundColor = .wp.random
         btn.setTitle("Layout", for: .normal)
@@ -116,5 +135,9 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
             make.edges.equalToSuperview()
             make.size.equalTo(CGSize.init(width: 200, height: 200))
         }
+    }
+    
+    func alertInfo() -> WPAlertManager.Alert {
+        return .init(.default, startLocation: .center(.zero), startDuration: 2, stopLocation: .bottom, stopDuration: 0.2)
     }
 }
