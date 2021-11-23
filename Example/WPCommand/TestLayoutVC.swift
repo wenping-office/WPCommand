@@ -11,7 +11,7 @@ import WPCommand
 import RxSwift
 
 class TestLayoutVC: WPBaseVC {
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -24,13 +24,8 @@ class TestLayoutVC: WPBaseVC {
             make.centerX.equalToSuperview()
             make.top.equalTo(120)
         }
-
-        WPGCD.main_asyncAfter(.now() + 3, task: {
-            FrameAlert().show(in: self.view)
-            
-        })
+        FrameAlert().show()
     }
-
 }
 
 class FrameAlert:WPBaseView,WPAlertProtocol {
@@ -48,9 +43,8 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
         addSubview(btn)
         addSubview(field)
 
-        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: { _ in
-            let layoutAlert = LayoutAlert()
-            layoutAlert.show(option: .insert(keep: true))
+        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] _ in
+            self?.dismiss()
         }).disposed(by: wp.disposeBag)
         field.backgroundColor = .red
     }
@@ -67,13 +61,29 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
     
     func updateStatus(status: WPAlertManager.Progress) {
-        if status == .willShow {
-            field.becomeFirstResponder()
+        
+        switch status {
+        case .cooling:
+            print("frame cooling")
+        case.willShow:
+            print("frame willShow")
+            
+        case .didShow:
+            print("frame didShow")
+        case .willPop:
+            print("frame willPop")
+//            LayoutAlert().show(option: .insert(keep: false))
+        case .didPop:
+            print("frame didPop")
+        case .remove:
+            print("frame remove")
+            LayoutAlert().show(option: .insert(keep: false))
+        case .unknown:
+            print("frame unknown")
         }
     }
 
     func touchMask() {
-        field.resignFirstResponder()
         dismiss()
     }
     
@@ -81,8 +91,9 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
         return .init(.default, startLocation: .bottom(.zero), startDuration: 0.5, stopLocation: .bottom, stopDuration: 0.5)
     }
     
-    func maskInfo() -> WPAlertManager.Mask {
-        return .init(color: .red, enabled: false, isHidden: true)
+    deinit {
+        
+        print("frame deinit")
     }
 }
 

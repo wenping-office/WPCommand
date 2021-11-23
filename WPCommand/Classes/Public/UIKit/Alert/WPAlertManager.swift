@@ -38,6 +38,16 @@ public class WPAlertManager {
         weak var target: UIView?
         /// 布局方式
         var layoutOption: LayoutOption?
+        /// 弹窗状态
+        var state : Progress = .unknown{
+            didSet{
+                alert.updateStatus(status: state)
+                stateChange?(state)
+            }
+        }
+        /// 状态变化
+        var stateChange : ((Progress)->Void)?
+        
         init(alert: WPAlertProtocol, level: Int) {
             self.alert = alert
             self.level = level
@@ -52,7 +62,6 @@ public class WPAlertManager {
             removeMask()
         }
     }
-
     /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
@@ -61,7 +70,6 @@ public class WPAlertManager {
             return target!
         }
     }
-
     /// 当前弹窗的mask
     private weak var maskView: WPAlertManagerMask?
     /// 弹窗队列
@@ -72,16 +80,12 @@ public class WPAlertManager {
             }
         }
     }
-
     /// 当前弹窗开始的frame
     private var currentAlertBeginFrame: CGRect = .zero
     /// 当前弹窗结束的frame
     private var currentAlertEndFrame: CGRect = .zero
     /// 自动布局下的block
     private var autoLayoutBeginBlock: (()->Void)?
-    /// 当前弹窗的进度
-    private var currentAlertProgress: Progress = .unknown
-    
     /// 单例
     public static var `default`: WPAlertManager = {
         let manager = WPAlertManager()
@@ -90,9 +94,10 @@ public class WPAlertManager {
 
     /// 添加一个弹窗
     public func addAlert(_ alert: WPAlertProtocol) {
-        alert.updateStatus(status: .cooling)
         alert.tag = WPAlertManager.identification()
-        alerts.append(.init(alert: alert, level: Int(alert.alertLevel())))
+        let alertItem : AlertItem = .init(alert: alert, level: Int(alert.alertLevel()))
+        alertItem.state = .cooling
+        alerts.append(alertItem)
     }
     
     /// 移除一个弹窗
@@ -129,18 +134,41 @@ public class WPAlertManager {
         let alertItem: WPAlertManager.AlertItem = .init(alert: alert, level: level)
         alertItem.target = alert.targetView
         alerts.insert(alertItem, at: 0)
-        alert.updateStatus(status: .cooling)
-        
-        if currentAlertProgress == .didShow, alerts.count >= 1 {
+        alertItem.state = .cooling
+
+        if currentAlert == nil {
+            show()
+        }else{
             switch option {
-            case .insert(let keep):
-                currentAlert?.isInterruptInset = keep
-                alertAnimate(isShow: false, option: option)
-            default: break
+            case .add:
+               break
+            case .insert(let keep): 
+                switch currentAlert!.state {
+                case .willShow:
+                    currentAlert?.stateChange = {[weak self] state in
+                        if state == .didShow {
+                            self?.currentAlert?.isInterruptInset = keep
+                            self?.alertAnimate(isShow: false, option: option)
+                        }
+                    }
+                case .didShow:
+                    currentAlert?.stateChange = nil
+                    currentAlert?.isInterruptInset = keep
+                    alertAnimate(isShow: false, option: option)
+                default: break
+                }
             }
-        } else {
-            alertAnimate(isShow: true, option: .add)
         }
+//        if currentAlertProgress == .didShow, alerts.count >= 1 {
+//            switch option {
+//            case .insert(let keep):
+//                currentAlert?.isInterruptInset = keep
+//                alertAnimate(isShow: false, option: option)
+//            default: break
+//            }
+//        } else {
+//            alertAnimate(isShow: true, option: .add)
+//        }
     }
     
     /// 隐藏当前的弹框 如果弹框序列里还有弹窗将会弹出下一个
@@ -176,7 +204,7 @@ extension WPAlertManager {
         // 如果没有蒙版 那么添加一个
         if !resualt {
             let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
-                if self?.currentAlertProgress == .didShow {
+                if self?.currentAlert?.state == .didShow{
                     self?.currentAlert?.alert.touchMask()
                 }
             })
@@ -248,12 +276,10 @@ extension WPAlertManager {
                 }
 
                 maskView?.maskInfo = item.alert.maskInfo()
-                item.alert.updateStatus(status: .willShow)
-                currentAlertProgress = .willShow
+                currentAlert?.state = .willShow
                 item.target = target
             } else {
-                item.alert.updateStatus(status: .willPop)
-                currentAlertProgress = .willPop
+                currentAlert?.state = .willPop
             }
             
             // 动画时间
@@ -294,12 +320,10 @@ extension WPAlertManager {
                         item.isInterruptInset = false
                         self?.autoLayoutBeginBlock = nil
                         self?.resetEndFrame(item)
-                        item.alert.updateStatus(status: .didShow)
-                        self?.currentAlertProgress = .didShow
+                        self?.currentAlert?.state = .didShow
                     } else {
                         if !item.isInterruptInset { // 正常弹出才更新状态
-                            self?.currentAlertProgress = .didPop
-                            item.alert.updateStatus(status: .didPop)
+                            self?.currentAlert?.state = .didPop
                             self?.removeAlert(item.alert)
                         } else {
                             self?.moveItemToFist(item)
@@ -307,8 +331,7 @@ extension WPAlertManager {
                         self?.show()
                     }
                 } else {
-                    item.alert.updateStatus(status: .unknown)
-                    self?.currentAlertProgress = .unknown
+                    self?.currentAlert?.state = .unknown
                 }
             }
             
