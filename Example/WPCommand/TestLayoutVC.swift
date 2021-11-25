@@ -11,7 +11,7 @@ import WPCommand
 import RxSwift
 
 class TestLayoutVC: WPBaseVC {
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -24,13 +24,18 @@ class TestLayoutVC: WPBaseVC {
             make.centerX.equalToSuperview()
             make.top.equalTo(120)
         }
+//        FrameAlert().show()
+        
+       
+        
+        for index in 0...10 {
+            WPGCD.main_asyncAfter(.now() + TimeInterval(index), task: {
+                LayoutAlert(index.description).show(option: .insert(keep: true))
+            })
+        }
 
-        WPGCD.main_asyncAfter(.now() + 3, task: {
-            FrameAlert().show(in: self.view)
-            
-        })
+       
     }
-
 }
 
 class FrameAlert:WPBaseView,WPAlertProtocol {
@@ -48,9 +53,8 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
         addSubview(btn)
         addSubview(field)
 
-        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: { _ in
-            let layoutAlert = LayoutAlert()
-            layoutAlert.show(option: .insert(keep: true))
+        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] _ in
+            self?.dismiss()
         }).disposed(by: wp.disposeBag)
         field.backgroundColor = .red
     }
@@ -67,22 +71,37 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
     
     func updateStatus(status: WPAlertManager.Progress) {
-        if status == .willShow {
-            field.becomeFirstResponder()
+        
+        switch status {
+        case .cooling:
+            print("frame cooling")
+        case.willShow:
+            print("frame willShow")
+            
+        case .didShow:
+            print("frame didShow")
+        case .willPop:
+            print("frame willPop")
+        case .didPop:
+            print("frame didPop")
+        case .remove:
+            print("frame remove")
+        case .unknown:
+            print("frame unknown")
         }
     }
 
     func touchMask() {
-        field.resignFirstResponder()
         dismiss()
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.5, stopLocation: .bottom, stopDuration: 0.5)
+        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.2, stopLocation: .bottom, stopDuration: 0.2)
     }
     
-    func maskInfo() -> WPAlertManager.Mask {
-        return .init(color: .red, enabled: false, isHidden: true)
+    deinit {
+        
+        print("frame deinit")
     }
 }
 
@@ -90,6 +109,11 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
 
     let btn = UIButton()
     
+    init(_ string:String) {
+        super.init(frame: .zero)
+        btn.setTitle("Layout" + string, for: .normal)
+    }
+
     override func initSubView() {
         btn.backgroundColor = .wp.random
         btn.setTitle("Layout", for: .normal)
@@ -105,5 +129,9 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
             make.edges.equalToSuperview()
             make.size.equalTo(CGSize.init(width: 200, height: 200))
         }
+    }
+    
+    func alertInfo() -> WPAlertManager.Alert {
+        return .init(.default, startLocation: .center(.zero), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.2)
     }
 }
