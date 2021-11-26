@@ -219,7 +219,11 @@ public extension WPSpace where Base: UIView {
                       lineSpacing: Int = 5,
                       isBottom: Bool = true)
     {
-        let shapeLayer = CAShapeLayer()
+        base.layer.sublayers?.forEach({ elmt in
+            (elmt as? WPDashLineLayer)?.removeFromSuperlayer()
+        })
+        
+        let shapeLayer = WPDashLineLayer()
         shapeLayer.bounds = self.bounds
         shapeLayer.anchorPoint = CGPoint(x: 0, y: 0)
         shapeLayer.fillColor = UIColor.blue.cgColor
@@ -387,6 +391,9 @@ open class WPPlaceholderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+
+class WPDashLineLayer : CAShapeLayer{}
 
 class WPToastView: UIView {
     /// 内容视图

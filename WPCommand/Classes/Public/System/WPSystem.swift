@@ -359,13 +359,12 @@ public extension WPSystem {
         let authStatus = CLLocationManager.authorizationStatus()
 //        let resault = (authStatus != .restricted && authStatus != .denied)
         
-        let requestLocation = {
+        func requestLocation(){
             
             locationManager.requestWhenInUseAuthorization()
 
             locationManager.wp.delegate.didChangeAuthorizationBlock = { _, state in
                 locationManager.wp.disposeBag = DisposeBag()
-                
                 if state == .notDetermined { return }
                 WPGCD.main_Async {
                     if state == .authorizedAlways || state == .authorizedWhenInUse {
@@ -374,6 +373,7 @@ public extension WPSystem {
                         close?()
                     }
                 }
+                locationManager.wp.delegate.didChangeAuthorizationBlock = nil
             }
         }
 
