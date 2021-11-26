@@ -55,6 +55,6 @@ open class WPTableGroup: NSObject {
     public init<T: UITableViewHeaderFooterView>(footerClass: T.Type) {
         super.init()
         footViewClass = footerClass
-        headViewReuseIdentifier = NSStringFromClass(footerClass)
+        footViewReuseIdentifier = NSStringFromClass(footerClass)
     }
 }

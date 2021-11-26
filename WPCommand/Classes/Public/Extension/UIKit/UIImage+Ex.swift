@@ -10,6 +10,28 @@ import Photos
 import UIKit
 
 public extension WPSpace where Base: UIImage {
+    /// 填充颜色
+    /// - Parameter color: 颜色
+    /// - Returns: 结果
+    func fill(_ color: UIColor) -> Base? {
+        UIGraphicsBeginImageContextWithOptions(base.size, false, base.scale)
+        let context = UIGraphicsGetCurrentContext()
+        context?.translateBy(x: 0, y: base.size.height)
+        context?.scaleBy(x: 1.0, y: -1.0)
+        context?.setBlendMode(.normal)
+        let rect = CGRect(x: 0, y: 0, width: base.size.width, height: base.size.height) as CGRect
+        guard let CGImg = base.cgImage else { return nil }
+        context?.clip(to: rect, mask: CGImg)
+        color.setFill()
+        context?.fill(rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return image as? Base
+    }
+}
+
+public extension WPSpace where Base: UIImage {
     // 水印位置枚举
     enum WaterMarkCorner {
         case TopLeft
@@ -117,5 +139,76 @@ public extension WPSpace where Base: UIImage {
         } else {
             return nil
         }
+    }
+}
+
+public extension WPSpace where Base: UIImage {
+    /// 合并图片大小
+    enum MergeSize {
+        /// 自定义大小
+        case size(_ size: CGSize)
+        /// 原图图片大小
+        case normal
+    }
+
+    struct Item {
+        /// 图片
+        public var image: UIImage
+        /// 图片矩型
+        public var rect: CGRect = .zero
+        /// 透明度
+        public var alpha: CGFloat = 1
+        /// 初始图片
+        /// - Parameter image: 图片
+        /// - Parameter alpha: 透明度
+        public init(_ image: UIImage, alpha: CGFloat = 1) {
+            self.image = image
+            self.rect.size = image.size
+            self.alpha = 1
+        }
+
+        /// 初始化图片item
+        /// - Parameters:
+        ///   - image: 原图
+        ///   - rect: 矩型
+        ///   - alpha: 透明度
+        public init(_ image: UIImage, rect: CGRect, alpha: CGFloat = 1) {
+            self.image = image
+            self.rect = rect
+            self.alpha = 1
+        }
+    }
+
+    /// 合并图片
+    /// - Parameters:
+    ///   - items: 图片组
+    ///   - size: 生成的图片大小
+    /// - Returns: 图片
+    static func merge(_ items: [Item], size: CGSize) -> Base {
+        return UIImage().wp.merge(items as! [WPSpace<UIImage>.Item], size: .size(size)) as! Base
+    }
+
+    /// 合并图片
+    /// - Parameters:
+    ///   - items: 图片
+    ///   - size: 图片大小
+    /// - Returns: 返回图片
+    func merge(_ items: [Item], size: MergeSize = .normal) -> Base {
+        var imageSize: CGSize = .init(width: 0, height: 0)
+        switch size {
+        case .normal:
+            imageSize = base.size
+        case .size(let size):
+            imageSize = size
+        }
+        UIGraphicsBeginImageContext(imageSize)
+        base.draw(in: .init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
+        items.forEach { elmt in
+            elmt.image.draw(in: elmt.rect, blendMode: .normal, alpha: elmt.alpha)
+        }
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return image as! Base
     }
 }
