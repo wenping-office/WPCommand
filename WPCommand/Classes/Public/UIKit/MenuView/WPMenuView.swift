@@ -72,6 +72,11 @@ public extension WPMenuView{
     var tableView:UITableView{
         return contentView
     }
+    
+    /// 身体视图
+    var bodyView:WPMenuBodyView{
+        return contentView.bodyView
+    }
 }
 
 public extension WPMenuView {
