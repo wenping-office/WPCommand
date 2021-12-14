@@ -12,129 +12,78 @@ import MJRefresh
 import RxSwift
 
 class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
-    let tableVC = testTableVC()
-
-    func menuHeaderViewForIndex(index: Int) -> WPMenuHeaderViewProtocol? {
-//        if index == 2 || index == 4 {
-//            return testHeader()
-//        }else{
-//            return nil
-//        }
-        return testHeader()
-    }
     
+    let test1 = TestMenuVC1()
+    let test2 = TestMenuVC2()
+    let test3 = TestMenuVC1()
+    let header = TestMenuHeaer()
+
     func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol? {
         if index == 0 {
-            return testBodyView2()
-        }else if index == 4{
-            return tableVC
+            return test1
+        }else if index == 1{
+            return test2
+        }else if index == 2{
+            return test3
         }
-        return testBodyView()
+        return nil
+    }
+
+    func menuHeaderViewForIndex(index: Int) -> WPMenuHeaderViewProtocol?{
+        return TestMenuHeaer()
     }
 
     let menuView = WPMenuView(navigationHeight: 44)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
-        let items = [testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem(),testMenuItem()]
-
-        menuView.bounces = false
-//        menuView.navigationInset = .init(left: 40, right: 30, spacing: 30)
-//        menuView.setItems(items: items)
-        menuView.backgroundColor = UIColor.wp.random
+        addChild(test1)
+        addChild(test2)
+        addChild(test3)
+        
+        view.backgroundColor = .white
+        menuView.dataSource = self
+        menuView.multiGesture = true
+        menuView.tableView.bounces = false
+        let items = [testMenuItem(),testMenuItem(),testMenuItem()]
+        menuView.setNavigation(items)
+        menuView.selected(0)
     }
     
     override func initSubView() {
-        menuView.dataSource = self
         
+        menuView.bodyViewSelecteAnimate = true
         view.addSubview(menuView)
     }
 
     override func initSubViewLayout() {
         menuView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.left.equalTo(0)
+            make.right.equalTo(0)
         }
     }
 
 }
 
-class testHeader: UILabel,WPMenuHeaderViewProtocol {
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
+class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
 
-    }
-    
-    func menuHeaderView() -> UIView? {
-        return self
-    }
-    
-    func menuHeaderViewAtHeight() -> WPMenuView.HeaderHeightOption {
-        return .autoLayout
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        numberOfLines = 4
-        var mstr : String = ""
-        for _ in 0..<20 + arc4random_uniform(60) {
-            mstr += "测试代码"
-        }
-
-        text = mstr
-
+    init() {
+        super.init(frame: .zero)
+        text = "测试代码"
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        print("释放代码")
-    }
-}
-
-class testBodyView: UIView,WPMenuBodyViewProtocol {
-    
-    func menuBodyView() -> UIView? {
-        return self
-    }
-    
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
-        switch status {
-        case .normal:
-            backgroundColor = .white
-        default:
-            backgroundColor = .blue
-        }
-    }
-}
-
-class testBodyView2: UIView,WPMenuBodyViewProtocol {
-    
-    func menuBodyView() -> UIView? {
-        return self
-    }
-    
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
-        
-        switch status {
-        case .normal:
-            backgroundColor = .white
-        default:
-            backgroundColor = .blue
-        }
-    }
-}
-
-class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
     func menuItemWidth() -> CGFloat {
         return CGFloat(arc4random_uniform(50) + 50)
     }
     
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
-        text = "测试代码"
         if status == .normal {
             backgroundColor = .white
         }else{
@@ -144,61 +93,129 @@ class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
 }
 
 
-class testTableVC: UITableView,WPMenuBodyViewProtocol,UITableViewDataSource,UITableViewDelegate, UIGestureRecognizerDelegate {
+class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
+    func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol? {
+        switch index {
+        case 0:
+            return test1
+        case 1:
+            return test2
+        default:
+            return nil
+        }
+    }
     
-    override init(frame: CGRect, style: UITableView.Style) {
-        super.init(frame: .zero,style: style)
-        delegate = self
-        dataSource = self
+    let menuView = WPMenuView(navigationHeight: 44)
+    let test1 : ContentVC = .init()
+    let test2 : ContentVC = .init()
+
+    func menuBodyView() -> UIView? {
+        return view
+    }
+    
+    override func initSubView(){
         
-        self.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
+        addChild(test1)
+        addChild(test2)
+        
+        test2.view.backgroundColor = .orange
+        test1.view.backgroundColor = .green
+
+        menuView.dataSource = self
+        menuView.setNavigation([testMenuItem(),testMenuItem()])
+        
+        view.backgroundColor = .red
+        view.addSubview(menuView)
+    }
+    
+    override func initSubViewLayout() {
+        menuView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    class ContentVC: WPBaseVC,WPMenuBodyViewProtocol {
+        let tableView = UITableView()
+        
+        func menuBodyView() -> UIView? {
+            return view
+        }
+        
+        override func initSubView(){
+            view.addSubview(tableView)
+            tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
+                WPGCD.main_asyncAfter(.now() + 3, task: {[weak self] in
+                    self?.tableView.mj_header?.endRefreshing()
+                })
+            })
+        }
+        
+        override func initSubViewLayout() {
+            tableView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+    }
+    
+    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus){
+        
+        if status == .selected {
+            menuView.scrollToHeader()
+        }
+    }
+}
+
+class TestMenuVC2: WPBaseVC,WPMenuBodyViewProtocol {
+    func menuBodyView() -> UIView? {
+        return view
+    }
+    
+    let tableView = UITableView()
+    
+    override func initSubView(){
+        view.backgroundColor = .blue
+        
+        view.addSubview(tableView)
+        
+        tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
             WPGCD.main_asyncAfter(.now() + 3, task: {[weak self] in
-                self?.mj_header?.endRefreshing()
+                self?.tableView.mj_header?.endRefreshing()
             })
         })
+    }
+    
+    override func initSubViewLayout(){
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus){
         
-        self.panGestureRecognizer.delegate = self
+        if status == .selected {
+            menuView.scrollToNavigation()
+        }
     }
+}
+
+
+class TestMenuHeaer: WPBaseView,WPMenuHeaderViewProtocol {
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    override func initSubView() {
+        
+        let label = UILabel()
+        
+
+        backgroundColor = .darkGray
     }
-    
-    func menuBodyView() -> UIView? {
+
+    func menuHeaderView() -> UIView? {
+        backgroundColor = .green
         return self
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("点击了cell")
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "4232")
-        cell.textLabel?.text = "测试代码"
-        return cell
-    }
-//
-//    func viewDidLoad() {
-//        super.viewDidLoad()
-//
-//        tableView.
-//    }
-//
-    
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
-        let view = UIView()
-        view.backgroundColor = .clear
+    func menuHeaderViewAtHeight() -> WPMenuView.HeaderHeightOption {
         
-    }
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        return .height(200)
     }
 }

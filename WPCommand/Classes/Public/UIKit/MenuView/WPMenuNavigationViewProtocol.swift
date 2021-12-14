@@ -12,7 +12,3 @@ public protocol WPMenuNavigationViewProtocol: WPMenuViewChildViewProtocol, UIVie
     func menuItemWidth() -> CGFloat
 }
 
-public extension WPMenuNavigationViewProtocol {
-    /// 子视图状态更新
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {}
-}
