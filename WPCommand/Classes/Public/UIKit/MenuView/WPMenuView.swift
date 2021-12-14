@@ -20,28 +20,19 @@ public extension WPMenuView{
     /// 头部视图
     var headerView: UIView? {
         set {
-            contentView.tableHeaderView = newValue
+            tableView.tableHeaderView = newValue
         }
         get {
-            return contentView.tableFooterView
+            return tableView.tableFooterView
         }
     }
     /// 尾巴部视图
     var footerView: UIView? {
         set {
-            contentView.tableFooterView = newValue
+            tableView.tableFooterView = newValue
         }
         get {
-            return contentView.tableFooterView
-        }
-    }
-    /// 弹簧效果
-    var bounces: Bool {
-        set {
-            contentView.bounces = newValue
-        }
-        get {
-            return contentView.bounces
+            return tableView.tableFooterView
         }
     }
     /// 导航栏背景视图
@@ -68,14 +59,40 @@ public extension WPMenuView{
             return contentView.showsVerticalScrollIndicator
         }
     }
-    /// 可以用来设置上下拉刷新 不可单独设置代理和
+    /// 可以用来设置上下拉刷新 不可单独设置代理
     var tableView:UITableView{
         return contentView
+    }
+    
+    /// 多手势识别
+    var multiGesture : Bool{
+        set{
+            contentView.multiGesture = newValue
+        }
+        get{
+            return contentView.multiGesture
+        }
     }
     
     /// 身体视图
     var bodyView:WPMenuBodyView{
         return contentView.bodyView
+    }
+    
+    /// 滚动到导航栏
+    func scrollToNavigation(animated:Bool = true,
+                                   position:UITableView.ScrollPosition = .top){
+        if contentView.delegate is WPMenuContentTableView {
+            contentView.selectRow(at: IndexPath.init(row: 0, section: 1), animated: animated, scrollPosition: position)
+        }
+    }
+    
+    /// 滚动到顶部
+    func scrollToHeader(animated:Bool = true,
+                               position:UITableView.ScrollPosition = .top){
+        if contentView.delegate is WPMenuContentTableView {
+        contentView.selectRow(at: IndexPath.init(row: 0, section: 0), animated: animated, scrollPosition: position)
+        }
     }
 }
 
@@ -315,7 +332,7 @@ public extension WPMenuView {
     }
 }
 
-class WPMenuContentTableView: UITableView {
+class WPMenuContentTableView: UITableView,UIGestureRecognizerDelegate {
     /// 导航条高度
     let navigationHeight: CGFloat
     /// 头部视图
@@ -324,6 +341,8 @@ class WPMenuContentTableView: UITableView {
     let bodyView = WPMenuBodyView()
     /// 当前导航视图
     let navView = WPMenuNavigationView()
+    /// 多手势识别
+    var multiGesture : Bool = false
     
     init(navigationHeight: CGFloat, style: UITableView.Style) {
         self.navigationHeight = navigationHeight
@@ -337,6 +356,10 @@ class WPMenuContentTableView: UITableView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return multiGesture
     }
 }
 

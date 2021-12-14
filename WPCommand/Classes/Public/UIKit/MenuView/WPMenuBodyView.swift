@@ -34,7 +34,7 @@ class WPMenuBodyViewItem: WPMenuView.Item {
 public class WPMenuBodyView: UITableViewCell {
     let layout = UICollectionViewFlowLayout()
     /// 内容视图
-    public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    lazy var collectionView = WPMenuBodyScrollView(frame: .zero, collectionViewLayout: layout)
     /// 当前数据源
     var data: [WPMenuBodyViewItem] = []
     /// 内容滚动回调
@@ -146,3 +146,27 @@ class WPMenuBodyCell: WPBaseCollectionViewCell {
         bodyView?.frame = bounds
     }
 }
+
+class WPMenuBodyScrollView: UICollectionView {
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if let panGestureClass = NSClassFromString("UIScrollViewPanGestureRecognizer"), gestureRecognizer.isMember(of: panGestureClass) {
+            let panGesture = gestureRecognizer as! UIPanGestureRecognizer
+            let velocityX = panGesture.velocity(in: panGesture.view!).x
+            if velocityX > 0 {
+                if contentOffset.x == 0 {
+                    return false
+                }
+            }else if velocityX < 0 {
+                if contentOffset.x + bounds.size.width == contentSize.width {
+                    return false
+                }
+            }
+        }
+
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
+    }
+}
+
+
