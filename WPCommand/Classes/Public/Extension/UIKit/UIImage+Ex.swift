@@ -31,7 +31,7 @@ public extension WPSpace where Base: UIImage {
     }
 }
 
-public extension WPSpace where Base: UIImage {
+public extension UIImage{
     // 水印位置枚举
     enum WaterMarkCorner {
         case TopLeft
@@ -39,7 +39,8 @@ public extension WPSpace where Base: UIImage {
         case BottomLeft
         case BottomRight
     }
-
+}
+public extension WPSpace where Base: UIImage {
     /// 添加一个水印
     /// - Parameters:
     ///   - waterMarkImage: 水印图片
@@ -47,7 +48,7 @@ public extension WPSpace where Base: UIImage {
     ///   - margin: 水印边距
     ///   - alpha: 水印透明度
     /// - Returns: 水印图片
-    func waterMarkedImage(waterMarkImage: UIImage, corner: WaterMarkCorner = .BottomRight,
+    func waterMarkedImage(waterMarkImage: UIImage, corner: UIImage.WaterMarkCorner = .BottomRight,
                           margin: CGPoint = CGPoint(x: 20, y: 20), alpha: CGFloat = 1) -> UIImage?
     {
         var markFrame = CGRect(x: 0, y: 0, width: waterMarkImage.size.width, height: waterMarkImage.size.height)
@@ -142,7 +143,7 @@ public extension WPSpace where Base: UIImage {
     }
 }
 
-public extension WPSpace where Base: UIImage {
+public extension UIImage{
     /// 合并图片大小
     enum MergeSize {
         /// 自定义大小
@@ -178,14 +179,16 @@ public extension WPSpace where Base: UIImage {
             self.alpha = 1
         }
     }
+}
 
+public extension WPSpace where Base: UIImage {
     /// 合并图片
     /// - Parameters:
     ///   - items: 图片组
     ///   - size: 生成的图片大小
     /// - Returns: 图片
-    static func merge(_ items: [Item], size: CGSize) -> Base {
-        return UIImage().wp.merge(items as! [WPSpace<UIImage>.Item], size: .size(size)) as! Base
+    static func merge(_ items: [UIImage.Item], size: CGSize) -> Base {
+        return UIImage().wp.merge(items, size: .size(size)) as! Base
     }
 
     /// 合并图片
@@ -193,7 +196,7 @@ public extension WPSpace where Base: UIImage {
     ///   - items: 图片
     ///   - size: 图片大小
     /// - Returns: 返回图片
-    func merge(_ items: [Item], size: MergeSize = .normal) -> Base {
+    func merge(_ items: [UIImage.Item], size: UIImage.MergeSize = .normal) -> Base {
         var imageSize: CGSize = .init(width: 0, height: 0)
         switch size {
         case .normal:
@@ -201,7 +204,7 @@ public extension WPSpace where Base: UIImage {
         case .size(let size):
             imageSize = size
         }
-        UIGraphicsBeginImageContext(imageSize)
+        UIGraphicsBeginImageContextWithOptions(imageSize, false, UIScreen.main.scale)
         base.draw(in: .init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
         items.forEach { elmt in
             elmt.image.draw(in: elmt.rect, blendMode: .normal, alpha: elmt.alpha)

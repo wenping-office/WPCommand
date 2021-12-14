@@ -12,7 +12,3 @@ public protocol WPMenuBodyViewProtocol: WPMenuViewChildViewProtocol {
     func menuBodyView() -> UIView?
 }
 
-public extension WPMenuBodyViewProtocol {
-    /// 子视图状态更新
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {}
-}

@@ -31,10 +31,10 @@ class WPMenuBodyViewItem: WPMenuView.Item {
 }
 
 /// 菜单视图
-class WPMenuBodyView: UITableViewCell {
+public class WPMenuBodyView: UITableViewCell {
     let layout = UICollectionViewFlowLayout()
     /// 内容视图
-    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    lazy var collectionView = WPMenuBodyScrollView(frame: .zero, collectionViewLayout: layout)
     /// 当前数据源
     var data: [WPMenuBodyViewItem] = []
     /// 内容滚动回调
@@ -89,7 +89,7 @@ class WPMenuBodyView: UITableViewCell {
 }
 
 extension WPMenuBodyView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let item = data[indexPath.row]
         let cell = cell as? WPMenuBodyCell
 
@@ -99,23 +99,23 @@ extension WPMenuBodyView: UICollectionViewDelegate {
         }
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offSet = scrollView.contentOffset.x / scrollView.wp.width
         contentOffSet?(offSet)
     }
 
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let index = Int(scrollView.contentOffset.x / scrollView.wp.width + 0.5)
         didSelected?(index)
     }
 }
 
 extension WPMenuBodyView: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return data.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = data[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: item.reuseIdentifier, for: indexPath)
         return cell
@@ -146,3 +146,27 @@ class WPMenuBodyCell: WPBaseCollectionViewCell {
         bodyView?.frame = bounds
     }
 }
+
+class WPMenuBodyScrollView: UICollectionView {
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if let panGestureClass = NSClassFromString("UIScrollViewPanGestureRecognizer"), gestureRecognizer.isMember(of: panGestureClass) {
+            let panGesture = gestureRecognizer as! UIPanGestureRecognizer
+            let velocityX = panGesture.velocity(in: panGesture.view!).x
+            if velocityX > 0 {
+                if contentOffset.x == 0 {
+                    return false
+                }
+            }else if velocityX < 0 {
+                if contentOffset.x + bounds.size.width == contentSize.width {
+                    return false
+                }
+            }
+        }
+
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
+    }
+}
+
+

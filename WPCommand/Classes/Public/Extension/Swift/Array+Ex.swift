@@ -374,3 +374,50 @@ public extension WPSpace where Base == [Any] {
 }
 
 
+///
+public extension WPSpace where Base == Array<UIView> {
+    
+    /// 水平中心点布局 类似于tabbar的Item效果
+    /// - Parameters:
+    ///   - maxWidth: 最大的宽
+    ///   - block: 回调 包括子视图和当前子视图中心点的位置
+    func horizontalCenterX(with maxWidth : CGFloat,block:(UIView,_ point:CGFloat)->Void){
+        let count = base.count * 2
+        let padding : CGFloat = maxWidth / CGFloat(count)
+        var itemIndex = 0
+        for index in 0...count {
+            if (index % 2) > 0 {
+                block(base[itemIndex],CGFloat(CGFloat(index) * padding))
+                itemIndex += 1
+            }
+        }
+    }
+    
+    /// 设置所有view的抗拉伸等级
+    /// - Parameters:
+    ///   - priority: 等级
+    ///   - axis: 轴
+    ///   - option: 选择
+    func setContentHugging(_ priority: UILayoutPriority,for axis:NSLayoutConstraint.Axis,option : ((UIView)->Bool) = {_ in return true}) {
+        base.forEach { elmt in
+            if option(elmt){
+                elmt.setContentHuggingPriority(priority, for: axis)
+            }
+        }
+    }
+    
+    /// 设置抗压缩等级
+    /// - Parameters:
+    ///   - priority: 等级
+    ///   - axis: 轴
+    ///   - option: 选择
+    func setCompressionResistance(_ priority: UILayoutPriority,
+                                  for axis:NSLayoutConstraint.Axis,
+                                  option : ((UIView)->Bool) = {_ in return true}) {
+        base.forEach { elmt in
+            if option(elmt){
+                elmt.setContentCompressionResistancePriority(priority, for: axis)
+            }
+        }
+    }
+}

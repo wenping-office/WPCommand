@@ -17,7 +17,4 @@ public protocol WPMenuHeaderViewProtocol: WPMenuViewChildViewProtocol {
 
 public extension WPMenuHeaderViewProtocol {
     func menuHeaderViewAtHeight() -> WPMenuView.HeaderHeightOption { return .autoLayout }
-
-    /// 子视图状态更新
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {}
 }

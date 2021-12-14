@@ -72,7 +72,7 @@ public extension WPSpace where Base == Date{
     var weekday : Int {
         let interval = base.timeIntervalSince1970;
         let days = Int(interval / 86400);
-        return (days - 3) % 7;
+        return (days - 3) % 7
     }
     
     /// 是否是当天
