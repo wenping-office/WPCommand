@@ -160,7 +160,9 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus){
         
         if status == .selected {
-            menuView.scrollToHeader()
+            menuView.scroll(to: .header()) {
+                
+            }
         }
     }
 }
@@ -193,7 +195,9 @@ class TestMenuVC2: WPBaseVC,WPMenuBodyViewProtocol {
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus){
         
         if status == .selected {
-            menuView.scrollToNavigation()
+            menuView.scroll(to: .navigation()) {
+                
+            }
         }
     }
 }

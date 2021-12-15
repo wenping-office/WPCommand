@@ -8,6 +8,14 @@
 import UIKit
 
 public extension WPMenuView{
+    /// 滚动选项
+    enum ScrollOption {
+        /// 选中导航
+        case navigation(animated:Bool = true,position:UITableView.ScrollPosition = .top)
+        /// 选中头部视图
+        case header(animated:Bool = true,position:UITableView.ScrollPosition = .top)
+    }
+    
     /// 身体视图是否执行选中动画
     var bodyViewSelecteAnimate: Bool {
         set {
@@ -64,7 +72,7 @@ public extension WPMenuView{
         return contentView
     }
     
-    /// 多手势识别
+    /// 多手势识别 默认false
     var multiGesture : Bool{
         set{
             contentView.multiGesture = newValue
@@ -74,25 +82,38 @@ public extension WPMenuView{
         }
     }
     
+    /// 水平手势适配 默认false
+    var horizontalGestureAdaptation : Bool{
+        set{
+            contentView.bodyView.collectionView.horizontalGestureAdaptation = newValue
+        }
+        get{
+            return contentView.bodyView.collectionView.horizontalGestureAdaptation
+        }
+    }
+    
     /// 身体视图
     var bodyView:WPMenuBodyView{
         return contentView.bodyView
     }
     
-    /// 滚动到导航栏
-    func scrollToNavigation(animated:Bool = true,
-                                   position:UITableView.ScrollPosition = .top){
+    /// 滚动到目标视图
+    /// - Parameters:
+    ///   - option: 选择
+    ///   - complete: 回调
+    func scroll(to option:ScrollOption,complete:(()->Void)?=nil){
+        contentView.isUserInteractionEnabled = false
         if contentView.delegate is WPMenuContentTableView {
-            contentView.selectRow(at: IndexPath.init(row: 0, section: 1), animated: animated, scrollPosition: position)
+            switch option {
+            case .navigation(let animated, let position):
+                contentView.selectRow(at: IndexPath.init(row: 0, section: 1), animated: animated, scrollPosition: position)
+            case .header(let animated, let position):
+                contentView.selectRow(at: IndexPath.init(row: 0, section: 0), animated: animated, scrollPosition: position)
+            }
         }
-    }
-    
-    /// 滚动到顶部
-    func scrollToHeader(animated:Bool = true,
-                               position:UITableView.ScrollPosition = .top){
-        if contentView.delegate is WPMenuContentTableView {
-        contentView.selectRow(at: IndexPath.init(row: 0, section: 0), animated: animated, scrollPosition: position)
-        }
+        WPGCD.main_asyncAfter(.now() + 0.2, task: {[weak self] in
+            self?.contentView.isUserInteractionEnabled = true
+        })
     }
 }
 
@@ -218,7 +239,7 @@ public class WPMenuView: WPBaseView {
         }
         return .bottom
     }
-
+    
     /// 数据源
     public weak var dataSource: WPMenuViewDataSource?
     /// 代理
@@ -270,7 +291,7 @@ public class WPMenuView: WPBaseView {
             let headerItem = self?.contentView.headerView.datas.wp_get(of: index)
             
             guard let self = self else { return }
-
+            
             // 导航条item滚动到当前
             if self.navigationSelectedStyle != .none {
                 self.contentView.navView.collectionView.scrollToItem(at: .init(row: index, section: 0), at: self.navSelectedStyle, animated: true)
@@ -357,7 +378,7 @@ class WPMenuContentTableView: UITableView,UIGestureRecognizerDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return multiGesture
     }

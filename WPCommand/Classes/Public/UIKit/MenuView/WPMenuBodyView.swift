@@ -149,6 +149,9 @@ class WPMenuBodyCell: WPBaseCollectionViewCell {
 
 class WPMenuBodyScrollView: UICollectionView {
     
+    /// 是否开启水平手势适配
+    var horizontalGestureAdaptation = false
+
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         
         if let panGestureClass = NSClassFromString("UIScrollViewPanGestureRecognizer"), gestureRecognizer.isMember(of: panGestureClass) {
