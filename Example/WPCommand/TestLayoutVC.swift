@@ -12,6 +12,8 @@ import RxSwift
 
 class TestLayoutVC: WPBaseVC {
 
+    let manager = WPAlertManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -24,17 +26,8 @@ class TestLayoutVC: WPBaseVC {
             make.centerX.equalToSuperview()
             make.top.equalTo(120)
         }
-//        FrameAlert().show()
-        
-       
-        
-        for index in 0...10 {
-            WPGCD.main_asyncAfter(.now() + TimeInterval(index), task: {
-                LayoutAlert(index.description).show(option: .insert(keep: true))
-            })
-        }
 
-       
+        LayoutAlert("疯狂大叫弗兰克大家的反馈啦就是大福利卡技术的饭卡老大积分卡拉的就是发老大积分啦的").show()
     }
 }
 
@@ -132,6 +125,14 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .center(.zero), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.2)
+        return .init(.bounces(damping: 0.5, velocity: 0.1, options: .curveLinear),
+                     startLocation: .center(),
+                     startDuration: 0.3,
+                     stopLocation: .top,
+                     stopDuration: 10)
+    }
+    
+    deinit {
+        print("弹窗释放")
     }
 }
