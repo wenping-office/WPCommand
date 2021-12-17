@@ -13,7 +13,7 @@ public extension Array {
         let arr = self
         return arr
     }
-
+    
     /// 过滤元素 返回ture过滤 否则不过滤
     /// - Parameter resualt: 过滤结果会改变自身 数组应该为可变属性
     mutating func wp_filter(by resultBlock: @escaping (Element)->Bool) {
@@ -60,7 +60,7 @@ public extension Array {
         }
         return false
     }
-
+    
     /// 安全获取一个元素
     /// - Parameter index: 所有
     /// - Returns: 元素
@@ -71,7 +71,7 @@ public extension Array {
             return nil
         }
     }
-
+    
     /// 交换元素
     /// - Parameters:
     ///   - index: 交换元素的索引
@@ -139,7 +139,7 @@ public extension Array {
         let location = self.count - count
         if count <= self.count {
             return Array(self[location..<self.count])
-                
+            
         } else {
             return Array(self[0..<self.count])
         }
@@ -158,6 +158,43 @@ public extension Array {
             return Array(self[range.location..<self.count])
         }
     }
+    
+    /// 递归 注：非交叉递归 如果会交叉那么会死循环，向上递归的时候会做去重
+    /// - Parameters:
+    ///   - obj: 目标对象
+    ///   - topPath: 向上递归的path
+    ///   - Path: 目标对象需要递归的属性必须是个数组
+    ///   - option: 选择
+    static func wp_recursion<T,
+                          O:KeyPath<T,T?>,
+                          P:KeyPath<T,[T]>>(_ obj:T ,topPath:O? = nil,path:P,
+                  option:(T)->Bool = {_ in return true})->[T]{
+    var resualt : [T] = []
+    
+    if topPath != nil{
+        if obj[keyPath: topPath!] != nil{
+            let topObj : T = obj[keyPath: topPath!]!
+            
+            for elmt in topObj[keyPath: path]{
+                if option(elmt){
+                    resualt.append(elmt)
+                }
+                resualt.append(contentsOf: wp_recursion(topObj, topPath: topPath, path: path, option: option))
+            }
+        }
+    }else{
+        for elmt in obj[keyPath: path]{
+            if option(elmt){
+                resualt.append(elmt)
+            }
+            resualt.append(contentsOf: wp_recursion(elmt, topPath: nil, path: path, option: option))
+        }
+    }
+
+                            
+    return resualt
+}
+
 }
 
 public extension Array where Element: WPRepeatProtocol {
@@ -178,16 +215,16 @@ public extension Array where Element: WPRepeatProtocol {
         
         if sortMode == .fist || sortMode == .last {
             var tempArray: [(index: Int, key: Element.type, obj: Element)] = []
-
+            
             for index in 0..<count {
                 let obj = self[index]
                 tempArray.append((index, obj.wp_repeatKey, obj))
             }
-
+            
             var json: [Element.type: (index: Int, key: Element.type, obj: Element)] = [:]
             
             tempArray.forEach { elmt in
-
+                
                 if sortMode == .fist {
                     if json[elmt.key] == nil { // 添加第一次出现的元素
                         json[elmt.key] = elmt
@@ -199,16 +236,16 @@ public extension Array where Element: WPRepeatProtocol {
             
             /// 去重以后的arr
             var tempTowArr: [(index: Int, key: Element.type, obj: Element)] = []
-
+            
             json.forEach { subDict in
                 tempTowArr.append(subDict.value)
             }
-
+            
             // 排序
             let tempThreeArr = tempTowArr.sorted { obj1, obj2 in
                 obj1.index < obj2.index
             }
-
+            
             tempThreeArr.forEach { elmt in
                 resualtArray.append(elmt.obj)
             }
@@ -222,10 +259,10 @@ public extension Array where Element: WPRepeatProtocol {
                 resualtArray.append(subDict.value)
             }
         }
-
+        
         self = resualtArray
     }
-}
+ }
 
 public extension WPSpace where Base == [Any] {
     /// 过滤元素 返回ture过滤 否则不过滤
@@ -274,7 +311,7 @@ public extension WPSpace where Base == [Any] {
         }
         return false
     }
-
+    
     /// 安全获取一个元素
     /// - Parameter index: 所有
     /// - Returns: 元素
@@ -285,7 +322,7 @@ public extension WPSpace where Base == [Any] {
             return nil
         }
     }
-
+    
     /// 交换元素
     /// - Parameters:
     ///   - index: 交换元素的索引

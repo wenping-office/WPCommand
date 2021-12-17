@@ -14,6 +14,11 @@ public protocol WPRepeatProtocol {
     var wp_repeatKey: type { get }
 }
 
+extension NSObject: WPRepeatProtocol{
+    public typealias type = String
+    public var wp_repeatKey: type { return wp.memoryAddress }
+}
+
 extension Int: WPRepeatProtocol {
     public typealias key = Self
     public var wp_repeatKey: Int { return self }
@@ -77,11 +82,6 @@ extension CGFloat: WPRepeatProtocol {
 extension String: WPRepeatProtocol {
     public typealias key = Self
     public var wp_repeatKey: String { return self }
-}
-
-extension NSString: WPRepeatProtocol {
-    public typealias key = NSString
-    public var wp_repeatKey: NSString { return self }
 }
 
 extension Date: WPRepeatProtocol {

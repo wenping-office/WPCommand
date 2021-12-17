@@ -122,6 +122,7 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
         test1.view.backgroundColor = .green
 
         menuView.dataSource = self
+        menuView.horizontalGestureAdaptation = true
         menuView.setNavigation([testMenuItem(),testMenuItem()])
         
         view.backgroundColor = .red
@@ -135,7 +136,7 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
     }
     
     class ContentVC: WPBaseVC,WPMenuBodyViewProtocol {
-        let tableView = UITableView()
+        let tableView = testTableView()
         
         func menuBodyView() -> UIView? {
             return view
@@ -143,25 +144,16 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
         
         override func initSubView(){
             view.addSubview(tableView)
-            tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
-                WPGCD.main_asyncAfter(.now() + 3, task: {[weak self] in
-                    self?.tableView.mj_header?.endRefreshing()
-                })
-            })
+//            tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
+//                WPGCD.main_asyncAfter(.now() + 3, task: {[weak self] in
+//                    self?.tableView.mj_header?.endRefreshing()
+//                })
+//            })
         }
         
         override func initSubViewLayout() {
             tableView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
-            }
-        }
-    }
-    
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus){
-        
-        if status == .selected {
-            menuView.scroll(to: .header()) {
-                
             }
         }
     }
@@ -191,15 +183,6 @@ class TestMenuVC2: WPBaseVC,WPMenuBodyViewProtocol {
             make.edges.equalToSuperview()
         }
     }
-    
-    func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus){
-        
-        if status == .selected {
-            menuView.scroll(to: .navigation()) {
-                
-            }
-        }
-    }
 }
 
 
@@ -222,4 +205,22 @@ class TestMenuHeaer: WPBaseView,WPMenuHeaderViewProtocol {
         
         return .height(200)
     }
+}
+
+
+class testTableView: UITableView {
+    
+    init(){
+        super.init(frame: .zero, style: .plain)
+//        horizontalAdaptation = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+//    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+//
+//        return false
+//    }
 }

@@ -100,6 +100,17 @@ public extension WPSpace where Base: UIView {
     var isAddConstraints: Bool {
         return base.constraints.count > 0
     }
+    
+    /// 父类视图所有节点
+    /// - Returns:
+    func nodeViews(_ option:(UIView)->Bool) -> [UIView]{
+        let view = base as UIView
+        var notes = Array<Any>.wp_recursion(view, topPath: \.superview, path: \.subviews, option: option)
+        
+        notes.wp_repeat(retain: .fist)
+
+        return notes
+    }
 }
 
 public extension WPSpace where Base: UIView {

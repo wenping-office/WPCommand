@@ -85,12 +85,22 @@ public extension WPMenuView{
     /// 水平手势适配 默认false
     var horizontalGestureAdaptation : Bool{
         set{
-            contentView.bodyView.collectionView.horizontalGestureAdaptation = newValue
+            contentView.bodyView.collectionView.horizontalAdaptation = newValue
         }
         get{
-            return contentView.bodyView.collectionView.horizontalGestureAdaptation
+            return contentView.bodyView.collectionView.horizontalAdaptation
         }
     }
+    
+    /// 垂直手势适配 默认false
+//    var verticalGestureAdaptation : Bool{
+//        set{
+//            contentView.bodyView.collectionView.verticalAdaptation = newValue
+//        }
+//        get{
+//            return contentView.bodyView.collectionView.verticalAdaptation
+//        }
+//    }
     
     /// 身体视图
     var bodyView:WPMenuBodyView{
