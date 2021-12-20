@@ -6,8 +6,79 @@
 //
 
 import UIKit
+public extension Array{
+    /// 排序规则
+    enum WPSortMode {
+        /// 不排序
+        case `default`
+        /// 保留第一次出现的元素
+        case fist
+        /// 保留最后一次出现的元素
+        case last
+    }
+
+
+    /// 去重操作
+    /// - Parameter sortMode: 排序规则
+    mutating func wp_repeat<V:Hashable,P:KeyPath<Element,V>>(retain sortMode: WPSortMode = .default,path:P) {
+        var resualtArray: [Element] = []
+
+        if sortMode == .fist || sortMode == .last {
+           
+            var tempArray: [(index: Int, key: V, obj: Element)] = []
+
+            for index in 0..<count {
+                let obj = self[index]
+                tempArray.append((index, obj[keyPath: path], obj))
+            }
+
+            var json: [V: (index: Int, key: V, obj: Element)] = [:]
+
+            tempArray.forEach { elmt in
+
+                if sortMode == .fist {
+                    if json[elmt.key] == nil { // 添加第一次出现的元素
+                        json[elmt.key] = elmt
+                    }
+                } else { // 保留最后一次出现的元素
+                    json[elmt.key] = elmt
+                }
+            }
+
+            /// 去重以后的arr
+            var tempTowArr: [(index: Int, key: V, obj: Element)] = []
+
+            json.forEach { subDict in
+                tempTowArr.append(subDict.value)
+            }
+
+            // 排序
+            let tempThreeArr = tempTowArr.sorted { obj1, obj2 in
+                obj1.index < obj2.index
+            }
+
+            tempThreeArr.forEach { elmt in
+                resualtArray.append(elmt.obj)
+            }
+        } else {
+
+            var json: [V: Element] = [:]
+            
+            forEach { elmt in
+                json[elmt[keyPath: path]] = elmt
+            }
+
+            json.forEach { subDict in
+                resualtArray.append(subDict.value)
+            }
+        }
+        
+        self = resualtArray
+    }
+}
 
 public extension Array {
+
     /// 复制一个array
     var wp_copy: [Element] {
         let arr = self
@@ -166,8 +237,8 @@ public extension Array {
     ///   - Path: 目标对象需要递归的属性必须是个数组
     ///   - option: 选择
     static func wp_recursion<T,
-                          O:KeyPath<T,T?>,
-                          P:KeyPath<T,[T]>>(_ obj:T ,topPath:O? = nil,path:P,
+                             O:KeyPath<T,T?>,
+P:KeyPath<T,[T]>>(_ obj:T ,topPath:O? = nil,path:P,
                   option:(T)->Bool = {_ in return true})->[T]{
     var resualt : [T] = []
     
@@ -190,23 +261,13 @@ public extension Array {
             resualt.append(contentsOf: wp_recursion(elmt, topPath: nil, path: path, option: option))
         }
     }
-
-                            
     return resualt
 }
-
+    
 }
 
 public extension Array where Element: WPRepeatProtocol {
-    /// 排序规则
-    enum WPSortMode {
-        /// 不排序
-        case `default`
-        /// 保留第一次出现的元素
-        case fist
-        /// 保留最后一次出现的元素
-        case last
-    }
+    
     
     /// 去重操作
     /// - Parameter sortMode: 排序规则
@@ -262,7 +323,7 @@ public extension Array where Element: WPRepeatProtocol {
         
         self = resualtArray
     }
- }
+}
 
 public extension WPSpace where Base == [Any] {
     /// 过滤元素 返回ture过滤 否则不过滤

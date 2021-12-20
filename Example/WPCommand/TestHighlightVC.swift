@@ -23,6 +23,10 @@ class TestHighlightVC: WPBaseVC {
         let yayer = CAShapeLayer.wp.shapefillet([.bottomLeft], radius: 30, in: view.bounds)
         yayer.fillColor = UIColor.init(0, 0, 0, 0.4).cgColor
         view.layer.addSublayer(yayer)
+        
+        var array = ["1","2","2","1"]
+        array.wp_repeat(retain: .last, path: \.description)
+        
     }
 
     func layout(in bounds:CGRect)->CAShapeLayer{
