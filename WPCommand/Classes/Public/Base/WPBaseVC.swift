@@ -52,7 +52,7 @@ open class WPBaseVC: UIViewController {
                         hidden: navigationisHidden)
     }
     
-    open override func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         navigationController?.navigationBar.isTranslucent = navigationTranslucent

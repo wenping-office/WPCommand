@@ -11,7 +11,6 @@ import WPCommand
 import RxSwift
 
 class ViewController: UIViewController {
-
     var tableView = UITableView(frame: .zero, style: .plain)
 
     override func viewDidLoad() {
@@ -21,12 +20,11 @@ class ViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        
+
         let group = WPTableGroup()
         group.headerHeight = 0
         group.footerHeight = 0
-        
+
         let vc : [(String,WPBaseVC.Type)] = [
             ("输入框",TestUIController.self),
             ("弹窗管理器",TestAlertController.self),
@@ -50,11 +48,8 @@ class ViewController: UIViewController {
         let presions = [Presion.init(id: "123", name: "qqq"),Presion.init(id: "234", name: "rew")]
         let name = presions.map { $0.name }
         let nams = presions.map(\.name)
-        
     }
-    
 }
-
 
 @dynamicMemberLookup
 public struct Reactive<Base> {
@@ -110,17 +105,8 @@ extension ReactiveCompatible {
 /// Extend NSObject with `rx` proxy.
 extension NSObject: ReactiveCompatible { }
 
-
-
-
-
-
-
-
-
 /// keypath 动态获取属性
 func setter<Object : AnyObject,value>(for object:Object,keyPath:ReferenceWritableKeyPath<Object,value>)->(value)->Void{
-
     return { [weak object] value in
         object?[keyPath: keyPath] = value
     }
@@ -130,7 +116,7 @@ extension Sequence{
     func map<T>(_ keyPath:KeyPath<Element,T>) -> [T] {
         return map{ $0[keyPath: keyPath]}
     }
-    
+
     func stord<T:Comparable>(_ keyPath : KeyPath<Element,T>) -> [Element]{
         return sorted { elmt1, elmt2 in
             return elmt1[keyPath:keyPath] < elmt2[keyPath:keyPath]

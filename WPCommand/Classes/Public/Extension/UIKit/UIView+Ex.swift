@@ -32,7 +32,7 @@ public extension WPSpace where Base: UIView {
             base.layer.render(in: rendererContext.cgContext)
         }
     }
-
+    
     var x: CGFloat {
         get { return base.frame.origin.x }
         set { base.frame.origin.x = newValue }
@@ -95,7 +95,7 @@ public extension WPSpace where Base: UIView {
         get { return base.bounds }
         set { base.bounds = newValue }
     }
-
+    
     /// 是否有添加约束
     var isAddConstraints: Bool {
         return base.constraints.count > 0
@@ -106,9 +106,7 @@ public extension WPSpace where Base: UIView {
     func nodeViews(_ option:(UIView)->Bool) -> [UIView]{
         let view = base as UIView
         var notes = Array<Any>.wp_recursion(view, topPath: \.superview, path: \.subviews, option: option)
-        
-        notes.wp_repeat(retain: .fist)
-
+        notes.wp_repeat(retain: .fist, path: \.wp.memoryAddress)
         return notes
     }
 }
@@ -341,7 +339,7 @@ public extension WPSpace where Base: UIView {
             toastView.alpha = 0
             
             base.addSubview(toastView)
-
+            
             toastView.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview().offset(offSetY)

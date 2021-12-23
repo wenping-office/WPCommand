@@ -100,9 +100,9 @@ public extension WPAlertManager {
         /// 默认
         case `default`
         /// 弹簧效果 damping 阻尼系数: 取值(0~1)默认0.5  velocity初始速度:  取值(0~1)默认0.5  options: 动画选择
-        case bounces(damping:CGFloat = 0.5,
-                     velocity:CGFloat = 0.5,
-                     options:UIView.AnimationOptions = .curveLinear)
+        case bounces(damping: CGFloat = 0.5,
+                     velocity: CGFloat = 0.5,
+                     options: UIView.AnimationOptions = .curveLinear)
     }
     
     /// 弹窗开始位置
@@ -157,16 +157,17 @@ public class WPAlertManager {
         /// 布局方式
         var layoutOption: LayoutOption?
         /// 弹窗状态
-        var state : Progress = .unknown{
-            didSet{
+        var state: Progress = .unknown {
+            didSet {
                 alert.updateStatus(status: state)
                 stateChange?(state)
             }
         }
+
         /// 弹窗的偏移量
-        var offset : CGPoint = .zero
+        var offset: CGPoint = .zero
         /// 状态变化
-        var stateChange : ((Progress)->Void)?
+        var stateChange: ((Progress)->Void)?
         
         init(alert: WPAlertProtocol, level: Int) {
             self.alert = alert
@@ -182,6 +183,7 @@ public class WPAlertManager {
             removeMask()
         }
     }
+
     /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
@@ -190,6 +192,7 @@ public class WPAlertManager {
             return target!
         }
     }
+
     /// 当前弹窗的mask
     private weak var maskView: WPAlertManagerMask?
     /// 弹窗队列
@@ -200,6 +203,7 @@ public class WPAlertManager {
             }
         }
     }
+
     /// 当前弹窗开始的frame
     private var currentAlertBeginFrame: CGRect = .zero
     /// 当前弹窗结束的frame
@@ -207,19 +211,19 @@ public class WPAlertManager {
     /// 自动布局下的block
     private var autoLayoutBeginBlock: (()->Void)?
     /// 自动布局下的block
-    private var autoLayoutEndBlock:(()->Void)?
+    private var autoLayoutEndBlock: (()->Void)?
     /// 单例
     public static var `default`: WPAlertManager = {
         let manager = WPAlertManager()
         return manager
     }()
 
-    public init(){}
+    public init() {}
 
     /// 添加一个弹窗
     public func addAlert(_ alert: WPAlertProtocol) {
         alert.tag = WPAlertManager.identification()
-        let alertItem : AlertItem = .init(alert: alert, level: Int(alert.alertLevel()))
+        let alertItem: AlertItem = .init(alert: alert, level: Int(alert.alertLevel()))
         alertItem.state = .cooling
         alerts.append(alertItem)
     }
@@ -238,7 +242,7 @@ public class WPAlertManager {
     }
     
     /// 移除所有弹窗
-    public func removeAllAlert(){
+    public func removeAllAlert() {
         currentAlert?.alert.removeFromSuperview()
         alerts = []
     }
@@ -268,14 +272,14 @@ public class WPAlertManager {
 
         if currentAlert == nil {
             show()
-        }else{
+        } else {
             switch option {
             case .add:
-               break
+                break
             case .insert(let keep):
                 switch currentAlert!.state {
                 case .willShow:
-                    currentAlert?.stateChange = {[weak self] state in
+                    currentAlert?.stateChange = { [weak self] state in
                         if state == .didShow {
                             self?.currentAlert?.isInterruptInset = keep
                             self?.alertAnimate(isShow: false, option: option)
@@ -335,7 +339,7 @@ extension WPAlertManager {
         // 如果没有蒙版 那么添加一个
         if !resualt {
             let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
-                if self?.currentAlert?.state == .didShow{
+                if self?.currentAlert?.state == .didShow {
                     self?.currentAlert?.alert.touchMask()
                 }
             })
@@ -440,7 +444,7 @@ extension WPAlertManager {
                     case .layout:
                         if item.alert.alertInfo().stopLocation != .center {
                             item.alert.superview?.layoutIfNeeded()
-                        }else{
+                        } else {
                             item.alert.frame = self.currentAlertEndFrame
                         }
                     case .frame:
@@ -484,7 +488,7 @@ extension WPAlertManager {
                 }, completion: { resualt in
                     animateCompleteBlock(resualt)
                 })
-            case .bounces(let damping, let velocity,let options):
+            case .bounces(let damping, let velocity, let options):
                 UIView.animate(withDuration: TimeInterval(duration), delay: 0, usingSpringWithDamping: damping, initialSpringVelocity: velocity, options: options, animations: {
                     animatedBolok()
                 }, completion: { resualt in

@@ -37,40 +37,39 @@ public extension WPSpace where Base: NSObject {
             return base.wp_disposeBag
         }
     }
-    
+
     /// 当前keyWindow
-    static var keyWindow : UIWindow?{
+    static var keyWindow : UIWindow? {
         return NSObject().wp.keyWindow
     }
-    
+
     /// 当前KeyController
     static var keyController: UIViewController? {
         return NSObject().wp.keyController
     }
-    
+
     /// 当前keyWindow
     var keyWindow: UIWindow? {
         return UIApplication.shared.windows.wp_elmt { elmt in
             elmt.windowLevel == .normal
         }
     }
-    
+
     /// 当前KeyController
     var keyController: UIViewController? {
         func rootVC(vc: UIViewController?) -> UIViewController? {
-            
             if let presentedVC = vc?.presentedViewController { return rootVC(vc: presentedVC) }
-            
+
             if let tabBarVC = vc as? UITabBarController,
-               let selectedVC = tabBarVC.selectedViewController{
+               let selectedVC = tabBarVC.selectedViewController {
                 return rootVC(vc: selectedVC)
             }
             if let navigationVC = vc as? UINavigationController,
-               let visibleVC = navigationVC.visibleViewController{
+               let visibleVC = navigationVC.visibleViewController {
                 return rootVC(vc: visibleVC)
             }
             if let pageVC = vc as? UIPageViewController,
-               pageVC.viewControllers?.count == 1{
+               pageVC.viewControllers?.count == 1 {
                 return rootVC(vc: pageVC.viewControllers?.first)
             }
 
@@ -83,5 +82,4 @@ public extension WPSpace where Base: NSObject {
         }
         return rootVC(vc: keyWindow?.rootViewController)
     }
-    
 }
