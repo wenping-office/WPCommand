@@ -9,32 +9,18 @@
 import UIKit
 import WPCommand
 
-public struct Test:WPRepeatProtocol {
-    
-    public var wp_repeatKey: String{
-        return self.id
-    }
-    
-    var id : String = ""
-}
-
 class TestUIController: WPBaseVC {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
-
+        
         self.textField()
+        
         self.textView()
-        
-        var arr = [ Test(id: "1"),
-        Test(id: "2"),
-        Test(id: "3"),
-        Test(id: "1"),
-        Test(id: "3"),]
-        
-        arr.wp_repeat(retain: .last)
-
+    }
+    
+    func obj(obj:AnyObject,an:AnyObject) -> AnyObject? {
+        return nil
     }
     
     func textField(){
@@ -56,9 +42,9 @@ class TestUIController: WPBaseVC {
         textView.snp.makeConstraints { make in
             make.left.equalTo(20)
             make.right.equalTo(-20)
+           
             make.top.equalTo(150)
             make.height.equalTo(50)
         }
     }
-
 }

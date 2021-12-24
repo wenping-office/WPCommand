@@ -240,7 +240,7 @@ public extension WPSpace where Base == String {
     }
     
     /// 复制到粘贴版
-    func sopyToPasteboard() {
+    func copyToPasteboard() {
         let pasteboard = UIPasteboard.general
         pasteboard.string = base
     }

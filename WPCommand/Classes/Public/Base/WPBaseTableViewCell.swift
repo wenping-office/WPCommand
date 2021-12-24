@@ -33,4 +33,3 @@ open class WPBaseTableViewCell: UITableViewCell {
     // 初始化视图
     open func initSubView() {}
 }
-

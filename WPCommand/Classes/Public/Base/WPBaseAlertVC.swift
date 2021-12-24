@@ -18,12 +18,12 @@ open class WPBaseAlertVC: UIViewController {
     open var endDuration: CGFloat { return 0.3 }
     /// 蒙板颜色
     open var maskColor: UIColor { return UIColor(0, 0, 0, 0.15) }
-    
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         show()
     }
-    
+
     public required init() {
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .overCurrentContext
@@ -32,12 +32,12 @@ open class WPBaseAlertVC: UIViewController {
         initSubViewLayout()
         observeSubViewEvent()
     }
-    
+
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     /// 初始化试图
     open func initSubView() {
         grayView.backgroundColor = .clear
@@ -61,13 +61,13 @@ open class WPBaseAlertVC: UIViewController {
     /// 显示弹窗
     open func show() {
         willShow()
-        
+
         showToLoacton()
         UIView.animate(withDuration: TimeInterval(startDuration), animations: { [weak self] in
             self?.showToAnimates()
             self?.grayView.backgroundColor = self?.maskColor
             self?.view.layoutIfNeeded()
-            
+
         }, completion: { [weak self] complete in
             if complete {
                 self?.didShow()
