@@ -7,7 +7,7 @@
 
 import UIKit
 
-public extension WPSpace where Base == String {
+public extension WPSpace where Base == String{
     /// 可变富文本
     var attributed: WPSpace<NSMutableAttributedString> {
         return .init(NSMutableAttributedString(string: base))
