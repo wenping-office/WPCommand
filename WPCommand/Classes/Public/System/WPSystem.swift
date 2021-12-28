@@ -139,6 +139,7 @@ public extension WPSystem {
         ///   - bag: 垃圾桶 使用rxSwift实现
         /// - Returns: 观察者
         public func offsetY(in view: UIView, bag: DisposeBag)->Observable<CGFloat> {
+            weak var weakView = view
             var obServer: AnyObserver<CGFloat>?
             let ob: Observable<CGFloat> = .create { ob in
                 obServer = ob
@@ -148,7 +149,7 @@ public extension WPSystem {
             
             WPSystem.keyboard.willShow.subscribe(onNext: { value in
                 if targetFrame == .zero {
-                    targetFrame = view.wp.frameInWidow
+                    targetFrame = weakView?.wp.frameInWidow ?? .zero
                 }
                 let keyBoardEnd = (value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero
                 let of = -(targetFrame.maxY - keyBoardEnd.minY)

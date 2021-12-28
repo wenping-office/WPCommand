@@ -73,7 +73,7 @@ public extension WPAlertProtocol {
               by manager: WPAlertManager = WPAlertManager.default)
     {
         self.targetView = targetView
-        manager.showNext(self, option: option)
+        manager.show(next: self,option: option)
     }
 
     /// 隐藏弹窗
@@ -142,7 +142,7 @@ public extension WPAlertBridgeProtocol {
     {
         self.targetView = targetView
         self.maskHandler = maskHandler
-        manager.showNext(self, option: option)
+        manager.show(next: self,option: option)
     }
 
     /// 隐藏弹窗
