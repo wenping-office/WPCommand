@@ -110,7 +110,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
     
     func maskInfo() -> WPAlertManager.Mask {
-        return .init(color: .red, enabled: false, isHidden: true)
+        return .init(color: .red, enabled: false, hidden: true)
     }
 
     deinit {

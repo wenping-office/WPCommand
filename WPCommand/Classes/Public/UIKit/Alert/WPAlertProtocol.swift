@@ -54,7 +54,7 @@ public extension WPAlertProtocol {
     func maskInfo()->WPAlertManager.Mask {
         return .init(color: UIColor(0, 0, 0, 0.15),
                      enabled: false,
-                     isHidden: false)
+                     hidden: false)
     }
 
     /// 点击了蒙版

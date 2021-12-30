@@ -64,17 +64,19 @@ public extension WPAlertManager {
         /// 是否可以交互点击
         public let enabled: Bool
         /// 是否显示
-        public let isHidden: Bool
+        public let hidden: Bool
         
         /// 初始化一个蒙版信息
         /// - Parameters:
         ///   - color: 蒙板颜色
         ///   - enabled: 是否可以交互点击
         ///   - isHidden: 是否隐藏
-        public init(color: UIColor, enabled: Bool, isHidden: Bool) {
+        public init(color: UIColor,
+                    enabled: Bool,
+                    hidden: Bool) {
             self.color = color
             self.enabled = enabled
-            self.isHidden = isHidden
+            self.hidden = hidden
         }
     }
     
@@ -105,7 +107,7 @@ public extension WPAlertManager {
                      options: UIView.AnimationOptions = .curveLinear)
     }
     
-    /// 弹窗开始位置
+    /// 显示位置
     enum ShowLocation {
         /// 顶部弹出
         case top(_ offset: CGPoint = .zero)
@@ -127,7 +129,7 @@ public extension WPAlertManager {
         case rightToFill(_ offsetY: CGFloat = 0)
     }
     
-    /// 弹出结束位置
+    /// 弹出方向
     enum DismissDirection {
         /// 顶部收回
         case top
@@ -142,7 +144,7 @@ public extension WPAlertManager {
     }
 }
 
-/// 弹窗队列弹出实现WPAlertProtocol协议的弹窗，可弹出一组弹窗或插入式弹窗，也可自定义一个manager自己管理一组弹窗
+/// 可弹出一组弹窗或插入式弹窗，也可自定义一个manager自己管理一组弹窗
 public class WPAlertManager {
     /// 弹窗
     private class Item {
@@ -263,7 +265,6 @@ public class WPAlertManager {
     ///   - alert: 弹窗
     ///   - option: 选择条件
     public func show(next alert: WPAlertProtocol, option: Option = .insert(keep: true)) {
-        
         alert.tag = WPAlertManager.identification()
         let level = (current?.level ?? 0) - 1
         let alertItem: Item = .init(alert: alert, level: level)
@@ -363,8 +364,8 @@ public class WPAlertManager {
     ///   - duration: 动画时间
     ///   - offset: 偏移量 注：如果是tofill 那么只有x或者y生效
     public func update(offset:CGPoint,
-                             _ animateType: AnimationType = .default,
-                             _ duration:TimeInterval = 0.2){
+                       _ animateType: AnimationType = .default,
+                       _ duration:TimeInterval = 0.2){
         guard
             let alertItem = current,
             let layoutOption = alertItem.layoutOption
@@ -454,9 +455,8 @@ extension WPAlertManager {
         )
     }
     
-    /// 添加一个蒙版
+    /// 添加一个蒙层
     private func addMask(info: WPAlertManager.Mask) {
-        // 检查是否有蒙版
         let resualt = targetView.subviews.wp_isContent { elmt in
             elmt.isKind(of: WPAlertManagerMask.self)
         }
@@ -483,8 +483,8 @@ extension WPAlertManager {
     ///   - isShow: 是否是显示
     ///   - layoutOption: 布局方式
     private func animateActuator(_ item:Item,
-                              isShow:Bool,
-                              layoutOption:LayoutOption){
+                                 isShow:Bool,
+                                 layoutOption:LayoutOption){
         item.alert.transform = CGAffineTransform.identity
         if isShow {
             switch layoutOption {
@@ -517,8 +517,8 @@ extension WPAlertManager {
     ///   - resualt: 结果
     ///   - isShow: 是否是显示
     private func animationActuatorComplete(_ item:Item,
-                                      resualt:Bool,
-                                      isShow:Bool){
+                                           resualt:Bool,
+                                           isShow:Bool){
         if resualt {
             if isShow {
                 item.isInterruptInset = false
@@ -541,9 +541,9 @@ extension WPAlertManager {
     
     /// 执行动画
     private func animation(_ type:AnimationType,
-                         duration:TimeInterval,
+                           duration:TimeInterval,
                            animation:@escaping ()->Void,
-                         completion:@escaping(Bool)->Void){
+                           completion:@escaping(Bool)->Void){
         maskView?.isUserInteractionEnabled = false
         switch type {
         case .default:
@@ -563,7 +563,7 @@ extension WPAlertManager {
         }
     }
 
-    /// 删除蒙版
+    /// 删除蒙层
     private func removeMask() {
         maskView?.removeFromSuperview()
         maskView = nil
@@ -575,18 +575,7 @@ extension WPAlertManager {
         return (count - 1) > 0
     }
     
-    /// 判断下一个弹窗是否是插入进来的
-    private func nextAlertIsInset()->Bool {
-        guard
-            let nextItem = alerts.wp_get(of: 1)
-        else { return false }
-        if nextItem.level <= 0 {
-            return true
-        }
-        return false
-    }
-    
-    /// 移动一个item并插入到插入数组的第一个
+    /// 移动一个item并插入到插入队列的第一个
     private func moveItemToFist(_ item: Item) {
         current = nil
         item.alert.removeFromSuperview()
@@ -601,7 +590,9 @@ extension WPAlertManager {
     }
 
     /// 执行弹窗动画
-    /// insert 是否强制
+    /// - Parameters:
+    ///   - isShow: 是显示还是移除
+    ///   - option: 选择
     private func alertAnimation(isShow: Bool, option: Option) {
         if let item = current {
             var layoutOption: LayoutOption = .layout
@@ -638,14 +629,14 @@ extension WPAlertManager {
             }
             
             animation(item.alert.alertInfo().animationType,
-                    duration: duration) {[weak self] in
+                      duration: duration) {[weak self] in
                 self?.animateActuator(item,
                                       isShow: isShow,
                                       layoutOption: layoutOption)
             } completion: {[weak self] resualt in
                 self?.animationActuatorComplete(item,
-                                           resualt: resualt,
-                                           isShow: isShow)
+                                                resualt: resualt,
+                                                isShow: isShow)
             }
 
         } else {
@@ -862,7 +853,7 @@ extension WPAlertManager {
     }
 }
 
-/// 蒙板视图
+/// 蒙层视图
 class WPAlertManagerMask: UIView {
     /// 蒙板视图
     let contentView = UIButton()
@@ -871,7 +862,7 @@ class WPAlertManagerMask: UIView {
         didSet {
             contentView.backgroundColor = maskInfo.color
             contentView.isUserInteractionEnabled = !maskInfo.enabled
-            isHidden = maskInfo.isHidden
+            isHidden = maskInfo.hidden
         }
     }
     
