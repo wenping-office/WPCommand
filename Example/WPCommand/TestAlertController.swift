@@ -62,7 +62,7 @@ class TestAlert: WPBaseView,WPAlertProtocol {
     }
 
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .bottomWidthToFill(0), startDuration: 0.3, stopLocation: .bottom, stopDuration: 0.3)
+        return .init(.default, location: .bottomToFill(0), showDuration: 0.3, direction: .bottom, dismissDuration: 0.3)
     }
     
     func touchMask() {

@@ -28,10 +28,10 @@ class TestLayoutVC: WPBaseVC {
         }
 
         
-        let view = UIView()
-        self.view.addSubview(view)
-        view.backgroundColor = .wp.random
-        view.snp.makeConstraints { make in
+        let testView = UIView()
+        self.view.addSubview(testView)
+        testView.backgroundColor = .wp.random
+        testView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview()
             make.width.equalTo(300)
@@ -39,7 +39,11 @@ class TestLayoutVC: WPBaseVC {
         }
 
         let alert = LayoutAlert("alkfdjadf")
-        alert.wp.show(in:view)
+        alert.wp.show(in: testView) { state in
+            print(state,"------")
+        }
+
+
         
 //        LayoutAlert("疯狂大叫弗").show(in:view)
     }
@@ -77,7 +81,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
         }
     }
     
-    func updateStatus(status: WPAlertManager.Progress) {
+    func updateStatus(status: WPAlertManager.State) {
         
         switch status {
         case .cooling:
@@ -102,7 +106,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .top(.zero), startDuration: 0.2, stopLocation: .right, stopDuration: 0.2)
+        return .init(.default, location: .top(.zero), showDuration: 0.2, direction: .right, dismissDuration: 0.2)
     }
     
     func maskInfo() -> WPAlertManager.Mask {
@@ -188,10 +192,10 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     
     func alertInfo() -> WPAlertManager.Alert {
         return .init(.default,
-                     startLocation: .center(),
-                     startDuration: 0.3,
-                     stopLocation: .center,
-                     stopDuration: 0.3)
+                     location: .center(),
+                     showDuration: 0.3,
+                     direction: .center,
+                     dismissDuration: 0.3)
     }
     
     func touchMask() {
@@ -199,9 +203,8 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
 //        FrameAlert().show(in:superview,option: .insert(keep: true))
     }
     
-    func updateStatus(status: WPAlertManager.Progress) {
-        
-        if status == .didShow {
+    func stateDidUpdate(state: WPAlertManager.State) {
+        if state == .didShow {
             idDidShow = true
             field.showHighlight(to: self, touch: { view in
                 
@@ -210,7 +213,7 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
             idDidShow = false
         }
 
-        if status == .didShow  {
+        if state == .didShow  {
 
             WPSystem.keyboard.offsetY(in: self.btn, bag: wp.disposeBag).subscribe(onNext: {[weak self] value in
 //                let test = self.lab.text
