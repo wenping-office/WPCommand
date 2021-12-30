@@ -27,7 +27,18 @@ class TestLayoutVC: WPBaseVC {
             make.top.equalTo(120)
         }
 
-        LayoutAlert("疯狂大叫弗兰克大家的反馈啦就是大福利卡技术的饭卡老大积分卡拉的就是发老大积分啦的").show()
+        
+        let view = UIView()
+        self.view.addSubview(view)
+        view.backgroundColor = .wp.random
+        view.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.width.equalTo(300)
+            make.height.equalTo(400)
+        }
+
+        LayoutAlert("疯狂大叫弗兰克大家的反馈啦就是大福利卡技术的饭卡老大积分卡拉的就是发老大积分啦的").show(in:view)
     }
 }
 
@@ -101,11 +112,15 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
 }
 
+class testBtn : UITextField,WPHighlightMaskProtocol{
+    
+}
+
 class LayoutAlert:WPBaseView,WPAlertProtocol{
 
     let btn = UIButton()
     let lab = UILabel()
-    let field = UITextField()
+    let field = testBtn()
 
     var isObser = false
     var idDidShow = false
@@ -130,7 +145,7 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
 
         btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] in
             let test = self?.lab.text
-//            self?.lab.text = test! + test!
+            self?.lab.text = test! + test!
 //            self?.btn.snp.updateConstraints { make in
 //                make.width.equalTo(260)
 //            }
@@ -177,21 +192,24 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     }
     
     func touchMask() {
-//        dismiss()
-        FrameAlert().show(option: .insert(keep: true))
+        dismiss()
+//        FrameAlert().show(in:superview,option: .insert(keep: true))
     }
     
     func updateStatus(status: WPAlertManager.Progress) {
         
         if status == .didShow {
             idDidShow = true
+            field.showHighlight(to: self, touch: { view in
+                
+            }, color: UIColor.init(0, 0, 0, 0.7))
         }else{
             idDidShow = false
         }
 
         if status == .didShow  {
 
-            WPSystem.keyboard.offsetY(in: self, bag: wp.disposeBag).subscribe(onNext: {[weak self] value in
+            WPSystem.keyboard.offsetY(in: self.btn, bag: wp.disposeBag).subscribe(onNext: {[weak self] value in
 //                let test = self.lab.text
 //                self.lab.text = test! + test!
                 guard
@@ -199,7 +217,7 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
                 else { return }
                 
                 if self.idDidShow {
-                    let newValue = (value != 0) ? value - 100 : 0
+                    let newValue = (value != 0) ? value - 10 : 0
                     //                WPAlertManager.default.update(size: .init(width: 50, height: -100))
                     WPAlertManager.default.update(offset: .init(x: 0, y: newValue))
                 }else{

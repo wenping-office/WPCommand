@@ -77,19 +77,19 @@ public extension WPHighlightMaskProtocol {
         topTapGesture.rx.event.bind(onNext: { gesture in
             topView.highlighMaskTouch(tapGesture: gesture, targetView: topView)
             touch?(topView)
-        }).disposed(by: topView.wp_disposeBag)
+        }).disposed(by: (topView as UIView).wp.disposeBag)
         bottomTapGesture.rx.event.bind(onNext: { gesture in
             bottomView.highlighMaskTouch(tapGesture: gesture, targetView: bottomView)
             touch?(bottomView)
-        }).disposed(by: topView.wp_disposeBag)
+        }).disposed(by: (topView as UIView).wp.disposeBag)
         leftTapGesture.rx.event.bind(onNext: { gesture in
             leftView.highlighMaskTouch(tapGesture: gesture, targetView: leftView)
             touch?(leftView)
-        }).disposed(by: topView.wp_disposeBag)
+        }).disposed(by: (topView as UIView).wp.disposeBag)
         rightTapGesture.rx.event.bind(onNext: { gesture in
             rightView.highlighMaskTouch(tapGesture: gesture, targetView: rightView)
             touch?(rightView)
-        }).disposed(by: topView.wp_disposeBag)
+        }).disposed(by: (topView as UIView).wp.disposeBag)
 
         topView.backgroundColor = color
         bottomView.backgroundColor = color
