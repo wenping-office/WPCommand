@@ -27,7 +27,7 @@ class TestAlertController: WPBaseVC {
         super.viewDidAppear(animated)
         
         let alert = TestAlert()
-        alert.show()
+        alert.wp.show()
         
         WPGCD.main_asyncAfter(.now() + 3, task: {
             self.showAlert(alert: alert)
@@ -42,11 +42,11 @@ class TestAlertController: WPBaseVC {
         
         let vc = WPBaseVC()
         navigationController?.pushViewController(vc, animated: true)
-        alert.dismiss()
+
     }
 }
 
-class TestAlert: WPBaseView,WPAlertBridgeProtocol {
+class TestAlert: WPBaseView,WPAlertProtocol {
     
     let contentView = UILabel()
     
@@ -66,7 +66,7 @@ class TestAlert: WPBaseView,WPAlertBridgeProtocol {
     }
     
     func touchMask() {
-        dismiss()
+        wp.dismiss()
     }
 }
 

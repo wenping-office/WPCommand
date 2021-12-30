@@ -38,7 +38,10 @@ class TestLayoutVC: WPBaseVC {
             make.height.equalTo(400)
         }
 
-        LayoutAlert("疯狂大叫弗兰克大家的反馈啦就是大福利卡技术的饭卡老大积分卡拉的就是发老大积分啦的").show(in:view)
+        let alert = LayoutAlert("alkfdjadf")
+        alert.wp.show(in:view)
+        
+//        LayoutAlert("疯狂大叫弗").show(in:view)
     }
 }
 
@@ -58,7 +61,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
         addSubview(field)
 
         btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] _ in
-            self?.dismiss()
+            self?.wp.dismiss()
         }).disposed(by: wp.disposeBag)
         field.backgroundColor = .red
     }
@@ -95,7 +98,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
 
     func touchMask() {
-        dismiss()
+        wp.dismiss()
     }
     
     func alertInfo() -> WPAlertManager.Alert {
@@ -192,7 +195,7 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     }
     
     func touchMask() {
-        dismiss()
+        wp.dismiss()
 //        FrameAlert().show(in:superview,option: .insert(keep: true))
     }
     
