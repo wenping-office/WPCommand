@@ -246,6 +246,9 @@ public class WPAlertManager {
     /// 移除所有弹窗
     public func removeAllAlert() {
         current?.alert.removeFromSuperview()
+        alerts.forEach { item in
+            item.alert.stateDidUpdate(state: .remove)
+        }
         alerts = []
     }
 
