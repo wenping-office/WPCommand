@@ -27,7 +27,25 @@ class TestLayoutVC: WPBaseVC {
             make.top.equalTo(120)
         }
 
-        LayoutAlert("疯狂大叫弗兰克大家的反馈啦就是大福利卡技术的饭卡老大积分卡拉的就是发老大积分啦的").show()
+        
+        let testView = UIView()
+        self.view.addSubview(testView)
+        testView.backgroundColor = .wp.random
+        testView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.width.equalTo(300)
+            make.height.equalTo(400)
+        }
+
+        let alert = LayoutAlert("alkfdjadf")
+        alert.wp.show(in: testView) { state in
+            print(state,"------")
+        }
+
+
+        
+//        LayoutAlert("疯狂大叫弗").show(in:view)
     }
 }
 
@@ -47,7 +65,7 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
         addSubview(field)
 
         btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] _ in
-            self?.dismiss()
+            self?.wp.dismiss()
         }).disposed(by: wp.disposeBag)
         field.backgroundColor = .red
     }
@@ -63,14 +81,13 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
         }
     }
     
-    func updateStatus(status: WPAlertManager.Progress) {
+    func updateStatus(status: WPAlertManager.State) {
         
         switch status {
         case .cooling:
             print("frame cooling")
         case.willShow:
             print("frame willShow")
-            
         case .didShow:
             print("frame didShow")
         case .willPop:
@@ -85,53 +102,137 @@ class FrameAlert:WPBaseView,WPAlertProtocol {
     }
 
     func touchMask() {
-        dismiss()
+        wp.dismiss()
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.default, startLocation: .bottom(.zero), startDuration: 0.2, stopLocation: .bottom, stopDuration: 0.2)
+        return .init(.default, location: .top(.zero), showDuration: 0.2, direction: .right, dismissDuration: 0.2)
     }
     
+    func maskInfo() -> WPAlertManager.Mask {
+        return .init(color: .red, enabled: false, hidden: true)
+    }
+
     deinit {
         
         print("frame deinit")
     }
 }
 
+class testBtn : UITextField,WPHighlightMaskProtocol{
+    
+}
+
 class LayoutAlert:WPBaseView,WPAlertProtocol{
 
     let btn = UIButton()
-    
+    let lab = UILabel()
+    let field = testBtn()
+
+    var isObser = false
+    var idDidShow = false
+
     init(_ string:String) {
-        super.init(frame: .zero)
-        btn.setTitle("Layout" + string, for: .normal)
+        super.init(frame: .init(x: 0, y: 0, width: 0, height: 0))
+        btn.setTitle("更新尺寸", for: .normal)
+        btn.setTitleColor(.black, for: .normal)
+        lab.text = string
     }
 
     override func initSubView() {
-        btn.backgroundColor = .wp.random
-        btn.setTitle("Layout", for: .normal)
+
+        btn.backgroundColor = .white
         addSubview(btn)
         
-        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] _ in
-            self?.dismiss()
+        lab.numberOfLines = 0
+        addSubview(lab)
+        
+        field.placeholder = "键盘"
+        addSubview(field)
+
+        btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] in
+            let test = self?.lab.text
+            self?.lab.text = test! + test!
+//            self?.btn.snp.updateConstraints { make in
+//                make.width.equalTo(260)
+//            }
+            
+//            WPAlertManager.default.updateSize(.bounces(damping: 0.3, velocity: 0.1, options: .allowUserInteraction),
+//                                              0.2,
+//                                                   .init(width: 50,     height: 50))
+            
+            WPAlertManager.default.update(offset: .init(x: 0, y: -10))
+            
         }).disposed(by: wp.disposeBag)
+        
+        wp.subViewRandomColor()
     }
     
     override func initSubViewLayout() {
+
         btn.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.size.equalTo(CGSize.init(width: 200, height: 200))
+            make.top.equalToSuperview()
+            make.height.equalTo(44)
+            make.left.right.equalToSuperview()
+            make.width.equalTo(200)
+        }
+        
+        field.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.height.equalTo(44)
+            make.top.equalTo(btn.snp.bottom)
+        }
+
+        lab.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.equalTo(field.snp.bottom)
+            make.bottom.equalToSuperview()
         }
     }
     
     func alertInfo() -> WPAlertManager.Alert {
-        return .init(.bounces(damping: 0.5, velocity: 0.1, options: .curveLinear),
-                     startLocation: .center(),
-                     startDuration: 0.3,
-                     stopLocation: .top,
-                     stopDuration: 10)
+        return .init(.default,
+                     location: .center(),
+                     showDuration: 0.3,
+                     direction: .center,
+                     dismissDuration: 0.3)
     }
     
+    func touchMask() {
+        wp.dismiss()
+//        FrameAlert().show(in:superview,option: .insert(keep: true))
+    }
+    
+    func stateDidUpdate(state: WPAlertManager.State) {
+        if state == .didShow {
+            idDidShow = true
+            field.showHighlight(to: self, touch: { view in
+                
+            }, color: UIColor.init(0, 0, 0, 0.7))
+        }else{
+            idDidShow = false
+        }
+
+        if state == .didShow  {
+
+            WPSystem.keyboard.offsetY(in: self.btn, bag: wp.disposeBag).subscribe(onNext: {[weak self] value in
+//                let test = self.lab.text
+//                self.lab.text = test! + test!
+                guard
+                    let self = self
+                else { return }
+                
+                if self.idDidShow {
+                    let newValue = (value != 0) ? value - 10 : 0
+                    //                WPAlertManager.default.update(size: .init(width: 50, height: -100))
+                    WPAlertManager.default.update(offset: .init(x: 0, y: newValue))
+                }else{
+                    
+                }
+            }).disposed(by: wp.disposeBag)
+        }
+    }
+
     deinit {
         print("弹窗释放")
     }

@@ -55,7 +55,7 @@ open class WPBaseAlertVC: UIViewController {
     open func observeSubViewEvent() {
         grayView.rx.tap.subscribe(onNext: { [weak self] in
             self?.dismiss()
-        }).disposed(by: wp_disposeBag)
+        }).disposed(by: wp.disposeBag)
     }
 
     /// 显示弹窗
