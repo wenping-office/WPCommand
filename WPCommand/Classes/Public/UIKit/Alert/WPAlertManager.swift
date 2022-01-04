@@ -239,6 +239,7 @@ public class WPAlertManager {
             elmt.alert.tag == alert.tag
         }
         alert.stateDidUpdate(state: .remove)
+        alert.stateHandler?(.remove)
         
         current = alerts.first
     }
@@ -246,8 +247,9 @@ public class WPAlertManager {
     /// 移除所有弹窗
     public func removeAllAlert() {
         current?.alert.removeFromSuperview()
+        
         alerts.forEach { item in
-            item.alert.stateDidUpdate(state: .remove)
+            item.state = .remove
         }
         alerts = []
     }

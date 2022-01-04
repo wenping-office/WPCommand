@@ -206,9 +206,10 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     func stateDidUpdate(state: WPAlertManager.State) {
         if state == .didShow {
             idDidShow = true
+            
             field.showHighlight(to: self, touch: { view in
-                
-            }, color: UIColor.init(0, 0, 0, 0.7))
+
+            }, color: UIColor.init(0, 0, 0, 1))
         }else{
             idDidShow = false
         }
