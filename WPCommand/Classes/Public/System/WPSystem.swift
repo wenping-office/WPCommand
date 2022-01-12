@@ -327,7 +327,8 @@ public extension WPSystem {
     /// - Parameters:
     ///   - phone: 电话
     ///   - failed: 拨打失败
-    static func callPhone(phone: String, failed: (()->Void)? = nil) {
+    static func call(phone: String,
+                     failed: (()->Void)? = nil) {
         let phoneStr = "tel://" + phone.wp.filterSpace
         if let phoneURL = URL(string: phoneStr), UIApplication.shared.canOpenURL(phoneURL) {
             UIApplication.shared.openURL(phoneURL)

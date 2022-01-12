@@ -29,9 +29,7 @@ public extension WPSpace where Base == CGPoint {
     }
 
     /// 是否是自定义
-    var isCustom : Bool
-
-    {
+    var isCustom : Bool{
         return base.x == CGFloat(auto) &&
 
             base.y == CGFloat(auto)
