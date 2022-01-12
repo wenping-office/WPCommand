@@ -291,22 +291,22 @@ public class WPMenuView: WPBaseView {
     override public func observeSubViewEvent() {
         contentView.bodyView.contentOffSet = {[weak self] x,defaultIndex in
 
-            let intX = Int(x)
-            
-            var offset = x - CGFloat(intX) == 0 ? 1 : x - (CGFloat(intX))
-
-            let current = self?.contentView.navView.data.wp_get(of: defaultIndex)
-            
-            print(x,defaultIndex)
-
-            if intX < defaultIndex { // 左
-                let lastItem = self?.contentView.navView.data.wp_get(of: defaultIndex - 1)
-                lastItem?.navigationItem.willRolling(with: 1 - offset)
-            }else{
-                let nextItem = self?.contentView.navView.data.wp_get(of: defaultIndex + 1)
-                nextItem?.navigationItem.willRolling(with: offset)
-                current?.navigationItem.willRolling(with: 1 - offset)
-            }
+//            let intX = Int(x)
+//
+//            var offset = x - CGFloat(intX) == 0 ? 1 : x - (CGFloat(intX))
+//
+//            let current = self?.contentView.navView.data.wp_get(of: defaultIndex)
+//
+//            print(x,defaultIndex)
+//
+//            if intX < defaultIndex { // 左
+//                let lastItem = self?.contentView.navView.data.wp_get(of: defaultIndex - 1)
+//                lastItem?.navigationItem.willRolling(with: 1 - offset)
+//            }else{
+//                let nextItem = self?.contentView.navView.data.wp_get(of: defaultIndex + 1)
+//                nextItem?.navigationItem.willRolling(with: offset)
+//                current?.navigationItem.willRolling(with: 1 - offset)
+//            }
         }
         
         contentView.bodyView.didSelected = { [weak self] index in
