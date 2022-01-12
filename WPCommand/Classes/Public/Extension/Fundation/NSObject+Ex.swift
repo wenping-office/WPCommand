@@ -40,7 +40,7 @@ public extension WPSpace where Base: NSObject {
 
     /// 当前keyWindow
     static var keyWindow : UIWindow? {
-        return NSObject().wp.keyWindow
+        return NSObject.wp.keyWindow
     }
 
     /// 当前KeyController

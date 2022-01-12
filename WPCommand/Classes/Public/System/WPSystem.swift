@@ -15,32 +15,6 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-/// 默认View边距
-public let wp_viewEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: -16, right: -16)
-/// 屏幕尺寸
-public var wp_Screen: CGRect {
-    return UIScreen.main.bounds
-}
-
-/// 导航栏高度
-public var wp_navigationHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height + UINavigationController().navigationBar.frame.size.height
-/// 安全距离
-public let wp_safeArea = wp_isFullScreen ? UIEdgeInsets(top: 44.0, left: 0.0, bottom: 34.0, right: 0.0) : UIEdgeInsets.zero
-/// 是否是刘海屏
-public var wp_isFullScreen: Bool {
-    if #available(iOS 11, *) {
-        guard let w = UIApplication.shared.delegate?.window, let unwrapedWindow = w else {
-            return false
-        }
-        
-        if unwrapedWindow.safeAreaInsets.left > 0 || unwrapedWindow.safeAreaInsets.bottom > 0 {
-            print(unwrapedWindow.safeAreaInsets)
-            return true
-        }
-    }
-    return false
-}
-
 public extension WPSystem {
     /// 当前设备类型
     static var deviceType: DeviceType {
@@ -197,11 +171,39 @@ public extension WPSystem {
         public var custom = Custom()
         /// 系统相关
         public var system = System()
+        /// 导航栏高度
+        public var navigationHeight : CGFloat{
+            return UIApplication.shared.statusBarFrame.size.height + UINavigationController().navigationBar.frame.size.height
+        }
+        /// 安全内边距
+        public var safeArea : UIEdgeInsets{
+            if #available(iOS 11.0, *) {
+                return UIApplication.shared.delegate!.window??.safeAreaInsets ?? .zero
+            } else {
+                return .zero
+            }
+        }
+        
+        /// 屏幕大小
+        public var size : CGSize{
+            return UIScreen.main.bounds.size
+        }
+        
+        /// 是否是刘海屏
+        public var isFull : Bool{
+            if #available(iOS 11, *) {
+                if safeArea.left > 0 || safeArea.bottom > 0 {
+                    return true
+                }
+            }
+            return false
+        }
+        
         /// 判断是否是16:9屏
         /// - Returns: true 是 false不是
         public var is16x9: Bool {
-            let maxWidth = wp_Screen.width
-            let Sheight = wp_Screen.height
+            let maxWidth = size.width
+            let Sheight = size.height
             let maxHeight = maxWidth / 9 * 16
             let range = Sheight - maxHeight
             return range <= 2
@@ -227,8 +229,8 @@ public extension WPSystem {
             /// 获取一个比例高度
             /// - Returns: 比例高度
             public var height: CGFloat {
-                let maxHeight = wp_Screen.height
-                let maxWidth = wp_Screen.width
+                let maxHeight = WPSystem.screen.size.height
+                let maxWidth = WPSystem.screen.size.width
                 switch self {
                 case .p16x9:
                     if WPSystem.screen.is16x9 {

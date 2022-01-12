@@ -13,9 +13,9 @@ import RxSwift
 
 class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
     
-    let test1 = TestMenuVC1()
+    let test1 = TestMenuVC2()
     let test2 = TestMenuVC2()
-    let test3 = TestMenuVC1()
+    let test3 = TestMenuVC2()
     let header = TestMenuHeaer()
 
     func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol? {
@@ -44,9 +44,8 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         
         view.backgroundColor = .white
         menuView.dataSource = self
-        menuView.multiGesture = true
         menuView.tableView.bounces = false
-        let items = [testMenuItem(),testMenuItem(),testMenuItem()]
+        let items = [testMenuItem(index: 0),testMenuItem(index: 1),testMenuItem(index: 2)]
         menuView.setNavigation(items)
         menuView.selected(0)
     }
@@ -70,9 +69,11 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
 
 class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
 
-    init() {
+    init(index:Int) {
         super.init(frame: .zero)
-        text = "测试代码"
+        text = "测试代码\(index)"
+        font = UIFont.boldSystemFont(ofSize: 10)
+        textAlignment = .center
     }
     
     required init?(coder: NSCoder) {
@@ -80,7 +81,7 @@ class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
     }
     
     func menuItemWidth() -> CGFloat {
-        return CGFloat(arc4random_uniform(50) + 50)
+        return CGFloat(150)
     }
     
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
@@ -89,6 +90,15 @@ class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
         }else{
             backgroundColor = .blue
         }
+    }
+    
+    func willRolling(with percentage: CGFloat) {
+        
+        let size = 10 + (percentage * 5)
+        
+        self.font = UIFont.boldSystemFont(ofSize: size)
+
+//        print(size,percentage)
     }
 }
 
@@ -123,7 +133,7 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
 
         menuView.dataSource = self
         menuView.horizontalGestureAdaptation = true
-        menuView.setNavigation([testMenuItem(),testMenuItem()])
+//        menuView.setNavigation([testMenuItem(),testMenuItem()])
         
         view.backgroundColor = .red
         view.addSubview(menuView)

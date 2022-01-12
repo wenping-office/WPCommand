@@ -7,7 +7,7 @@
 
 import UIKit
 
-private var WPitemPointer = "WPItemsModelPointer"
+private var WPitemPointer = "WPItemModelPointer"
 
 public protocol WPTableCellProtocol: NSObjectProtocol, UITableViewCell {
     /// item模型创建时是什么item cell就会获得一个什么样的item

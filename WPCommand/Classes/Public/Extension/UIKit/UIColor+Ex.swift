@@ -8,20 +8,30 @@
 
 import UIKit
 
-public extension UIColor {
+public extension WPSpace where Base: UIColor {
     /// 返回一个颜色
     /// - Parameters:
     ///   - r:红色
     ///   - g:绿色
     ///   - b:蓝色
     ///   - a:透明度
-    convenience init(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat) {
-        self.init(red: r / 255.0, green: g / 255.0, blue: b / 255.0, alpha: a * 255 / 255)
+    static func initWith(_ r: CGFloat,
+                         _ g: CGFloat,
+                         _ b: CGFloat,
+                         _ a: CGFloat)->Base {
+        
+        var alpha : CGFloat = 0
+        if a == 1 {
+            alpha = 255
+        }else if a < 1{
+            alpha = 255 * a
+        }
+        return Base.init(red: r / 255.0, green: g / 255.0, blue: b / 255.0, alpha:alpha / 255)
     }
     
     /// 16进制颜色
     /// - Parameter hexString: 16进制string
-    convenience init(_ hexString: String) {
+    static func initWith(_ hexString: String)->Base {
         let hexStringTrim = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
         let scanner = Scanner(string: hexStringTrim)
         
@@ -41,7 +51,7 @@ public extension UIColor {
         let green = CGFloat(g) / 255.0
         let blue = CGFloat(b) / 255.0
         
-        self.init(red: red, green: green, blue: blue, alpha: 1)
+        return Base.init(red: red, green: green, blue: blue, alpha: 1)
     }
 }
 
@@ -51,7 +61,7 @@ public extension WPSpace where Base: UIColor {
         let r = CGFloat(arc4random_uniform(255))
         let g = CGFloat(arc4random_uniform(255))
         let b = CGFloat(arc4random_uniform(255))
-        return .init(r, g, b, 255)
+        return .wp.initWith(r, g, b, 1)
     }
 
     /// 转换成图片
@@ -122,4 +132,3 @@ public extension WPSpace where Base: UIColor {
         }
     }
 }
-

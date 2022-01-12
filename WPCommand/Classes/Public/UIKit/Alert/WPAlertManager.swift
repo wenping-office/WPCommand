@@ -190,7 +190,7 @@ public class WPAlertManager {
     /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
-            return UIApplication.shared.wp.topWindow
+            return UIApplication.wp.keyWindow!
         } else {
             return target!
         }

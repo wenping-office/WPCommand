@@ -75,12 +75,6 @@ public extension Array{
 }
 
 public extension Array {
-    /// 复制一个array
-    var wp_copy: [Element] {
-        let arr = self
-        return arr
-    }
-    
     /// 过滤元素 返回ture过滤 否则不过滤
     /// - Parameter resualt: 过滤结果会改变自身 数组应该为可变属性
     mutating func wp_filter(by resultBlock: @escaping (Element)->Bool) {

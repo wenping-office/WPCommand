@@ -11,8 +11,8 @@ import UIKit
 
 public extension WPSpace where Base: UIView {
     /// 从xib加载
-    static func initWithXibName(xib: String) -> Any? {
-        guard let nibs = Bundle.main.loadNibNamed(xib, owner: nil, options: nil) else {
+    static func initWith(_ xibName: String) -> Any? {
+        guard let nibs = Bundle.main.loadNibNamed(xibName, owner: nil, options: nil) else {
             return nil
         }
         return nibs[0]
@@ -414,7 +414,8 @@ class WPToastView: UIView {
         super.init(frame: frame)
         addSubview(backgroundV)
         addSubview(titleL)
-        backgroundV.backgroundColor = .init(0, 0, 0, 255 * 0.6)
+        backgroundV.backgroundColor = .wp.initWith(0, 0, 0, 0.6)
+
         titleL.numberOfLines = 0
         titleL.textColor = .white
         layer.cornerRadius = 8

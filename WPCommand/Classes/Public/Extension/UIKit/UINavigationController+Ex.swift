@@ -13,14 +13,16 @@ public extension WPSpace where Base: UINavigationController {
     /// - Parameters:
     ///   - type: vc类型
     ///   - completion: 完成回调
-    func popToViewController<T: UIViewController>(_ type: T.Type, completion: ((T)->Void?)? = nil) {
+    func pop<T: UIViewController>(to type: T.Type,
+                                  animated:Bool = true,
+                                  completion: ((T)->Void?)? = nil) {
         let targetControl = base.viewControllers.wp_elmt(of: { elmt in
             elmt.isKind(of: type)
         })
         guard
             let control = targetControl
         else { return }
-        base.popToViewController(control, animated: true)
+        base.popToViewController(control, animated: animated)
         completion?(control as! T)
     }
     
@@ -28,7 +30,8 @@ public extension WPSpace where Base: UINavigationController {
     /// - Parameters:
     ///   - animated: 是否显示动画
     ///   - completion: 完成回调
-    func popViewController(animated: Bool = true, completion: ((UIViewController)->Void?)? = nil) {
+    func pop(animated: Bool = true,
+             completion: ((UIViewController)->Void?)? = nil) {
         if base.viewControllers.count <= 1 { return }
         if let viewController = base.viewControllers.wp_get(of: base.viewControllers.count - 2) {
             let pushCompletion: ()->Void = {
@@ -46,7 +49,8 @@ public extension WPSpace where Base: UINavigationController {
     /// - Parameters:
     ///   - animated: 是否显示动画
     ///   - completion: 完成回调
-    func popToRootViewController(animated: Bool = true, completion: ((UIViewController)->Void?)? = nil) {
+    func popToRootViewController(animated: Bool = true,
+                                 completion: ((UIViewController)->Void?)? = nil) {
         if let viewController = base.viewControllers.first {
             let pushCompletion: ()->Void = {
                 completion?(viewController)
@@ -64,7 +68,9 @@ public extension WPSpace where Base: UINavigationController {
     ///   - viewController: controller
     ///   - animated: 是否显示动画
     ///   - completion: 完成回调
-    func pushViewController<T: UIViewController>(_ viewController: T, animated: Bool = true, completion: ((T)->Void)? = nil) {
+    func push<T: UIViewController>(_ viewController: T,
+                                   animated: Bool = true,
+                                   completion: ((T)->Void)? = nil) {
         let pushCompletion: ()->Void = {
             completion?(viewController)
         }

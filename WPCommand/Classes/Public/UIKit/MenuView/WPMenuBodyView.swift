@@ -36,11 +36,13 @@ public class WPMenuBodyView: UITableViewCell {
     /// 当前数据源
     var data: [WPMenuBodyViewItem] = []
     /// 内容滚动回调
-    var contentOffSet: ((CGFloat) -> Void)?
+    var contentOffSet: ((_ offsetX:CGFloat,_ defaultIndex:Int) -> Void)?
     /// 当前滚动到的索引
     var didSelected: ((Int) -> Void)?
     /// 是否执行选中动画
     var selectedAnimate = false
+    /// 开始拖动时point
+    var willBeginDraggingPoint : CGPoint = .zero
     
     init() {
         super.init(style: .default, reuseIdentifier: nil)
@@ -99,12 +101,19 @@ extension WPMenuBodyView: UICollectionViewDelegate {
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offSet = scrollView.contentOffset.x / scrollView.wp.width
-        contentOffSet?(offSet)
+        let defaultIndex =  willBeginDraggingPoint.x / scrollView.wp.width
+        
+        contentOffSet?(offSet,Int(defaultIndex))
+    }
+
+    public func scrollViewWillBeginDragging(_ scrollView:UIScrollView){
+        willBeginDraggingPoint = scrollView.contentOffset
     }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let index = Int(scrollView.contentOffset.x / scrollView.wp.width + 0.5)
         didSelected?(index)
+        contentOffSet?(0,index)
     }
 }
 
