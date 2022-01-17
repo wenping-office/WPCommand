@@ -9,6 +9,10 @@ import UIKit
 
 /// 默认menuitemView实现渐变动画 暂未实现
 public class WPDefaultMenuNavigationIItemView: WPBaseView, WPMenuNavigationViewProtocol {
+    public func willRolling(with percentage: Double) {
+
+    }
+    
     public func menuItemWidth() -> CGFloat {
         return 30
     }

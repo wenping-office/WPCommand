@@ -12,7 +12,7 @@ public protocol WPMenuNavigationViewProtocol: WPMenuViewChildViewProtocol, UIVie
     func menuItemWidth() -> CGFloat
     
     /// 滚动百分比
-    func willRolling(with percentage:CGFloat)
+    func willRolling(with percentage:Double)
 
 }
 

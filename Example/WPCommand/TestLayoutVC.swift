@@ -39,7 +39,7 @@ class TestLayoutVC: WPBaseVC {
         }
 
         let alert = LayoutAlert("alkfdjadf")
-        alert.wp.show(in: testView) { state in
+        alert.wp.show(in: nil) { state in
             print(state,"------")
         }
 
