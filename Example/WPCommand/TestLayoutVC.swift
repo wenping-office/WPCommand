@@ -39,13 +39,18 @@ class TestLayoutVC: WPBaseVC {
         }
 
         let alert = LayoutAlert("alkfdjadf")
-        alert.wp.show(in: testView) { state in
+        alert.wp.show(in: nil) { state in
             print(state,"------")
         }
 
+        arithmeticMean(3,3,23)
 
-        
 //        LayoutAlert("疯狂大叫弗").show(in:view)
+    }
+    
+    func arithmeticMean(_ numbers:Double...) -> Int {
+        
+        return 0
     }
 }
 
@@ -207,8 +212,8 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
         if state == .didShow {
             idDidShow = true
             field.showHighlight(to: self, touch: { view in
-                
-            }, color: UIColor.init(0, 0, 0, 0.7))
+
+            }, color: .wp.initWith(0, 0, 0, 1))
         }else{
             idDidShow = false
         }

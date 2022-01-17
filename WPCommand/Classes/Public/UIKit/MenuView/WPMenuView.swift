@@ -17,12 +17,12 @@ public extension WPMenuView{
     }
     
     /// 身体视图是否执行选中动画
-    var bodyViewSelecteAnimate: Bool {
+    var selectedAnimation: Bool {
         set {
-            contentView.bodyView.selectedAnimate = newValue
+            contentView.bodyView.selectedAnimation = newValue
         }
         get {
-            return contentView.bodyView.selectedAnimate
+            return contentView.bodyView.selectedAnimation
         }
     }
     /// 头部视图
@@ -235,6 +235,9 @@ public class WPMenuView: WPBaseView {
     private let contentView: WPMenuContentTableView
     /// 导航栏选中样式
     public var navigationSelectedStyle: NavigationSelectedStyle = .center
+    /// 当前选中的索引
+    public private(set) var currentIndex:Int?
+    
     /// 导航栏选中动画样式
     private var navSelectedStyle: UICollectionView.ScrollPosition {
         switch navigationSelectedStyle {
@@ -289,10 +292,29 @@ public class WPMenuView: WPBaseView {
     }
     
     override public func observeSubViewEvent() {
-        contentView.bodyView.contentOffSet = { _ in
+
+        contentView.bodyView.contentOffSet = {[weak self] x in
+            /// 偏移量
+            var offset : Double = 0
+            let defaultIndex = Int((x + 0.5))
+            let current = self?.contentView.navView.data.wp_get(of: defaultIndex)
+            /// 需要增量的索引
+            let intX = Int(x)
+            offset = x - Double(intX)
+            if intX < defaultIndex {
+                self?.contentView.navView.data.wp_get(of: defaultIndex + 1)?.navigationItem.willRolling(with: 0)
+                self?.contentView.navView.data.wp_get(of: defaultIndex - 1)?.navigationItem.willRolling(with: 1 - offset)
+                current?.navigationItem.willRolling(with: offset)
+            }else if x > CGFloat(defaultIndex){
+                self?.contentView.navView.data.wp_get(of: defaultIndex - 1)?.navigationItem.willRolling(with: 0)
+                current?.navigationItem.willRolling(with: offset)
+                self?.contentView.navView.data.wp_get(of: defaultIndex + 1)?.navigationItem.willRolling(with: Double(offset))
+                current?.navigationItem.willRolling(with: 1 - offset)
+            }
         }
         
         contentView.bodyView.didSelected = { [weak self] index in
+            self?.currentIndex = index
             // 代理回掉
             self?.delegate?.menuViewDidSelected(index: index)
             // 设置翻页
@@ -316,6 +338,16 @@ public class WPMenuView: WPBaseView {
         }
         
         contentView.navView.didSelected = { [weak self] index in
+            /// 是否执行选中动画
+            let isAnimation = self?.bodyView.selectedAnimation ?? false
+            if !isAnimation {
+                if let index = self?.currentIndex {
+                    self?.contentView.navView.data.wp_get(of: index)?.navigationItem.willRolling(with: 0)
+                }
+                self?.contentView.navView.data.wp_get(of: index)?.navigationItem.willRolling(with: 1)
+            }
+            
+            self?.currentIndex = index
             self?.contentView.bodyView.selected(index)
             self?.contentView.bodyView.didSelected?(index)
         }
@@ -360,6 +392,7 @@ public extension WPMenuView {
     /// 选中一个item
     func selected(_ index: Int) {
         contentView.navView.didSelected?(index)
+        contentView.navView.data.wp_get(of: index)?.navigationItem.willRolling(with: 1)
     }
 }
 

@@ -52,7 +52,7 @@ public extension WPAlertProtocol {
 
     /// 蒙板属性
     func maskInfo()->WPAlertManager.Mask {
-        return .init(color: UIColor(0, 0, 0, 0.15),
+        return .init(color: .wp.initWith(0, 0, 0, 0.15),
                      enabled: false,
                      hidden: false)
     }

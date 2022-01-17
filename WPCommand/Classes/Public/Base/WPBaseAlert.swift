@@ -32,7 +32,7 @@ open class WPBaseAlert: UIView {
     /// 结束动画时间
     open var endDuration: CGFloat { return 0.3 }
     /// 蒙板颜色
-    open var maskColor: UIColor { return UIColor(0, 0, 0, 0.15) }
+    open var maskColor: UIColor { return .wp.initWith(0, 0, 0, 0.15)}
 
     override public init(frame: CGRect) {
         super.init(frame: frame)

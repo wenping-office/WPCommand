@@ -51,11 +51,10 @@ public extension WPHighlightMaskProtocol {
     /// - Parameter view: 高亮添加到的视图 注：view的frame必须稳定以后才可以调用、否则有可能显示位置不准,并且view必须是self的底层，看起来要比view一般是widow或者view的superView
     func showHighlight(to view: UIView? = nil,
                        touch: ((WPHighlightViewProtocol) -> Void)? = nil,
-                       color: UIColor = UIColor(0, 0, 0, 0.4))
-    {
+                       color: UIColor = .wp.initWith(0, 0, 0, 0.4)){
         removeHighlight(of: view)
 
-        let keyView = view != nil ? view : UIApplication.shared.wp.topWindow
+        let keyView = view != nil ? view : UIApplication.wp.keyWindow!
         let keyViewFrame: CGRect = convert(bounds, to: keyView)
 
         let topView = highlightTopView()
@@ -142,7 +141,7 @@ public extension WPHighlightMaskProtocol {
     func removeHighlight(of view: UIView? = nil,
                          completion: ((WPHighlightMaskProtocol) -> Void)? = nil)
     {
-        let keyView = view != nil ? view : UIApplication.shared.wp.topWindow
+        let keyView = view != nil ? view : UIApplication.wp.keyWindow
         keyView?.subviews.forEach { elmt in
             let highView = elmt as? WPHighlightViewProtocol
             highView?.removeFromSuperview()

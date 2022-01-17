@@ -10,5 +10,13 @@ import UIKit
 public protocol WPMenuNavigationViewProtocol: WPMenuViewChildViewProtocol, UIView {
     /// 每一个菜单item的width
     func menuItemWidth() -> CGFloat
+    
+    /// 滚动百分比
+    func willRolling(with percentage:Double)
+
 }
 
+public extension WPMenuNavigationViewProtocol{
+    
+    func willRolling(with percentage:CGFloat){}
+}

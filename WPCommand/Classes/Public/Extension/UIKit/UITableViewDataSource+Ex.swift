@@ -10,7 +10,7 @@ import UIKit
 private var WPTableViewDataSourcePointer = "WPTableViewDataSourcePointer"
 
 /// 扩展数据源
-public extension UITableView {
+extension UITableView {
     /// 数据源
     var wp_source: WPTableViewSource {
         set {

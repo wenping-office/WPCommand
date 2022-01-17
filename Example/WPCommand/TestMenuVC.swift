@@ -13,9 +13,12 @@ import RxSwift
 
 class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
     
-    let test1 = TestMenuVC1()
+    let test1 = TestMenuVC2()
     let test2 = TestMenuVC2()
-    let test3 = TestMenuVC1()
+    let test3 = TestMenuVC2()
+    let test4 = TestMenuVC2()
+    let test5 = TestMenuVC2()
+    let test6 = TestMenuVC2()
     let header = TestMenuHeaer()
 
     func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol? {
@@ -25,7 +28,14 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
             return test2
         }else if index == 2{
             return test3
+        }else if index == 3{
+            return test4
+        }else if index == 4{
+            return test5
+        }else if index == 5{
+            return test6
         }
+        
         return nil
     }
 
@@ -44,16 +54,21 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         
         view.backgroundColor = .white
         menuView.dataSource = self
-        menuView.multiGesture = true
         menuView.tableView.bounces = false
-        let items = [testMenuItem(),testMenuItem(),testMenuItem()]
+        let items = [testMenuItem(index: 0),
+                     testMenuItem(index: 1),
+                     testMenuItem(index: 2),
+                     testMenuItem(index: 3),
+                     testMenuItem(index: 4),
+                     testMenuItem(index: 5),]
         menuView.setNavigation(items)
-        menuView.selected(0)
+        menuView.selectedAnimation = true
+        
     }
     
     override func initSubView() {
         
-        menuView.bodyViewSelecteAnimate = true
+//        menuView.selectedAnimation = true
         view.addSubview(menuView)
     }
 
@@ -64,15 +79,22 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
             make.left.equalTo(0)
             make.right.equalTo(0)
         }
+        
+        WPGCD.main_asyncAfter(.now() + 3, task: {
+            self.menuView.selected(4)
+        })
     }
 
 }
 
 class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
 
-    init() {
+    init(index:Int) {
         super.init(frame: .zero)
-        text = "测试代码"
+        text = "测试\(index)"
+        font = UIFont.boldSystemFont(ofSize: 10)
+        textAlignment = .center
+//        backgroundColor = .wp.initWith(0, 0, 0, 1)
     }
     
     required init?(coder: NSCoder) {
@@ -80,7 +102,7 @@ class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
     }
     
     func menuItemWidth() -> CGFloat {
-        return CGFloat(arc4random_uniform(50) + 50)
+        return WPSystem.screen.size.width / 6
     }
     
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
@@ -89,6 +111,15 @@ class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
         }else{
             backgroundColor = .blue
         }
+    }
+    
+    func willRolling(with percentage: Double) {
+        
+        let size = 10 + (percentage * 5)
+        
+        self.font = UIFont.boldSystemFont(ofSize: size)
+//        backgroundColor = .wp.initWith(0, 0, 0, percentage)
+//        print(size,percentage)
     }
 }
 
@@ -123,7 +154,7 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
 
         menuView.dataSource = self
         menuView.horizontalGestureAdaptation = true
-        menuView.setNavigation([testMenuItem(),testMenuItem()])
+//        menuView.setNavigation([testMenuItem(),testMenuItem()])
         
         view.backgroundColor = .red
         view.addSubview(menuView)
@@ -170,6 +201,7 @@ class TestMenuVC2: WPBaseVC,WPMenuBodyViewProtocol {
         view.backgroundColor = .blue
         
         view.addSubview(tableView)
+        tableView.backgroundColor = .wp.random
         
         tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
             WPGCD.main_asyncAfter(.now() + 3, task: {[weak self] in
