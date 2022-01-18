@@ -36,7 +36,7 @@ class WPMenuHeaderView: WPBaseTableViewCell {
     var headerHeight: WPMenuView.HeaderHeightOption = .height(0)
 
     /// 数据源
-    var datas: [WPMenuHeaderViewItem] = []
+    var data: [WPMenuHeaderViewItem] = []
 
     /// 设置一个视图
     func setHeaderView(of view: WPMenuHeaderViewProtocol?, complete: @escaping (Bool) -> Void) {

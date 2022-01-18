@@ -55,17 +55,23 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         view.backgroundColor = .white
         menuView.dataSource = self
         menuView.tableView.bounces = false
-        let items = [testMenuItem(index: 0),
-                     testMenuItem(index: 1),
-                     testMenuItem(index: 2),
-                     testMenuItem(index: 3),
-                     testMenuItem(index: 4),
-                     testMenuItem(index: 5),]
+
+        let items = [.default(.init(.text("akdfjalj", 10, .thin,300), background: .background(UIColor.red.wp.image(), nil, 0.3), line: .line(color: .clear))),
+                     style(str: "测试代码2"),
+                     style(str: "测试代码3"),
+                     style(str: "测试代码4"),
+                     style(str: "测试代码5"),
+                     style(str: "测试代码6")]
         menuView.setNavigation(items)
         menuView.selectedAnimation = true
         
     }
     
+    func style(str:String) -> WPMenuView.DefaultNavigationItem{
+
+        return WPMenuView.DefaultNavigationItem.default(.init(.text(str, 20, .bold), background: .background(), line: .line(nil, 5, .init(left: 30, right: 30), color: .wp.random)))
+    }
+
     override func initSubView() {
         
 //        menuView.selectedAnimation = true
@@ -112,8 +118,8 @@ class testMenuItem: UILabel,WPMenuNavigationViewProtocol {
             backgroundColor = .blue
         }
     }
-    
-    func willRolling(with percentage: Double) {
+
+    func didHorizontalRolling(with percentage: Double) {
         
         let size = 10 + (percentage * 5)
         

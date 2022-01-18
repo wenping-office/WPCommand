@@ -172,11 +172,16 @@ public extension WPMenuView {
 public protocol WPMenuViewChildViewProtocol: NSObjectProtocol {
     /// 子视图状态更新
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus)
+    
+    /// 横向滚动百分比
+    func didHorizontalRolling(with percentage:Double)
 }
 
 public extension WPMenuViewChildViewProtocol {
     /// 子视图状态更新
     func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {}
+    /// 横向滚动百分比
+    func didHorizontalRolling(with percentage:Double){}
 }
 
 extension WPMenuView {
@@ -209,7 +214,7 @@ public extension WPMenuView {
             navItems.append(navItem)
             headItems.append(haederItem)
         }
-        contentView.headerView.datas = headItems
+        contentView.headerView.data = headItems
         contentView.navView.data = navItems
         contentView.navView.registerCell()
         contentView.bodyView.data = bodyItems
@@ -297,19 +302,17 @@ public class WPMenuView: WPBaseView {
             /// 偏移量
             var offset : Double = 0
             let defaultIndex = Int((x + 0.5))
-            let current = self?.contentView.navView.data.wp_get(of: defaultIndex)
             /// 需要增量的索引
             let intX = Int(x)
             offset = x - Double(intX)
             if intX < defaultIndex {
-                self?.contentView.navView.data.wp_get(of: defaultIndex + 1)?.navigationItem.willRolling(with: 0)
-                self?.contentView.navView.data.wp_get(of: defaultIndex - 1)?.navigationItem.willRolling(with: 1 - offset)
-                current?.navigationItem.willRolling(with: offset)
+                self?.setChildView(offset: 0, with: defaultIndex + 1)
+                self?.setChildView(offset: 1 - offset, with: defaultIndex - 1)
+                self?.setChildView(offset: offset, with: defaultIndex)
             }else if x > CGFloat(defaultIndex){
-                self?.contentView.navView.data.wp_get(of: defaultIndex - 1)?.navigationItem.willRolling(with: 0)
-                current?.navigationItem.willRolling(with: offset)
-                self?.contentView.navView.data.wp_get(of: defaultIndex + 1)?.navigationItem.willRolling(with: Double(offset))
-                current?.navigationItem.willRolling(with: 1 - offset)
+                self?.setChildView(offset: 0, with: defaultIndex - 1)
+                self?.setChildView(offset: offset, with: defaultIndex + 1)
+                self?.setChildView(offset: 1 - offset, with: defaultIndex)
             }
         }
         
@@ -320,7 +323,7 @@ public class WPMenuView: WPBaseView {
             // 设置翻页
             self?.selectedPage(index: index)
             // 设置header头
-            let headerItem = self?.contentView.headerView.datas.wp_get(of: index)
+            let headerItem = self?.contentView.headerView.data.wp_get(of: index)
             
             guard let self = self else { return }
             
@@ -340,11 +343,12 @@ public class WPMenuView: WPBaseView {
         contentView.navView.didSelected = { [weak self] index in
             /// 是否执行选中动画
             let isAnimation = self?.bodyView.selectedAnimation ?? false
+            
             if !isAnimation {
                 if let index = self?.currentIndex {
-                    self?.contentView.navView.data.wp_get(of: index)?.navigationItem.willRolling(with: 0)
+                    self?.setChildView(offset: 0, with: index)
                 }
-                self?.contentView.navView.data.wp_get(of: index)?.navigationItem.willRolling(with: 1)
+                self?.setChildView(offset: 1, with: index)
             }
             
             self?.currentIndex = index
@@ -376,23 +380,32 @@ public class WPMenuView: WPBaseView {
         bodyItem?.isSelected = true
         bodyItem?.bodyView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
         
-        contentView.headerView.datas.forEach { item in
+        contentView.headerView.data.forEach { item in
             if item.isSelected {
                 item.headerView?.menuViewChildViewUpdateStatus(menuView: self, status: .normal)
             }
             item.isSelected = false
         }
-        let headItem = contentView.headerView.datas.wp_get(of: index)
+        let headItem = contentView.headerView.data.wp_get(of: index)
         headItem?.isSelected = true
         headItem?.headerView?.menuViewChildViewUpdateStatus(menuView: self, status: .selected)
     }
+    
+    /// 设置子视图偏移量
+    private func setChildView(offset:Double,with index:Int){
+        
+        contentView.headerView.data.wp_get(of: index)?.headerView?.didHorizontalRolling(with: offset)
+        contentView.navView.data.wp_get(of: index)?.navigationItem.didHorizontalRolling(with: offset)
+        contentView.bodyView.data.wp_get(of: index)?.bodyView?.didHorizontalRolling(with: offset)
+    }
+    
 }
 
 public extension WPMenuView {
     /// 选中一个item
     func selected(_ index: Int) {
         contentView.navView.didSelected?(index)
-        contentView.navView.data.wp_get(of: index)?.navigationItem.willRolling(with: 1)
+        setChildView(offset: 1, with: index)
     }
 }
 
@@ -411,6 +424,9 @@ class WPMenuContentTableView: UITableView,UIGestureRecognizerDelegate {
     init(navigationHeight: CGFloat, style: UITableView.Style) {
         self.navigationHeight = navigationHeight
         super.init(frame: .zero, style: style)
+        if #available(iOS 15.0, *) {
+            sectionHeaderTopPadding = 0
+        }
         backgroundColor = .clear
         delegate = self
         dataSource = self
