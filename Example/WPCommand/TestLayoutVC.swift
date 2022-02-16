@@ -27,7 +27,6 @@ class TestLayoutVC: WPBaseVC {
             make.top.equalTo(120)
         }
 
-        
         let testView = UIView()
         self.view.addSubview(testView)
         testView.backgroundColor = .wp.random
@@ -46,6 +45,7 @@ class TestLayoutVC: WPBaseVC {
         arithmeticMean(3,3,23)
 
 //        LayoutAlert("疯狂大叫弗").show(in:view)
+
     }
     
     func arithmeticMean(_ numbers:Double...) -> Int {

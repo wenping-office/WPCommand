@@ -9,42 +9,85 @@
 import UIKit
 import WPCommand
 
+class obj:YPSelecteAlertItem {
+    var selecteAlertTitle: String?{
+        return testStr
+    }
+    
+    
+    var testStr : String = "skafja"
+}
+
+extension UIView:YPSelecteAlertItem{
+    var selecteAlertTitle: String? {
+        return description
+    }
+}
+
 class TestUIController: WPBaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white
-        
-        self.textField()
-        
-        self.textView()
+        view.backgroundColor = .white
+        addBtn()
+//        let dateView = YPDateView.init(dateStyle: .yearMonthDayHourMinute, forScroll: Date())
+//        dateView?.dateLabelColor = .clear
+//        dateView?.maxLimitDate = Date() + 366.wp.day
+//        dateView?.minLimitDate = Date() - 366.wp.day
+//        view.addSubview(dateView!)
+//        dateView?.snp.makeConstraints { make in
+//            make.left.right.equalToSuperview()
+//            make.centerY.equalToSuperview()
+//            make.height.equalTo(200)
+//        }
+//
+////        dateView?.backgroundColor = .wp.random
+//        let strs = ["",""]
+//
+//        test([(strs,\.description)])
+
     }
     
-    func obj(obj:AnyObject,an:AnyObject) -> AnyObject? {
-        return nil
-    }
-    
-    func textField(){
-        let field = WPTextField(inputMode: .input,["3","4"])
-        field.maxCount = 8
-        view.addSubview(field)
-        field.snp.makeConstraints { make in
-            make.width.equalTo(280)
-            make.height.equalTo(44)
+    func addBtn(){
+        let btn = UIButton()
+        btn.setTitle("按钮", for: .normal)
+        btn.setTitleColor(.wp.random, for: .normal)
+        btn.rx.controlEvent(.touchUpInside).bind {[weak self] _ in
+            self?.showAlert()
+        }.disposed(by: wp.disposeBag)
+        view.addSubview(btn)
+        
+        btn.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
     }
-    
-    func textView(){
-        let textView = WPTextView(inputMode: .input, ["1","2"])
-        textView.maxCount = 20
-        view.addSubview(textView)
+
+    func showAlert() {
         
-        textView.snp.makeConstraints { make in
-            make.left.equalTo(20)
-            make.right.equalTo(-20)
-           
-            make.top.equalTo(150)
-            make.height.equalTo(50)
+//        let alert = YPSelecteAlert(showType: .date(type: .yearMonthDay, normalDate: Date()))
+        
+//        let alert = YPSelecteAlert(showType: .custom)
+//
+//        alert.wp.show()
+        
+//        YPSelecteAlert.showDate(in: nil, style: .yearMonthDay, normalDate: Date()) { alert in
+//            alert.topBar.titleLabel.text = "测试代码"
+//        }
+        
+        let source = [UIView(),UIView()]
+        let source2 = [obj(),obj(),obj()]
+        YPSelecteAlert.showCustom(in: nil,
+                                  source: [source,
+                                           source2]) { alert in
+            alert.topBar.titleLabel.text = "自定义"
+        } callBack: { resualt in
+            
         }
+
+    }
+
+    func test<E,P:KeyPath<E,String>>(_ other:[([E],P)]) {
+        
     }
 }
+
+

@@ -209,6 +209,9 @@ public extension WPMenuView {
         for index in 0 ..< navigationitems.count {
             let haederItem = WPMenuHeaderViewItem(index: index, headerView: self.dataSource?.menuHeaderViewForIndex(index: index))
             let bodyItem = WPMenuBodyViewItem(index: index, bodyView: self.dataSource?.menuBodyViewForIndex(index: index))
+            bodyItem.bodyView?.targetViewDidScroll = {[weak self] scrollView in
+                self?.contentView.targetViewDidScroll(item: bodyItem, scrollView: scrollView)
+            }
             let navItem = WPMenuNavigationItem(size: .init(width: navigationitems[index].menuItemWidth(), height: navigationHeight), index: index, item: navigationitems[index])
             bodyItems.append(bodyItem)
             navItems.append(navItem)
@@ -420,6 +423,8 @@ class WPMenuContentTableView: UITableView,UIGestureRecognizerDelegate {
     let navView = WPMenuNavigationView()
     /// 多手势识别
     var multiGesture : Bool = false
+    /// 是否可以滚动
+    var canScroll : Bool = false
     
     init(navigationHeight: CGFloat, style: UITableView.Style) {
         self.navigationHeight = navigationHeight
@@ -487,6 +492,77 @@ extension WPMenuContentTableView: UITableViewDelegate, UITableViewDataSource {
             return 0
         }
     }
+    
+    
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+  
+//        if scrollView.contentOffset.y >= bottomCellOffset {
+//            bodyView.data.wp_get(of: 0)?.bodyView
+//        }
+    }
+}
+
+extension WPMenuContentTableView{
+    
+    /// 目标视图正在滚动
+    func targetViewDidScroll(item:WPMenuBodyViewItem, scrollView:UIScrollView){
+
+        if (!item.canScroll) {
+            scrollView.contentOffset = .zero
+        }
+        if (scrollView.contentOffset.y <= 0) {
+            if (!item.fingerIsTouch) { return }
+            item.canScroll = false
+            scrollView.contentOffset = .zero
+
+            canScroll = true
+            bodyView.canScroll = false
+            
+            item.canScroll = bodyView.canScroll
+            if !bodyView.canScroll {
+                scrollView.contentOffset = .zero
+            }
+        }
+    }
 }
 
 
+
+/*
+if (!item.canScroll) {
+    scrollView.contentOffset = .zero
+}
+if (scrollView.contentOffset.y <= 0) {
+    if (!item.fingerIsTouch) { return }
+    item.canScroll = false
+    scrollView.contentOffset = .zero
+
+    canScroll = true
+    bodyView.canScroll = false
+    
+    item.canScroll = bodyView.canScroll
+    if !bodyView.canScroll {
+        scrollView.contentOffset = .zero
+    }
+
+}
+scrollView.showsVerticalScrollIndicator = item.canScroll ? true : false
+*/
+
+/*
+ let bottomCellOffset = rect(forSection: 1).origin.y
+
+ if scrollView.contentOffset.y > bottomCellOffset {
+     scrollView.contentOffset = .init(x: 0, y: bottomCellOffset)
+     if canScroll {
+         canScroll = false
+         bodyView.canScroll = true
+     }
+ }else{
+     if !canScroll { // 自视图没到顶部
+         scrollView.contentOffset = .init(x: 0, y: bottomCellOffset)
+     }
+ }
+
+ showsVerticalScrollIndicator = canScroll ? true : false
+ */

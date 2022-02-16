@@ -23,9 +23,13 @@ public extension WPMenuView{
     /// 默认导航栏
     final class DefaultNavigationItem: WPBaseView,WPMenuNavigationViewProtocol {
         // 内容标题
-        let contentLabel : UILabel = .init()
+        let normalLabel : UILabel = .init()
+        /// 选中时候label
+        let selectedLabel : UILabel = .init()
         /// 背景视图
         let backgroundView : UIImageView = UIImageView()
+        /// 选中的背景视图
+        let selectedBackgroundView : UIImageView = UIImageView()
         /// 线条
         let lineView = UIView()
         /// 选中样式
@@ -35,13 +39,23 @@ public extension WPMenuView{
             self.style = style
             super.init(frame: .zero)
             
-            contentLabel.text = style.text.title
-            contentLabel.textAlignment = .center
-            contentLabel.font = UIFont.systemFont(ofSize: style.text.defaultSize, weight: style.text.fontWeight)
-            contentLabel.textColor = style.text.normalColor
-            contentLabel.backgroundColor = .clear
-            backgroundView.alpha = style.background.defaultAlpha
+            normalLabel.text = style.text.title
+            normalLabel.textAlignment = .center
+            normalLabel.font = UIFont.systemFont(ofSize: style.text.defaultSize, weight: style.text.fontWeight)
+            normalLabel.textColor = style.text.normalColor
+            normalLabel.backgroundColor = .clear
+            
+            selectedLabel.text = style.text.title
+            selectedLabel.textAlignment = .center
+            selectedLabel.font = UIFont.systemFont(ofSize: style.text.defaultSize, weight: style.text.fontWeight)
+            selectedLabel.textColor = style.text.selectedColor
+            selectedLabel.backgroundColor = .clear
+            selectedLabel.alpha = 0
+            
             backgroundView.image = style.background.normalImage
+            
+            selectedBackgroundView.alpha = 0
+            selectedBackgroundView.image = style.background.selectedImage
             
             lineView.backgroundColor = style.line.color
             lineView.alpha = 0
@@ -49,18 +63,28 @@ public extension WPMenuView{
 
         public override func initSubView() {
             addSubview(backgroundView)
-            addSubview(contentLabel)
+            addSubview(selectedBackgroundView)
+            addSubview(normalLabel)
+            addSubview(selectedLabel)
             addSubview(lineView)
         }
        
         public override func initSubViewLayout() {
-            contentLabel.snp.makeConstraints { make in
+            normalLabel.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
                 make.left.equalToSuperview().offset(style.text.edge.left)
                 make.right.equalToSuperview().offset(-style.text.edge.right)
             }
            
+            selectedLabel.snp.makeConstraints { make in
+                make.edges.equalTo(normalLabel)
+            }
+
             backgroundView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            
+            selectedBackgroundView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
            
@@ -89,25 +113,23 @@ public extension WPMenuView{
             }
         }
        
-        public func menuViewChildViewUpdateStatus(menuView: WPMenuView, status: WPMenuView.MenuViewStatus) {
-            if status == .normal {
-                backgroundView.image = style.background.normalImage
-               
-            }else if style.background.selectedImage != nil{
-                backgroundView.image = style.background.selectedImage
-            }else{
-                backgroundView.image = style.background.normalImage
-            }
-        }
-       
         public func didHorizontalRolling(with percentage: Double) {
             let newSize = style.text.defaultSize + (style.text.transitionNumber * style.text.fontSize) * percentage
 
-            contentLabel.font = UIFont.systemFont(ofSize: newSize, weight: style.text.fontWeight)
+            normalLabel.font = UIFont.systemFont(ofSize: newSize, weight: style.text.fontWeight)
+            
+            selectedLabel.font = UIFont.systemFont(ofSize: newSize, weight: style.text.fontWeight)
+            
+            selectedLabel.alpha = percentage
            
-            backgroundView.alpha = style.background.defaultAlpha + style.background.transitionNumber * percentage
+            backgroundView.alpha = 1 - percentage
+            
+            normalLabel.alpha = 1 - percentage
+            
+            selectedBackgroundView.alpha = percentage
            
             lineView.alpha = percentage
+            
         }
     }
 }
@@ -241,12 +263,6 @@ public extension WPMenuView.DefaultNavigationItem{
         public let normalImage : UIImage?
         /// 选中背景图
         public let selectedImage : UIImage?
-        ///  背景过度系数 默认1 取值范围 0～1
-        public let transitionNumber : CGFloat
-        /// 默认背景透明度
-        public var defaultAlpha : CGFloat{
-            return 1 - transitionNumber
-        }
         
         /// 背景图片
         /// - Parameters:
@@ -254,11 +270,9 @@ public extension WPMenuView.DefaultNavigationItem{
         ///   - selectedImage: 选中图片
         ///   - transitionNumber: 过渡系数
         public init(normalImage:UIImage?,
-                    selectedImage:UIImage?,
-                    transitionNumber:CGFloat){
+                    selectedImage:UIImage?){
             self.normalImage = normalImage
             self.selectedImage = selectedImage
-            self.transitionNumber = transitionNumber
         }
         
         /// 背景图片
@@ -267,11 +281,9 @@ public extension WPMenuView.DefaultNavigationItem{
         ///   - selectedImage: 选中图片
         ///   - transitionNumber: 过渡系数
         public static func background(_ normalImage:UIImage? = nil,
-                                      _ selectedImage:UIImage? = nil,
-                                      _ transitionNumber:CGFloat = 0)->Self{
+                                      _ selectedImage:UIImage? = nil)->Self{
             return .init(normalImage: normalImage,
-                         selectedImage: selectedImage,
-                         transitionNumber: transitionNumber)
+                         selectedImage: selectedImage)
         }
     }
 

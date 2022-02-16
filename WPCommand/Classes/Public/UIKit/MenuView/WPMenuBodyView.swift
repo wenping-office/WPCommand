@@ -14,8 +14,12 @@ class WPMenuBodyViewItem: WPMenuView.Item {
             isAddToSuperView = false
         }
     }
+    /// 是否可以滚动
+    var canScroll : Bool = true
     /// 是否加入到视图
     var isAddToSuperView = false
+    /// 是否正在触碰屏幕
+    private(set) var fingerIsTouch : Bool = false
     /// 重用标识符
     var reuseIdentifier: String {
         return NSStringFromClass(WPMenuBodyCell.self) + index.description
@@ -25,6 +29,13 @@ class WPMenuBodyViewItem: WPMenuView.Item {
          bodyView: WPMenuBodyViewProtocol?){
         super.init(index: index)
         self.bodyView = bodyView
+        
+        bodyView?.targetViewWillBeginDragging = {[weak self] scrollView in
+            self?.fingerIsTouch = true
+        }
+        bodyView?.targetViewWillEndDragging = {[weak self] scrollView in
+            self?.fingerIsTouch = false
+        }
     }
 }
 
@@ -41,6 +52,8 @@ public class WPMenuBodyView: UITableViewCell {
     var didSelected: ((Int) -> Void)?
     /// 是否执行选中动画
     var selectedAnimation = false
+    /// 是否可以滚动
+    var canScroll : Bool = false
     
     init() {
         super.init(style: .default, reuseIdentifier: nil)

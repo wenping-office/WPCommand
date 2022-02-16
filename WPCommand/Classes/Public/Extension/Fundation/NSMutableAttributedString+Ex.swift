@@ -76,6 +76,24 @@ public extension WPSpace where Base: NSMutableAttributedString {
         base.append(string)
         return self
     }
+    
+    /// 获取文本size
+    /// - Parameters:
+    ///   - maxSize: 最大尺寸
+    ///   - options: 选项
+    /// - Returns: 结果
+    func size(with maxSize:CGSize,
+              options:NSStringDrawingOptions) -> CGSize{
+        return  base.string.boundingRect(with: maxSize,
+                                         options: options,
+                                         attributes: base.wp.get, context: nil).size
+    }
+    
+    /// 获取富文本全部属性
+    var get: [NSAttributedString.Key : Any] {
+        guard base.string.count > 0 else { return [:] }
+        return base.attributes(at: 0, effectiveRange: nil)
+    }
 }
 
 public extension WPSpace where Base: NSMutableAttributedString {

@@ -30,6 +30,11 @@ public extension WPSpace where Base == String {
         return Bundle.main.infoDictionary?["CFBundleDisplayName"] as? Base
     }
     
+    /// 16进制颜色
+    var color : UIColor{
+        return UIColor.wp.initWith(base)
+    }
+
     /// 是否是邮箱
     var isEmail: Bool {
         let predicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
