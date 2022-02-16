@@ -452,8 +452,13 @@
     customLabel.text = newTtitle;
     customLabel.textColor = _datePickerColor;
     
-    [[pickerView.subviews objectAtIndex:1] setHidden:true];
-    [[pickerView.subviews objectAtIndex:2] setHidden:true];
+
+    if (pickerView.subviews.count > 2) {
+        [[pickerView.subviews objectAtIndex:1] setHidden:true];
+        [[pickerView.subviews objectAtIndex:2] setHidden:true];
+    }else{
+        [[pickerView.subviews objectAtIndex:1] setHidden:true];
+    }
     
     return customLabel;
     

@@ -13,6 +13,7 @@ extension YPSelecteAlert{
     enum ShowType {
         /// 日期类型
         case date(type:YPDateStyle,normalDate:Date)
+        
         case custom
     }
 }
@@ -33,7 +34,7 @@ extension YPSelecteAlertItem{
     }
 }
 
-class YPSelecteAlert: WPBaseView,WPAlertProtocol{
+class YPSelecteAlert: WPBaseView,YPAlertProtocol{
     /// 顶部筛选条
     let topBar = YPAlertTopBar()
     /// 日期筛选视图
@@ -107,7 +108,7 @@ class YPSelecteAlert: WPBaseView,WPAlertProtocol{
 
     override func observeSubViewEvent() {
         topBar.cancelBtn.rx.controlEvent(.touchUpInside).bind(onNext: {[weak self] in
-            self?.wp.dismiss()
+            self?.dismiss()
         }).disposed(by: wp.disposeBag)
 
         topBar.qureBtn.rx.controlEvent(.touchUpInside).bind { [weak self] in
@@ -136,7 +137,7 @@ class YPSelecteAlert: WPBaseView,WPAlertProtocol{
         return resualtArray
     }
 
-    func alertInfo() -> WPAlertManager.Alert {
+    func alertInfo() -> YPAlertManager.Alert {
         return .init(.default,
                      location: .bottomToFill(0),
                      showDuration: 0.3,
@@ -156,7 +157,7 @@ class YPSelecteAlert: WPBaseView,WPAlertProtocol{
                          config:(YPSelecteAlert)->Void){
         let alert = YPSelecteAlert(showType: .date(type: style, normalDate: normalDate))
         config(alert)
-        alert.wp.show(in:view)
+        alert.show(in:view)
     }
 
     static func showCustom(in view:UIView?,
@@ -166,7 +167,7 @@ class YPSelecteAlert: WPBaseView,WPAlertProtocol{
         let alert = YPSelecteAlert(showType: .custom)
         alert.customSource = source
         config(alert)
-        alert.wp.show(in:view)
+        alert.show(in:view)
     }
 
 }

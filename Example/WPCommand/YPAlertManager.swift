@@ -1,0 +1,920 @@
+//
+//  YPAlertManager.swift
+//  WPCommand
+//
+//  Created by WenPing on 2021/8/2.
+//
+
+import RxSwift
+import UIKit
+
+public extension YPAlertManager {
+    enum Option {
+        /// 插入式强制立马弹出 keep == true 插入弹窗消失后弹出被插入的弹窗
+        /// keep == false 干掉被插入的弹窗
+        case insert(keep: Bool)
+        /// 添加到下一个弹窗
+        case add
+    }
+
+    enum LayoutOption {
+        case frame(size: CGSize)
+        case layout
+    }
+}
+
+public extension YPAlertManager {
+    struct Alert {
+        public let animationType: AnimationType
+        /// 弹窗显示的位置
+        public let location: ShowLocation
+        /// 弹窗显示的时间
+        public let showDuration: TimeInterval
+        /// 弹窗dismiss的方向
+        public let direction: DismissDirection
+        /// 弹窗dismiss的时间
+        public let dismissDuration: TimeInterval
+        
+        /// 初始化一个弹窗信息
+        /// - Parameters:
+        ///   - animationType: 动画类型
+        ///   - location: 开始弹出的位置
+        ///   - showDuration: 开始动画时间
+        ///   - direction: 结束弹出的位置
+        ///   - dismissDuration: 结束动画时间
+        public init(_ animationType: AnimationType,
+                    location: ShowLocation,
+                    showDuration: TimeInterval,
+                    direction: DismissDirection,
+                    dismissDuration: TimeInterval)
+        {
+            self.animationType = animationType
+            self.location = location
+            self.showDuration = showDuration
+            self.direction = direction
+            self.dismissDuration = dismissDuration
+        }
+    }
+    
+    struct Mask {
+        /// 蒙板颜色
+        public let color: UIColor
+        /// 是否可以交互点击
+        public let enabled: Bool
+        /// 是否显示
+        public let hidden: Bool
+        
+        /// 初始化一个蒙版信息
+        /// - Parameters:
+        ///   - color: 蒙板颜色
+        ///   - enabled: 是否可以交互点击
+        ///   - isHidden: 是否隐藏
+        public init(color: UIColor,
+                    enabled: Bool,
+                    hidden: Bool) {
+            self.color = color
+            self.enabled = enabled
+            self.hidden = hidden
+        }
+    }
+    
+    enum State {
+        /// 挂起状态等待被弹出
+        case cooling
+        /// 将要显示
+        case willShow
+        /// 已经弹并显示
+        case didShow
+        /// 将要弹出
+        case willPop
+        /// 已经弹出完成
+        case didPop
+        /// 弹窗已经被移除
+        case remove
+        /// 未知状态
+        case unknown
+    }
+    
+    /// 动画类型
+    enum AnimationType {
+        /// 默认
+        case `default`
+        /// 弹簧效果 damping 阻尼系数: 取值(0~1)默认0.5  velocity初始速度:  取值(0~1)默认0.5  options: 动画选择
+        case bounces(damping: CGFloat = 0.5,
+                     velocity: CGFloat = 0.5,
+                     options: UIView.AnimationOptions = .curveLinear)
+    }
+    
+    /// 显示位置
+    enum ShowLocation {
+        /// 顶部弹出
+        case top(_ offset: CGPoint = .zero)
+        /// 左边弹出
+        case left(_ offset: CGPoint = .zero)
+        /// 底部弹出
+        case bottom(_ offset: CGPoint = .zero)
+        /// 右边弹出
+        case right(_ offset: CGPoint = .zero)
+        /// 中间弹出
+        case center(_ offset: CGPoint = .zero)
+        /// 顶部弹出 并且width填充至弹窗TargetView的width
+        case topToFill(_ offsetY: CGFloat = 0)
+        /// 左边弹出 并且height填充至弹窗TargetView的height
+        case leftToFill(_ offsetX: CGFloat = 0)
+        /// 底部弹出 并且width填充至弹窗TargetView的width
+        case bottomToFill(_ offsetY: CGFloat = 0)
+        /// 右边弹出 并且height填充至弹窗TargetView的height
+        case rightToFill(_ offsetY: CGFloat = 0)
+    }
+    
+    /// 弹出方向
+    enum DismissDirection {
+        /// 顶部收回
+        case top
+        /// 左边收回
+        case left
+        /// 底部收回
+        case bottom
+        /// 右边收回
+        case right
+        /// 中心收回
+        case center
+    }
+}
+
+/// 可弹出一组弹窗或插入式弹窗，也可自定义一个manager自己管理一组弹窗
+public class YPAlertManager {
+    /// 弹窗
+    private class Item {
+        let alert: YPAlertProtocol
+
+        let level: Int
+
+        var isInterruptInset = false
+
+        weak var target: UIView?
+
+        var layoutOption: LayoutOption?
+
+        var state: State = .unknown {
+            didSet {
+                alert.stateHandler?(state)
+                alert.stateDidUpdate(state: state)
+                stateChange?(state)
+            }
+        }
+
+        var offset: CGPoint = .zero
+
+        var stateChange: ((State)->Void)?
+        
+        init(alert: YPAlertProtocol, level: Int) {
+            self.alert = alert
+            self.level = level
+        }
+    }
+
+    private weak var current: Item?
+
+    private weak var target: UIView? {
+        willSet {
+            removeMask()
+        }
+    }
+
+    private var targetView: UIView {
+        if target == nil {
+            return UIApplication.wp.keyWindow!
+        } else {
+            return target!
+        }
+    }
+
+    private weak var maskView: YPAlertManagerMask?
+
+    private var alerts: [Item] = [] {
+        didSet {
+            alerts.sort { elmt1, elmt2 in
+                elmt1.level < elmt2.level
+            }
+        }
+    }
+
+    private var showFrame: CGRect = .zero
+
+    private var dismissFrame: CGRect = .zero
+
+    private var layoutShowBlock: (()->Void)?
+
+    /// 单例
+    public static var `default`: YPAlertManager = {
+        let manager = YPAlertManager()
+        return manager
+    }()
+
+    public init() {}
+
+    /// 添加一个弹窗
+    public func add(alert: YPAlertProtocol) {
+        alert.tag = YPAlertManager.identification()
+        let alertItem: Item = .init(alert: alert, level: Int(alert.alertLevel()))
+        alertItem.state = .cooling
+        alerts.append(alertItem)
+    }
+    
+    /// 移除一个弹窗
+    public func remove(alert: YPAlertProtocol) {
+        current = nil
+        alert.removeFromSuperview()
+        
+        alerts.yp_filter { elmt in
+            elmt.alert.tag == alert.tag
+        }
+        alert.stateDidUpdate(state: .remove)
+        alert.stateHandler?(.remove)
+        
+        current = alerts.first
+    }
+    
+    /// 移除所有弹窗
+    public func removeAllAlert() {
+        current?.alert.removeFromSuperview()
+        
+        alerts.forEach { item in
+            item.state = .remove
+        }
+        alerts = []
+    }
+
+    /// 添加一组弹窗会清除现有的弹窗
+    /// - Parameter alerts: 弹窗
+    @discardableResult
+    public func set(alerts: [YPAlertProtocol])->YPAlertManager {
+        self.alerts = []
+        alerts.forEach { [weak self] elmt in
+            self?.add(alert: elmt)
+        }
+        return self
+    }
+    
+    /// 弹出一个弹窗 如果序列里有多个弹窗将会插入到下一个
+    /// - Parameters:
+    ///   - alert: 弹窗
+    ///   - option: 选择条件
+    public func show(next alert: YPAlertProtocol, option: Option = .insert(keep: true)) {
+        alert.tag = YPAlertManager.identification()
+        let level = (current?.level ?? 0) - 1
+        let alertItem: Item = .init(alert: alert, level: level)
+        alertItem.target = alert.targetView
+        
+        alerts.insert(alertItem, at: 0)
+        alertItem.state = .cooling
+
+        if current == nil {
+            show()
+        } else {
+            switch option {
+            case .add:
+                break
+            case .insert(let keep):
+                switch current!.state {
+                case .willShow:
+                    current?.stateChange = { [weak self] state in
+                        if state == .didShow {
+                            self?.current?.isInterruptInset = keep
+                            self?.alertAnimation(isShow: false, option: option)
+                        }
+                        self?.current?.stateChange = nil
+                    }
+                case .didShow:
+                    current?.stateChange = nil
+                    current?.isInterruptInset = keep
+                    alertAnimation(isShow: false, option: option)
+                default: break
+                }
+            }
+        }
+//        if currentAlertProgress == .didShow, alerts.count >= 1 {
+//            switch option {
+//            case .insert(let keep):
+//                current?.isInterruptInset = keep
+//                alertAnimate(isShow: false, option: option)
+//            default: break
+//            }
+//        } else {
+//            alertAnimate(isShow: true, option: .add)
+//        }
+    }
+    
+    /// 隐藏当前的弹框 如果弹框序列里还有弹窗将会弹出下一个
+    public func dismiss() {
+        alertAnimation(isShow: false, option: .add)
+    }
+    
+    /// 显示弹窗
+    public func show() {
+        alertAnimation(isShow: true, option: .add)
+    }
+    
+    /// 更新当前弹窗的size
+    /// - Parameters:
+    ///   - duration: 动画时间
+    ///   - size: 如果是frame布局的弹窗才需要填
+    public func update(size:CGSize = .zero,
+                       _ animationType: AnimationType = .default,
+                       _ duration:TimeInterval = 0.2){
+        guard
+            let alertItem = current,
+            let layoutOption = alertItem.layoutOption
+        else { return }
+
+        switch layoutOption {
+        case .frame(let alertSize):
+            let alertOrgin = alertItem.alert.yp_orgin
+            var newSize = alertSize
+            newSize.width += size.width
+            newSize.height += size.height
+            alertItem.layoutOption = .frame(size: newSize)
+            resetFrame(alertItem)
+            alertItem.alert.yp_orgin = alertOrgin
+        case .layout: break
+        }
+
+        animation(animationType, duration: duration, animation: {[weak self] in
+            guard
+                let self = self
+            else { return }
+            switch layoutOption {
+            case .frame(_):
+                alertItem.alert.frame = self.showFrame
+            case .layout:
+                alertItem.alert.superview?.layoutIfNeeded()
+            }
+        }, completion: { [weak self] resualt in
+            self?.resetEndFrame(alertItem)
+        })
+    }
+    
+    /// 更新偏移量
+    /// - Parameters:
+    ///   - animateType: 动画类型
+    ///   - duration: 动画时间
+    ///   - offset: 偏移量 注：如果是tofill 那么只有x或者y生效
+    public func update(offset:CGPoint,
+                       _ animateType: AnimationType = .default,
+                       _ duration:TimeInterval = 0.2){
+        guard
+            let alertItem = current,
+            let layoutOption = alertItem.layoutOption
+        else { return }
+
+        switch layoutOption {
+        case .frame(_):
+            let alertFrame = alertItem.alert.frame
+            resetFrame(alertItem)
+            alertItem.alert.transform = CGAffineTransform.identity
+            alertItem.alert.alpha = 1
+            var newFrame = showFrame
+            newFrame.origin.y = newFrame.origin.y + offset.y
+            newFrame.origin.x = newFrame.origin.x + offset.x
+            newFrame.size = alertFrame.size
+            showFrame = newFrame
+            alertItem.alert.frame = alertFrame
+        case .layout:
+            switch alertItem.alert.alertInfo().location {
+            case .top(let normalOffset):
+                alertItem.alert.snp.updateConstraints({ make in
+                    make.centerX.equalToSuperview().offset(offset.x + normalOffset.x)
+                    make.top.equalToSuperview().offset(offset.y + normalOffset.y)
+                })
+            case .topToFill(let normalOffsetY):
+                alertItem.alert.snp.updateConstraints ({ make in
+                    make.top.equalToSuperview().offset(offset.y + normalOffsetY)
+                    make.left.right.equalToSuperview()
+                })
+            case .left(let normalOffset):
+                alertItem.alert.snp.updateConstraints( { make in
+                    make.centerY.equalToSuperview().offset(offset.y + normalOffset.y)
+                    make.left.equalToSuperview().offset(offset.x + normalOffset.x)
+                })
+            case .leftToFill(let normalOffsetX):
+                alertItem.alert.snp.updateConstraints( { make in
+                    make.top.bottom.equalToSuperview()
+                    make.left.equalToSuperview().offset(offset.x + normalOffsetX)
+                })
+            case .bottom(let normalOffset):
+                alertItem.alert.snp.updateConstraints( { make in
+                    make.bottom.equalToSuperview().offset(offset.y + normalOffset.y)
+                    make.centerX.equalToSuperview().offset(offset.x + normalOffset.x)
+                })
+            case .bottomToFill(let normalOffsetY):
+                alertItem.alert.snp.updateConstraints( { make in
+                    make.bottom.equalToSuperview().offset(offset.y + normalOffsetY)
+                    make.left.right.equalToSuperview()
+                })
+            case .right(let normalOffset):
+                alertItem.alert.snp.updateConstraints( { make in
+                    make.right.equalToSuperview().offset(offset.x + normalOffset.x)
+                    make.centerY.equalToSuperview().offset(offset.y + normalOffset.y)
+                })
+            case .rightToFill(let normalOffsetX):
+                alertItem.alert.snp.updateConstraints( { make in
+                    make.right.equalToSuperview().offset(offset.x + normalOffsetX)
+                    make.top.bottom.equalToSuperview()
+                })
+            case .center(let normalOffset):
+                alertItem.alert.snp.updateConstraints( { make in
+                    make.centerX.equalToSuperview().offset(offset.x + normalOffset.x)
+                    make.centerY.equalToSuperview().offset(offset.y + normalOffset.y)
+                })
+            }
+        }
+
+        animation(animateType, duration: duration, animation:{[weak self] in
+            self?.animateActuator(alertItem,
+                                  isShow: true,
+                                  layoutOption: layoutOption)
+        }, completion: { [weak self] resualt in
+            self?.resetEndFrame(alertItem)
+        })
+    }
+}
+
+extension YPAlertManager {
+
+    private static func identification()->Int {
+        return Int(
+            arc4random_uniform(100) +
+                arc4random_uniform(100) +
+                arc4random_uniform(100) +
+                arc4random_uniform(100) +
+                arc4random_uniform(100)
+        )
+    }
+
+    private func addMask(info: YPAlertManager.Mask) {
+        let resualt = targetView.subviews.yp_isContent { elmt in
+            elmt.isKind(of: YPAlertManagerMask.self)
+        }
+        
+        if !resualt {
+            let maskView = YPAlertManagerMask(maskInfo: info, action: { [weak self] in
+                if self?.current?.state == .didShow {
+                    self?.current?.alert.touchMask()
+                }
+            })
+            self.maskView = maskView
+            maskView.alpha = 0
+            targetView.insertSubview(maskView, at: 999)
+            maskView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+    }
+    
+    private func animateActuator(_ item:Item,
+                                 isShow:Bool,
+                                 layoutOption:LayoutOption){
+        item.alert.transform = CGAffineTransform.identity
+        if isShow {
+            switch layoutOption {
+            case .layout:
+                item.alert.superview?.layoutIfNeeded()
+            case .frame:
+                item.alert.frame = showFrame
+            }
+            item.alert.alpha = 1
+            self.maskView?.alpha = 1
+        } else {
+            switch layoutOption {
+            case .layout: // 这样做是零时解决办法
+                item.alert.frame = dismissFrame
+            case .frame:
+                item.alert.frame = dismissFrame
+            }
+            if !self.isNext() {
+                self.maskView?.alpha = 0
+            }
+            if item.alert.alertInfo().direction == .center {
+                item.alert.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+            }
+        }
+    }
+    
+    private func animationActuatorComplete(_ item:Item,
+                                           resualt:Bool,
+                                           isShow:Bool){
+        if resualt {
+            if isShow {
+                item.isInterruptInset = false
+                layoutShowBlock = nil
+                resetEndFrame(item)
+                current?.state = .didShow
+            } else {
+                if !item.isInterruptInset { // 正常弹出才更新状态
+                    current?.state = .didPop
+                    remove(alert: item.alert)
+                } else {
+                    moveItemToFist(item)
+                }
+                show()
+            }
+        } else {
+            current?.state = .unknown
+        }
+    }
+    
+    private func animation(_ type:AnimationType,
+                           duration:TimeInterval,
+                           animation:@escaping ()->Void,
+                           completion:@escaping(Bool)->Void){
+        maskView?.isUserInteractionEnabled = false
+        switch type {
+        case .default:
+            UIView.animate(withDuration: duration, animations: {
+                animation()
+            }, completion: {[weak self] resualt in
+                self?.maskView?.isUserInteractionEnabled = true
+                completion(resualt)
+            })
+        case .bounces(let damping, let velocity, let options):
+            UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: damping, initialSpringVelocity: velocity, options: options, animations: {
+                animation()
+            }, completion: {[weak self] resualt in
+                completion(resualt)
+                self?.maskView?.isUserInteractionEnabled = true
+            })
+        }
+    }
+
+    private func removeMask() {
+        maskView?.removeFromSuperview()
+        maskView = nil
+    }
+    
+    private func isNext()->Bool {
+        let count = alerts.count
+        return (count - 1) > 0
+    }
+    
+    private func moveItemToFist(_ item: Item) {
+        current = nil
+        item.alert.removeFromSuperview()
+        
+        self.alerts.yp_filter { elmt in
+            elmt.alert.tag == item.alert.tag
+        }
+        current = alerts.first
+        
+        item.alert.yp_size = .zero
+        alerts.append(item)
+    }
+
+    private func alertAnimation(isShow: Bool, option: Option) {
+        if let item = current {
+            var layoutOption: LayoutOption = .layout
+            if isShow {
+                if target == nil, item.target == nil {
+                } else {
+                    target = item.target
+                }
+                addMask(info: item.alert.maskInfo())
+                targetView.insertSubview(item.alert, at: 1000)
+                layoutOption = resetFrame(item)
+                
+                switch layoutOption {
+                case .layout:
+                    item.alert.superview?.layoutIfNeeded()
+                    layoutShowBlock?()
+                default: break
+                }
+
+                maskView?.maskInfo = item.alert.maskInfo()
+                current?.state = .willShow
+                item.target = target
+            } else {
+                current?.state = .willPop
+            }
+            
+            // 动画时间
+            var duration: TimeInterval = 0
+            switch option {
+            case .add:
+                duration = (isShow ? item.alert.alertInfo().showDuration : item.alert.alertInfo().dismissDuration)
+            case .insert:
+                duration = 0
+            }
+            
+            animation(item.alert.alertInfo().animationType,
+                      duration: duration) {[weak self] in
+                self?.animateActuator(item,
+                                      isShow: isShow,
+                                      layoutOption: layoutOption)
+            } completion: {[weak self] resualt in
+                self?.animationActuatorComplete(item,
+                                                resualt: resualt,
+                                                isShow: isShow)
+            }
+
+        } else {
+            current = alerts.first
+            if current != nil {
+                show()
+            } else {
+                removeMask()
+            }
+        }
+    }
+    
+    @discardableResult
+    private func resetFrame(_ item: Item)->LayoutOption {
+        switch item.layoutOption {
+        case .frame(let size):
+            item.alert.transform = CGAffineTransform.identity
+            item.alert.frame = .init(x: 0, y: 0, width: size.width, height: size.height)
+        default: break
+        }
+
+        let alertW: CGFloat = item.alert.yp_width
+        let alertH: CGFloat = item.alert.yp_height
+        let maxW: CGFloat = targetView.yp_width
+        let maxH: CGFloat = targetView.yp_height
+        let center: CGPoint = .init(x: (maxW - alertW) * 0.5, y: (maxH - alertH) * 0.5)
+        var beginF: CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
+        
+        if item.layoutOption == nil {
+            item.layoutOption = (item.alert.yp_size == .zero) ? .layout : .frame(size: item.alert.yp_size)
+        }
+        
+        switch item.alert.alertInfo().location {
+        case .top(let offset):
+            item.offset = offset
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
+                    make.centerX.equalToSuperview().offset(offset.x)
+                    make.bottom.equalTo(targetView.snp.top)
+                }
+                layoutShowBlock = {
+                    item.alert.snp.remakeConstraints { make in
+                        make.centerX.equalToSuperview().offset(offset.x)
+                        make.top.equalToSuperview().offset(offset.y)
+                    }
+                }
+            case .frame:
+                beginF.origin.x = center.x + offset.x
+                beginF.origin.y = 0 + offset.y
+                item.alert.yp_x = center.x + offset.x
+                item.alert.yp_y = -alertH + offset.y
+            }
+        case .topToFill(let offsetY):
+            item.offset = .init(x: 0, y: offsetY)
+            item.alert.snp.remakeConstraints { make in
+                make.left.right.equalToSuperview()
+                make.bottom.equalTo(targetView.snp.top)
+            }
+            layoutShowBlock = {
+                item.alert.snp.remakeConstraints { make in
+                    make.top.equalToSuperview().offset(offsetY)
+                    make.left.right.equalToSuperview()
+                }
+            }
+        case .left(let offset):
+            item.offset = offset
+            
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
+                    make.right.equalTo(targetView.snp.left)
+                    make.centerY.equalToSuperview().offset(offset.y)
+                }
+                layoutShowBlock = {
+                    item.alert.snp.remakeConstraints { make in
+                        make.centerY.equalToSuperview().offset(offset.y)
+                        make.left.equalToSuperview().offset(offset.x)
+                    }
+                }
+            case .frame:
+                beginF.origin.x = 0 + offset.x
+                beginF.origin.y = center.y + offset.y
+                item.alert.yp_x = -alertW + offset.x
+                item.alert.yp_y = center.y + offset.y
+            }
+
+        case .leftToFill(let offsetX):
+            item.offset = .init(x: offsetX, y: 0)
+            item.alert.snp.remakeConstraints { make in
+                make.right.equalTo(targetView.snp.left)
+                make.top.bottom.equalToSuperview()
+            }
+            layoutShowBlock = {
+                item.alert.snp.remakeConstraints { make in
+                    make.top.bottom.equalToSuperview()
+                    make.left.equalToSuperview().offset(offsetX)
+                }
+            }
+        case .bottom(let offset):
+            item.offset = offset
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
+                    make.top.equalTo(targetView.snp.bottom)
+                    make.centerX.equalToSuperview().offset(offset.x)
+                }
+                layoutShowBlock = {
+                    item.alert.snp.remakeConstraints { make in
+                        make.bottom.equalToSuperview().offset(offset.y)
+                        make.centerX.equalToSuperview().offset(offset.x)
+                    }
+                }
+            case .frame:
+                beginF.origin.x = center.x + offset.x
+                beginF.origin.y = maxH - alertH + offset.y
+                item.alert.yp_x = center.x + offset.x
+                item.alert.yp_y = maxH + offset.y
+            }
+
+        case .bottomToFill(let offsetY):
+            item.offset = .init(x: 0, y: offsetY)
+            item.alert.snp.remakeConstraints { make in
+                make.top.equalTo(targetView.snp.bottom)
+                make.left.right.equalToSuperview()
+            }
+            layoutShowBlock = {
+                item.alert.snp.remakeConstraints { make in
+                    make.bottom.equalToSuperview().offset(offsetY)
+                    make.left.right.equalToSuperview()
+                }
+            }
+        case .right(let offset):
+            item.offset = offset
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
+                    make.left.equalTo(targetView.snp.right)
+                    make.centerY.equalToSuperview().offset(offset.y)
+                }
+                layoutShowBlock = {
+                    item.alert.snp.remakeConstraints { make in
+                        make.right.equalToSuperview().offset(offset.x)
+                        make.centerY.equalToSuperview().offset(offset.y)
+                    }
+                }
+            case .frame:
+                beginF.origin.x = maxW - alertW + offset.x
+                beginF.origin.y = center.y + offset.y
+                item.alert.yp_y = center.y + offset.y
+                item.alert.yp_x = maxW + offset.x
+            }
+        case .rightToFill(let offsetY):
+            item.offset = .init(x: 0, y: offsetY)
+            item.alert.snp.remakeConstraints { make in
+                make.left.equalTo(targetView.snp.right)
+                make.top.bottom.equalToSuperview()
+            }
+            layoutShowBlock = {
+                item.alert.snp.remakeConstraints { make in
+                    make.right.equalToSuperview().offset(offsetY)
+                    make.top.bottom.equalToSuperview()
+                }
+            }
+        case .center(let offset):
+            item.offset = offset
+            switch item.layoutOption! {
+            case .layout:
+                item.alert.snp.remakeConstraints { make in
+                    make.centerX.equalToSuperview().offset(offset.x)
+                    make.centerY.equalToSuperview().offset(offset.y)
+                }
+            case .frame:
+                beginF.origin.x = center.x + offset.x
+                beginF.origin.y = center.y + offset.y
+                item.alert.alpha = 0
+                item.alert.yp_orgin = beginF.origin
+            }
+            item.alert.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+        }
+        
+        showFrame = beginF
+        
+        return item.layoutOption!
+    }
+    
+    private func resetEndFrame(_ item: Item) {
+        let alertW: CGFloat = item.alert.yp_width
+        let alertH: CGFloat = item.alert.yp_height
+        let maxW: CGFloat = targetView.yp_width
+        let maxH: CGFloat = targetView.yp_height
+        var endF: CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
+        
+        switch item.alert.alertInfo().direction {
+        case .top:
+            endF.origin.x = item.alert.yp_x
+            endF.origin.y = -alertH
+        case .left:
+            endF.origin.x = -alertW
+            endF.origin.y = item.alert.yp_y
+        case .bottom:
+            endF.origin.x = item.alert.yp_x
+            endF.origin.y = maxH
+        case .right:
+            endF.origin.x = maxW
+            endF.origin.y = item.alert.yp_y
+        case .center:
+            endF.origin = item.alert.yp_orgin
+        }
+        
+        dismissFrame = endF
+    }
+}
+
+class YPAlertManagerMask: UIView {
+
+    let contentView = UIButton()
+
+    var maskInfo: YPAlertManager.Mask {
+        didSet {
+            contentView.backgroundColor = maskInfo.color
+            contentView.isUserInteractionEnabled = !maskInfo.enabled
+            isHidden = maskInfo.hidden
+        }
+    }
+    
+    init(maskInfo: YPAlertManager.Mask, action: (()->Void)?) {
+        self.maskInfo = maskInfo
+        super.init(frame: .zero)
+
+        addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        contentView.rx.controlEvent(.touchUpInside).subscribe(onNext: {
+            action?()
+        }).disposed(by: wp.disposeBag)
+    }
+    
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+public extension UIView {
+    var yp_x: CGFloat {
+        get { return frame.origin.x }
+        set { frame.origin.x = newValue }
+    }
+    
+    var yp_y: CGFloat {
+        get { return frame.origin.y }
+        set { frame.origin.y = newValue }
+    }
+    
+    var yp_width: CGFloat {
+        get { return frame.size.width }
+        set { frame.size.width = newValue }
+    }
+    
+    var yp_height: CGFloat {
+        get { return frame.size.height }
+        set { frame.size.height = newValue }
+    }
+    
+    var yp_maxX: CGFloat {
+        get { return yp_x + yp_width }
+        set { yp_x = newValue - yp_width }
+    }
+    
+    var yp_maxY: CGFloat {
+        get { return yp_y + yp_height }
+        set { yp_y = newValue - yp_height }
+    }
+    
+    var yp_centerX: CGFloat {
+        get { return center.x }
+        set { center.x = newValue }
+    }
+    
+    var yp_centerY: CGFloat {
+        get { return center.y }
+        set { center.y = newValue }
+    }
+    
+    var yp_midX: CGFloat {
+        return yp_width * 0.5
+    }
+    
+    var yp_midY: CGFloat {
+        return yp_height * 0.5
+    }
+    
+    var yp_size: CGSize {
+        get { return frame.size }
+        set { frame.size = newValue }
+    }
+    
+    var yp_orgin: CGPoint {
+        get { return frame.origin }
+        set { frame.origin = newValue }
+    }
+}

@@ -19,6 +19,10 @@
 		8B40CC9927B9EA9400B4F0DA /* YPAlertTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B40CC9827B9EA9400B4F0DA /* YPAlertTopBar.swift */; };
 		8B7D4A0E26ABF1000075B40F /* TestUIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0D26ABF1000075B40F /* TestUIController.swift */; };
 		8B9474A826EB805A00115DDE /* TestLayoutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9474A726EB805A00115DDE /* TestLayoutVC.swift */; };
+		8B9B81F027BC951600DDE649 /* YPAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9B81EE27BC951600DDE649 /* YPAlertManager.swift */; };
+		8B9B81F127BC951600DDE649 /* YPAlertProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9B81EF27BC951600DDE649 /* YPAlertProtocol.swift */; };
+		8B9B81F327BC967800DDE649 /* Array+Ex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9B81F227BC967800DDE649 /* Array+Ex.swift */; };
+		8B9B81F527BC97C500DDE649 /* YPSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9B81F427BC97C500DDE649 /* YPSpace.swift */; };
 		8BB4D3D32721080F002F0C46 /* TestHighlightVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB4D3D22721080F002F0C46 /* TestHighlightVC.swift */; };
 		8BDADD872733E21100D197FE /* TestSpaceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDADD862733E21000D197FE /* TestSpaceVC.swift */; };
 		8BF362A026BBF04A000A2280 /* TestMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF3629F26BBF04A000A2280 /* TestMenuVC.swift */; };
@@ -61,6 +65,10 @@
 		8B40CC9827B9EA9400B4F0DA /* YPAlertTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPAlertTopBar.swift; sourceTree = "<group>"; };
 		8B7D4A0D26ABF1000075B40F /* TestUIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUIController.swift; sourceTree = "<group>"; };
 		8B9474A726EB805A00115DDE /* TestLayoutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutVC.swift; sourceTree = "<group>"; };
+		8B9B81EE27BC951600DDE649 /* YPAlertManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPAlertManager.swift; sourceTree = "<group>"; };
+		8B9B81EF27BC951600DDE649 /* YPAlertProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPAlertProtocol.swift; sourceTree = "<group>"; };
+		8B9B81F227BC967800DDE649 /* Array+Ex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Ex.swift"; sourceTree = "<group>"; };
+		8B9B81F427BC97C500DDE649 /* YPSpace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPSpace.swift; sourceTree = "<group>"; };
 		8BB4D3D22721080F002F0C46 /* TestHighlightVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHighlightVC.swift; sourceTree = "<group>"; };
 		8BDADD862733E21000D197FE /* TestSpaceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSpaceVC.swift; sourceTree = "<group>"; };
 		8BF3629F26BBF04A000A2280 /* TestMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMenuVC.swift; sourceTree = "<group>"; };
@@ -191,6 +199,10 @@
 		8B40CC9227B9E9A800B4F0DA /* YPTest */ = {
 			isa = PBXGroup;
 			children = (
+				8B9B81F427BC97C500DDE649 /* YPSpace.swift */,
+				8B9B81F227BC967800DDE649 /* Array+Ex.swift */,
+				8B9B81EE27BC951600DDE649 /* YPAlertManager.swift */,
+				8B9B81EF27BC951600DDE649 /* YPAlertProtocol.swift */,
 				8B40CC9627B9EA3900B4F0DA /* YPSelecteAlert.swift */,
 				8B40CC9827B9EA9400B4F0DA /* YPAlertTopBar.swift */,
 			);
@@ -261,6 +273,7 @@
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = ZJ8YFM3RFM;
 						LastSwiftMigration = 1320;
+						ProvisioningStyle = Automatic;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
@@ -390,12 +403,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B9B81F327BC967800DDE649 /* Array+Ex.swift in Sources */,
 				8B1B572326B399DB009178AE /* TestAlertController.swift in Sources */,
 				8BDADD872733E21100D197FE /* TestSpaceVC.swift in Sources */,
+				8B9B81F527BC97C500DDE649 /* YPSpace.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				8B40CC9927B9EA9400B4F0DA /* YPAlertTopBar.swift in Sources */,
 				8B40CC9727B9EA3900B4F0DA /* YPSelecteAlert.swift in Sources */,
+				8B9B81F027BC951600DDE649 /* YPAlertManager.swift in Sources */,
 				8B9474A826EB805A00115DDE /* TestLayoutVC.swift in Sources */,
+				8B9B81F127BC951600DDE649 /* YPAlertProtocol.swift in Sources */,
 				8BF362A026BBF04A000A2280 /* TestMenuVC.swift in Sources */,
 				8BB4D3D32721080F002F0C46 /* TestHighlightVC.swift in Sources */,
 				8B40CC9127B77F2C00B4F0DA /* YPDateView.m in Sources */,
@@ -547,13 +564,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZJ8YFM3RFM;
 				INFOPLIST_FILE = WPCommand/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.WPCommand-Exampl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "WPCommand/WPCommand_Example-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -567,13 +587,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZJ8YFM3RFM;
 				INFOPLIST_FILE = WPCommand/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.WPCommand-Exampl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "WPCommand/WPCommand_Example-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
