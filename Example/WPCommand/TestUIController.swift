@@ -78,9 +78,9 @@ class TestUIController: WPBaseVC,WPLabelsViewDelegate {
         for index in 0...30 {
             let item : YPWorkTypeAlert.Item = .init()
             if count > 0 {
-                item.placeholder = .init(text: "测试代码", btnTitle: "点击", callBack: {
-                    print("回调")
-                })
+//                item.placeholder = .init(text: "测试代码", btnTitle: "点击", callBack: {
+//                    print("回调")
+//                })
             }
             item.text = "测试代码\(index)"
             for twoIndex in 0...10 {
@@ -91,7 +91,7 @@ class TestUIController: WPBaseVC,WPLabelsViewDelegate {
                     threeItem.text = "测试代码\(threeIndex)"
                     twoItem.subItems.append(threeItem)
                     if index == 0  && count > 0{
-                        threeItem.isSelected = true
+//                        threeItem.isSelected = true
                         count = count - 1
                     }
                 }
@@ -101,8 +101,10 @@ class TestUIController: WPBaseVC,WPLabelsViewDelegate {
         }
 
         YPWorkTypeAlert.show(config: { alert in
+            alert.maxLevelTwo = 3
+            alert.maxLevelThree = 5
             alert.topBar.titleLabel.text = "测试代码"
-        }, style: .three, source: testItem) { items in
+        }, style: .two, source: testItem) { items in
             for item in items {
                 print(item.text)
             }

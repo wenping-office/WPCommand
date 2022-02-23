@@ -21,6 +21,10 @@ extension YPWorkTypeAlert{
 class YPWorkTypeAlert: WPBaseView,YPAlertProtocol,WPLabelsViewDelegate {
     /// 顶部条
     let topBar = YPAlertTopBar()
+    /// 最多选择二级标签几个
+    var maxLevelTwo : Int = 999
+    /// 最多三级标签几个
+    var maxLevelThree : Int = 999
     /// 标签视图
     private let labelsView = WPLabelsView<LabelView>.init(itemHeight: 28, spacing: 12, rowSpacing: 8)
     /// 左边tabel
@@ -196,8 +200,12 @@ class YPWorkTypeAlert: WPBaseView,YPAlertProtocol,WPLabelsViewDelegate {
         
         switch style{
             case.two:
+            if !checkLevleTow() && !elmt.isSelected {
+                print("超过最大可选择工种数量")
+                return
+            }
                 elmt.isSelected = !elmt.isSelected
-            
+
                 if elmt.isSelected {
                     addLabels(with: elmt)
                 }else{
@@ -268,8 +276,24 @@ class YPWorkTypeAlert: WPBaseView,YPAlertProtocol,WPLabelsViewDelegate {
         }
     }
     
+    func checkLevleTow() -> Bool {
+        var currentSelectedCount = 0
+        leftSource.forEach { elmt in
+            elmt.subItems.forEach { item in
+                if item.isSelected {
+                   currentSelectedCount += 1
+                }
+            }
+        }
+        return currentSelectedCount < maxLevelTwo
+    }
+
+    func checkLevelThree() -> Bool {
+        return labelsView.data.count < maxLevelThree
+    }
+
     static func show(in view:UIView? = nil,
-                     config:(YPWorkTypeAlert)->Void?,
+                     config:(YPWorkTypeAlert)->Void,
                      style:Style,
                      source:[Item],
                      complete:@escaping (([Item])->Void)){
@@ -323,7 +347,19 @@ extension YPWorkTypeAlert:UITableViewDelegate,UITableViewDataSource{
             let cell = tableView.wp.dequeue(of: RightCell.self)!
             cell.set(item: superItem)
             cell.selectedChange = {[weak self] item in
-                
+                guard
+                    let weakSelf = self
+                else { return }
+
+                if !weakSelf.checkLevleTow() && !item.isSelected && !superItem.isSelected {
+                    print("超过最大可选择工种数量")
+                    return
+                }
+                if !weakSelf.checkLevelThree() && !item.isSelected {
+                    print("最大最大可选择标签数量")
+                    return
+                }
+
                 item.isSelected = !item.isSelected
                 superItem.isSelected = superItem.isLabelSelected
                 if item.isSelected {
