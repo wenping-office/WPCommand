@@ -133,7 +133,8 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     let btn = UIButton()
     let lab = UILabel()
     let field = testBtn()
-
+    let table = UITableView()
+    
     var isObser = false
     var idDidShow = false
 
@@ -154,19 +155,18 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
         
         field.placeholder = "键盘"
         addSubview(field)
+        
+        table.backgroundColor = .red
+        addSubview(table)
 
         btn.rx.controlEvent(.touchUpInside).subscribe(onNext: {[weak self] in
             let test = self?.lab.text
             self?.lab.text = test! + test!
-//            self?.btn.snp.updateConstraints { make in
-//                make.width.equalTo(260)
-//            }
+            self?.field.snp.updateConstraints { make in
+                make.height.equalTo(90)
+            }
             
-//            WPAlertManager.default.updateSize(.bounces(damping: 0.3, velocity: 0.1, options: .allowUserInteraction),
-//                                              0.2,
-//                                                   .init(width: 50,     height: 50))
-            
-            WPAlertManager.default.update(offset: .init(x: 0, y: -10))
+            WPAlertManager.default.update(.default, 0.3)
             
         }).disposed(by: wp.disposeBag)
         
@@ -179,7 +179,7 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
             make.top.equalToSuperview()
             make.height.equalTo(44)
             make.left.right.equalToSuperview()
-            make.width.equalTo(200)
+//            make.width.equalTo(200)
         }
         
         field.snp.makeConstraints { make in
@@ -191,13 +191,21 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
         lab.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(field.snp.bottom)
+//            make.bottom.equalToSuperview()
+        }
+        
+        table.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.equalTo(lab.snp.bottom)
+            make.height.equalTo(150)
             make.bottom.equalToSuperview()
         }
+        
     }
     
     func alertInfo() -> WPAlertManager.Alert {
         return .init(.default,
-                     location: .center(),
+                     location: .bottomToFill(0),
                      showDuration: 0.3,
                      direction: .center,
                      dismissDuration: 0.3)
@@ -205,38 +213,9 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
     
     func touchMask() {
         wp.dismiss()
-//        FrameAlert().show(in:superview,option: .insert(keep: true))
     }
-    
-    func stateDidUpdate(state: WPAlertManager.State) {
-        if state == .didShow {
-            idDidShow = true
-            field.showHighlight(to: self, touch: { view in
 
-            }, color: .wp.initWith(0, 0, 0, 1))
-        }else{
-            idDidShow = false
-        }
 
-        if state == .didShow  {
-
-            WPSystem.keyboard.offsetY(in: self.btn, bag: wp.disposeBag).subscribe(onNext: {[weak self] value in
-//                let test = self.lab.text
-//                self.lab.text = test! + test!
-                guard
-                    let self = self
-                else { return }
-                
-                if self.idDidShow {
-                    let newValue = (value != 0) ? value - 10 : 0
-                    //                WPAlertManager.default.update(size: .init(width: 50, height: -100))
-                    WPAlertManager.default.update(offset: .init(x: 0, y: newValue))
-                }else{
-                    
-                }
-            }).disposed(by: wp.disposeBag)
-        }
-    }
 
     deinit {
         print("弹窗释放")

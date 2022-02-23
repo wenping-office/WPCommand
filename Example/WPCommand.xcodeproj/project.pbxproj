@@ -18,6 +18,8 @@
 		8B40CC9727B9EA3900B4F0DA /* YPSelecteAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B40CC9627B9EA3900B4F0DA /* YPSelecteAlert.swift */; };
 		8B40CC9927B9EA9400B4F0DA /* YPAlertTopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B40CC9827B9EA9400B4F0DA /* YPAlertTopBar.swift */; };
 		8B7D4A0E26ABF1000075B40F /* TestUIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D4A0D26ABF1000075B40F /* TestUIController.swift */; };
+		8B93CDE527C473B100517596 /* YPOptionAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B93CDE427C473B000517596 /* YPOptionAlert.swift */; };
+		8B93CDE727C4AD3100517596 /* YPWorkTypeAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B93CDE627C4AD3100517596 /* YPWorkTypeAlert.swift */; };
 		8B9474A826EB805A00115DDE /* TestLayoutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9474A726EB805A00115DDE /* TestLayoutVC.swift */; };
 		8B9B81F027BC951600DDE649 /* YPAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9B81EE27BC951600DDE649 /* YPAlertManager.swift */; };
 		8B9B81F127BC951600DDE649 /* YPAlertProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9B81EF27BC951600DDE649 /* YPAlertProtocol.swift */; };
@@ -64,6 +66,8 @@
 		8B40CC9627B9EA3900B4F0DA /* YPSelecteAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPSelecteAlert.swift; sourceTree = "<group>"; };
 		8B40CC9827B9EA9400B4F0DA /* YPAlertTopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPAlertTopBar.swift; sourceTree = "<group>"; };
 		8B7D4A0D26ABF1000075B40F /* TestUIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUIController.swift; sourceTree = "<group>"; };
+		8B93CDE427C473B000517596 /* YPOptionAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPOptionAlert.swift; sourceTree = "<group>"; };
+		8B93CDE627C4AD3100517596 /* YPWorkTypeAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPWorkTypeAlert.swift; sourceTree = "<group>"; };
 		8B9474A726EB805A00115DDE /* TestLayoutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLayoutVC.swift; sourceTree = "<group>"; };
 		8B9B81EE27BC951600DDE649 /* YPAlertManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPAlertManager.swift; sourceTree = "<group>"; };
 		8B9B81EF27BC951600DDE649 /* YPAlertProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPAlertProtocol.swift; sourceTree = "<group>"; };
@@ -205,6 +209,8 @@
 				8B9B81EF27BC951600DDE649 /* YPAlertProtocol.swift */,
 				8B40CC9627B9EA3900B4F0DA /* YPSelecteAlert.swift */,
 				8B40CC9827B9EA9400B4F0DA /* YPAlertTopBar.swift */,
+				8B93CDE427C473B000517596 /* YPOptionAlert.swift */,
+				8B93CDE627C4AD3100517596 /* YPWorkTypeAlert.swift */,
 			);
 			name = YPTest;
 			sourceTree = "<group>";
@@ -403,6 +409,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B93CDE727C4AD3100517596 /* YPWorkTypeAlert.swift in Sources */,
 				8B9B81F327BC967800DDE649 /* Array+Ex.swift in Sources */,
 				8B1B572326B399DB009178AE /* TestAlertController.swift in Sources */,
 				8BDADD872733E21100D197FE /* TestSpaceVC.swift in Sources */,
@@ -411,6 +418,7 @@
 				8B40CC9927B9EA9400B4F0DA /* YPAlertTopBar.swift in Sources */,
 				8B40CC9727B9EA3900B4F0DA /* YPSelecteAlert.swift in Sources */,
 				8B9B81F027BC951600DDE649 /* YPAlertManager.swift in Sources */,
+				8B93CDE527C473B100517596 /* YPOptionAlert.swift in Sources */,
 				8B9474A826EB805A00115DDE /* TestLayoutVC.swift in Sources */,
 				8B9B81F127BC951600DDE649 /* YPAlertProtocol.swift in Sources */,
 				8BF362A026BBF04A000A2280 /* TestMenuVC.swift in Sources */,

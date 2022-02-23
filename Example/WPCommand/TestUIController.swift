@@ -9,42 +9,51 @@
 import UIKit
 import WPCommand
 
-class obj:YPSelecteAlertItem {
-    var selecteAlertTitle: String?{
-        return testStr
+extension UILabel : WPLabelsItemView{
+    
+    
+    public func labelItemWidth(with data: Any) -> CGFloat {
+        guard
+            
+        let dataStr = data as? String
+            
+        else { return 0 }
+
+        text = dataStr
+        backgroundColor = .wp.random
+
+        return dataStr.wp.width(UIFont.systemFont(ofSize: 16), CGFloat.greatestFiniteMagnitude)
     }
     
     
-    var testStr : String = "skafja"
 }
 
-extension UIView:YPSelecteAlertItem{
-    var selecteAlertTitle: String? {
-        return description
+class TestUIController: WPBaseVC,WPLabelsViewDelegate {
+    
+    func labelsView(didSelectAt index: Int, with itemView: WPLabelsItemView, data: Any) {
+        print("-------")
     }
-}
-
-class TestUIController: WPBaseVC {
+    
+    
+    
+    let labelsView = WPLabelsView<UILabel>(itemHeight: 40)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         addBtn()
-//        let dateView = YPDateView.init(dateStyle: .yearMonthDayHourMinute, forScroll: Date())
-//        dateView?.dateLabelColor = .clear
-//        dateView?.maxLimitDate = Date() + 366.wp.day
-//        dateView?.minLimitDate = Date() - 366.wp.day
-//        view.addSubview(dateView!)
-//        dateView?.snp.makeConstraints { make in
-//            make.left.right.equalToSuperview()
-//            make.centerY.equalToSuperview()
-//            make.height.equalTo(200)
-//        }
-//
-////        dateView?.backgroundColor = .wp.random
-//        let strs = ["",""]
-//
-//        test([(strs,\.description)])
 
+        labelsView.set(data: ["测试代码0","测试代码1","测试代码2","测试代码3","测试代码4","测试代码5","测试代码6","测试代码7","测试代码8","测试代码9","测试代码10","测试代码11"])
+        labelsView.numberOfLines = 2
+        labelsView.delegate = self
+        view.addSubview(labelsView)
+        labelsView.backgroundColor = .wp.random
+        labelsView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(100)
+            make.left.equalToSuperview()
+            make.right.equalToSuperview().offset(-0)
+            make.height.equalTo(300)
+        }
     }
     
     func addBtn(){
@@ -55,39 +64,58 @@ class TestUIController: WPBaseVC {
             self?.showAlert()
         }.disposed(by: wp.disposeBag)
         view.addSubview(btn)
-        
+
         btn.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.centerY.equalToSuperview().offset(200)
+            make.centerX.equalToSuperview()
         }
     }
 
     func showAlert() {
         
-//        let alert = YPSelecteAlert(showType: .date(type: .yearMonthDay, normalDate: Date()))
-        
-//        let alert = YPSelecteAlert(showType: .custom)
-//
-//        alert.wp.show()
-        
-//        YPSelecteAlert.showDate(in: nil, style: .yearMonthDay, normalDate: Date()) { alert in
-//            alert.topBar.titleLabel.text = "测试代码"
-//        }
-        
-        let source = [UIView(),UIView()]
-        let source2 = [obj(),obj(),obj()]
-        YPSelecteAlert.showCustom(in: nil,
-                                  source: [source,
-                                           source2]) { alert in
-            alert.topBar.titleLabel.text = "自定义"
-        } callBack: { resualt in
-            
+        var testItem : [YPWorkTypeAlert.Item] = []
+        var count = 4
+        for index in 0...30 {
+            let item : YPWorkTypeAlert.Item = .init()
+            if count > 0 {
+                item.placeholder = .init(text: "测试代码", btnTitle: "点击", callBack: {
+                    print("回调")
+                })
+            }
+            item.text = "测试代码\(index)"
+            for twoIndex in 0...10 {
+                let twoItem : YPWorkTypeAlert.Item = .init()
+                twoItem.text = "测试代码\(twoIndex)"
+                for threeIndex in 0...5 {
+                    let threeItem : YPWorkTypeAlert.Item = .init()
+                    threeItem.text = "测试代码\(threeIndex)"
+                    twoItem.subItems.append(threeItem)
+                    if index == 0  && count > 0{
+                        threeItem.isSelected = true
+                        count = count - 1
+                    }
+                }
+                item.subItems.append(twoItem)
+            }
+            testItem.append(item)
         }
 
+        YPWorkTypeAlert.show(config: { alert in
+            alert.topBar.titleLabel.text = "测试代码"
+        }, style: .three, source: testItem) { items in
+            for item in items {
+                print(item.text)
+            }
+        }
+        
+
+        /*
+        YPOptionAlert.show(source: [[("1",false),("2",true)],[("取消",false)]]) { index in
+            
+        }
+         */
     }
 
-    func test<E,P:KeyPath<E,String>>(_ other:[([E],P)]) {
-        
-    }
 }
 
 
