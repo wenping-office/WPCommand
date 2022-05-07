@@ -184,7 +184,7 @@ public class YPAlertManager {
 
     private var targetView: UIView {
         if target == nil {
-            return UIApplication.wp.keyWindow!
+            return UIApplication.wp.mainWindow
         } else {
             return target!
         }

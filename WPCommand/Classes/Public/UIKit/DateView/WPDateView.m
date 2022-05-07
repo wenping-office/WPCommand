@@ -10,7 +10,7 @@
 
 #define kPickerSize self.datePicker.frame.size
 #define MAXYEAR 2099
-#define MINYEAR 0
+#define MINYEAR 1970
 
 
 @interface WPDateView ()<UIPickerViewDelegate,UIPickerViewDataSource,UIGestureRecognizerDelegate> {

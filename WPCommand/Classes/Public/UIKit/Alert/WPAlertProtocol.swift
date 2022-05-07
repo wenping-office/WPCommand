@@ -8,9 +8,13 @@
 import UIKit
 private var AlertTargetViewPointer = "WPAlertProtocolTargetViewPointer"
 private var AlertStatePointer = "WPAlertStatePointer"
+private var AlertStateHandlerPointer = "AlertStateHandlerPointer"
 
 /// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出,show时可携带maskHandler处理点击 dismiss时可携带handler处理弹窗状态
 public protocol WPAlertProtocol: UIView {
+    
+    /// 当前弹窗状态
+    var currentAlertState: WPAlertManager.State { get set }
     /// 弹窗根视图
     var targetView: UIView? { get set }
     /// 弹窗状态变化后执行
@@ -38,6 +42,17 @@ public extension WPAlertProtocol {
         }
         set {
             return WPRunTime.set(self, newValue, &AlertTargetViewPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    /// 弹窗根视图
+    var currentAlertState: WPAlertManager.State {
+        get {
+            let state : WPAlertManager.State = WPRunTime.get(self, &AlertStatePointer) ?? WPAlertManager.State.unknown
+            return state
+        }
+        set {
+            return WPRunTime.set(self, newValue, &AlertStatePointer, .OBJC_ASSOCIATION_RETAIN)
         }
     }
 
@@ -69,10 +84,10 @@ public extension WPAlertProtocol {
     /// 弹窗状态
     var stateHandler: StateHandler {
         get {
-            return WPRunTime.get(self, &AlertStatePointer)
+            return WPRunTime.get(self, &AlertStateHandlerPointer)
         }
         set {
-            return WPRunTime.set(self, newValue, &AlertStatePointer, .OBJC_ASSOCIATION_COPY)
+            return WPRunTime.set(self, newValue, &AlertStateHandlerPointer, .OBJC_ASSOCIATION_COPY)
         }
     }
 }

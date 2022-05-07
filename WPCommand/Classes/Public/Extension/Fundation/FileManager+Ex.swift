@@ -9,9 +9,27 @@ import UIKit
 
 public extension WPSpace where Base == FileManager{
 
- 
+    /// 文档路径
+    static var documentsDirectory : URL{
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
     
+    ///
+    static var libraryDirectory : URL{
+        return FileManager.default.urls(for: FileManager.SearchPathDirectory.libraryDirectory, in: .userDomainMask).first!
+    }
+
+    /// 零时文件夹
+    static var tempDirectory : URL {
+        return FileManager.default.temporaryDirectory
+    }
+    
+    /// 缓存文件夹
+    static var librayCaches : URL {
+        return FileManager.default.urls(for: FileManager.SearchPathDirectory.cachesDirectory, in: .userDomainMask).first!
+    }
 }
+
 
 /*
  enum YPDirectories {
@@ -21,7 +39,7 @@ public extension WPSpace where Base == FileManager{
      case temp
  }
 
- // 文件管理
+
  class YPFileManager: NSObject {
      
      static let shared = YPFileManager()
@@ -171,5 +189,4 @@ public extension WPSpace where Base == FileManager{
      }
      
  }
-
- */
+*/

@@ -12,13 +12,12 @@ import MJRefresh
 import RxSwift
 
 class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
-    
     let test1 = TestMenuVC2()
-    let test2 = TestMenuVC2()
+    let test2 = TestMenuVC1()
     let test3 = TestMenuVC2()
     let test4 = TestMenuVC2()
     let test5 = TestMenuVC2()
-    let test6 = TestMenuVC2()
+    let test6 = TestMenu3()
     let header = TestMenuHeaer()
 
     func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol? {
@@ -49,7 +48,7 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         case 2:
             return TestMenuHeaer3()
         case 3:
-            return TestMenuHeaer4()
+            return nil
         case 4:
             return TestMenuHeaer3()
         case 5:
@@ -73,6 +72,7 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         menuView.dataSource = self
         menuView.tableView.bounces = false
         menuView.multiGesture = true
+//        menuView.autoAdaptationScroll = false
 
         let items = [style(str: "测试代码32323"),
                      style(str: "测试代码2"),
@@ -82,7 +82,13 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
                      style(str: "测试代码6")]
         menuView.setNavigation(items)
         menuView.selectedAnimation = true
+
         
+        menuView.tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
+            WPGCD.main_asyncAfter(.now() + 1.5, task: {[weak self] in
+                self?.menuView.tableView.mj_header?.endRefreshing()
+            })
+        })
     }
     
     func style(str:String) -> WPMenuView.DefaultNavigationItem{
@@ -103,6 +109,9 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
         }
     }
 
+    deinit {
+
+    }
 }
 
 
@@ -151,14 +160,19 @@ class TestMenuVC2: WPBaseVC,WPMenuBodyViewProtocol,UITableViewDelegate, UITableV
         targetViewDidScroll?(scrollView)
     }
     
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        // 触碰屏幕
-        targetViewWillBeginDragging?(scrollView)
+    func menuBodyViewAdaptationScrollView() -> UIScrollView?{
+        return tableView
     }
 
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        // 离开屏幕
-        targetViewWillEndDragging?(scrollView)
+    deinit {
+        print("vc 销毁")
+    }
+}
+
+class TestMenu3: WPBaseVC,WPMenuBodyViewProtocol {
+    func menuBodyView() -> UIView? {
+        view.backgroundColor = .blue
+       return view
     }
     
 
@@ -178,6 +192,10 @@ class TestMenuHeaer: WPBaseView,WPMenuHeaderViewProtocol {
     func menuHeaderViewAtHeight() -> WPMenuView.HeaderHeightOption {
         
         return .height(200)
+    }
+    
+    deinit {
+        print("header 销毁")
     }
 }
 
@@ -208,11 +226,15 @@ class TestMenuHeaer4 : TestMenuHeaer{
         
         return .height(120)
     }
+    
+    deinit {
+        print("header 销毁")
+    }
 }
 
 
 
-class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
+class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource,WPMenuViewDelegate{
     func menuBodyViewForIndex(index: Int) -> WPMenuBodyViewProtocol? {
         switch index {
         case 0:
@@ -226,26 +248,42 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource{
     
     let menuView = WPMenuView(navigationHeight: 44)
     let test1 : ContentVC = .init()
-    let test2 : ContentVC = .init()
+    let test2 : TestMenuVC2 = .init()
 
     func menuBodyView() -> UIView? {
         return view
     }
     
+    func menuBodyViewAdaptationScrollView() -> UIScrollView? {
+        return menuView.tableView
+    }
+    
+    func menuViewDidVerticalScroll(_ point: CGPoint) {
+        targetViewDidScroll?(menuView.tableView)
+    }
+
     override func initSubView(){
         
         addChild(test1)
         addChild(test2)
         
+        let co = UICollectionView(frame: .zero, collectionViewLayout: .init())
+
         test2.view.backgroundColor = .orange
         test1.view.backgroundColor = .green
 
         menuView.dataSource = self
+        menuView.delegate = self
         menuView.horizontalGestureAdaptation = true
-//        menuView.setNavigation([testMenuItem(),testMenuItem()])
+        menuView.setNavigation([style(str: "蓝色"),style(str: "绿色")])
         
         view.backgroundColor = .red
         view.addSubview(menuView)
+    }
+    
+    func style(str:String) -> WPMenuView.DefaultNavigationItem{
+
+        return WPMenuView.DefaultNavigationItem.default(.init(.text(str, 20, .bold), background: .background(), line: .line(nil, 5, .init(left: 30, right: 30), color: .wp.random)))
     }
     
     override func initSubViewLayout() {

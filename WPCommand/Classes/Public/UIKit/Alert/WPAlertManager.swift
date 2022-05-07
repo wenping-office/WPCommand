@@ -163,6 +163,7 @@ public class WPAlertManager {
             didSet {
                 alert.stateHandler?(state)
                 alert.stateDidUpdate(state: state)
+                alert.currentAlertState = state
                 stateChange?(state)
             }
         }
@@ -190,7 +191,7 @@ public class WPAlertManager {
     /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
-            return UIApplication.wp.keyWindow!
+            return UIApplication.wp.mainWindow
         } else {
             return target!
         }
@@ -550,12 +551,14 @@ extension WPAlertManager {
                            animation:@escaping ()->Void,
                            completion:@escaping(Bool)->Void){
         maskView?.isUserInteractionEnabled = false
+        UIApplication.wp.mainWindow.isUserInteractionEnabled = false
         switch type {
         case .default:
             UIView.animate(withDuration: duration, animations: {
                 animation()
             }, completion: {[weak self] resualt in
                 self?.maskView?.isUserInteractionEnabled = true
+                UIApplication.wp.mainWindow.isUserInteractionEnabled = true
                 completion(resualt)
             })
         case .bounces(let damping, let velocity, let options):
@@ -564,6 +567,7 @@ extension WPAlertManager {
             }, completion: {[weak self] resualt in
                 completion(resualt)
                 self?.maskView?.isUserInteractionEnabled = true
+                UIApplication.wp.mainWindow.isUserInteractionEnabled = true
             })
         }
     }

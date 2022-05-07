@@ -74,6 +74,7 @@
 		8B9B81F227BC967800DDE649 /* Array+Ex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Ex.swift"; sourceTree = "<group>"; };
 		8B9B81F427BC97C500DDE649 /* YPSpace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YPSpace.swift; sourceTree = "<group>"; };
 		8BB4D3D22721080F002F0C46 /* TestHighlightVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHighlightVC.swift; sourceTree = "<group>"; };
+		8BC9CCCB281B91CC002FCE4A /* TestPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = TestPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		8BDADD862733E21000D197FE /* TestSpaceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSpaceVC.swift; sourceTree = "<group>"; };
 		8BF3629F26BBF04A000A2280 /* TestMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMenuVC.swift; sourceTree = "<group>"; };
 		C58DB079722391B159D224D6 /* Pods_WPCommand_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPCommand_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,6 +148,7 @@
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 				8B40CC8B27B77E9D00B4F0DA /* WPCommand_Example-Bridging-Header.h */,
+				8BC9CCCB281B91CC002FCE4A /* TestPlayground.playground */,
 			);
 			name = "Example for WPCommand";
 			path = WPCommand;

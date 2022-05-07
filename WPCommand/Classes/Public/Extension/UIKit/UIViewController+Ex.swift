@@ -38,3 +38,34 @@ public extension UIViewController {
         viewControl?.present(control, animated: animated, completion: completion)
     }
 }
+
+
+public extension WPSpace where Base: UIViewController {
+    /// 当前显示的VC
+   static var current: UIViewController? {
+        func rootVC(vc: UIViewController?) -> UIViewController? {
+            if let presentedVC = vc?.presentedViewController { return rootVC(vc: presentedVC) }
+
+            if let tabBarVC = vc as? UITabBarController,
+               let selectedVC = tabBarVC.selectedViewController {
+                return rootVC(vc: selectedVC)
+            }
+            if let navigationVC = vc as? UINavigationController,
+               let visibleVC = navigationVC.visibleViewController {
+                return rootVC(vc: visibleVC)
+            }
+            if let pageVC = vc as? UIPageViewController,
+               pageVC.viewControllers?.count == 1 {
+                return rootVC(vc: pageVC.viewControllers?.first)
+            }
+
+            for elmt in vc?.view?.subviews ?? [] {
+                if let childViewController = elmt.next as? UIViewController {
+                    return rootVC(vc: childViewController)
+                }
+            }
+            return vc
+        }
+        return rootVC(vc: UIApplication.wp.mainWindow.rootViewController)
+    }
+}

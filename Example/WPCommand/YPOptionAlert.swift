@@ -83,7 +83,7 @@ extension YPOptionAlert:UITableViewDelegate,UITableViewDataSource{
         if elmt.1 {
             cell.textLabel?.textColor = .wp.initWith(0, 146, 255, 1)
         }else{
-            cell.textLabel?.textColor = .wp.initWith(0, 0, 0, 0.85)
+            cell.textLabel?.textColor = .wp.initWith(0, 0, 0, 0.8)
         }
         return cell
     }
@@ -105,9 +105,17 @@ extension YPOptionAlert:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        var index = 0
+
+          for sourceIndex in 0..<indexPath.section {
+              index = index + source[sourceIndex].count
+          }
+
+          index = index + indexPath.row
+
         dismiss(stateHandler: {[weak self] state in
             if state == .didPop {
-                self?.callBack?(2)
+                self?.callBack?(index)
             }
         })
     }

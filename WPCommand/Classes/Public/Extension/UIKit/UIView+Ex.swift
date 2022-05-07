@@ -11,18 +11,18 @@ import UIKit
 
 public extension WPSpace where Base: UIView {
     /// 从xib加载
-    static func initWith(_ xibName: String) -> Any? {
+    static func initWith(_ xibName: String) -> Base? {
         guard let nibs = Bundle.main.loadNibNamed(xibName, owner: nil, options: nil) else {
             return nil
         }
-        return nibs[0]
+        return nibs.first as? Base
     }
 }
 
 public extension WPSpace where Base: UIView {
     /// 在keyWindow中的位置
-    var frameInWidow: CGRect {
-        return base.convert(bounds, to: UIApplication.shared.keyWindow)
+    var frameInMainWidow: CGRect {
+        return base.convert(bounds, to: UIApplication.wp.mainWindow)
     }
     
     /// 将当前视图转为UIImage
@@ -181,7 +181,7 @@ public extension WPSpace where Base: UIView {
     
     /// 设置渐变背景色，需在设置frame或约束后调用
     @discardableResult
-    func layerColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor]) -> CAGradientLayer {
+    func backgroundColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor]) -> CAGradientLayer {
         let layer = CAGradientLayer()
         let sKey = "c-p-p"
         layer.name = sKey

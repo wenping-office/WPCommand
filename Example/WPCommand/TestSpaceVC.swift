@@ -21,6 +21,12 @@ class TestSpaceVC: WPBaseVC {
             make.edges.equalToSuperview()
         }
         view.backgroundColor = .white
+        
+        let text = UITextView()
+        let textField = UITextField()
+        
+        text.rx.text
+        textField.rx.text
 
     }
 }

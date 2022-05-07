@@ -167,6 +167,7 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
             }
             
             WPAlertManager.default.update(.default, 0.3)
+            self?.stateDidUpdate(state: .didShow)
             
         }).disposed(by: wp.disposeBag)
         
@@ -215,7 +216,11 @@ class LayoutAlert:WPBaseView,WPAlertProtocol{
         wp.dismiss()
     }
 
-
+    func stateDidUpdate(state: WPAlertManager.State) {
+        if state == .didShow {
+            wp.corner([.topLeft,.topRight], radius: 6)
+        }
+    }
 
     deinit {
         print("弹窗释放")

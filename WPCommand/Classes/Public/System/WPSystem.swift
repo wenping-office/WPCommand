@@ -119,11 +119,11 @@ public extension WPSystem {
                 obServer = ob
                 return Disposables.create()
             }
-            var targetFrame: CGRect = view.wp.frameInWidow
+            var targetFrame: CGRect = view.wp.frameInMainWidow
             
             WPSystem.keyboard.willShow.subscribe(onNext: { value in
                 if targetFrame == .zero {
-                    targetFrame = weakView?.wp.frameInWidow ?? .zero
+                    targetFrame = weakView?.wp.frameInMainWidow ?? .zero
                 }
                 let keyBoardEnd = (value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero
                 let of = -(targetFrame.maxY - keyBoardEnd.minY)

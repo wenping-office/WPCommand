@@ -14,9 +14,9 @@ public extension UIPanGestureRecognizer{
         /// 右边滑动
         case right
         /// 上拉滑动
-        case top
+        case upper
         /// 下拉滑动
-        case bottom
+        case lower
         /// 未知
         case unknown
     }
@@ -40,9 +40,9 @@ public extension WPSpace where Base: UIPanGestureRecognizer{
             }
         }else if absY > absX{
             if point.y < 0{
-                return .top
+                return .upper
             }else{
-                return .bottom
+                return .lower
             }
         }
         
