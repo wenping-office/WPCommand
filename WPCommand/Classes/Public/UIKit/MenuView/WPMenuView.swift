@@ -92,16 +92,6 @@ public extension WPMenuView{
         }
     }
     
-    /// 垂直手势适配 默认false
-//    var verticalGestureAdaptation : Bool{
-//        set{
-//            contentView.bodyView.collectionView.verticalAdaptation = newValue
-//        }
-//        get{
-//            return contentView.bodyView.collectionView.verticalAdaptation
-//        }
-//    }
-    
     /// 身体视图
     var bodyView:WPMenuBodyView{
         return contentView.bodyView
@@ -209,6 +199,9 @@ public extension WPMenuView {
         for index in 0 ..< navigationitems.count {
             let haederItem = WPMenuHeaderViewItem(index: index, headerView: self.dataSource?.menuHeaderViewForIndex(index: index))
             let bodyItem = WPMenuBodyViewItem(index: index, bodyView: self.dataSource?.menuBodyViewForIndex(index: index))
+            bodyItem.bodyView?.targetViewDidScroll = {[weak self] scrollView in
+                self?.didScoll(did: bodyItem)
+            }
             let navItem = WPMenuNavigationItem(size: .init(width: navigationitems[index].menuItemWidth(), height: navigationHeight), index: index, item: navigationitems[index])
             bodyItems.append(bodyItem)
             navItems.append(navItem)
@@ -240,6 +233,8 @@ public class WPMenuView: WPBaseView {
     private let contentView: WPMenuContentTableView
     /// 导航栏选中样式
     public var navigationSelectedStyle: NavigationSelectedStyle = .center
+    /// 自动识别bodyView是否为scrollView 自动开启多手势识别 默认true
+    public var autoAdaptationScroll = true
     /// 当前选中的索引
     public private(set) var currentIndex:Int?
     
@@ -290,6 +285,9 @@ public class WPMenuView: WPBaseView {
         contentView.estimatedSectionFooterHeight = 0
         contentView.showsHorizontalScrollIndicator = false
         contentView.showsVerticalScrollIndicator = false
+        if #available(iOS 15.0, *) {
+            contentView.sectionHeaderTopPadding = 0
+        }
         addSubview(contentView)
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -297,6 +295,10 @@ public class WPMenuView: WPBaseView {
     }
     
     override public func observeSubViewEvent() {
+        
+        contentView.didScroll = {[weak self] view in
+            self?.contentViewDidScroll(view)
+        }
 
         contentView.bodyView.contentOffSet = {[weak self] x in
             /// 偏移量
@@ -313,6 +315,15 @@ public class WPMenuView: WPBaseView {
                 self?.setChildView(offset: 0, with: defaultIndex - 1)
                 self?.setChildView(offset: offset, with: defaultIndex + 1)
                 self?.setChildView(offset: 1 - offset, with: defaultIndex)
+            }
+
+            guard
+                let self = self
+            else { return }
+            
+            let bodyItem = self.bodyView.data.wp_get(of: defaultIndex)
+            if self.autoAdaptationScroll {
+                self.contentView.multiGesture = bodyItem?.bodyView?.menuBodyViewAdaptationScrollView() != nil
             }
         }
         
@@ -357,6 +368,60 @@ public class WPMenuView: WPBaseView {
         }
     }
     
+    // contentView滚动
+    private func contentViewDidScroll(_ scrollView:UIScrollView){
+        
+        delegate?.menuViewDidVerticalScroll(scrollView.contentOffset)
+
+        let offsetY = contentView.rectForRow(at: IndexPath.init(row: 0, section: 1)).origin.y - navigationHeight
+
+        if scrollView.contentOffset.y > contentView.lastOffsetY {
+            if scrollView.contentOffset.y >= offsetY {
+                scrollView.contentOffset = .init(x: 0, y: offsetY)
+            }
+        }
+
+        if scrollView.contentOffset.y < contentView.lastOffsetY {
+            if let index = currentIndex {
+                let item = contentView.bodyView.data.wp_get(of: index)
+                let subCurrentY = item?.bodyView?.menuBodyViewAdaptationScrollView()?.contentOffset.y ?? 0
+                if subCurrentY > 0 {
+                    scrollView.contentOffset = .init(x: 0, y: contentView.lastOffsetY)
+                }else{
+                    if scrollView.contentOffset.y <= 0 {
+                        scrollView.contentOffset = .zero
+                    }
+                }
+            }
+        }
+        contentView.lastOffsetY = scrollView.contentOffset.y
+    }
+    
+    /// 子视图正在滚动
+    private func didScoll(did item:WPMenuBodyViewItem){
+        
+        if contentView.contentOffset.y == 0 { return }
+        
+        let offsetY = contentView.rectForRow(at: IndexPath.init(row: 0, section: 1)).origin.y - navigationHeight
+        
+        let subCurrentY = item.bodyView?.menuBodyViewAdaptationScrollView()?.contentOffset.y ?? 0
+        let subLastY = item.lastOffset.y
+
+        if offsetY > item.lastOffset.y {
+            if contentView.contentOffset.y < offsetY && subLastY >= 0{
+                item.bodyView?.menuBodyViewAdaptationScrollView()?.contentOffset = .init(x: 0, y: item.lastOffset.y)
+            }
+        }
+
+        if subCurrentY < subLastY  {
+            if subCurrentY <= 0 && contentView.contentOffset.y > 0 {
+                item.bodyView?.menuBodyViewAdaptationScrollView()?.contentOffset = .zero
+            }
+        }
+        
+        item.lastOffset = item.bodyView?.menuBodyViewAdaptationScrollView()?.contentOffset ?? .zero
+    }
+
     /// 选中一页内部使用
     /// - Parameter index:
     private func selectedPage(index: Int) {
@@ -420,7 +485,11 @@ class WPMenuContentTableView: UITableView,UIGestureRecognizerDelegate {
     let navView = WPMenuNavigationView()
     /// 多手势识别
     var multiGesture : Bool = false
+    /// 上次滚动的Y
+    var lastOffsetY : CGFloat = 0
     
+    var didScroll : ((UIScrollView)->Void)?
+
     init(navigationHeight: CGFloat, style: UITableView.Style) {
         self.navigationHeight = navigationHeight
         super.init(frame: .zero, style: style)
@@ -487,6 +556,8 @@ extension WPMenuContentTableView: UITableViewDelegate, UITableViewDataSource {
             return 0
         }
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        didScroll?(scrollView)
+    }
 }
-
-

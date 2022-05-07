@@ -14,6 +14,8 @@ class WPMenuBodyViewItem: WPMenuView.Item {
             isAddToSuperView = false
         }
     }
+    /// 上次滚动到的偏移量
+    var lastOffset : CGPoint = .zero
     /// 是否加入到视图
     var isAddToSuperView = false
     /// 重用标识符

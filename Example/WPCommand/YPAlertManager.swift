@@ -1,5 +1,5 @@
 //
-//  WPAlertManager.swift
+//  YPAlertManager.swift
 //  WPCommand
 //
 //  Created by WenPing on 2021/8/2.
@@ -8,7 +8,7 @@
 import RxSwift
 import UIKit
 
-public extension WPAlertManager {
+public extension YPAlertManager {
     enum Option {
         /// 插入式强制立马弹出 keep == true 插入弹窗消失后弹出被插入的弹窗
         /// keep == false 干掉被插入的弹窗
@@ -17,16 +17,14 @@ public extension WPAlertManager {
         case add
     }
 
-    /// 布局方式
     enum LayoutOption {
         case frame(size: CGSize)
         case layout
     }
 }
 
-public extension WPAlertManager {
+public extension YPAlertManager {
     struct Alert {
-        /// 动画类型
         public let animationType: AnimationType
         /// 弹窗显示的位置
         public let location: ShowLocation
@@ -145,50 +143,45 @@ public extension WPAlertManager {
 }
 
 /// 可弹出一组弹窗或插入式弹窗，也可自定义一个manager自己管理一组弹窗
-public class WPAlertManager {
+public class YPAlertManager {
     /// 弹窗
     private class Item {
-        /// 弹窗
-        let alert: WPAlertProtocol
-        /// 弹窗等级
+        let alert: YPAlertProtocol
+
         let level: Int
-        /// 是否被中断动画并且被插入到当前位置
+
         var isInterruptInset = false
-        /// 目标视图
+
         weak var target: UIView?
-        /// 布局方式
+
         var layoutOption: LayoutOption?
-        /// 弹窗状态
+
         var state: State = .unknown {
             didSet {
                 alert.stateHandler?(state)
                 alert.stateDidUpdate(state: state)
-                alert.currentAlertState = state
                 stateChange?(state)
             }
         }
 
-        /// 弹窗的偏移量
         var offset: CGPoint = .zero
-        /// 状态变化
+
         var stateChange: ((State)->Void)?
         
-        init(alert: WPAlertProtocol, level: Int) {
+        init(alert: YPAlertProtocol, level: Int) {
             self.alert = alert
             self.level = level
         }
     }
 
-    /// 弹窗视图
     private weak var current: Item?
-    /// 弹窗的根视图
+
     private weak var target: UIView? {
         willSet {
             removeMask()
         }
     }
 
-    /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
             return UIApplication.wp.mainWindow
@@ -197,9 +190,8 @@ public class WPAlertManager {
         }
     }
 
-    /// 当前弹窗的mask
-    private weak var maskView: WPAlertManagerMask?
-    /// 弹窗队列
+    private weak var maskView: YPAlertManagerMask?
+
     private var alerts: [Item] = [] {
         didSet {
             alerts.sort { elmt1, elmt2 in
@@ -208,35 +200,34 @@ public class WPAlertManager {
         }
     }
 
-    /// 当前弹窗开始的frame
     private var showFrame: CGRect = .zero
-    /// 当前弹窗结束的frame
+
     private var dismissFrame: CGRect = .zero
-    /// 自动布局下的block
+
     private var layoutShowBlock: (()->Void)?
 
     /// 单例
-    public static var `default`: WPAlertManager = {
-        let manager = WPAlertManager()
+    public static var `default`: YPAlertManager = {
+        let manager = YPAlertManager()
         return manager
     }()
 
     public init() {}
 
     /// 添加一个弹窗
-    public func add(alert: WPAlertProtocol) {
-        alert.tag = WPAlertManager.identification()
+    public func add(alert: YPAlertProtocol) {
+        alert.tag = YPAlertManager.identification()
         let alertItem: Item = .init(alert: alert, level: Int(alert.alertLevel()))
         alertItem.state = .cooling
         alerts.append(alertItem)
     }
     
     /// 移除一个弹窗
-    public func remove(alert: WPAlertProtocol) {
+    public func remove(alert: YPAlertProtocol) {
         current = nil
         alert.removeFromSuperview()
         
-        alerts.wp_filter { elmt in
+        alerts.yp_filter { elmt in
             elmt.alert.tag == alert.tag
         }
         alert.stateDidUpdate(state: .remove)
@@ -258,7 +249,7 @@ public class WPAlertManager {
     /// 添加一组弹窗会清除现有的弹窗
     /// - Parameter alerts: 弹窗
     @discardableResult
-    public func set(alerts: [WPAlertProtocol])->WPAlertManager {
+    public func set(alerts: [YPAlertProtocol])->YPAlertManager {
         self.alerts = []
         alerts.forEach { [weak self] elmt in
             self?.add(alert: elmt)
@@ -270,8 +261,8 @@ public class WPAlertManager {
     /// - Parameters:
     ///   - alert: 弹窗
     ///   - option: 选择条件
-    public func show(next alert: WPAlertProtocol, option: Option = .insert(keep: true)) {
-        alert.tag = WPAlertManager.identification()
+    public func show(next alert: YPAlertProtocol, option: Option = .insert(keep: true)) {
+        alert.tag = YPAlertManager.identification()
         let level = (current?.level ?? 0) - 1
         let alertItem: Item = .init(alert: alert, level: level)
         alertItem.target = alert.targetView
@@ -339,13 +330,13 @@ public class WPAlertManager {
 
         switch layoutOption {
         case .frame(let alertSize):
-            let alertOrgin = alertItem.alert.wp_orgin
+            let alertOrgin = alertItem.alert.yp_orgin
             var newSize = alertSize
             newSize.width += size.width
             newSize.height += size.height
             alertItem.layoutOption = .frame(size: newSize)
             resetFrame(alertItem)
-            alertItem.alert.wp_orgin = alertOrgin
+            alertItem.alert.yp_orgin = alertOrgin
         case .layout: break
         }
 
@@ -449,8 +440,8 @@ public class WPAlertManager {
     }
 }
 
-extension WPAlertManager {
-    /// 获取一个唯一标识
+extension YPAlertManager {
+
     private static func identification()->Int {
         return Int(
             arc4random_uniform(100) +
@@ -460,16 +451,14 @@ extension WPAlertManager {
                 arc4random_uniform(100)
         )
     }
-    
-    /// 添加一个蒙层
-    private func addMask(info: WPAlertManager.Mask) {
-        let resualt = targetView.subviews.wp_isContent { elmt in
-            elmt.isKind(of: WPAlertManagerMask.self)
+
+    private func addMask(info: YPAlertManager.Mask) {
+        let resualt = targetView.subviews.yp_isContent { elmt in
+            elmt.isKind(of: YPAlertManagerMask.self)
         }
         
-        // 如果没有蒙版 那么添加一个
         if !resualt {
-            let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
+            let maskView = YPAlertManagerMask(maskInfo: info, action: { [weak self] in
                 if self?.current?.state == .didShow {
                     self?.current?.alert.touchMask()
                 }
@@ -483,11 +472,6 @@ extension WPAlertManager {
         }
     }
     
-    /// 动画节点
-    /// - Parameters:
-    ///   - item: alert
-    ///   - isShow: 是否是显示
-    ///   - layoutOption: 布局方式
     private func animateActuator(_ item:Item,
                                  isShow:Bool,
                                  layoutOption:LayoutOption){
@@ -517,11 +501,6 @@ extension WPAlertManager {
         }
     }
     
-    /// 动画执行结果
-    /// - Parameters:
-    ///   - item: alert
-    ///   - resualt: 结果
-    ///   - isShow: 是否是显示
     private func animationActuatorComplete(_ item:Item,
                                            resualt:Bool,
                                            isShow:Bool){
@@ -545,20 +524,17 @@ extension WPAlertManager {
         }
     }
     
-    /// 执行动画
     private func animation(_ type:AnimationType,
                            duration:TimeInterval,
                            animation:@escaping ()->Void,
                            completion:@escaping(Bool)->Void){
         maskView?.isUserInteractionEnabled = false
-        UIApplication.wp.mainWindow.isUserInteractionEnabled = false
         switch type {
         case .default:
             UIView.animate(withDuration: duration, animations: {
                 animation()
             }, completion: {[weak self] resualt in
                 self?.maskView?.isUserInteractionEnabled = true
-                UIApplication.wp.mainWindow.isUserInteractionEnabled = true
                 completion(resualt)
             })
         case .bounces(let damping, let velocity, let options):
@@ -567,41 +543,33 @@ extension WPAlertManager {
             }, completion: {[weak self] resualt in
                 completion(resualt)
                 self?.maskView?.isUserInteractionEnabled = true
-                UIApplication.wp.mainWindow.isUserInteractionEnabled = true
             })
         }
     }
 
-    /// 删除蒙层
     private func removeMask() {
         maskView?.removeFromSuperview()
         maskView = nil
     }
     
-    /// 判断是否还有下一个弹窗
     private func isNext()->Bool {
         let count = alerts.count
         return (count - 1) > 0
     }
     
-    /// 移动一个item并插入到插入队列的第一个
     private func moveItemToFist(_ item: Item) {
         current = nil
         item.alert.removeFromSuperview()
         
-        self.alerts.wp_filter { elmt in
+        self.alerts.yp_filter { elmt in
             elmt.alert.tag == item.alert.tag
         }
         current = alerts.first
         
-        item.alert.wp_size = .zero
+        item.alert.yp_size = .zero
         alerts.append(item)
     }
 
-    /// 执行弹窗动画
-    /// - Parameters:
-    ///   - isShow: 是显示还是移除
-    ///   - option: 选择
     private func alertAnimation(isShow: Bool, option: Option) {
         if let item = current {
             var layoutOption: LayoutOption = .layout
@@ -658,7 +626,6 @@ extension WPAlertManager {
         }
     }
     
-    /// 计算弹窗的位置
     @discardableResult
     private func resetFrame(_ item: Item)->LayoutOption {
         switch item.layoutOption {
@@ -668,15 +635,15 @@ extension WPAlertManager {
         default: break
         }
 
-        let alertW: CGFloat = item.alert.wp_width
-        let alertH: CGFloat = item.alert.wp_height
-        let maxW: CGFloat = targetView.wp_width
-        let maxH: CGFloat = targetView.wp_height
+        let alertW: CGFloat = item.alert.yp_width
+        let alertH: CGFloat = item.alert.yp_height
+        let maxW: CGFloat = targetView.yp_width
+        let maxH: CGFloat = targetView.yp_height
         let center: CGPoint = .init(x: (maxW - alertW) * 0.5, y: (maxH - alertH) * 0.5)
         var beginF: CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
         if item.layoutOption == nil {
-            item.layoutOption = (item.alert.wp_size == .zero) ? .layout : .frame(size: item.alert.wp_size)
+            item.layoutOption = (item.alert.yp_size == .zero) ? .layout : .frame(size: item.alert.yp_size)
         }
         
         switch item.alert.alertInfo().location {
@@ -697,8 +664,8 @@ extension WPAlertManager {
             case .frame:
                 beginF.origin.x = center.x + offset.x
                 beginF.origin.y = 0 + offset.y
-                item.alert.wp_x = center.x + offset.x
-                item.alert.wp_y = -alertH + offset.y
+                item.alert.yp_x = center.x + offset.x
+                item.alert.yp_y = -alertH + offset.y
             }
         case .topToFill(let offsetY):
             item.offset = .init(x: 0, y: offsetY)
@@ -730,8 +697,8 @@ extension WPAlertManager {
             case .frame:
                 beginF.origin.x = 0 + offset.x
                 beginF.origin.y = center.y + offset.y
-                item.alert.wp_x = -alertW + offset.x
-                item.alert.wp_y = center.y + offset.y
+                item.alert.yp_x = -alertW + offset.x
+                item.alert.yp_y = center.y + offset.y
             }
 
         case .leftToFill(let offsetX):
@@ -763,8 +730,8 @@ extension WPAlertManager {
             case .frame:
                 beginF.origin.x = center.x + offset.x
                 beginF.origin.y = maxH - alertH + offset.y
-                item.alert.wp_x = center.x + offset.x
-                item.alert.wp_y = maxH + offset.y
+                item.alert.yp_x = center.x + offset.x
+                item.alert.yp_y = maxH + offset.y
             }
 
         case .bottomToFill(let offsetY):
@@ -796,8 +763,8 @@ extension WPAlertManager {
             case .frame:
                 beginF.origin.x = maxW - alertW + offset.x
                 beginF.origin.y = center.y + offset.y
-                item.alert.wp_y = center.y + offset.y
-                item.alert.wp_x = maxW + offset.x
+                item.alert.yp_y = center.y + offset.y
+                item.alert.yp_x = maxW + offset.x
             }
         case .rightToFill(let offsetY):
             item.offset = .init(x: 0, y: offsetY)
@@ -823,7 +790,7 @@ extension WPAlertManager {
                 beginF.origin.x = center.x + offset.x
                 beginF.origin.y = center.y + offset.y
                 item.alert.alpha = 0
-                item.alert.wp_orgin = beginF.origin
+                item.alert.yp_orgin = beginF.origin
             }
             item.alert.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
         }
@@ -833,41 +800,39 @@ extension WPAlertManager {
         return item.layoutOption!
     }
     
-    /// 计算弹窗结束位置
     private func resetEndFrame(_ item: Item) {
-        let alertW: CGFloat = item.alert.wp_width
-        let alertH: CGFloat = item.alert.wp_height
-        let maxW: CGFloat = targetView.wp_width
-        let maxH: CGFloat = targetView.wp_height
+        let alertW: CGFloat = item.alert.yp_width
+        let alertH: CGFloat = item.alert.yp_height
+        let maxW: CGFloat = targetView.yp_width
+        let maxH: CGFloat = targetView.yp_height
         var endF: CGRect = .init(x: 0, y: 0, width: alertW, height: alertH)
         
         switch item.alert.alertInfo().direction {
         case .top:
-            endF.origin.x = item.alert.wp_x
+            endF.origin.x = item.alert.yp_x
             endF.origin.y = -alertH
         case .left:
             endF.origin.x = -alertW
-            endF.origin.y = item.alert.wp_y
+            endF.origin.y = item.alert.yp_y
         case .bottom:
-            endF.origin.x = item.alert.wp_x
+            endF.origin.x = item.alert.yp_x
             endF.origin.y = maxH
         case .right:
             endF.origin.x = maxW
-            endF.origin.y = item.alert.wp_y
+            endF.origin.y = item.alert.yp_y
         case .center:
-            endF.origin = item.alert.wp_orgin
+            endF.origin = item.alert.yp_orgin
         }
         
         dismissFrame = endF
     }
 }
 
-/// 蒙层视图
-class WPAlertManagerMask: UIView {
-    /// 蒙板视图
+class YPAlertManagerMask: UIView {
+
     let contentView = UIButton()
-    /// 蒙板info
-    var maskInfo: WPAlertManager.Mask {
+
+    var maskInfo: YPAlertManager.Mask {
         didSet {
             contentView.backgroundColor = maskInfo.color
             contentView.isUserInteractionEnabled = !maskInfo.enabled
@@ -875,7 +840,7 @@ class WPAlertManagerMask: UIView {
         }
     }
     
-    init(maskInfo: WPAlertManager.Mask, action: (()->Void)?) {
+    init(maskInfo: YPAlertManager.Mask, action: (()->Void)?) {
         self.maskInfo = maskInfo
         super.init(frame: .zero)
 
@@ -891,5 +856,65 @@ class WPAlertManagerMask: UIView {
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+public extension UIView {
+    var yp_x: CGFloat {
+        get { return frame.origin.x }
+        set { frame.origin.x = newValue }
+    }
+    
+    var yp_y: CGFloat {
+        get { return frame.origin.y }
+        set { frame.origin.y = newValue }
+    }
+    
+    var yp_width: CGFloat {
+        get { return frame.size.width }
+        set { frame.size.width = newValue }
+    }
+    
+    var yp_height: CGFloat {
+        get { return frame.size.height }
+        set { frame.size.height = newValue }
+    }
+    
+    var yp_maxX: CGFloat {
+        get { return yp_x + yp_width }
+        set { yp_x = newValue - yp_width }
+    }
+    
+    var yp_maxY: CGFloat {
+        get { return yp_y + yp_height }
+        set { yp_y = newValue - yp_height }
+    }
+    
+    var yp_centerX: CGFloat {
+        get { return center.x }
+        set { center.x = newValue }
+    }
+    
+    var yp_centerY: CGFloat {
+        get { return center.y }
+        set { center.y = newValue }
+    }
+    
+    var yp_midX: CGFloat {
+        return yp_width * 0.5
+    }
+    
+    var yp_midY: CGFloat {
+        return yp_height * 0.5
+    }
+    
+    var yp_size: CGSize {
+        get { return frame.size }
+        set { frame.size = newValue }
+    }
+    
+    var yp_orgin: CGPoint {
+        get { return frame.origin }
+        set { frame.origin = newValue }
     }
 }

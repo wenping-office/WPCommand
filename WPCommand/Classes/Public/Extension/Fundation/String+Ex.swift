@@ -30,6 +30,11 @@ public extension WPSpace where Base == String {
         return Bundle.main.infoDictionary?["CFBundleDisplayName"] as? Base
     }
     
+    /// 16进制颜色
+    var color : UIColor{
+        return UIColor.wp.initWith(base)
+    }
+
     /// 是否是邮箱
     var isEmail: Bool {
         let predicate = NSPredicate(format: "SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}")
@@ -131,34 +136,6 @@ public extension WPSpace where Base == String {
     /// 过滤换行
     var filterLineFeed: Base {
         return filter("\n")
-    }
-}
-
-// 不要的扩展
-public extension WPSpace where Base == String {
-    /// 转日期 默认本地日期
-    /// - Parameter format: 日期格式
-    /// - Parameter locale: 默认zh_CN
-    /// - parameter timeZone: 默认当前时区
-    /// - Returns: 日期
-    func toDate(_ format: String,
-                locale: Locale? = Locale(identifier: "zh_CN"),
-                timeZone: TimeZone? = TimeZone.current) -> Date?
-    {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = timeZone
-        dateFormatter.dateFormat = format
-        return dateFormatter.date(from: base)
-    }
-
-    /// 字符串转本地日期
-    /// - Parameter format: 解码规则
-    /// - Returns:
-    func toZh_ChDate(_ format: String) -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "zh_CN")
-        dateFormatter.dateFormat = format
-        return dateFormatter.date(from: base)
     }
 }
 

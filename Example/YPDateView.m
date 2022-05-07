@@ -1,19 +1,19 @@
 //
-//  WPDateView.m
+//  YPDateView.m
 //  meal
 //
 //  Created by WenPing on 2017/11/7.
 //  Copyright © 2017年 Developer. All rights reserved.
 //
 
-#import "WPDateView.h"
+#import "YPDateView.h"
 
 #define kPickerSize self.datePicker.frame.size
 #define MAXYEAR 2099
-#define MINYEAR 1970
+#define MINYEAR 0
 
 
-@interface WPDateView ()<UIPickerViewDelegate,UIPickerViewDataSource,UIGestureRecognizerDelegate> {
+@interface YPDateView ()<UIPickerViewDelegate,UIPickerViewDataSource,UIGestureRecognizerDelegate> {
     
     NSString *_dateFormatter;
     //记录位置
@@ -31,13 +31,13 @@
 @property (nonatomic,strong)selectBlock selectBlock;
 @property (nonatomic,strong) selectBlock didChangeBlock;
 
-@property (nonatomic,assign)WPDateStyle datePickerStyle;
+@property (nonatomic,assign)YPDateStyle datePickerStyle;
 
 @end
 
-@implementation WPDateView : UIView
+@implementation YPDateView : UIView
 
-- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle forScrollDate:(NSDate *)date
+- (instancetype)initWithDateStyle:(YPDateStyle)datePickerStyle forScrollDate:(NSDate *)date
 {
     if ([super init]) {
         
@@ -66,28 +66,31 @@
 
         self.datePickerStyle = datePickerStyle;
         switch (datePickerStyle) {
-            case WPDateStyleYearMonthDayHourMinute:
+            case YPDateStyleYearMonthDayHourMinute:
                 _dateFormatter = @"yyyy-MM-dd HH:mm";
                 break;
-            case WPDateStyleMonthDayHourMinute:
+            case YPDateStyleYear:
                 _dateFormatter = @"yyyy-MM-dd HH:mm";
                 break;
-            case WPDateStyleYearMonthDay:
+            case YPDateStyleMonthDayHourMinute:
+                _dateFormatter = @"yyyy-MM-dd HH:mm";
+                break;
+            case YPDateStyleYearMonthDay:
                 _dateFormatter = @"yyyy-MM-dd";
                 break;
-            case WPDateStyleYearMonth:
+            case YPDateStyleYearMonth:
                 _dateFormatter = @"yyyy-MM-dd";
                 break;
-            case WPDateStyleMonthDay:
+            case YPDateStyleMonthDay:
                 _dateFormatter = @"yyyy-MM-dd";
                 break;
-            case WPDateStyleHourMinute:
+            case YPDateStyleHourMinute:
                 _dateFormatter = @"HH:mm";
                 break;
-            case WPDateStyleYearMonthDayHour:
+            case YPDateStyleYearMonthDayHour:
                 _dateFormatter = @"yyyy-MM-dd HH";
                 break;
-            case WPDateStyleMonthDayHour:
+            case YPDateStyleMonthDayHour:
                 _dateFormatter = @"MM-dd HH";
                 break;
             default:
@@ -104,7 +107,7 @@
 /**
  默认滚动到当前时间
  */
--(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle completeBlock:(selectBlock)selectBlcok {
+-(instancetype)initWithDateStyle:(YPDateStyle)datePickerStyle completeBlock:(selectBlock)selectBlcok {
     self = [self initWithDateStyle:datePickerStyle forScrollDate:nil];
     self.selectBlock = selectBlcok;
     return self;
@@ -113,13 +116,13 @@
 /**
  滚动到指定的的日期
  */
--(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle scrollToDate:(NSDate *)scrollToDate completeBlock:(selectBlock)selectBlcok {
+-(instancetype)initWithDateStyle:(YPDateStyle)datePickerStyle scrollToDate:(NSDate *)scrollToDate completeBlock:(selectBlock)selectBlcok {
     self = [self initWithDateStyle:datePickerStyle forScrollDate:scrollToDate];
     self.selectBlock = selectBlcok;
     return self;
 }
 
-- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle didSelectBlock:(selectBlock)selectBlcok
+- (instancetype)initWithDateStyle:(YPDateStyle)datePickerStyle didSelectBlock:(selectBlock)selectBlcok
 {
     self = [self initWithDateStyle:datePickerStyle forScrollDate:nil];
     self.didChangeBlock = selectBlcok;
@@ -211,28 +214,31 @@
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
     switch (self.datePickerStyle) {
-        case WPDateStyleYearMonthDayHourMinute:
+        case YPDateStyleYearMonthDayHourMinute:
             [self addLabelWithName:@[@"年",@"月",@"日",@"时",@"分"]];
             return 5;
-        case WPDateStyleMonthDayHourMinute:
+        case YPDateStyleYear:
+            [self addLabelWithName:@[@"年"]];
+            return 1;
+        case YPDateStyleMonthDayHourMinute:
             [self addLabelWithName:@[@"月",@"日",@"时",@"分"]];
             return 4;
-        case WPDateStyleYearMonth:
+        case YPDateStyleYearMonth:
             [self addLabelWithName:@[@"年",@"月"]];
             return 2;
-        case WPDateStyleYearMonthDay:
+        case YPDateStyleYearMonthDay:
             [self addLabelWithName:@[@"年",@"月",@"日"]];
             return 3;
-        case WPDateStyleMonthDay:
+        case YPDateStyleMonthDay:
             [self addLabelWithName:@[@"月",@"日"]];
             return 2;
-        case WPDateStyleHourMinute:
+        case YPDateStyleHourMinute:
             [self addLabelWithName:@[@"时",@"分"]];
             return 2;
-        case WPDateStyleMonthDayHour:
+        case YPDateStyleMonthDayHour:
             [self addLabelWithName:@[@"月",@"日",@"时"]];
             return 3;
-        case WPDateStyleYearMonthDayHour:
+        case YPDateStyleYearMonthDayHour:
             [self addLabelWithName:@[@"年",@"月",@"日",@"时"]];
             return 4;
             
@@ -257,27 +263,30 @@
     NSInteger timeInterval = MAXYEAR - MINYEAR;
     
     switch (self.datePickerStyle) {
-        case WPDateStyleYearMonthDayHourMinute:
+        case YPDateStyleYearMonthDayHourMinute:
             return @[@(yearNum),@(monthNum),@(dayNum),@(hourNum),@(minuteNUm)];
             break;
-        case WPDateStyleMonthDayHourMinute:
+        case YPDateStyleYear:
+            return @[@(yearNum)];
+            break;
+        case YPDateStyleMonthDayHourMinute:
             return @[@(monthNum*timeInterval),@(dayNum),@(hourNum),@(minuteNUm)];
             break;
-        case WPDateStyleYearMonthDay:
+        case YPDateStyleYearMonthDay:
             return @[@(yearNum),@(monthNum),@(dayNum)];
             break;
-        case WPDateStyleYearMonth:
+        case YPDateStyleYearMonth:
             return @[@(yearNum),@(monthNum)];
-        case WPDateStyleMonthDay:
+        case YPDateStyleMonthDay:
             return @[@(monthNum*timeInterval),@(dayNum),@(hourNum)];
             break;
-        case WPDateStyleHourMinute:
+        case YPDateStyleHourMinute:
             return @[@(hourNum),@(minuteNUm)];
             break;
-        case WPDateStyleMonthDayHour:
+        case YPDateStyleMonthDayHour:
             return @[@(monthNum*timeInterval),@(dayNum),@(hourNum)];
             break;
-        case WPDateStyleYearMonthDayHour:
+        case YPDateStyleYearMonthDayHour:
             return @[@(yearNum),@(monthNum),@(dayNum),@(hourNum)];
             break;
         default:
@@ -301,101 +310,133 @@
     NSString *title;
 
     switch (self.datePickerStyle) {
-        case WPDateStyleYearMonthDayHourMinute:
+        case YPDateStyleYearMonthDayHourMinute:
             if (component==0) {
                 title = _yearArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"年"];
             }
             if (component==1) {
                 title = _monthArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"月"];
             }
             if (component==2) {
                 title = _dayArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"日"];
             }
             if (component==3) {
                 title = _hourArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"时"];
             }
             if (component==4) {
                 title = _minuteArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"分"];
             }
             break;
-        case WPDateStyleYearMonth:
+        case YPDateStyleYear:
             if (component==0) {
                 title = _yearArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"年"];
+            }
+            break;
+        case YPDateStyleYearMonth:
+            if (component==0) {
+                title = _yearArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"年"];
             }
             if (component==1) {
                 title = _monthArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"月"];
             }
             break;
-        case WPDateStyleYearMonthDay:
+        case YPDateStyleYearMonthDay:
             if (component==0) {
                 title = _yearArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"年"];
             }
             if (component==1) {
                 title = _monthArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"月"];
             }
             if (component==2) {
                 title = _dayArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"日"];
             }
             break;
-        case WPDateStyleMonthDayHourMinute:
+        case YPDateStyleMonthDayHourMinute:
             if (component==0) {
                 title = _monthArray[row%12];
+                title = [title stringByAppendingFormat:@"%@",@"月"];
             }
             if (component==1) {
                 title = _dayArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"日"];
             }
             if (component==2) {
                 title = _hourArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"时"];
             }
             if (component==3) {
                 if (row >= _minuteArray.count) {
                     title = _minuteArray.firstObject;
+                    title = [title stringByAppendingFormat:@"%@",@"分"];
                 }else{
                     title = _minuteArray[row];
+                    title = [title stringByAppendingFormat:@"%@",@"分"];
                 }
             }
             break;
-        case WPDateStyleMonthDay:
+        case YPDateStyleMonthDay:
             if (component==0) {
                 title = _monthArray[row%12];
+                title = [title stringByAppendingFormat:@"%@",@"月"];
             }
             if (component==1) {
                 title = _dayArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"日"];
             }
             break;
-        case WPDateStyleHourMinute:
+        case YPDateStyleHourMinute:
             if (component==0) {
                 title = _hourArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"时"];
             }
             if (component==1) {
                 title = _minuteArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"分"];
             }
             break;
             
-        case WPDateStyleMonthDayHour:
+        case YPDateStyleMonthDayHour:
             if (component==0) {
                 title = _monthArray[row%12];
+                title = [title stringByAppendingFormat:@"%@",@"月"];
             }
             if (component==1) {
                 title = _dayArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"日"];
             }
             if (component==2) {
                 title = _hourArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"时"];
             }
             break;
             
-        case WPDateStyleYearMonthDayHour:
+        case YPDateStyleYearMonthDayHour:
             if (component==0) {
                 title = _yearArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"年"];
             }
             if (component==1) {
                 title = _monthArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"月"];
             }
             if (component==2) {
                 title = _dayArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"日"];
             }
             if (component==3) {
                 title = _hourArray[row];
+                title = [title stringByAppendingFormat:@"%@",@"时"];
             }
             break;
             
@@ -403,9 +444,22 @@
             title = @"00";
             break;
     }
-    
-    customLabel.text = title;
+
+    NSMutableString *newTtitle = [[NSMutableString alloc] initWithString:title];
+    if ([[title substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"0"]) {
+        [newTtitle replaceCharactersInRange:NSMakeRange(0, 1) withString:@""];
+    }
+    customLabel.text = newTtitle;
     customLabel.textColor = _datePickerColor;
+    
+
+    if (pickerView.subviews.count > 2) {
+        [[pickerView.subviews objectAtIndex:1] setHidden:true];
+        [[pickerView.subviews objectAtIndex:2] setHidden:true];
+    }else{
+        [[pickerView.subviews objectAtIndex:1] setHidden:true];
+    }
+    
     return customLabel;
     
 }
@@ -421,7 +475,7 @@
         row = [self.delegate dateView:self willSelectedRow:row forComponent:component];
     }
     switch (self.datePickerStyle) {
-        case WPDateStyleYearMonthDayHourMinute:{
+        case YPDateStyleYearMonthDayHourMinute:{
             
             if (component == 0) {
                 yearIndex = row;
@@ -446,8 +500,18 @@
                 
             }
         }
+        case YPDateStyleYear:{
+            
+            if (component == 0) {
+                yearIndex = row;
+            }
+
+            if (component == 0 || component == 1){
+                [self DaysfromYear:[_yearArray[yearIndex] integerValue] andMonth:[_monthArray[monthIndex] integerValue]];
+            }
+        }
             break;
-        case WPDateStyleYearMonth:
+        case YPDateStyleYearMonth:
             if (component == 0) {
                 yearIndex = row;
             }
@@ -459,7 +523,7 @@
                 [self DaysfromYear:[_yearArray[yearIndex] integerValue] andMonth:[_monthArray[monthIndex] integerValue]];
             }
             break;
-        case WPDateStyleYearMonthDay:{
+        case YPDateStyleYearMonthDay:{
             
             if (component == 0) {
                 yearIndex = row;
@@ -479,7 +543,7 @@
         }
             break;
             
-        case WPDateStyleMonthDayHourMinute:{
+        case YPDateStyleMonthDayHourMinute:{
             
             if (component == 1) {
                 dayIndex = row;
@@ -504,7 +568,7 @@
         }
             break;
             
-        case WPDateStyleMonthDay:{
+        case YPDateStyleMonthDay:{
             if (component == 1) {
                 dayIndex = row;
             }
@@ -520,7 +584,7 @@
         }
             break;
             
-        case WPDateStyleHourMinute:{
+        case YPDateStyleHourMinute:{
             if (component == 0) {
                 hourIndex = row;
             }
@@ -529,7 +593,7 @@
             }
         }
             break;
-        case WPDateStyleYearMonthDayHour:{
+        case YPDateStyleYearMonthDayHour:{
             
             if (component == 0) {
                 yearIndex = row;
@@ -554,7 +618,7 @@
         }
             break;
             
-        case WPDateStyleMonthDayHour:{
+        case YPDateStyleMonthDayHour:{
 
             if (component == 1) {
                 dayIndex = row;
@@ -683,27 +747,31 @@
     
     NSArray *indexArray;
     
-    if (self.datePickerStyle == WPDateStyleYearMonthDayHourMinute)
+    if (self.datePickerStyle == YPDateStyleYearMonthDayHourMinute)
         indexArray = @[@(yearIndex),@(monthIndex),@(dayIndex),@(hourIndex),@(minuteIndex)];
-    if (self.datePickerStyle == WPDateStyleYearMonth)
+    if (self.datePickerStyle == YPDateStyleYear)
+        indexArray = @[@(yearIndex)];
+    if (self.datePickerStyle == YPDateStyleYear)
+        indexArray = @[@(yearIndex)];
+    if (self.datePickerStyle == YPDateStyleYearMonth)
         indexArray = @[@(yearIndex),@(monthIndex)];
-    if (self.datePickerStyle == WPDateStyleYearMonthDay)
+    if (self.datePickerStyle == YPDateStyleYearMonthDay)
         indexArray = @[@(yearIndex),@(monthIndex),@(dayIndex)];
-    if (self.datePickerStyle == WPDateStyleMonthDayHourMinute)
+    if (self.datePickerStyle == YPDateStyleMonthDayHourMinute)
         indexArray = @[@(monthIndex),@(dayIndex),@(hourIndex),@(minuteIndex)];
-    if (self.datePickerStyle == WPDateStyleMonthDay)
+    if (self.datePickerStyle == YPDateStyleMonthDay)
         indexArray = @[@(monthIndex),@(dayIndex)];
-    if (self.datePickerStyle == WPDateStyleHourMinute)
+    if (self.datePickerStyle == YPDateStyleHourMinute)
         indexArray = @[@(hourIndex),@(minuteIndex)];
-    if (self.datePickerStyle == WPDateStyleYearMonthDayHour)
+    if (self.datePickerStyle == YPDateStyleYearMonthDayHour)
         indexArray = @[@(yearIndex),@(monthIndex),@(dayIndex),@(hourIndex)];
-    if (self.datePickerStyle == WPDateStyleMonthDayHour)
+    if (self.datePickerStyle == YPDateStyleMonthDayHour)
         indexArray = @[@(monthIndex),@(dayIndex),@(hourIndex)];
     
     [self.datePicker reloadAllComponents];
     
     for (int i=0; i<indexArray.count; i++) {
-        if ((self.datePickerStyle == WPDateStyleMonthDayHourMinute || self.datePickerStyle == WPDateStyleMonthDay || self.datePickerStyle == WPDateStyleMonthDayHour)&& i==0) {
+        if ((self.datePickerStyle == YPDateStyleMonthDayHourMinute || self.datePickerStyle == YPDateStyleMonthDay || self.datePickerStyle == YPDateStyleMonthDayHour)&& i==0) {
             NSInteger mIndex = [indexArray[i] integerValue]+(12*(self.scrollToDate.year - MINYEAR));
             [self.datePicker selectRow:mIndex inComponent:i animated:animated];
         } else {
@@ -730,7 +798,6 @@
     self.datePicker.frame = self.bounds;
     self.showYearView.frame = CGRectMake(0, 0, self.frame.size.width, 40);
     self.showYearView.center = self.datePicker.center;
-
 }
 @end
 
@@ -829,3 +896,4 @@ static const unsigned componentFlags = (NSCalendarUnitYear| NSCalendarUnitMonth 
     return sharedCalendar;
 }
 @end
+

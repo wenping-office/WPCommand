@@ -8,9 +8,9 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
-  s.version          = '0.4.0'
+  s.version          = '0.5.0'
   # 介绍
-  s.summary          = '基础库工具类、队列Alert,TextView、TextField、等'
+  s.summary          = '基础库工具类、队列Alert、支持TableView嵌套手势处理的MenuView、轻量级自定义标签视图、Extension、引导视图'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -27,6 +27,7 @@ TODO: Add long description of the pod here.
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { '文平' => '850500722@qq.com' }
   s.source           = { :git => 'https://github.com/MyNameWp/WPCommand.git', :tag => s.version.to_s }
+  s.swift_version='5.0'
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   # 最低支持的系统版本
   s.ios.deployment_target = '10.0'
@@ -61,6 +62,7 @@ TODO: Add long description of the pod here.
      s.dependency 'RxCocoa'
 
 
-s.prefix_header_contents = '#import "Bridge.h"'
+     s.prefix_header_contents = '#import "Bridge.h"'
+     s.prefix_header_contents = '#import "WPDateView.h"'
      
 end

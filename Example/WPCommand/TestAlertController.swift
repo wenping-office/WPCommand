@@ -17,10 +17,7 @@ class TestAlertController: WPBaseVC {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-//        navigationItem.rightBarButtonItem = .init(title: "弹窗", style: .done, target: self, action: #selector(showAlert))
-        
         navigationItem.leftBarButtonItem = .init(title: "返回", style: .done, target: self, action: #selector(popVC))
-
     }
 
     override func viewDidAppear(_ animated: Bool) {
