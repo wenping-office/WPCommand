@@ -551,14 +551,12 @@ extension WPAlertManager {
                            animation:@escaping ()->Void,
                            completion:@escaping(Bool)->Void){
         maskView?.isUserInteractionEnabled = false
-        UIApplication.wp.mainWindow.isUserInteractionEnabled = false
         switch type {
         case .default:
             UIView.animate(withDuration: duration, animations: {
                 animation()
             }, completion: {[weak self] resualt in
                 self?.maskView?.isUserInteractionEnabled = true
-                UIApplication.wp.mainWindow.isUserInteractionEnabled = true
                 completion(resualt)
             })
         case .bounces(let damping, let velocity, let options):
@@ -567,7 +565,6 @@ extension WPAlertManager {
             }, completion: {[weak self] resualt in
                 completion(resualt)
                 self?.maskView?.isUserInteractionEnabled = true
-                UIApplication.wp.mainWindow.isUserInteractionEnabled = true
             })
         }
     }
