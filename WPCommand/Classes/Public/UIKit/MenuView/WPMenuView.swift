@@ -280,7 +280,7 @@ public class WPMenuView: WPBaseView {
     }
     
     override public func initSubView() {
-        contentView.estimatedRowHeight = 0.0
+        contentView.estimatedRowHeight = 44
         contentView.estimatedSectionHeaderHeight = 0
         contentView.estimatedSectionFooterHeight = 0
         contentView.showsHorizontalScrollIndicator = false
@@ -347,7 +347,7 @@ public class WPMenuView: WPBaseView {
             
             // 选中headr
             self.contentView.headerView.setHeaderView(of: headerItem?.headerView, complete: { [weak self] _ in
-                self?.contentView.reloadData()
+                self?.contentView.reloadRows(at: [.init(row: 0, section: 0)], with: .none)
             })
         }
         

@@ -156,6 +156,7 @@ extension WPTableViewDelegate: UITableViewDelegate {
         willDisplayCell?(tableView, cell, indexPath)
         
         if let item = tableView.wp_source.groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row) {
+            cell.separatorInset = item.separatorInset
             item.willDisplay?(cell)
             cell.didSetItemInfo(info: item.info)
         }

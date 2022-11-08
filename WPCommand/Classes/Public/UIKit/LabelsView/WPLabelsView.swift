@@ -43,18 +43,23 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
         }
         return 0
     }
+    
+    private var estimatedWidth : CGFloat?
 
     /// 初始化标签视图
     /// - Parameters:
     ///   - itemHeight: item高度
     ///   - spacing: 列间距
     ///   - rowSpacing: 行间距
+    ///   - estimatedWidth: 预估最大宽，如果有值按照预估值计算
     public init(itemHeight: CGFloat,
+                estimatedWidth : CGFloat? = nil,
                 spacing:CGFloat = 10,
                 rowSpacing:CGFloat = 10) {
         self.itemHight = itemHeight
         self.spacing = spacing
         self.rowSpacing = rowSpacing
+        self.estimatedWidth = estimatedWidth
         super.init(frame: .zero)
         isUserInteractionEnabled = true
     }
@@ -104,8 +109,7 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
     }
 
     private func resetSubItemsFrame(){
-        let maxWidth = self.wp.width
-
+        let maxWidth = estimatedWidth != nil ? estimatedWidth! : self.wp.width
         var y : CGFloat = 0
         var row : CGFloat = 0
         var rowX : CGFloat = 0

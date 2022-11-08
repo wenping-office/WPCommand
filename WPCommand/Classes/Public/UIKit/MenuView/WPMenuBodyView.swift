@@ -34,7 +34,7 @@ class WPMenuBodyViewItem: WPMenuView.Item {
 public class WPMenuBodyView: UITableViewCell {
     let layout = UICollectionViewFlowLayout()
     /// 内容视图
-    lazy var collectionView = WPMenuBodyScrollView(frame: .zero, collectionViewLayout: layout)
+    public lazy var collectionView = WPMenuBodyScrollView(frame: .zero, collectionViewLayout: layout)
     /// 当前数据源
     var data: [WPMenuBodyViewItem] = []
     /// 内容滚动回调
@@ -55,12 +55,15 @@ public class WPMenuBodyView: UITableViewCell {
         collectionView.isPagingEnabled = true
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.bounces = false
         selectionStyle = .none
         backgroundColor = .clear
         contentView.addSubview(collectionView)
-        collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        collectionView.frame = bounds
     }
     
     @available(*, unavailable)
@@ -136,6 +139,7 @@ class WPMenuBodyCell: WPBaseCollectionViewCell {
         if let view = view {
             contentView.wp.removeAllSubViewFromSuperview()
             contentView.addSubview(view)
+            view.frame = bounds
         } else {
             contentView.wp.removeAllSubViewFromSuperview()
         }
@@ -147,9 +151,9 @@ class WPMenuBodyCell: WPBaseCollectionViewCell {
     }
 }
 
-class WPMenuBodyScrollView: UICollectionView,WPGestureAdaptationProtocol {
+public class WPMenuBodyScrollView: UICollectionView,WPGestureAdaptationProtocol {
     
-    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 
         return gestureBegin(gestureRecognizer)
     }
