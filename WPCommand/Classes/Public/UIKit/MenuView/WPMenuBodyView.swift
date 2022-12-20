@@ -43,6 +43,10 @@ public class WPMenuBodyView: UITableViewCell {
     var didSelected: ((Int) -> Void)?
     /// 是否执行选中动画
     var selectedAnimation = false
+    /// 滚动时试图还为创建记是否要第一次滚动
+    private  var scrollTo = false
+    /// 记是否要第一次滚动
+    private var scrollNormalIndex : Int?
     
     init() {
         super.init(style: .default, reuseIdentifier: nil)
@@ -64,6 +68,13 @@ public class WPMenuBodyView: UITableViewCell {
     public override func layoutSubviews() {
         super.layoutSubviews()
         collectionView.frame = bounds
+        
+        if frame.size != .zero && scrollTo{
+           if let index = scrollNormalIndex{
+               scrollTo = false
+                selected(index)
+            }
+        }
     }
     
     @available(*, unavailable)
@@ -87,6 +98,10 @@ public class WPMenuBodyView: UITableViewCell {
     /// 选中一页
     /// - Parameter index: 索引
     func selected(_ index: Int) {
+        if collectionView.frame == .zero{
+            scrollTo = true
+            scrollNormalIndex = index
+        }
         collectionView.scrollToItem(at: .init(row: index, section: 0), at: .left, animated: selectedAnimation)
     }
 }

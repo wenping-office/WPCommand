@@ -10,7 +10,7 @@ private var AlertTargetViewPointer = "WPAlertProtocolTargetViewPointer"
 private var AlertStatePointer = "WPAlertStatePointer"
 private var AlertStateHandlerPointer = "AlertStateHandlerPointer"
 
-/// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出,show时可携带maskHandler处理点击 dismiss时可携带handler处理弹窗状态
+/// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出、可使用WPAlertManager动态修改alert高度或者offset，可搭配WPSystem.KeyBoard适配键盘
 public protocol WPAlertProtocol: UIView {
     
     /// 当前弹窗状态
@@ -27,6 +27,8 @@ public protocol WPAlertProtocol: UIView {
     func alertLevel()->UInt
     /// 点击了蒙版
     func touchMask()
+    /// 动画显示中禁止targeView响应事件 默认true
+    func animationEnableTargetViewEvent() -> Bool
 }
 
 
@@ -90,6 +92,9 @@ public extension WPAlertProtocol {
             return WPRunTime.set(self, newValue, &AlertStateHandlerPointer, .OBJC_ASSOCIATION_COPY)
         }
     }
+    
+    /// 动画中禁止targeView响应事件 默认true
+    func animationEnableTargetViewEvent() -> Bool { return true }
 }
 
 public extension WPSpace where Base : WPAlertProtocol{

@@ -205,14 +205,32 @@ public extension WPSpace where Base == String {
     /// 返回子字符串在当前字符串的位置 如果有多个将会找最后一个
     /// - Parameter str: 关键字
     func of(_ keyword: Base) -> NSRange {
-        return (base as NSString).range(of: keyword)
+        let res : [NSTextCheckingResult] = of(keyword)
+        if res.count > 0{
+            return (base as NSString).range(of: keyword)
+        }else{
+            return .init(location: 0, length: 0)
+        }
+    }
+    
+    /// 返回子字符串在当前字符串的位置
+    /// - Parameters:
+    ///   - keyword: 关键字
+    ///   - options: 选择
+    ///   - matchingOptions: 选择
+    /// - Returns: 结果
+    func of(_ keyword:Base,
+            options:NSRegularExpression.Options = [] ,
+            matchingOptions:NSRegularExpression.MatchingOptions = []) -> [NSTextCheckingResult] {
+        let regex = try? NSRegularExpression(pattern: keyword, options: options)
+        return regex?.matches(in: base, options: matchingOptions, range: NSRange(location: 0, length: base.count)) ?? []
     }
     
     /// 判断是否包含某个字符串
     /// - Parameter keyword: 关键字
     /// - Returns: 结果
     func isContent(_ keyword: String) -> Bool {
-        let resualt = of(keyword)
+        let resualt : NSRange = of(keyword)
         return resualt.length != 0
     }
     
@@ -245,12 +263,16 @@ public extension WPSpace where Base == String {
     /// - Parameter range: 返回
     /// - Returns: 结果
     func subString(of range: NSRange) -> Base {
-        let lenght = range.length
-        let maxLenght = base.count - range.location
-        if lenght <= maxLenght {
+        
+        let maxLength = base.count - range.location
+        if range.location > base.count - 1{ return "" }
+        if range.length <= 0 { return "" }
+        if maxLength <= 0 { return "" }
+        
+        if range.length <= maxLength {
             return (base as NSString).substring(with: range)
         } else {
-            return (base as NSString).substring(with: .init(location: range.location, length: base.count))
+            return (base as NSString).substring(with: .init(location: range.location, length: maxLength))
         }
     }
     

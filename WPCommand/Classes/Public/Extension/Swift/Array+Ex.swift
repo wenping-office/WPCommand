@@ -211,13 +211,32 @@ public extension Array {
     /// - Returns: 结果
     func wp_subArray(of range: NSRange)->[Element] {
         let lenght = range.length
-        let maxLenght = self.count - range.location
-        if lenght <= maxLenght {
+        let maxLength = self.count - range.location
+        
+        if range.location > count { return [] }
+        if range.length <= 0 { return []}
+        if maxLength <= 0 { return [] }
+        
+        if lenght <= maxLength {
             let count = range.location + range.length
             return Array(self[range.location..<count])
         } else {
             return Array(self[range.location..<self.count])
         }
+    }
+    
+    /// 数组切片
+    /// - Parameter length: 切片长度
+    /// - Returns: 结果
+    func wp_section(with length:Int) -> [[Element]] {
+        if length <= 0 { return [] }
+        var array : [[Element]] = []
+        let subCount = count / length + (count % length > 0 ? 1 : 0)
+        for index in 0..<subCount{
+            let loction = index * length
+            array.append(self.wp_subArray(of: NSMakeRange(loction, length)))
+        }
+        return array
     }
     
     /// 递归 注：非交叉递归 如果会交叉那么会死循环，向上递归的时候会做去重

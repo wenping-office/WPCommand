@@ -551,6 +551,16 @@ extension WPAlertManager {
                            animation:@escaping ()->Void,
                            completion:@escaping(Bool)->Void){
         maskView?.isUserInteractionEnabled = false
+        
+        var isResetEnabled = false
+
+        if current?.alert.animationEnableTargetViewEvent() ?? false{
+            if targetView.isUserInteractionEnabled{
+                targetView.isUserInteractionEnabled = false
+                isResetEnabled = true
+            }
+        }
+
         switch type {
         case .default:
             UIView.animate(withDuration: duration, animations: {
@@ -558,6 +568,7 @@ extension WPAlertManager {
             }, completion: {[weak self] resualt in
                 self?.maskView?.isUserInteractionEnabled = true
                 completion(resualt)
+                if isResetEnabled { self?.targetView.isUserInteractionEnabled = true }
             })
         case .bounces(let damping, let velocity, let options):
             UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: damping, initialSpringVelocity: velocity, options: options, animations: {
@@ -565,6 +576,7 @@ extension WPAlertManager {
             }, completion: {[weak self] resualt in
                 completion(resualt)
                 self?.maskView?.isUserInteractionEnabled = true
+                if isResetEnabled { self?.targetView.isUserInteractionEnabled = true }
             })
         }
     }

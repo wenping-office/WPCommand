@@ -8,12 +8,84 @@
 import UIKit
 
 public extension WPMenuView{
+    
+    final class LineView:WPBaseView{
+        /// 线条宽度
+        public var lineWidth : LineWidth = .equalText()
+        /// 线条高度
+        public var lineHeight : CGFloat = 2
+        /// Y轴偏移
+        public var offsetY : CGFloat = 0
+    }
+}
+
+public extension WPMenuView{
     /// 滚动选项
     enum ScrollOption {
         /// 选中导航
         case navigation(animated:Bool = true,position:UITableView.ScrollPosition = .top)
         /// 选中头部视图
         case header(animated:Bool = true,position:UITableView.ScrollPosition = .top)
+    }
+    
+    /// 下滑线宽
+    enum LineWidth {
+        /// 最大宽度
+        case max(width:CGFloat)
+        /// 等于默认文本宽度
+        case equalText(edge:ContentEdge = .zero)
+        /// 等于导航栏item宽度
+        case equalView(edge:ContentEdge = .zero)
+        /// 获取宽度
+        func width(with item:WPMenuNavigationViewProtocol?) -> CGFloat {
+            var maxWidth : CGFloat = 0
+            switch self {
+            case .max(let width):
+                maxWidth = width
+            case .equalText(let edge):
+                if let view = item as? DefaultNavigationItem{
+                    maxWidth = view.menuItemWidth() - edge.left - edge.right
+                }else{
+                    maxWidth = 20
+                }
+            case .equalView(let edge):
+                maxWidth = (item?.menuItemWidth() ?? 0) - edge.left - edge.right
+            }
+            return maxWidth
+        }
+        /// 是否需要布局
+        var isLayout : Bool{
+            switch self {
+            case .max:
+                return false
+            case .equalText:
+                return true
+            case .equalView:
+                return true
+            }
+        }
+    }
+
+    /// 左右内容边距
+    struct ContentEdge{
+        /// 左边内容内边距
+        public let left : CGFloat
+        /// 右边内容内编剧
+        public let right : CGFloat
+        
+        ///  边距
+        /// - Parameters:
+        ///   - left: 左边距
+        ///   - right : 右边距
+        public init(left:CGFloat,
+                    right:CGFloat){
+            self.left = left
+            self.right = right
+        }
+        
+        public static var zero : ContentEdge{
+            return .init(left: 0, right: 0)
+        }
     }
     
     /// 身体视图是否执行选中动画
@@ -43,6 +115,33 @@ public extension WPMenuView{
             return tableView.tableFooterView
         }
     }
+    /// 导航栏左边视图 使用frame布局 填frame.size 有效
+    var navigationLeftView:UIView?{
+        set{
+            contentView.navView.leftView = newValue
+        }
+        get{
+            return contentView.navView.leftView
+        }
+    }
+    /// 导航栏右边视图 使用frame布局 填frame.size 有效
+    var navigationRightView:UIView?{
+        set{
+            contentView.navView.rightView = newValue
+        }
+        get{
+            return contentView.navView.rightView
+        }
+    }
+    /// 导航栏视图是否可拖动
+    var navigationViewIsScrollEnabled:Bool{
+        set{
+            contentView.navView.collectionView.isScrollEnabled = newValue
+        }
+        get{
+            return contentView.navView.collectionView.isScrollEnabled
+        }
+    }
     /// 导航栏背景视图
     var navigationBackgroundView: UIView{
         get {
@@ -67,11 +166,23 @@ public extension WPMenuView{
             return contentView.showsVerticalScrollIndicator
         }
     }
+    /// 导航栏选中样式
+    var navigationSelectedStyle: WPMenuView.NavigationSelectedStyle{
+        set{
+            contentView.navView.selectedStyle = newValue
+        }
+        get{
+            return contentView.navView.selectedStyle
+        }
+    }
+    /// 下滑线
+    var lineView : LineView{
+        return contentView.navView.lineView
+    }
     /// 可以用来设置上下拉刷新 不可单独设置代理
     var tableView:UITableView{
         return contentView
     }
-    
     /// 多手势识别 默认false
     var multiGesture : Bool{
         set{
@@ -81,7 +192,15 @@ public extension WPMenuView{
             return contentView.multiGesture
         }
     }
-    
+    /// 主视图滚动时禁用身体视图滚动 当multiGesture == true 时生效
+    var mainDidScrollCloseBodyScroll : Bool{
+        set{
+            contentView.mainDidScrollCloseBodyScroll = newValue
+        }
+        get{
+            return contentView.mainDidScrollCloseBodyScroll
+        }
+    }
     /// 水平手势适配 默认false
     var horizontalGestureAdaptation : Bool{
         set{
@@ -91,7 +210,6 @@ public extension WPMenuView{
             return contentView.bodyView.collectionView.horizontalAdaptation
         }
     }
-    
     /// 身体视图
     var bodyView:WPMenuBodyView{
         return contentView.bodyView
@@ -231,28 +349,10 @@ public class WPMenuView: WPBaseView {
     private let navigationHeight: CGFloat
     /// 内容视图
     private let contentView: WPMenuContentTableView
-    /// 导航栏选中样式
-    public var navigationSelectedStyle: NavigationSelectedStyle = .center
     /// 自动识别bodyView是否为scrollView 自动开启多手势识别 默认true
     public var autoAdaptationScroll = true
     /// 当前选中的索引
     public private(set) var currentIndex:Int?
-    
-    /// 导航栏选中动画样式
-    private var navSelectedStyle: UICollectionView.ScrollPosition {
-        switch navigationSelectedStyle {
-        case .none:
-            break
-        case .left:
-            return .left
-        case .right:
-            return .right
-        case .center:
-            return .centeredHorizontally
-        }
-        return .bottom
-    }
-    
     /// 数据源
     public weak var dataSource: WPMenuViewDataSource?
     /// 代理
@@ -261,6 +361,7 @@ public class WPMenuView: WPBaseView {
     public var navigationInset: NavigationInset = .init(left: 0, right: 0, spacing: 0) {
         didSet {
             contentView.navView.layout.minimumLineSpacing = navigationInset.spacing
+            contentView.navView.layout.minimumInteritemSpacing = navigationInset.spacing
             contentView.navView.collectionView.contentInset = .init(top: 0,
                                                                     left: navigationInset.left,
                                                                     bottom: 0,
@@ -325,6 +426,58 @@ public class WPMenuView: WPBaseView {
             if self.autoAdaptationScroll {
                 self.contentView.multiGesture = bodyItem?.bodyView?.menuBodyViewAdaptationScrollView() != nil
             }
+
+            /// 当前导航item
+            var currentX: CGFloat = 0.0
+            /// 目标导航item
+            var targetX : CGFloat = 0.0
+            var spacing = 0.0
+            var defaultX : CGFloat = 0
+            let lineView = self.contentView.navView.lineView
+            let targetIndex = intX
+            var scrollOffSet : CGFloat = Double(x.wp.decimal()) ?? 0
+            // 线条宽度
+            var currentLineWidth : CGFloat = 0
+            var targetLineWidth : CGFloat = 0
+            var lineSpacing = 0.0
+            var defalutWidth = 0.0
+            
+            if intX < defaultIndex {
+                scrollOffSet = 1 - offset
+
+                if self.contentView.navView.lineView.lineWidth.isLayout{
+                    currentLineWidth = self.contentView.navView.lineView.lineWidth.width(with: self.contentView.navView.data.wp_get(of: defaultIndex)?.navigationItem)
+                    targetLineWidth = self.contentView.navView.lineView.lineWidth.width(with: self.contentView.navView.data.wp_get(of: targetIndex)?.navigationItem)
+                    lineSpacing = (currentLineWidth - targetLineWidth) / 100
+                    defalutWidth = currentLineWidth
+                    lineView.wp_width = defalutWidth - scrollOffSet * lineSpacing * 100
+                }
+                
+                currentX = self.contentView.navView.data.wp_get(of: defaultIndex)?.navigationItem.superview?.wp_centerX ?? 0
+                targetX = self.contentView.navView.data.wp_get(of: targetIndex)?.navigationItem.superview?.wp_centerX ?? 0
+                spacing = (currentX - targetX) / 100
+                defaultX = currentX
+                lineView.wp_centerX = defaultX - scrollOffSet * spacing * 100
+
+            }else if x > CGFloat(defaultIndex){
+
+                scrollOffSet = offset
+
+                if self.contentView.navView.lineView.lineWidth.isLayout{
+                    currentLineWidth = self.contentView.navView.lineView.lineWidth.width(with: self.contentView.navView.data.wp_get(of: targetIndex + 1)?.navigationItem)
+                    targetLineWidth = self.contentView.navView.lineView.lineWidth.width(with: self.contentView.navView.data.wp_get(of: defaultIndex)?.navigationItem)
+                    lineSpacing = (currentLineWidth - targetLineWidth) / 100
+                    defalutWidth = targetLineWidth
+                    lineView.wp_width = defalutWidth + scrollOffSet * lineSpacing * 100
+                }
+                
+                currentX = self.contentView.navView.data.wp_get(of: targetIndex + 1)?.navigationItem.superview?.wp_centerX ?? 0
+                targetX = self.contentView.navView.data.wp_get(of: defaultIndex)?.navigationItem.superview?.wp_centerX ?? 0
+                spacing = (currentX - targetX) / 100
+                defaultX = targetX
+                lineView.wp_centerX = defaultX + scrollOffSet * spacing * 100
+                
+            }
         }
         
         contentView.bodyView.didSelected = { [weak self] index in
@@ -338,12 +491,7 @@ public class WPMenuView: WPBaseView {
             
             guard let self = self else { return }
             
-            // 导航条item滚动到当前
-            if self.navigationSelectedStyle != .none {
-                self.contentView.navView.collectionView.scrollToItem(at: .init(row: index, section: 0), at: self.navSelectedStyle, animated: true)
-            } else {
-                self.contentView.navView.collectionView.scrollToItem(at: .init(row: index, section: 0), at: self.navSelectedStyle, animated: false)
-            }
+            self.contentView.navView.selected(index)
             
             // 选中headr
             self.contentView.headerView.setHeaderView(of: headerItem?.headerView, complete: { [weak self] _ in
@@ -365,6 +513,8 @@ public class WPMenuView: WPBaseView {
             self?.currentIndex = index
             self?.contentView.bodyView.selected(index)
             self?.contentView.bodyView.didSelected?(index)
+            
+            self?.contentView.navView.selected(index)
         }
     }
     
@@ -463,7 +613,6 @@ public class WPMenuView: WPBaseView {
         contentView.navView.data.wp_get(of: index)?.navigationItem.didHorizontalRolling(with: offset)
         contentView.bodyView.data.wp_get(of: index)?.bodyView?.didHorizontalRolling(with: offset)
     }
-    
 }
 
 public extension WPMenuView {
@@ -485,6 +634,8 @@ class WPMenuContentTableView: UITableView,UIGestureRecognizerDelegate {
     let navView = WPMenuNavigationView()
     /// 多手势识别
     var multiGesture : Bool = false
+    /// 主视图滚动时禁用身体视图滚动 当multiGesture == true 时生效
+    var mainDidScrollCloseBodyScroll = true
     /// 上次滚动的Y
     var lastOffsetY : CGFloat = 0
     
@@ -508,6 +659,14 @@ class WPMenuContentTableView: UITableView,UIGestureRecognizerDelegate {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if multiGesture{
+            if mainDidScrollCloseBodyScroll{
+                if otherGestureRecognizer == bodyView.collectionView.panGestureRecognizer{
+                    return false
+                }
+            }
+        }
         return multiGesture
     }
 }

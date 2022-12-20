@@ -21,33 +21,33 @@ public extension WPMenuNavigationViewProtocol{
 
 public extension WPMenuView{
     /// 默认导航栏
-    final class DefaultNavigationItem: WPBaseView,WPMenuNavigationViewProtocol {
+    class DefaultNavigationItem: WPBaseView,WPMenuNavigationViewProtocol {
         // 内容标题
-        let normalLabel : UILabel = .init()
+        public let normalLabel : UILabel = .init()
         /// 选中时候label
-        let selectedLabel : UILabel = .init()
+        public let selectedLabel : UILabel = .init()
         /// 背景视图
-        let backgroundView : UIImageView = UIImageView()
+        public let backgroundView : UIImageView = UIImageView()
         /// 选中的背景视图
-        let selectedBackgroundView : UIImageView = UIImageView()
+        public let selectedBackgroundView : UIImageView = UIImageView()
         /// 线条
-        let lineView = UIView()
+        public let lineView = UIView()
         /// 选中样式
-        private let style : Style
+        let style : Style
 
-        init(style : Style) {
+        public init(style : Style) {
             self.style = style
             super.init(frame: .zero)
             
             normalLabel.text = style.text.title
             normalLabel.textAlignment = .center
-            normalLabel.font = UIFont.systemFont(ofSize: style.text.defaultSize, weight: style.text.fontWeight)
+            normalLabel.font = .init(name: style.text.font.fontName, size: style.text.defaultSize)
             normalLabel.textColor = style.text.normalColor
             normalLabel.backgroundColor = .clear
             
             selectedLabel.text = style.text.title
             selectedLabel.textAlignment = .center
-            selectedLabel.font = UIFont.systemFont(ofSize: style.text.defaultSize, weight: style.text.fontWeight)
+            selectedLabel.font = .init(name: style.text.font.fontName, size: style.text.defaultSize)
             selectedLabel.textColor = style.text.selectedColor
             selectedLabel.backgroundColor = .clear
             selectedLabel.alpha = 0
@@ -57,8 +57,10 @@ public extension WPMenuView{
             selectedBackgroundView.alpha = 0
             selectedBackgroundView.image = style.background.selectedImage
             
-            lineView.backgroundColor = style.line.color
+            lineView.backgroundColor = style.line?.color
             lineView.alpha = 0
+            
+            lineView.isHidden = style.line == nil
         }
 
         public override func initSubView() {
@@ -88,20 +90,18 @@ public extension WPMenuView{
                 make.edges.equalToSuperview()
             }
            
-            lineView.snp.makeConstraints {[weak self] make in
-                guard
-                    let self = self
-                else { return }
-                make.height.equalTo(style.line.height)
-               
-                if let width = self.style.line.width {
-                    make.centerX.equalToSuperview()
-                    make.width.equalTo(width)
-                }else{
-                    make.left.equalTo(self.style.line.edge.left)
-                    make.right.equalTo(-self.style.line.edge.right)
+            if  let line = style.line{
+                lineView.snp.makeConstraints { make in
+                    make.height.equalTo(style.line!.height)
+                    if let width = line.width {
+                        make.centerX.equalToSuperview()
+                        make.width.equalTo(width)
+                    }else{
+                        make.left.equalTo(line.edge.left)
+                        make.right.equalTo(-line.edge.right)
+                    }
+                    make.bottom.equalToSuperview()
                 }
-                make.bottom.equalToSuperview()
             }
         }
 
@@ -109,16 +109,16 @@ public extension WPMenuView{
             if style.text.width != nil {
                 return style.text.width!
             }else{
-                return style.text.title.wp.width(UIFont.systemFont(ofSize: style.text.fontSize + 1, weight: style.text.fontWeight), CGFloat.greatestFiniteMagnitude) + style.text.edge.left + style.text.edge.right
+                return style.text.title.wp.width(style.text.font, CGFloat.greatestFiniteMagnitude) + style.text.edge.left + style.text.edge.right + 1
             }
         }
        
         public func didHorizontalRolling(with percentage: Double) {
-            let newSize = style.text.defaultSize + (style.text.transitionNumber * style.text.fontSize) * percentage
+            let newSize = style.text.defaultSize + (style.text.transitionNumber * style.text.font.pointSize) * percentage
 
-            normalLabel.font = UIFont.systemFont(ofSize: newSize, weight: style.text.fontWeight)
+            normalLabel.font = .init(name: style.text.font.fontName, size: newSize)
             
-            selectedLabel.font = UIFont.systemFont(ofSize: newSize, weight: style.text.fontWeight)
+            selectedLabel.font = .init(name: style.text.font.fontName, size: newSize)
             
             selectedLabel.alpha = percentage
            
@@ -141,7 +141,7 @@ public extension WPMenuView.DefaultNavigationItem{
         /// 宽度
         let width:CGFloat?
         /// 边距
-        let edge:ContentEdge
+        let edge:WPMenuView.ContentEdge
         /// 颜色
         let color : UIColor?
         
@@ -153,7 +153,7 @@ public extension WPMenuView.DefaultNavigationItem{
         ///   - height: 高
         public init(width:CGFloat?,
                     height:CGFloat,
-                    edge:ContentEdge,
+                    edge:WPMenuView.ContentEdge,
                     color:UIColor){
             self.height = height
             self.width = width
@@ -169,7 +169,7 @@ public extension WPMenuView.DefaultNavigationItem{
         ///   - height: 高
         public static func line(_ width:CGFloat? = 44,
                                 _ height:CGFloat = 2,
-                                _ edge:ContentEdge = .init(left: 0, right: 0),
+                                _ edge:WPMenuView.ContentEdge = .init(left: 0, right: 0),
                                 color:UIColor)->Self{
             return .init(width: width,
                          height: height,
@@ -182,13 +182,11 @@ public extension WPMenuView.DefaultNavigationItem{
         /// 宽 如果设置了将根据标题适配、并且contentEdge将失效
         public let width : CGFloat?
         /// 左右内边距
-        public let edge : ContentEdge
+        public let edge : WPMenuView.ContentEdge
         /// 标题
         public let title : String
-        /// 字体最终大小 注：fontSize =  fontSize + fontTransitionNumber * fontSize
-        public let fontSize : CGFloat
-        /// 字体
-        public let fontWeight : UIFont.Weight
+        /// 字体 注：fontSize =  fontSize + fontTransitionNumber * fontSize
+        public let font : UIFont
         /// 默认字体颜色
         public let normalColor : UIColor
         /// 选中字体颜色
@@ -196,14 +194,14 @@ public extension WPMenuView.DefaultNavigationItem{
         /// 过渡系数 默认0.5 取值范围 0～1
         public let transitionNumber : CGFloat
         /// 默认字体大小
-        public var defaultSize : CGFloat{
-            return fontSize - fontSize * transitionNumber
+        var defaultSize : CGFloat{
+            return font.pointSize - font.pointSize * transitionNumber
         }
         
         /// 文本信息
         /// - Parameters:
         ///   - title: 标题
-        ///   - fontSize: 字体大小
+        ///   - font: 字体大小
         ///   - fontWeight: 字体
         ///   - normalColor: 默认颜色
         ///   - selectedColor: 选中颜色
@@ -211,16 +209,14 @@ public extension WPMenuView.DefaultNavigationItem{
         ///   - width: 为nil 时将自动适配宽度，受contentEdge影响，否则为固定宽度
         ///   - edge: 左右边距
         public init(title:String,
-                    fontSize:CGFloat,
-                    fontWeight:UIFont.Weight,
+                    font:UIFont,
                     width : CGFloat?,
                     normalColor:UIColor,
                     selectedColor:UIColor,
-                    edge:ContentEdge ,
+                    edge:WPMenuView.ContentEdge ,
                     transitionNumber:CGFloat){
             self.title = title
-            self.fontSize = fontSize
-            self.fontWeight = fontWeight
+            self.font = font
             self.normalColor = normalColor
             self.selectedColor = selectedColor
             self.transitionNumber = transitionNumber
@@ -239,16 +235,14 @@ public extension WPMenuView.DefaultNavigationItem{
         ///   - width: 为nil 时将自动适配宽度，受contentEdge影响，否则为固定宽度
         ///   - edge: 左右边距
         public static func text(_ title:String,
-                                _ fontSize:CGFloat,
-                                _ fontWeight:UIFont.Weight,
+                                _ font : UIFont = .systemFont(ofSize: 15),
                                 _ width : CGFloat? = nil,
                                 normalColor:UIColor = .black,
                                 selectedColor:UIColor = .black,
-                                edge:ContentEdge = .init(left: 20, right: 20),
+                                edge:WPMenuView.ContentEdge = .init(left: 20, right: 20),
                                 transitionNumber:CGFloat = 0.3)->Self{
             return .init(title: title,
-                         fontSize: fontSize,
-                         fontWeight: fontWeight,
+                         font: font,
                          width: width,
                          normalColor: normalColor,
                          selectedColor: selectedColor,
@@ -286,43 +280,26 @@ public extension WPMenuView.DefaultNavigationItem{
                          selectedImage: selectedImage)
         }
     }
-
+    
     struct Style{
         /// 字体相关
         public let text : Text
         /// 背景相关
         public let background:Background
         /// 线条样式
-        public let line : Line
+        public let line : Line?
         
         /// 样式
         /// - Parameters:
         ///   - text: 文本信息
         ///   - background: 背景
+        ///   - line 下滑线 nil 时隐藏
         public init(_ text:Text,
                     background:Background = .background(),
-                    line:Line = .line(color: .orange)){
+                    line:Line? = nil){
             self.text = text
             self.background = background
             self.line = line
-        }
-    }
-    
-    /// 左右内容边距
-    struct ContentEdge{
-        /// 左边内容内边距
-        public let left : CGFloat
-        /// 右边内容内编剧
-        public let right : CGFloat
-        
-        ///  边距
-        /// - Parameters:
-        ///   - left: 左边距
-        ///   - right : 右边距
-        public init(left:CGFloat,
-                    right:CGFloat){
-            self.left = left
-            self.right = right
         }
     }
 }

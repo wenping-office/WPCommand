@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
-  s.version          = '0.5.1'
+  s.version          = '0.5.2'
   # 介绍
   s.summary          = '基础库工具类、队列Alert、支持TableView嵌套手势处理的MenuView、轻量级自定义标签视图、Extension、引导视图'
 
