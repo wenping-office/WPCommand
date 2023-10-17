@@ -41,13 +41,27 @@ public extension WPMenuView{
             
             normalLabel.text = style.text.title
             normalLabel.textAlignment = .center
-            normalLabel.font = .init(name: style.text.font.fontName, size: style.text.defaultSize)
+            
+            switch style.text.fontOption {
+            case .custom:
+                normalLabel.font = .init(name: style.text.font.fontName, size: style.text.defaultSize)
+            case .system(let weight):
+                normalLabel.font = .systemFont(ofSize: style.text.defaultSize,weight: weight)
+            }
+
             normalLabel.textColor = style.text.normalColor
             normalLabel.backgroundColor = .clear
             
             selectedLabel.text = style.text.title
             selectedLabel.textAlignment = .center
-            selectedLabel.font = .init(name: style.text.font.fontName, size: style.text.defaultSize)
+            
+            switch style.text.fontOption {
+            case .custom:
+                selectedLabel.font = .init(name: style.text.font.fontName, size: style.text.defaultSize)
+            case .system(let weight):
+                selectedLabel.font = .systemFont(ofSize: style.text.defaultSize,weight: weight)
+            }
+            
             selectedLabel.textColor = style.text.selectedColor
             selectedLabel.backgroundColor = .clear
             selectedLabel.alpha = 0
@@ -116,10 +130,14 @@ public extension WPMenuView{
         public func didHorizontalRolling(with percentage: Double) {
             let newSize = style.text.defaultSize + (style.text.transitionNumber * style.text.font.pointSize) * percentage
 
-            normalLabel.font = .init(name: style.text.font.fontName, size: newSize)
-            
-            selectedLabel.font = .init(name: style.text.font.fontName, size: newSize)
-            
+            switch style.text.fontOption {
+            case .custom:
+                normalLabel.font = .init(name: style.text.font.fontName, size: newSize)
+                selectedLabel.font = .init(name: style.text.font.fontName, size: newSize)
+            case .system(let weight):
+                normalLabel.font = .systemFont(ofSize: newSize, weight: weight)
+                selectedLabel.font = .systemFont(ofSize: newSize, weight: weight)
+            }
             selectedLabel.alpha = percentage
            
             backgroundView.alpha = 1 - percentage
@@ -179,6 +197,13 @@ public extension WPMenuView.DefaultNavigationItem{
     }
 
     struct Text{
+        public enum FontOption {
+            /// 系统字体
+            case system(weight:UIFont.Weight = .light)
+            /// 自定义字体
+            case custom
+        }
+        
         /// 宽 如果设置了将根据标题适配、并且contentEdge将失效
         public let width : CGFloat?
         /// 左右内边距
@@ -187,6 +212,8 @@ public extension WPMenuView.DefaultNavigationItem{
         public let title : String
         /// 字体 注：fontSize =  fontSize + fontTransitionNumber * fontSize
         public let font : UIFont
+        /// 字体选项
+        public let fontOption: FontOption
         /// 默认字体颜色
         public let normalColor : UIColor
         /// 选中字体颜色
@@ -210,6 +237,7 @@ public extension WPMenuView.DefaultNavigationItem{
         ///   - edge: 左右边距
         public init(title:String,
                     font:UIFont,
+                    fontOption:FontOption,
                     width : CGFloat?,
                     normalColor:UIColor,
                     selectedColor:UIColor,
@@ -217,6 +245,7 @@ public extension WPMenuView.DefaultNavigationItem{
                     transitionNumber:CGFloat){
             self.title = title
             self.font = font
+            self.fontOption = fontOption
             self.normalColor = normalColor
             self.selectedColor = selectedColor
             self.transitionNumber = transitionNumber
@@ -242,7 +271,7 @@ public extension WPMenuView.DefaultNavigationItem{
                                 edge:WPMenuView.ContentEdge = .init(left: 20, right: 20),
                                 transitionNumber:CGFloat = 0.3)->Self{
             return .init(title: title,
-                         font: font,
+                         font: font, fontOption: .system(weight: .light),
                          width: width,
                          normalColor: normalColor,
                          selectedColor: selectedColor,

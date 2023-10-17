@@ -9,7 +9,7 @@ import UIKit
 
 open class WPTableGroup: NSObject {
     /// 当前组下的item
-    public var items: [WPTableItem] = []
+    open var items: [WPTableItem] = []
     /// 当前状态
     public var status = UIControl.State.normal
     /// 头部标题

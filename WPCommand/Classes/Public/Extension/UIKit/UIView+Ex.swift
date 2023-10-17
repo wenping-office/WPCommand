@@ -19,6 +19,23 @@ public extension WPSpace where Base: UIView {
     }
 }
 
+public extension WPSpace where Base: UIStackView{
+    
+    /// 移除一个视图
+    /// - Parameter view: 视图
+    func remove(_ view: UIView) {
+        base.removeArrangedSubview(view)
+        view.removeFromSuperview()
+    }
+    
+    /// 移除所有视图
+    func removeAllArrangedSubviews() {
+        base.arrangedSubviews.forEach { (view) in
+            
+        }
+    }
+}
+
 public extension WPSpace where Base: UIView {
     /// 在keyWindow中的位置
     var frameInMainWidow: CGRect {
@@ -209,7 +226,7 @@ public extension WPSpace where Base: UIView {
     }
     
     /// 移除所有子视图
-    func removeAllSubViewFromSuperview() {
+    func removeAllSubView() {
         base.subviews.forEach { elmt in
             elmt.removeFromSuperview()
         }

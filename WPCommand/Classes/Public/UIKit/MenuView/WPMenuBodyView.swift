@@ -152,11 +152,11 @@ class WPMenuBodyCell: WPBaseCollectionViewCell {
     func setBodyView(_ view: UIView?) {
         bodyView = view
         if let view = view {
-            contentView.wp.removeAllSubViewFromSuperview()
+            contentView.wp.removeAllSubView()
             contentView.addSubview(view)
             view.frame = bounds
         } else {
-            contentView.wp.removeAllSubViewFromSuperview()
+            contentView.wp.removeAllSubView()
         }
     }
     

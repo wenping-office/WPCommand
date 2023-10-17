@@ -139,6 +139,39 @@ public extension WPSpace where Base == String {
     }
 }
 
+public extension WPSpace where Base == String{
+    /// 转换成js方法
+    /// - Parameter argms: 参数
+    /// - Returns: 结果
+    func jsFunc(_ argms:[String] = []) -> String {
+        var index = 1
+        let newArgms = argms.map { str in
+            index += 1
+            if index == argms.count{
+                return "'" + str + "',"
+            }else{
+                return "'" + str + "'"
+            }
+        }
+        var str = base
+        str.append("(")
+        newArgms.forEach { elmt in
+            str.append(elmt)
+        }
+        return str.appending(")")
+    }
+    
+    
+    /// 转换成json
+    func json()->[String:Any]{
+        if let data = base.data(using: .utf8){
+            let json = try? JSONSerialization.jsonObject(with: data) as? [String:Any]
+            return json ?? [:]
+        }
+        return [:]
+    }
+}
+
 public extension WPSpace where Base == String {
     /// 转日期
     /// - Parameters:

@@ -31,6 +31,24 @@ public extension WPSpace where Base: UIImage {
     }
 }
 
+public extension WPSpace where Base: UIImage{
+    /// 图片二维码内容
+    var qrStr: String? {
+        guard let ciImage = CIImage(image: base) else {
+            return nil
+        }
+        
+        let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyLow])
+        if let results = detector?.features(in: ciImage) {
+            for result in results {
+                let qrCodeResult = result as? CIQRCodeFeature
+                return qrCodeResult?.messageString
+            }
+        }
+        return nil
+    }
+}
+
 public extension UIImage{
     // 水印位置枚举
     enum WaterMarkCorner {

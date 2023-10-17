@@ -7,6 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+/** RGB色 */
+#define WPRGB(r, g, b) [UIColor colorWithRed:(r) / 255.f green:(g) / 255.f blue:(b) / 255.f alpha:1.f]
+/** 随机色 */
+#define WPRandomColor WPRGB(arc4random_uniform(255), arc4random_uniform(255), arc4random_uniform(255))
 
 /**
  *  弹出日期类型
@@ -38,21 +42,21 @@ typedef void(^selectBlock)(NSDate *date);
 
 @interface WPDateView : UIView
 /** 初始化方法 */
-- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle forScrollDate:(NSDate *)date;
+- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding forScrollDate:(NSDate *)date;
 /**
  默认滚动到当前时间
  */
--(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle completeBlock:(selectBlock)selectBlcok;
+-(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding completeBlock:(selectBlock)selectBlcok;
 
 /**
  滚动到指定的的日期
  */
--(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle scrollToDate:(NSDate *)scrollToDate completeBlock:(selectBlock)selectBlcok;
+-(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding scrollToDate:(NSDate *)scrollToDate completeBlock:(selectBlock)selectBlcok;
 
 /**
  正在滚动日期
  */
--(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle didSelectBlock:(selectBlock)selectBlcok;
+-(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding didSelectBlock:(selectBlock)selectBlcok;
 //日期存储数组
 @property (nonatomic,strong) NSMutableArray *yearArray;
 @property (nonatomic,strong) NSMutableArray *monthArray;
@@ -117,5 +121,17 @@ typedef void(^selectBlock)(NSDate *date);
 @property (readonly) NSInteger year;
 - (NSDate *)dateWithFormatter:(NSString *)formatter;
 - (NSString *)dateWithFormat:(NSString *)format;
+
+@end
+
+@interface WPDateContentLabelsView: UIView
+
+@end
+
+@interface WPDateLabel: UIView
+
+@property (nonatomic,assign) CGFloat offset;
+
+@property (nonatomic,strong) UILabel *label;
 
 @end

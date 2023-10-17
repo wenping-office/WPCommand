@@ -8,9 +8,9 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
-  s.version          = '0.5.2'
+  s.version          = '0.5.3'
   # 介绍
-  s.summary          = '基础库工具类、队列Alert、支持TableView嵌套手势处理的MenuView、轻量级自定义标签视图、Extension、引导视图'
+  s.summary          = '队列Alert、日历视图、支持嵌套TableView的PagingView、轻量级面包屑视图、自适应LatticeView、各类常用Extension等基础库'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?

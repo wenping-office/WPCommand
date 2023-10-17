@@ -68,7 +68,7 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
     /// - Parameter data: 数据类型
     public func set(data:[Any]){
         self.data = data
-        wp.removeAllSubViewFromSuperview()
+        wp.removeAllSubView()
         
         for index in 0..<data.count {
             let elmt = data[index]

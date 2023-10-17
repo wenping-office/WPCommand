@@ -218,7 +218,7 @@ class WPMenuNavigationCell: WPBaseCollectionViewCell {
                 if let menuView = superview?.superview?.superview as? WPMenuView {
                     item.navigationItem.menuViewChildViewUpdateStatus(menuView: menuView, status: .normal)
                 }
-                wp.removeAllSubViewFromSuperview()
+                wp.removeAllSubView()
                 addSubview(item.navigationItem)
                 item.navigationItem.snp.makeConstraints { make in
                     make.edges.equalToSuperview()

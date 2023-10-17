@@ -11,7 +11,7 @@
 #define kPickerSize self.datePicker.frame.size
 #define MAXYEAR 2099
 #define MINYEAR 1970
-
+#define LabelFont [UIFont systemFontOfSize:17]
 
 @interface WPDateView ()<UIPickerViewDelegate,UIPickerViewDataSource,UIGestureRecognizerDelegate> {
     
@@ -25,22 +25,23 @@
    NSInteger minuteIndex;
     NSDate *_startDate;
 }
-@property (weak, nonatomic)  UILabel *showYearView;
+@property (weak, nonatomic)  WPDateContentLabelsView *showYearView;
 
 @property (nonatomic, retain) NSDate *scrollToDate;//滚到指定日期
 @property (nonatomic,strong)selectBlock selectBlock;
 @property (nonatomic,strong) selectBlock didChangeBlock;
 
 @property (nonatomic,assign)WPDateStyle datePickerStyle;
+@property (nonatomic,assign)UIEdgeInsets labelPadding;
 
 @end
 
 @implementation WPDateView : UIView
 
-- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle forScrollDate:(NSDate *)date
+- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding forScrollDate:(NSDate *)date
 {
     if ([super init]) {
-        
+        self.labelPadding = padding;
         self.dateLabelColor =  [UIColor redColor];
         self.datePickerColor = [UIColor blackColor];
         
@@ -60,7 +61,7 @@
         _datePicker = datePicker;
         [self addSubview:datePicker];
         
-        UILabel *showYearView = [UILabel new];
+        WPDateContentLabelsView *showYearView = [WPDateContentLabelsView new];
         _showYearView = showYearView;
         [self addSubview:showYearView];
 
@@ -104,8 +105,8 @@
 /**
  默认滚动到当前时间
  */
--(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle completeBlock:(selectBlock)selectBlcok {
-    self = [self initWithDateStyle:datePickerStyle forScrollDate:nil];
+-(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding completeBlock:(selectBlock)selectBlcok {
+    self = [self initWithDateStyle:datePickerStyle labelPadding:padding forScrollDate:nil];
     self.selectBlock = selectBlcok;
     return self;
 }
@@ -113,15 +114,15 @@
 /**
  滚动到指定的的日期
  */
--(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle scrollToDate:(NSDate *)scrollToDate completeBlock:(selectBlock)selectBlcok {
-    self = [self initWithDateStyle:datePickerStyle forScrollDate:scrollToDate];
+-(instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding scrollToDate:(NSDate *)scrollToDate completeBlock:(selectBlock)selectBlcok {
+    self = [self initWithDateStyle:datePickerStyle labelPadding:padding forScrollDate:scrollToDate];
     self.selectBlock = selectBlcok;
     return self;
 }
 
-- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle didSelectBlock:(selectBlock)selectBlcok
+- (instancetype)initWithDateStyle:(WPDateStyle)datePickerStyle labelPadding:(UIEdgeInsets)padding didSelectBlock:(selectBlock)selectBlcok
 {
-    self = [self initWithDateStyle:datePickerStyle forScrollDate:nil];
+    self = [self initWithDateStyle:datePickerStyle labelPadding:padding forScrollDate:nil];
     self.didChangeBlock = selectBlcok;
     return self;
 }
@@ -171,19 +172,22 @@
 
 -(void)addLabelWithName:(NSArray *)nameArr {
     for (id subView in self.showYearView.subviews) {
-        if ([subView isKindOfClass:[UILabel class]]) {
+        if ([subView isKindOfClass:[WPDateLabel class]]) {
             [subView removeFromSuperview];
         }
     }
-    
     for (int i=0; i<nameArr.count; i++) {
-        CGFloat labelX = kPickerSize.width/(nameArr.count*2)+18+kPickerSize.width/nameArr.count*i;
-        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(labelX, self.showYearView.frame.size.height/2-15/2.0, 15, 15)];
-        label.text = nameArr[i];
-        label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont systemFontOfSize:14];
-        label.textColor =  _dateLabelColor;
+        WPDateLabel *label = [WPDateLabel new];
+        label.label.text = nameArr[i];
+        label.label.font = [UIFont systemFontOfSize:14];
+        label.label.textColor =  _dateLabelColor;
         label.backgroundColor = [UIColor clearColor];
+        
+        if ([label.label.text isEqualToString:@"年"]){
+            label.offset = 28 + 3;
+        }else{
+            label.offset = 17 + 3;
+        }
         [self.showYearView addSubview:label];
     }
 }
@@ -191,9 +195,9 @@
 -(void)setDateLabelColor:(UIColor *)dateLabelColor {
     _dateLabelColor = dateLabelColor;
     for (id subView in self.showYearView.subviews) {
-        if ([subView isKindOfClass:[UILabel class]]) {
-            UILabel *label = subView;
-            label.textColor = _dateLabelColor;
+        if ([subView isKindOfClass:[WPDateLabel class]]) {
+            WPDateLabel *label = subView;
+            label.label.textColor = _dateLabelColor;
         }
     }
 }
@@ -296,7 +300,7 @@
     if (!customLabel) {
         customLabel = [[UILabel alloc] init];
         customLabel.textAlignment = NSTextAlignmentCenter;
-        [customLabel setFont:[UIFont systemFontOfSize:17]];
+        [customLabel setFont:LabelFont];
     }
     NSString *title;
 
@@ -728,7 +732,7 @@
     [super layoutSubviews];
     
     self.datePicker.frame = self.bounds;
-    self.showYearView.frame = CGRectMake(0, 0, self.frame.size.width, 40);
+    self.showYearView.frame = CGRectMake(self.labelPadding.left, 0, self.frame.size.width-self.labelPadding.left-self.labelPadding.right, 40);
     self.showYearView.center = self.datePicker.center;
 
 }
@@ -829,3 +833,50 @@ static const unsigned componentFlags = (NSCalendarUnitYear| NSCalendarUnitMonth 
     return sharedCalendar;
 }
 @end
+
+@implementation WPDateContentLabelsView
+
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    CGFloat pad = 5;
+    CGFloat width = (self.frame.size.width - pad * (self.subviews.count - 1)) / self.subviews.count;
+
+    for (int i = 0; i<self.subviews.count; i++) {
+        UIView *view = self.subviews[i];
+        view.frame = CGRectMake(i*width + pad * i, 0, width, self.frame.size.height);
+    }
+}
+
+
+@end
+
+
+@implementation WPDateLabel
+
+- (instancetype)initWithFrame:(CGRect)frame{
+    if([super initWithFrame:frame]){
+        UILabel *label = [UILabel new];
+        _label = label;
+        [self addSubview:label];
+    }
+    return self;
+}
+
+- (void)setOffset:(CGFloat)offset{
+    _offset = offset;
+    
+    [self layoutSubviews];
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    [self.label sizeToFit];
+    self.label.frame = CGRectMake((self.frame.size.width - self.label.frame.size.width) *0.5 + self.offset, (self.frame.size.height-self.label.frame.size.height) * 0.5, self.label.frame.size.width, self.label.frame.size.height);
+    
+    self.label.center = CGPointMake((self.frame.size.width * 0.5) + self.offset, self.frame.size.height * 0.5);
+}
+
+
+@end
+

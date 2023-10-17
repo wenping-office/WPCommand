@@ -93,7 +93,10 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
     
     func style(str:String) -> WPMenuView.DefaultNavigationItem{
 
-        return WPMenuView.DefaultNavigationItem.default(.init(.text(str, 20, .bold), background: .background(), line: .line(nil, 5, .init(left: 30, right: 30), color: .wp.random)))
+        return WPMenuView.DefaultNavigationItem.default(.init(.text(str),
+                                                              background: .background(),
+                                                              line: .line(nil, 5, .init(left: 30, right: 30),
+                                                                          color: .wp.random)))
     }
 
     override func initSubView() {
@@ -283,7 +286,7 @@ class TestMenuVC1: WPBaseVC,WPMenuBodyViewProtocol,WPMenuViewDataSource,WPMenuVi
     
     func style(str:String) -> WPMenuView.DefaultNavigationItem{
 
-        return WPMenuView.DefaultNavigationItem.default(.init(.text(str, 20, .bold), background: .background(), line: .line(nil, 5, .init(left: 30, right: 30), color: .wp.random)))
+        return WPMenuView.DefaultNavigationItem.default(.init(.text(str), background: .background(), line: .line(nil, 5, .init(left: 30, right: 30), color: .wp.random)))
     }
     
     override func initSubViewLayout() {
