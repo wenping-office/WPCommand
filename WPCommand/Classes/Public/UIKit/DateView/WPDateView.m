@@ -62,6 +62,7 @@
         [self addSubview:datePicker];
         
         WPDateContentLabelsView *showYearView = [WPDateContentLabelsView new];
+        showYearView.userInteractionEnabled = false;
         _showYearView = showYearView;
         [self addSubview:showYearView];
 

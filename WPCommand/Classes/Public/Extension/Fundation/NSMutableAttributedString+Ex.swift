@@ -14,6 +14,13 @@ public extension WPSpace where Base == String{
     }
 }
 
+public extension WPSpace where Base == NSAttributedString{
+    /// 可变富文本
+    var attributed: WPSpace<NSMutableAttributedString> {
+        return .init(.init(attributedString: base))
+    }
+}
+
 public extension WPSpace where Base: NSMutableAttributedString {
     /// 快速设置行间距
     /// - Parameters:
@@ -64,7 +71,7 @@ public extension WPSpace where Base: NSMutableAttributedString {
     /// 添加一个字符串
     /// - Parameter string: 字符串
     /// - Returns: 结果
-    func append(str string: String) -> Self {
+    func append(_ string: String) -> Self {
         base.append(NSMutableAttributedString(string: string))
         return self
     }
@@ -72,8 +79,24 @@ public extension WPSpace where Base: NSMutableAttributedString {
     /// 添加一个属性字符串
     /// - Parameter string: 属性字符串
     /// - Returns: 结果
-    func append(attributedStr string: NSMutableAttributedString) -> Self {
+    func append(_ string: NSMutableAttributedString) -> Self {
         base.append(string)
+        return self
+    }
+    
+    /// 添加一个属性字符串
+    /// - Parameter string: 属性字符串
+    /// - Returns: 结果
+    func append(_ string: WPSpace<NSMutableAttributedString>) -> Self {
+        base.append(string.base)
+        return self
+    }
+    
+    /// 添加一个属性字符串
+    /// - Parameter string: 属性字符串
+    /// - Returns: 结果
+    func append(_ string: WPSpace<NSAttributedString>) -> Self {
+        base.append(string.base)
         return self
     }
     

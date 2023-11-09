@@ -233,6 +233,12 @@ public extension WPMenuView{
             self?.contentView.isUserInteractionEnabled = true
         })
     }
+    
+    /// 刷新headerview
+    /// - Parameter animate:
+    func refreshHeader(_ animate:UITableView.RowAnimation = .none) {
+        contentView.reloadRows(at: [.init(row: 0, section: 0)], with: animate)
+    }
 }
 
 public extension WPMenuView {
@@ -495,7 +501,7 @@ public class WPMenuView: WPBaseView {
             
             // 选中headr
             self.contentView.headerView.setHeaderView(of: headerItem?.headerView, complete: { [weak self] _ in
-                self?.contentView.reloadRows(at: [.init(row: 0, section: 0)], with: .none)
+                self?.refreshHeader()
             })
         }
         

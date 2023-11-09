@@ -44,7 +44,7 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
         return 0
     }
     
-    private var estimatedWidth : CGFloat?
+    public var estimatedWidth : CGFloat?
 
     /// 初始化标签视图
     /// - Parameters:

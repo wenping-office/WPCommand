@@ -332,10 +332,30 @@ public extension WPSpace where Base == Array<String>{
             str.append(divider)
         }
         
-        if base.count > 0 {
+        if divider != "" {
             return str.wp.subString(of: .init(location: 0, length: str.count - 1))
         } else {
             return ""
+        }
+    }
+}
+
+public extension WPSpace where Base == Array<String.SubSequence>{
+    
+    /// 转换成string
+    /// - Parameter divider: 分割符
+    /// - Returns: 结果
+    func string(divider: String = "") -> String {
+        var str = ""
+        base.forEach { elmt in
+            str.append(contentsOf: elmt)
+            str.append(divider)
+        }
+        
+        if divider != "" {
+            return str.wp.subString(of: .init(location: 0, length: str.count - 1))
+        } else {
+            return str
         }
     }
 }

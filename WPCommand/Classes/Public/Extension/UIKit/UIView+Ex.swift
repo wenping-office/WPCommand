@@ -19,23 +19,6 @@ public extension WPSpace where Base: UIView {
     }
 }
 
-public extension WPSpace where Base: UIStackView{
-    
-    /// 移除一个视图
-    /// - Parameter view: 视图
-    func remove(_ view: UIView) {
-        base.removeArrangedSubview(view)
-        view.removeFromSuperview()
-    }
-    
-    /// 移除所有视图
-    func removeAllArrangedSubviews() {
-        base.arrangedSubviews.forEach { (view) in
-            
-        }
-    }
-}
-
 public extension WPSpace where Base: UIView {
     /// 在keyWindow中的位置
     var frameInMainWidow: CGRect {
@@ -116,6 +99,11 @@ public extension WPSpace where Base: UIView {
     /// 是否有添加约束
     var isAddConstraints: Bool {
         return base.constraints.count > 0
+    }
+    
+    /// 子视图是否全部隐藏
+    var subViewsAllHidden:Bool{
+        return !base.subviews.wp_isContent(in: {!$0.isHidden})
     }
     
     /// 父类视图所有节点
@@ -349,17 +337,18 @@ public extension WPSpace where Base: UIView {
     /// - Parameters:
     ///   - str: 内容
     ///   - delaySecond: 延迟时间
-    func toast(_ str: String, _ delaySecond: DispatchTime = .now() + 2, offSetY: CGFloat = 0) {
+    func toast(_ str: NSAttributedString?, _ delaySecond: DispatchTime = .now() + 2, offSetY: CGFloat = 0) {
         WPGCD.main_Async {
             let toastView = WPToastView()
-            toastView.titleL.text = str
+            toastView.titleL.attributedText = str
             toastView.alpha = 0
             
             base.addSubview(toastView)
-            
+
             toastView.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview().offset(offSetY)
+                make.width.lessThanOrEqualTo(UIScreen.main.bounds.width * 0.9)
             }
             
             UIView.animate(withDuration: 0.2, animations: {
@@ -431,8 +420,8 @@ class WPToastView: UIView {
         super.init(frame: frame)
         addSubview(backgroundV)
         addSubview(titleL)
+        titleL.textAlignment = .center
         backgroundV.backgroundColor = .wp.initWith(0, 0, 0, 0.6)
-
         titleL.numberOfLines = 0
         titleL.textColor = .white
         layer.cornerRadius = 8

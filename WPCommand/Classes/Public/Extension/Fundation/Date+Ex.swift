@@ -185,6 +185,23 @@ public extension WPSpace where Base == Date{
 }
 
 public extension WPSpace where Base == Date{
+
+    
+    /// 比较时间
+    /// - Parameters:
+    ///   - date: 当前日期
+    ///   - components: 比较项
+    ///   - calendar: 日历
+    /// - Returns: 结果
+    func compare(_ date: Date,
+                 _ components: Set<Calendar.Component>,
+                 calendar:Calendar = .current) -> DateComponents {
+        return calendar.dateComponents(components, from: date, to: base)
+    }
+}
+
+
+public extension WPSpace where Base == Date{
     /// 获取当前网络时间
     /// - Parameters:
     ///   - success: 成功
