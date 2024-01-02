@@ -35,25 +35,25 @@ public extension WPSpace where Base: UITableView {
 
 public class WPTableViewDelegate: WPScrollViewDelegate {
     /// 选中一行掉用
-    var didSelectRowAt: ((UITableView, IndexPath) -> Void)?
+   public var didSelectRowAt: ((UITableView, IndexPath) -> Void)?
     /// 每一行的高度
-    var heightForRowAt: ((UITableView, IndexPath) -> CGFloat)?
+    public var heightForRowAt: ((UITableView, IndexPath) -> CGFloat)?
     /// 编辑按钮的点击时间
-    var commitEditingStyle: ((UITableView, IndexPath) -> Void)?
+    public var commitEditingStyle: ((UITableView, IndexPath) -> Void)?
     /// 这一组header高度
-    var heightForHeaderInSection: ((UITableView, Int) -> CGFloat)?
+    public var heightForHeaderInSection: ((UITableView, Int) -> CGFloat)?
     /// 这一组footer高度
-    var heightForFooterInSection: ((UITableView, Int) -> CGFloat)?
+    public var heightForFooterInSection: ((UITableView, Int) -> CGFloat)?
     /// 这一组的headerView
-    var viewForHeaderInSection: ((UITableView, Int) -> UIView?)?
+    public var viewForHeaderInSection: ((UITableView, Int) -> UIView?)?
     /// 这一组的footerView
-    var viewForFooterInSection: ((UITableView, Int) -> UIView?)?
+    public  var viewForFooterInSection: ((UITableView, Int) -> UIView?)?
     /// cell即将显示
-    var willDisplayCell: ((UITableView, UITableViewCell, IndexPath) -> Void)?
+    public  var willDisplayCell: ((UITableView, UITableViewCell, IndexPath) -> Void)?
     /// 这一组headerView即将显示
-    var willDisplayHeaderView: ((UITableView, UIView, Int) -> Void)?
+    public var willDisplayHeaderView: ((UITableView, UIView, Int) -> Void)?
     /// 这一组foogerView即将显示
-    var willDisplayFooterView: ((UITableView, UIView, Int) -> Void)?
+    public var willDisplayFooterView: ((UITableView, UIView, Int) -> Void)?
 }
 
 extension WPTableViewDelegate: UITableViewDelegate {
@@ -179,6 +179,33 @@ extension WPTableViewDelegate: UITableViewDelegate {
             let footerView = view as! UITableViewHeaderFooterView
             footerView.reloadGroup(group: group)
             group.headWillDisplayBlock?(footerView)
+        }
+    }
+    
+    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let dataSource = tableView.wp.dataSource
+        let group = dataSource.groups.wp_get(of: indexPath.section)
+        let item = group?.items.wp_get(of: indexPath.row)
+        
+        if item?.didCommitEditBlock != nil{
+            return .init(actions: [.init(style: .destructive, title: "删除", handler: { action, view, actionBlock in
+                if let item,let group{
+                    item.didCommitEditBlock?(item,group)
+                }
+            })])
+        }
+        return nil
+    }
+    
+    public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        let dataSource = tableView.wp.dataSource
+        let item = dataSource.groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row)
+        if dataSource.editingStyleForRowAt != nil {
+            return dataSource.editingStyleForRowAt!(tableView, indexPath)
+        } else if item != nil {
+            return item!.editingStyle
+        } else {
+            return .none
         }
     }
 }

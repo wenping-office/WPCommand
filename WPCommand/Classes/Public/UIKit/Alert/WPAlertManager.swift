@@ -191,7 +191,7 @@ public class WPAlertManager {
     /// 弹窗弹出的根视图
     private var targetView: UIView {
         if target == nil {
-            return UIApplication.wp.mainWindow
+            return UIApplication.wp.mainWindow!
         } else {
             return target!
         }

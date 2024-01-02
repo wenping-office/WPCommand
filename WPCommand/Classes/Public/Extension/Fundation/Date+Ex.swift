@@ -97,6 +97,15 @@ public extension WPSpace where Base == Date{
         let selfComponents = calendar.dateComponents([.year], from: base)
         return (selfComponents.year == nowComponents.year)
     }
+
+    /// 0时区转系统时间
+    var toSystemDate:Date{
+        let date = Date() // 获得时间对象
+        let zone = NSTimeZone.system // 获得系统的时区
+        let time = zone.secondsFromGMT(for: date)// 以秒为单位返回当前时间与系统格林尼治时间的差
+        return date.addingTimeInterval(TimeInterval(time))// 然后把差的时间加上,就是当前系统准确的时间
+    }
+    
 }
 
 public extension WPSpace where Base == Date{

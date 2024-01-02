@@ -15,6 +15,11 @@ extension Double: WPAccuracyProtocol {}
 
 public extension WPSpace where Base: WPAccuracyProtocol {
     
+    /// 精度
+    func decimalNumber(length:Int = 2) -> NSDecimalNumber {
+        return NSDecimalNumber.init(string: String(format: "%.\(length)f",base as! CVarArg))
+    }
+    
     /// 获取小数位
     /// - Parameters:
     ///   - length: 小数长度

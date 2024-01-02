@@ -48,7 +48,7 @@ public extension UIImagePickerController {
         if vc != nil {
             vc?.present(picker, animated: true, completion: nil)
         } else {
-            UIApplication.wp.mainWindow.rootViewController?.present(picker, animated: true, completion: nil)
+            UIApplication.wp.mainWindow?.rootViewController?.present(picker, animated: true, completion: nil)
         }
     }
 

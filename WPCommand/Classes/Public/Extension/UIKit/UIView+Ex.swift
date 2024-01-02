@@ -349,6 +349,7 @@ public extension WPSpace where Base: UIView {
                 make.centerX.equalToSuperview()
                 make.centerY.equalToSuperview().offset(offSetY)
                 make.width.lessThanOrEqualTo(UIScreen.main.bounds.width * 0.9)
+                make.height.lessThanOrEqualTo(UIScreen.main.bounds.height * 0.9)
             }
             
             UIView.animate(withDuration: 0.2, animations: {

@@ -57,6 +57,10 @@ public class WPTableViewSource: NSObject {
         super.init()
     }
 
+    /// 索引
+    public var sectionIndexTitles:[String]?
+    /// 索引事件
+    public var sectionForSectionIndexTitleBlock:((String,Int)->Int)?
     /// 是否添加到superView
     private var isAddToSuperView = false
     /// 刷新模式 暂未测
@@ -172,15 +176,16 @@ extension WPTableViewSource: UITableViewDataSource {
         }
     }
     
-    public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        let item = groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row)
-        
-        if editingStyleForRowAt != nil {
-            return editingStyleForRowAt!(tableView, indexPath)
-        } else if item != nil {
-            return item!.editingStyle
-        } else {
-            return .none
-        }
+    public func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        return sectionIndexTitles
     }
+
+    public func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+        if let action = sectionForSectionIndexTitleBlock{
+            return action(title,index)
+        }
+
+        return index
+    }
+    
 }

@@ -7,6 +7,13 @@
 
 import UIKit
 
+public extension WPSpace where Base == String.SubSequence{
+    /// 可变富文本
+    var attributed: WPSpace<NSMutableAttributedString> {
+        return .init(NSMutableAttributedString(string: String(base)))
+    }
+}
+
 public extension WPSpace where Base == String{
     /// 可变富文本
     var attributed: WPSpace<NSMutableAttributedString> {
@@ -137,7 +144,10 @@ public extension WPSpace where Base: NSMutableAttributedString {
               range: NSRange?=nil) -> Self
     {
         if range != nil {
-            base.addAttributes([.kern: value], range: range!)
+            if range!.length > 0{
+                base.addAttributes([.kern: value], range: range!)
+            }
+            return self
         } else {
             base.addAttributes([.kern: value], range: NSMakeRange(0, base.string.count))
         }

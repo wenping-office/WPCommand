@@ -11,6 +11,8 @@
 
 /// 获取正方向图片
 - (UIImage *)wp_fixOrientation;
+/// 获取图片类型
+- (NSString *)wp_typeStr;
 
 @end
 

@@ -15,29 +15,29 @@ open class WPTableItem: NSObject {
     /// cell类型
     public let cellClass: UITableViewCell.Type
     /// cell状态
-    public var viewStatus = UIControl.State.normal
+    open var viewStatus = UIControl.State.normal
     /// 这行的indexpath
-    public var indexPath: IndexPath?
+    open var indexPath: IndexPath?
     /// 返回的高度 默认自适应高度
-    public var cellHeight: CGFloat = UITableView.automaticDimension
+    open var cellHeight: CGFloat = UITableView.automaticDimension
     /// 编辑的样式
-    public var editingStyle = UITableViewCell.EditingStyle.none
+    open var editingStyle = UITableViewCell.EditingStyle.none
     /// 分割线间距
-    public var separatorInset = UIEdgeInsets(top: 0, left: 16.0, bottom: 0, right: 0)
+    open var separatorInset = UIEdgeInsets(top: 0, left: 16.0, bottom: 0, right: 0)
     /// 编辑按钮点击后调用
-    public var didCommitEditBlock: ((WPTableItem, WPTableGroup)->Void)?
+    open var didCommitEditBlock: ((WPTableItem, WPTableGroup)->Void)?
     /// 选中一行调用
-    public var didSelectedBlock: ((UITableViewCell) ->Void)?
+    open var didSelectedBlock: ((UITableViewCell) ->Void)?
     /// 选中当前行调用
-    public var selectedToSelfBlock: ((WPTableItem) ->Void)?
+    open var selectedToSelfBlock: ((WPTableItem) ->Void)?
     /// 设置cell
-    public var settingCellBlock: ((UITableViewCell)->Void)?
+    open var settingCellBlock: ((UITableViewCell)->Void)?
     /// 即将绘制调用
-    public var willDisplay: ((UITableViewCell) ->Void)?
+    open var willDisplay: ((UITableViewCell) ->Void)?
     /// 设置完info后回调 可以用来主动计算Cell的高度
-    public var didSetInfo: ((Any?)->Void)?
+    open var didSetInfo: ((Any?)->Void)?
     /// 刷新Item
-    public var uploadItemBlock: ((WPTableItem)->Void)?
+    open var uploadItemBlock: ((WPTableItem)->Void)?
     
     public var info: Any? {
         didSet {

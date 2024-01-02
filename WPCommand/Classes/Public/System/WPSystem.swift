@@ -135,11 +135,24 @@ public extension WPSystem {
             }).disposed(by: bag)
             return ob
         }
+        
+        /// 高度变化
+        public func height(debounceTime:Int = 100)->Observable<(height:CGFloat,duration:CGFloat)>{
+            return Observable.merge(Observable.merge(WPSystem.keyboard.willChangeFrame,WPSystem.keyboard.willShow).map { not in
+                let endHeight = ((not.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero).height
+                let duration =  (not.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as? CGFloat) ?? 0
+                
+                return (endHeight,duration)
+            },WPSystem.keyboard.willHide.map({ not in
+                let duration =  (not.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as? CGFloat) ?? 0
+                return (0,duration)
+            })).debounce(.milliseconds(debounceTime), scheduler: MainScheduler.instance)
+        }
     }
     
     /// app相关
     struct Appliaction {
-        /// 将要进入前台台
+        /// 将要进入前台
         public var willEnterForeground: Observable<Notification> {
             return NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
         }

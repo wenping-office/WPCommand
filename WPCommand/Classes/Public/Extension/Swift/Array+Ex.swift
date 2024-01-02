@@ -335,7 +335,7 @@ public extension WPSpace where Base == Array<String>{
         if divider != "" {
             return str.wp.subString(of: .init(location: 0, length: str.count - 1))
         } else {
-            return ""
+            return str
         }
     }
 }

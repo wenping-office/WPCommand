@@ -42,6 +42,7 @@ public extension WPSpaceProtocol {
 
 extension NSObject: WPSpaceProtocol {}
 extension String: WPSpaceProtocol {}
+extension String.SubSequence: WPSpaceProtocol {}
 extension Date: WPSpaceProtocol {}
 extension Array: WPSpaceProtocol {}
 extension CGRect: WPSpaceProtocol {}
