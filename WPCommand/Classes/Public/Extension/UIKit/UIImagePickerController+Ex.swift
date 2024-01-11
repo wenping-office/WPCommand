@@ -12,11 +12,11 @@ private var UIImagePickerControllerDelegatePointer = "UIImagePickerControllerDel
 public extension UIImagePickerController {
     var wp_delegate: WPImagePickerControllerDelegate {
         set {
-            WPRunTime.set(self, newValue, &UIImagePickerControllerDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &UIImagePickerControllerDelegatePointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             delegate = newValue
         }
         get {
-            guard let wp_delegate: WPImagePickerControllerDelegate = WPRunTime.get(self, &UIImagePickerControllerDelegatePointer) else {
+            guard let wp_delegate: WPImagePickerControllerDelegate = WPRunTime.get(self, withUnsafePointer(to: &UIImagePickerControllerDelegatePointer, {$0})) else {
                 let wp_delegate = WPImagePickerControllerDelegate()
                 self.wp_delegate = wp_delegate
                 return wp_delegate

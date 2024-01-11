@@ -21,7 +21,7 @@ public protocol WPGestureAdaptationProtocol: UIScrollView {
 public extension WPGestureAdaptationProtocol{
     var horizontalAdaptation : Bool{
         get {
-            var resualt : Bool? = WPRunTime.get(self, &WPGestureAdaptationHorizontalPointer)
+            var resualt : Bool? = WPRunTime.get(self, withUnsafePointer(to: &WPGestureAdaptationHorizontalPointer, {$0}))
             if resualt == nil {
                 resualt = false
                 horizontalAdaptation = false
@@ -29,7 +29,7 @@ public extension WPGestureAdaptationProtocol{
             return resualt!
         }
         set {
-            return WPRunTime.set(self, newValue, &WPGestureAdaptationHorizontalPointer, .OBJC_ASSOCIATION_ASSIGN)
+            return WPRunTime.set(self, newValue, withUnsafePointer(to: &WPGestureAdaptationHorizontalPointer, {$0}), .OBJC_ASSOCIATION_ASSIGN)
         }
     }
     

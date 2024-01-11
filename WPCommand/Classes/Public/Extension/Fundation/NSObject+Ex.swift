@@ -14,10 +14,10 @@ public extension NSObject {
     /// 懒加载垃圾桶
     var wp_disposeBag: DisposeBag {
         set {
-            WPRunTime.set(self, newValue, &wp_disposeBagPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &wp_disposeBagPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            guard let disposeBag: DisposeBag = WPRunTime.get(self, &wp_disposeBagPointer) else {
+            guard let disposeBag: DisposeBag = WPRunTime.get(self, withUnsafePointer(to: &wp_disposeBagPointer, {$0})) else {
                 let bag = DisposeBag()
                 self.wp_disposeBag = bag
                 return bag

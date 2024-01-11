@@ -17,10 +17,10 @@ public protocol WPTableCellProtocol: NSObjectProtocol, UITableViewCell {
 public extension WPTableCellProtocol {
     var item: WPTableItem? {
         get {
-            return WPRunTime.get(self, &WPitemPointer)
+            return WPRunTime.get(self, withUnsafePointer(to: &WPitemPointer, {$0}))
         }
         set {
-            return WPRunTime.set(self, newValue, &WPitemPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return WPRunTime.set(self, newValue, withUnsafePointer(to: &WPitemPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

@@ -14,12 +14,12 @@ extension UICollectionView {
     /// 数据源
     var wp_source: WPCollectionViewSource {
         set {
-            WPRunTime.set(self, newValue, &WPCollectionViewSourcePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &WPCollectionViewSourcePointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             delegate = self.wp_delegate
             dataSource = newValue
         }
         get {
-            guard let source: WPCollectionViewSource = WPRunTime.get(self, &WPCollectionViewSourcePointer) else {
+            guard let source: WPCollectionViewSource = WPRunTime.get(self, withUnsafePointer(to: &WPCollectionViewSourcePointer, {$0})) else {
                 let wp_source = WPCollectionViewSource(collectionView: self)
                 self.wp_source = wp_source
                 return wp_source

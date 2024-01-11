@@ -21,10 +21,10 @@ public protocol WPTableHeaderFooterViewlProtocol: NSObjectProtocol, UITableViewH
 public extension WPTableHeaderFooterViewlProtocol {
     var group: WPTableGroup? {
         get {
-            return WPRunTime.get(self, &WPTableGroupPointer)
+            return WPRunTime.get(self, withUnsafePointer(to: &WPTableGroupPointer, {$0}))
         }
         set {
-            return WPRunTime.set(self, newValue, &WPTableGroupPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return WPRunTime.set(self, newValue, withUnsafePointer(to: &WPTableGroupPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

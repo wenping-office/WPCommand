@@ -40,21 +40,21 @@ public extension WPAlertProtocol {
     /// 弹窗根视图
     var targetView: UIView? {
         get {
-            return WPRunTime.get(self, &AlertTargetViewPointer)
+            return WPRunTime.get(self, withUnsafePointer(to: &AlertTargetViewPointer, {$0}))
         }
         set {
-            return WPRunTime.set(self, newValue, &AlertTargetViewPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return WPRunTime.set(self, newValue, withUnsafePointer(to: &AlertTargetViewPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
     /// 弹窗根视图
     var currentAlertState: WPAlertManager.State {
         get {
-            let state : WPAlertManager.State = WPRunTime.get(self, &AlertStatePointer) ?? WPAlertManager.State.unknown
+            let state : WPAlertManager.State = WPRunTime.get(self, withUnsafePointer(to: &AlertStatePointer, {$0})) ?? WPAlertManager.State.unknown
             return state
         }
         set {
-            return WPRunTime.set(self, newValue, &AlertStatePointer, .OBJC_ASSOCIATION_RETAIN)
+            return WPRunTime.set(self, newValue, withUnsafePointer(to: &AlertStatePointer, {$0}), .OBJC_ASSOCIATION_RETAIN)
         }
     }
 
@@ -86,10 +86,10 @@ public extension WPAlertProtocol {
     /// 弹窗状态
     var stateHandler: StateHandler {
         get {
-            return WPRunTime.get(self, &AlertStateHandlerPointer)
+            return WPRunTime.get(self, withUnsafePointer(to: &AlertStateHandlerPointer, {$0}))
         }
         set {
-            return WPRunTime.set(self, newValue, &AlertStateHandlerPointer, .OBJC_ASSOCIATION_COPY)
+            return WPRunTime.set(self, newValue, withUnsafePointer(to: &AlertStateHandlerPointer, {$0}), .OBJC_ASSOCIATION_COPY)
         }
     }
     

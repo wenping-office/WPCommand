@@ -14,12 +14,12 @@ extension UITableView {
     /// 数据源
     var wp_source: WPTableViewSource {
         set {
-            WPRunTime.set(self, newValue, &WPTableViewDataSourcePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &WPTableViewDataSourcePointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             delegate = self.wp_delegate
             dataSource = newValue
         }
         get {
-            guard let source: WPTableViewSource = WPRunTime.get(self, &WPTableViewDataSourcePointer) else {
+            guard let source: WPTableViewSource = WPRunTime.get(self, withUnsafePointer(to: &WPTableViewDataSourcePointer, {$0})) else {
                 let wp_source = WPTableViewSource(tableView: self)
                 self.wp_source = wp_source
                 return wp_source

@@ -12,11 +12,11 @@ private var WPTableViewDelegatePointer = "WPTableViewDelegatePointer"
 extension UITableView {
     var wp_delegate: WPTableViewDelegate {
         set {
-            WPRunTime.set(self, newValue, &WPTableViewDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &WPTableViewDelegatePointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             delegate = newValue
         }
         get {
-            guard let wp_delegate: WPTableViewDelegate = WPRunTime.get(self, &WPTableViewDelegatePointer) else {
+            guard let wp_delegate: WPTableViewDelegate = WPRunTime.get(self, withUnsafePointer(to: &WPTableViewDelegatePointer, {$0})) else {
                 let wp_delegate = WPTableViewDelegate()
                 self.wp_delegate = wp_delegate
                 return wp_delegate

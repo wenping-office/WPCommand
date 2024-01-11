@@ -14,10 +14,10 @@ public protocol WPCollectionCellProtocol: NSObjectProtocol, UICollectionViewCell
 public extension WPCollectionCellProtocol {
     var item: WPCollectionItem? {
         get {
-            return WPRunTime.get(self, &WPCollectionItemPointer)
+            return WPRunTime.get(self, withUnsafePointer(to: &WPCollectionItemPointer, {$0}))
         }
         set {
-            WPRunTime.set(self, newValue, &WPCollectionItemPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &WPCollectionItemPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

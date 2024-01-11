@@ -31,10 +31,10 @@ public extension WPMenuBodyViewProtocol{
     /// 滚动的视图解决手势冲突使用
     var targetViewDidScroll : ScrollHandler{
         get {
-            return WPRunTime.get(self, &MenuBodyViewScrollHandlerPointer)
+            return WPRunTime.get(self, withUnsafePointer(to: &MenuBodyViewScrollHandlerPointer, {$0}))
         }
         set {
-            return WPRunTime.set(self, newValue, &MenuBodyViewScrollHandlerPointer, .OBJC_ASSOCIATION_COPY)
+            return WPRunTime.set(self, newValue, withUnsafePointer(to: &MenuBodyViewScrollHandlerPointer, {$0}), .OBJC_ASSOCIATION_COPY)
         }
     }
 }

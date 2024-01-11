@@ -12,11 +12,11 @@ private var WPCollectionDelegatePointer = "WPCollectionDelegatePointer"
 extension UICollectionView {
     var wp_delegate: WPCollectionViewDelegate {
         set {
-            WPRunTime.set(self, newValue, &WPCollectionDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &WPCollectionDelegatePointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             delegate = newValue
         }
         get {
-            guard let wp_delegate: WPCollectionViewDelegate = WPRunTime.get(self, &WPCollectionDelegatePointer) else {
+            guard let wp_delegate: WPCollectionViewDelegate = WPRunTime.get(self, withUnsafePointer(to: &WPCollectionDelegatePointer, {$0})) else {
                 let wp_delegate = WPCollectionViewDelegate()
                 self.wp_delegate = wp_delegate
                 return wp_delegate

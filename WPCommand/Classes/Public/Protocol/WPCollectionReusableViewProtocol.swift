@@ -22,10 +22,10 @@ protocol WPCollectionReusableViewProtocol: NSObjectProtocol, UICollectionReusabl
 extension WPCollectionReusableViewProtocol {
     var group: WPCollectionGroup? {
         get {
-            return WPRunTime.get(self, &WPCollectionGroupPointer)
+            return WPRunTime.get(self, withUnsafePointer(to: &WPCollectionGroupPointer, {$0}))
         }
         set {
-            WPRunTime.set(self, newValue, &WPCollectionGroupPointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &WPCollectionGroupPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }

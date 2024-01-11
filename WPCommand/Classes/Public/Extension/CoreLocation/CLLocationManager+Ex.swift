@@ -208,11 +208,11 @@ public extension CLLocationManager {
     /// 桥接代理
     var wp_delegate: WPLocationManagerDelegate {
         set {
-            WPRunTime.set(self, newValue, &WPLocationManagerDelegatePointer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &WPLocationManagerDelegatePointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             delegate = newValue
         }
         get {
-            guard let wp_delegate: WPLocationManagerDelegate = WPRunTime.get(self, &WPLocationManagerDelegatePointer) else {
+            guard let wp_delegate: WPLocationManagerDelegate = WPRunTime.get(self, withUnsafePointer(to: &WPLocationManagerDelegatePointer, {$0})) else {
                 let wp_delegate = WPLocationManagerDelegate()
                 self.wp_delegate = wp_delegate
                 return wp_delegate
