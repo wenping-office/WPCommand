@@ -9,7 +9,7 @@ import UIKit
 
 class WPMenuBodyViewItem: WPMenuView.Item {
     /// 展示的视图
-    var bodyView: WPMenuBodyViewProtocol? {
+    weak var bodyView: WPMenuBodyViewProtocol? {
         didSet {
             isAddToSuperView = false
         }

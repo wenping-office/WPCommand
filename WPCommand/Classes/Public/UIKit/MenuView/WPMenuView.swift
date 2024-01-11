@@ -321,8 +321,8 @@ public extension WPMenuView {
         var bodyItems: [WPMenuBodyViewItem] = []
         
         for index in 0 ..< navigationitems.count {
-            let haederItem = WPMenuHeaderViewItem(index: index, headerView: self.dataSource?.menuHeaderViewForIndex(index: index))
-            let bodyItem = WPMenuBodyViewItem(index: index, bodyView: self.dataSource?.menuBodyViewForIndex(index: index))
+            let haederItem = WPMenuHeaderViewItem(index: index, headerView: dataSource?.menuHeaderViewForIndex(index: index))
+            let bodyItem = WPMenuBodyViewItem(index: index, bodyView: dataSource?.menuBodyViewForIndex(index: index))
             bodyItem.bodyView?.targetViewDidScroll = {[weak self] scrollView in
                 self?.didScoll(did: bodyItem)
             }

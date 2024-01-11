@@ -69,6 +69,35 @@ open class WPBaseVC: UIViewController {
                                                                    .font: font]
         navigationController?.navigationBar.setBackgroundImage(backgroundImage, for: .any, barMetrics: .default)
     }
+    
+    /// 返回到第一页
+    /// - Parameters:
+    ///   - animated: 动画
+    ///   - complete: 回调
+    open func popoToRootViewController(animated: Bool = true,complete:((UIViewController?)->Void)?=nil){
+        
+        if navigationController?.presentingViewController != nil{
+            dismiss(animated: true) {
+                UIViewController.wp.current?.navigationController?.wp.popToRootViewController(animated: animated,completion: complete)
+            }
+        }else{
+            navigationController?.wp.popToRootViewController(animated: animated,completion: complete)
+        }
+    }
+    
+    /// 返回上一页
+    /// - Parameters:
+    ///   - animated: 是否动画
+    ///   - complete: 回调
+    open func popoViewController(_ animated:Bool = true,complete:((UIViewController?)->Void)?=nil){
+        if navigationController?.presentingViewController != nil{
+            dismiss(animated: animated) {
+                complete?(nil)
+            }
+        }else{
+            navigationController?.wp.pop(animated: animated,completion: complete)
+        }
+    }
 
     override open func viewDidLoad() {
         super.viewDidLoad()

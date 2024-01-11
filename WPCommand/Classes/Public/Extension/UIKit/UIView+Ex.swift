@@ -8,6 +8,8 @@
 
 import RxCocoa
 import UIKit
+import SnapKit
+import RxSwift
 
 public extension WPSpace where Base: UIView {
     /// 从xib加载
@@ -16,6 +18,37 @@ public extension WPSpace where Base: UIView {
             return nil
         }
         return nibs.first as? Base
+    }
+}
+
+
+public extension WPSpace where Base: UIView {
+    
+    /// 点击手势
+    var tapGesture: ControlEvent<UITapGestureRecognizer> {
+        let ges = UITapGestureRecognizer()
+        base.addGestureRecognizer(ges)
+        base.isUserInteractionEnabled = true
+        return ges.rx.event
+    }
+}
+
+public extension WPSpace where Base: UIView {
+    
+    /// 快速创建内边距
+    /// - Parameters:
+    ///   - padding: 内边距
+    ///   - priority: 约束登记
+    /// - Returns: 结果
+    func padding(_ padding:UIEdgeInsets,priority:ConstraintPriority = .medium) -> WPPaddingView<Base> {
+        return WPPaddingView(base,padding: padding,priority: priority)
+    }
+    
+    /// 快速创建内边距
+    /// - Parameter customLayout: 自定义布局
+    /// - Returns: 结果
+    func padding(customLayout:@escaping ((Base)->Void)) -> WPPaddingView<Base> {
+        return WPPaddingView(base, customLayout: customLayout)
     }
 }
 

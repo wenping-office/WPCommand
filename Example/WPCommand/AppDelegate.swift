@@ -9,6 +9,9 @@
 import UIKit
 //import IQKeyboardManagerSwift
 
+//pod trunk register 850500722@qq.com 'MyNameWp' --description='iMac' --verbose
+//pod trunk push WPCommand.podspec --allow-warnings
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

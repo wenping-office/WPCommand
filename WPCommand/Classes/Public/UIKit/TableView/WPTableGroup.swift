@@ -24,16 +24,24 @@ open class WPTableGroup: NSObject {
     open var section: Int = 0
     /// 即将添加一个item
     open var didAddItem: ((_ section: Int, _ style: UITableView.RowAnimation)->Void)?
-    /// 即将价值一个item时的动画
+    /// 即将加载一个item时的动画
     open var didLoadStyle = UITableView.RowAnimation.fade
     /// 头部缓存标识符
     open var headViewReuseIdentifier: String?
     /// 尾部缓存标识符
     open var footViewReuseIdentifier: String?
     /// 头部class
-    open var headViewClass = UITableViewHeaderFooterView.self
+    open var headViewClass = UITableViewHeaderFooterView.self{
+        didSet{
+            headViewReuseIdentifier = NSStringFromClass(headViewClass)
+        }
+    }
     /// 尾部class
-    open var footViewClass = UITableViewHeaderFooterView.self
+    open var footViewClass = UITableViewHeaderFooterView.self{
+        didSet{
+            footViewReuseIdentifier = NSStringFromClass(footViewClass)
+        }
+    }
     /// 头部即将显示block
     open var headWillDisplayBlock: ((UITableViewHeaderFooterView)->Void)?
     /// 尾部即将显示block

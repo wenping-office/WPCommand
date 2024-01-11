@@ -124,6 +124,21 @@ public extension WPSpace where Base: NSMutableAttributedString {
         guard base.string.count > 0 else { return [:] }
         return base.attributes(at: 0, effectiveRange: nil)
     }
+    
+    /// 最大间距适配
+    /// - Parameters:
+    ///   - maxWidth: 最大的宽
+    ///   - font: 字体
+    ///   - minSpacing: 最小间距
+    /// - Returns: 结果
+    func alimentKern(_ maxWidth:CGFloat,font:UIFont,minSpacing:CGFloat = 0) -> Self {
+        let count = CGFloat(base.length - 1)
+        var spacing = (maxWidth - base.string.wp.width(font, CGFloat.infinity)) / count
+        if spacing < minSpacing{
+            spacing = minSpacing
+        }
+        return self.font(font).kern(spacing,range: .init(location: 0, length: Int(count)))
+    }
 }
 
 public extension WPSpace where Base: NSMutableAttributedString {
