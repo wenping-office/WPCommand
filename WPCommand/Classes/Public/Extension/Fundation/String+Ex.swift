@@ -70,6 +70,24 @@ public extension WPSpace where Base == String {
         }
     }
     
+    /// 转浮点数
+    var cgFloat:CGFloat?{
+        if float == nil{
+            return nil
+        }
+        return CGFloat(float!)
+    }
+
+    /// 转浮点数
+    var float: Float? {
+        return NumberFormatter().number(from: base)?.floatValue
+    }
+    
+    /// 转浮点数
+    var double: Double?{
+        return NumberFormatter().number(from: base)?.doubleValue
+    }
+    
     /// 是否安装当前协议app
     var isInstalled:Bool{
         if let url = URL(string: base){
@@ -136,6 +154,24 @@ public extension WPSpace where Base == String {
     var filterLineFeed: Base {
         return filter("\n")
     }
+    
+    /// 检查当前字符里的关键字
+    /// - Parameters:
+    ///   - patterns: 关键字 || 正则表达式
+    ///   - options: 选项
+    /// - Returns: 结果
+    func checkingResult(_ patterns:[String],
+                        options:NSRegularExpression.Options = [.caseInsensitive])->[NSTextCheckingResult]{
+        var res: [NSTextCheckingResult] = []
+        patterns.forEach { key in
+            let regex = try? NSRegularExpression(pattern: key, options: .caseInsensitive)
+            res.append(contentsOf: regex?.matches(in: base, range: .init(0, base.count)) ?? [])
+        }
+        
+       return res
+    }
+    
+
 }
 
 public extension WPSpace where Base == String{
@@ -547,11 +583,8 @@ public extension WPSpace where Base == String {
     /// - Returns: 高
     func height(_ font: UIFont, maxWidth: CGFloat) -> CGFloat {
         let size = CGSize(width: maxWidth, height: CGFloat(MAXFLOAT))
-
         let dic = [NSAttributedString.Key.font: font] // swift 3.0
-
         let strSize = base.boundingRect(with: size, options: [.usesLineFragmentOrigin], attributes: dic, context: nil).size
-
         return ceil(strSize.height) + 1
     }
     
@@ -562,9 +595,7 @@ public extension WPSpace where Base == String {
     /// - Returns: 宽
     func width(_ font: UIFont, _ maxHeight: CGFloat) -> CGFloat {
         let size = CGSize(width: CGFloat(MAXFLOAT), height: maxHeight)
-
         let dic = [NSAttributedString.Key.font: font] // swift 3.0
-
         let cString = base.cString(using: Base.Encoding.utf8)
         let str = String(cString: cString!, encoding: Base.Encoding.utf8)
         let strSize = str?.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: dic, context: nil).size

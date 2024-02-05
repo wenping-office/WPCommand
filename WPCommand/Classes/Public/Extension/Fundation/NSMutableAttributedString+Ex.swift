@@ -7,6 +7,29 @@
 
 import UIKit
 
+
+public extension WPSpace where Base: NSAttributedString{
+
+    /// 获取富文本宽度
+    /// - Parameters:
+    ///   - maxHeight: 最大高
+    ///   - options: 选项
+    /// - Returns: 结果
+    func width(maxHeight:CGFloat,
+               options:NSStringDrawingOptions = [.usesLineFragmentOrigin]) -> CGFloat {
+        return base.wp.mutable.size(with: .init(.infinity, maxHeight), options: options).width
+    }
+    
+    /// 获取富文本高度
+    /// - Parameters:
+    ///   - maxWidth: 最大宽
+    ///   - options: 选项
+    /// - Returns: 结果
+    func height(maxWidth:CGFloat,options:NSStringDrawingOptions = [.usesLineFragmentOrigin]) -> CGFloat {
+        return base.wp.mutable.size(with: .init(maxWidth, .infinity), options: options).height
+    }
+}
+
 public extension WPSpace where Base == String.SubSequence{
     /// 可变富文本
     var attributed: WPSpace<NSMutableAttributedString> {
@@ -490,11 +513,5 @@ public extension WPSpace where Base: NSMutableAttributedString {
             base.addAttributes([.paragraphStyle: style], range: NSMakeRange(0, base.string.count))
         }
         return self
-    }
-
-    /// 获取操作完成后的富文本
-    /// - Returns: 富文本
-    func complete() -> Base {
-        return base
     }
 }

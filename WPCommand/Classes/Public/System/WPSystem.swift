@@ -110,30 +110,19 @@ public extension WPSystem {
         /// 获取目标视图与键盘顶部的Y轴差值 0 键盘收回 正数代表被键盘覆盖的差值 负数代表没有被键盘覆盖的差值
         /// - Parameters:
         ///   - veiw: 目标视图
-        ///   - bag: 垃圾桶 使用rxSwift实现
         /// - Returns: 观察者
-        public func offsetY(in view: UIView, bag: DisposeBag)->Observable<CGFloat> {
-            weak var weakView = view
-            var obServer: AnyObserver<CGFloat>?
-            let ob: Observable<CGFloat> = .create { ob in
-                obServer = ob
-                return Disposables.create()
-            }
-            var targetFrame: CGRect = view.wp.frameInMainWidow
-            
-            WPSystem.keyboard.willShow.subscribe(onNext: { value in
+        public func offsetY(in view: UIView)->Observable<CGFloat> {
+              weak var weakView = view
+              var targetFrame: CGRect = view.wp.frameInMainWidow
+           return Observable.merge(WPSystem.keyboard.willShow.map({ value in
                 if targetFrame == .zero {
                     targetFrame = weakView?.wp.frameInMainWidow ?? .zero
                 }
                 let keyBoardEnd = (value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero
-                let of = -(targetFrame.maxY - keyBoardEnd.minY)
-                obServer?.onNext(of)
-            }).disposed(by: bag)
-            
-            WPSystem.keyboard.willHide.subscribe(onNext: { _ in
-                obServer?.onNext(0)
-            }).disposed(by: bag)
-            return ob
+                return -(targetFrame.maxY - keyBoardEnd.minY)
+            }),WPSystem.keyboard.willHide.map({ _ in
+                return 0
+            }))
         }
         
         /// 高度变化

@@ -66,11 +66,11 @@ public extension WPAlertManager {
         /// 是否显示
         public let hidden: Bool
         
-        /// 初始化一个蒙版信息
+        /// 初始化一个蒙层信息
         /// - Parameters:
         ///   - color: 蒙板颜色
         ///   - enabled: 是否可以交互点击
-        ///   - isHidden: 是否隐藏
+        ///   - hidden: 是否隐藏
         public init(color: UIColor,
                     enabled: Bool,
                     hidden: Bool) {
@@ -325,7 +325,7 @@ public class WPAlertManager {
         alertAnimation(isShow: true, option: .add)
     }
     
-    /// 更新当前弹窗的size
+    /// 更新当前弹窗的size 如果更新后view 被截断请检查是否设置了layer.mask 如果设置了需要手动重新绘制
     /// - Parameters:
     ///   - duration: 动画时间
     ///   - size: 如果是frame布局的弹窗才需要填
@@ -364,7 +364,7 @@ public class WPAlertManager {
         })
     }
     
-    /// 更新偏移量
+    /// 更新偏移量  如果更新后view 被截断请检查是否设置了layer.mask 如果设置了需要手动重新绘制
     /// - Parameters:
     ///   - animateType: 动画类型
     ///   - duration: 动画时间
@@ -467,7 +467,7 @@ extension WPAlertManager {
             elmt.isKind(of: WPAlertManagerMask.self)
         }
         
-        // 如果没有蒙版 那么添加一个
+        // 如果没有蒙层 那么添加一个
         if !resualt {
             let maskView = WPAlertManagerMask(maskInfo: info, action: { [weak self] in
                 if self?.current?.state == .didShow {
@@ -475,7 +475,7 @@ extension WPAlertManager {
                 }
             })
             self.maskView = maskView
-            maskView.alpha = 0
+            maskView.contentView.alpha = 0
             targetView.insertSubview(maskView, at: 999)
             maskView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
@@ -500,7 +500,7 @@ extension WPAlertManager {
                 item.alert.frame = showFrame
             }
             item.alert.alpha = 1
-            self.maskView?.alpha = 1
+            self.maskView?.contentView.alpha = 1
         } else {
             switch layoutOption {
             case .layout: // 这样做是零时解决办法
@@ -509,8 +509,9 @@ extension WPAlertManager {
                 item.alert.frame = dismissFrame
             }
             if !self.isNext() {
-                self.maskView?.alpha = 0
+                self.maskView?.contentView.alpha = 0
             }
+            
             if item.alert.alertInfo().direction == .center {
                 item.alert.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
             }
@@ -550,33 +551,18 @@ extension WPAlertManager {
                            duration:TimeInterval,
                            animation:@escaping ()->Void,
                            completion:@escaping(Bool)->Void){
-        maskView?.isUserInteractionEnabled = false
-        
-        var isResetEnabled = false
-
-        if current?.alert.animationEnableTargetViewEvent() ?? false{
-            if targetView.isUserInteractionEnabled{
-                targetView.isUserInteractionEnabled = false
-                isResetEnabled = true
-            }
-        }
-
         switch type {
         case .default:
             UIView.animate(withDuration: duration, animations: {
                 animation()
-            }, completion: {[weak self] resualt in
-                self?.maskView?.isUserInteractionEnabled = true
+            }, completion: {resualt in
                 completion(resualt)
-                if isResetEnabled { self?.targetView.isUserInteractionEnabled = true }
             })
         case .bounces(let damping, let velocity, let options):
             UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: damping, initialSpringVelocity: velocity, options: options, animations: {
                 animation()
-            }, completion: {[weak self] resualt in
+            }, completion: { resualt in
                 completion(resualt)
-                self?.maskView?.isUserInteractionEnabled = true
-                if isResetEnabled { self?.targetView.isUserInteractionEnabled = true }
             })
         }
     }

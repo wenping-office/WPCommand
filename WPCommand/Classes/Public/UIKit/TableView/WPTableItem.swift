@@ -26,6 +26,8 @@ open class WPTableItem: NSObject {
     open var separatorInset = UIEdgeInsets(top: 0, left: 16.0, bottom: 0, right: 0)
     /// 编辑按钮点击后调用
     open var didCommitEditBlock: ((WPTableItem, WPTableGroup)->Void)?
+    /// 自定义侧滑按钮
+    open var swipeActionsConfiguration: UISwipeActionsConfiguration?
     /// 选中一行调用
     open var didSelectedBlock: ((UITableViewCell) ->Void)?
     /// 选中当前行调用

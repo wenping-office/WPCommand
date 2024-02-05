@@ -25,7 +25,7 @@ open class WPCircularItem: WPTableItem {
 /// 圆角Cell
 open class WPCircularCell: WPBaseTableViewCell {
     /// 背景视图
-    public let contentBackgroundView = UIView()
+    public let contentBackgroundView = UIView().wp.backgroundColor(.white).clipsToBounds(true).value()
     /// 分割线
     public let separatorView = UIView()
     
@@ -34,8 +34,6 @@ open class WPCircularCell: WPBaseTableViewCell {
         
         selectionStyle = .none
         backgroundColor = .clear
-        contentBackgroundView.backgroundColor = .white
-        contentBackgroundView.clipsToBounds = true
         contentView.addSubview(contentBackgroundView)
         contentView.addSubview(separatorView)
     }

@@ -65,8 +65,8 @@ public class WPTextLinkView: WPBaseView {
             str = str?.foregroundColor(textColor)
         }
 
-        linkTextView.attributedText = str?.complete()
-        sizeLabel.attributedText = str?.complete()
+        linkTextView.attributedText = str?.value()
+        sizeLabel.attributedText = str?.value()
     }
 
     override public func initSubView() {

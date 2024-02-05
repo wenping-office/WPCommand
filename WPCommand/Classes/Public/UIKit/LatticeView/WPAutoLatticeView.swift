@@ -164,9 +164,7 @@ public class WPAutoLatticeView: UIView {
     /// 刷新检查每一行占位视图
     public func checkRowViewHidden() {
         contentView.arrangedSubviews.forEach { view in
-            view.isHidden = !view.subviews.wp_isContent(in: { view in
-                !view.isHidden
-            })
+            view.isHidden = view.wp.subViewsAllHidden
         }
     }
     

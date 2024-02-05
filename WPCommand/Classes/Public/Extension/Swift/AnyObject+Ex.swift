@@ -16,4 +16,20 @@ public extension WPSpace where Base : AnyObject {
         return String(describing: str)
     }
 }
+
+public extension WPSpace where Base == Int {
     
+    /// 判断是否在范围内
+    /// - Parameter range: 范围
+    /// - Returns: 结果
+    func locationIn(_ range:Range<Base>) -> Bool {
+        return NSLocationInRange(base, .init(range.lowerBound, range.upperBound))
+    }
+    
+    /// 判断是否在范围内
+    /// - Parameter range: 范围
+    /// - Returns: 结果
+    func locationIn(_ range:NSRange) -> Bool {
+        return NSLocationInRange(base, range)
+    }
+}

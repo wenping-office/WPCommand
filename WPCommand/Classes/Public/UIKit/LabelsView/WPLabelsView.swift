@@ -72,8 +72,7 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
         
         for index in 0..<data.count {
             let elmt = data[index]
-            let subView = V.init(frame: .zero)
-            subView.isUserInteractionEnabled = true
+            let subView = V.init(frame: .zero).wp.isUserInteractionEnabled(true).value()
             subView.frame = .init(x: 0, y: 0, width: subView.labelItemWidth(with: elmt), height: itemHight)
             addSubview(subView)
             let tap = UITapGestureRecognizer()

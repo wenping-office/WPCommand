@@ -34,3 +34,119 @@ public extension WPSpace where Base: UILabel {
         return labelTextLines > labelShowLines
     }
 }
+
+public extension WPSpace where Base: UILabel {
+    @discardableResult
+    func text(_ text: String?) -> Self {
+        base.text = text
+        return self
+    }
+    
+    @discardableResult
+    func attText(_ text: NSAttributedString?) -> Self {
+        base.attributedText = text
+        return self
+    }
+    
+    @discardableResult
+    func attText(_ text: WPSpace<NSAttributedString>?) -> Self {
+        return attText(text?.base)
+    }
+    
+    @discardableResult
+    func attText(_ text: WPSpace<NSMutableAttributedString>?) -> Self {
+        return attText(text?.base)
+    }
+    
+    @discardableResult
+    func font(_ font: UIFont) -> Self {
+        base.font = font
+        return self
+    }
+    
+    @discardableResult
+    func textColor(_ color: UIColor) -> Self {
+        base.textColor = color
+        return self
+    }
+    
+    @discardableResult
+    func textAlignment(_ alignment: NSTextAlignment) -> Self {
+        base.textAlignment = alignment
+        return self
+    }
+
+    @discardableResult
+    func numberOfLines(_ lines: Int) -> Self {
+        base.numberOfLines = lines
+        return self
+    }
+    
+    @discardableResult
+    func adjustsFontSizeToFitWidth(_ adjusts: Bool) -> Self {
+        base.adjustsFontSizeToFitWidth = adjusts
+        return self
+    }
+    
+    @discardableResult
+    func lineBreakMode(_ lineBreakMode: NSLineBreakMode) -> Self {
+        base.lineBreakMode = lineBreakMode
+        return self
+    }
+    
+    @discardableResult
+    func highlightedTextColor(_ color: UIColor?) -> Self {
+        base.highlightedTextColor = color
+        return self
+    }
+    
+    @discardableResult
+    func isEnabled(_ enabled: Bool) -> Self {
+        base.isEnabled = enabled
+        return self
+    }
+    
+    @discardableResult
+    func baselineAdjustment(_ baselineAdjustment: UIBaselineAdjustment) -> Self {
+        base.baselineAdjustment = baselineAdjustment
+        return self
+    }
+    
+    @discardableResult
+    func minimumScaleFactor(_ minimumScaleFactor: CGFloat) -> Self {
+        base.minimumScaleFactor = minimumScaleFactor
+        return self
+    }
+    
+    @discardableResult
+    func preferredMaxLayoutWidth(_ preferredMaxLayoutWidth: CGFloat) -> Self {
+        base.preferredMaxLayoutWidth = preferredMaxLayoutWidth
+        return self
+    }
+    
+    @discardableResult
+    func showsExpansionTextWhenTruncated(_ showsExpansionTextWhenTruncated: Bool) -> Self {
+        base.showsExpansionTextWhenTruncated = showsExpansionTextWhenTruncated
+        return self
+    }
+    
+    @discardableResult
+    func allowsDefaultTighteningForTruncation(_ allowsDefaultTighteningForTruncation: Bool) -> Self {
+        base.allowsDefaultTighteningForTruncation = allowsDefaultTighteningForTruncation
+        return self
+    }
+    
+    @available(iOS 14.0, *)
+    @discardableResult
+    func lineBreakStrategy(_ lineBreakStrategy: NSParagraphStyle.LineBreakStrategy) -> Self {
+        base.lineBreakStrategy = lineBreakStrategy
+        return self
+    }
+    
+    @available(iOS 17.0, *)
+    @discardableResult
+    func preferredVibrancy(_ preferredVibrancy: UILabelVibrancy) -> Self {
+        base.preferredVibrancy = preferredVibrancy
+        return self
+    }
+}

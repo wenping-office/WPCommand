@@ -67,10 +67,14 @@ public extension WPSpace where Base: WPAccuracyProtocol {
         }else{
             let point = base.description.wp.of(".")
             
-            if length <= 0{
-                resualtStr = base.description.wp.subString(of: .init(location: 0, length:point.location))
+            if point.length != 1 {
+                resualtStr = ""
             }else{
-                resualtStr = base.description.wp.subString(of: .init(location: 0, length:point.location + length + 1))
+                if length <= 0{
+                    resualtStr = base.description.wp.subString(of: .init(location: 0, length:point.location))
+                }else{
+                    resualtStr = base.description.wp.subString(of: .init(location: 0, length:point.location + length + 1))
+                }
             }
         }
         

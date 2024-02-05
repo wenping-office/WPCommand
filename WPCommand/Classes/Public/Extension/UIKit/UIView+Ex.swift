@@ -7,23 +7,28 @@
 //
 
 import RxCocoa
-import UIKit
-import SnapKit
 import RxSwift
+import SnapKit
+import UIKit
 
 public extension WPSpace where Base: UIView {
     /// 从xib加载
-    static func initWith(_ xibName: String) -> Base? {
+    static func initXibName(_ xibName: String,_ config:((Base)->Void)? = nil) -> Base? {
         guard let nibs = Bundle.main.loadNibNamed(xibName, owner: nil, options: nil) else {
             return nil
         }
-        return nibs.first as? Base
+        
+        let obj = nibs.first as? Base
+        weak var weakObj = obj
+
+        if  weakObj != nil {
+            config?(weakObj!)
+        }
+        return obj
     }
 }
 
-
 public extension WPSpace where Base: UIView {
-    
     /// 点击手势
     var tapGesture: ControlEvent<UITapGestureRecognizer> {
         let ges = UITapGestureRecognizer()
@@ -34,20 +39,19 @@ public extension WPSpace where Base: UIView {
 }
 
 public extension WPSpace where Base: UIView {
-    
     /// 快速创建内边距
     /// - Parameters:
     ///   - padding: 内边距
     ///   - priority: 约束登记
     /// - Returns: 结果
-    func padding(_ padding:UIEdgeInsets,priority:ConstraintPriority = .medium) -> WPPaddingView<Base> {
-        return WPPaddingView(base,padding: padding,priority: priority)
+    func padding(_ padding: UIEdgeInsets = .zero, priority: ConstraintPriority = .medium) -> WPPaddingView<Base> {
+        return WPPaddingView(base, padding: padding, priority: priority)
     }
     
     /// 快速创建内边距
     /// - Parameter customLayout: 自定义布局
     /// - Returns: 结果
-    func padding(customLayout:@escaping ((Base)->Void)) -> WPPaddingView<Base> {
+    func padding(customLayout: @escaping ((Base) -> Void)) -> WPPaddingView<Base> {
         return WPPaddingView(base, customLayout: customLayout)
     }
 }
@@ -135,13 +139,13 @@ public extension WPSpace where Base: UIView {
     }
     
     /// 子视图是否全部隐藏
-    var subViewsAllHidden:Bool{
-        return !base.subviews.wp_isContent(in: {!$0.isHidden})
+    var subViewsAllHidden: Bool {
+        return !base.subviews.wp_isContent(in: { !$0.isHidden })
     }
     
     /// 父类视图所有节点
     /// - Returns:
-    func nodeViews(_ option:(UIView)->Bool) -> [UIView]{
+    func nodeViews(_ option: (UIView) -> Bool) -> [UIView] {
         let view = base as UIView
         var notes = Array<Any>.wp_recursion(view, topPath: \.superview, path: \.subviews, option: option)
         notes.wp_repeat(retain: .fist, path: \.wp.memoryAddress)
@@ -266,9 +270,9 @@ public extension WPSpace where Base: UIView {
                       lineSpacing: Int = 5,
                       isBottom: Bool = true)
     {
-        base.layer.sublayers?.forEach({ elmt in
+        base.layer.sublayers?.forEach { elmt in
             (elmt as? WPDashLineLayer)?.removeFromSuperlayer()
-        })
+        }
         
         let shapeLayer = WPDashLineLayer()
         shapeLayer.bounds = self.bounds
@@ -441,8 +445,7 @@ open class WPPlaceholderView: UIView {
     }
 }
 
-
-class WPDashLineLayer : CAShapeLayer{}
+class WPDashLineLayer: CAShapeLayer {}
 
 class WPToastView: UIView {
     /// 内容视图
@@ -534,5 +537,291 @@ public extension UIView {
     var wp_orgin: CGPoint {
         get { return frame.origin }
         set { frame.origin = newValue }
+    }
+}
+
+public extension WPSpace where Base: UIView {
+    @discardableResult
+    func isUserInteractionEnabled(_ isUserInteractionEnabled: Bool) -> Self {
+        base.isUserInteractionEnabled = isUserInteractionEnabled
+        return self
+    }
+
+    @discardableResult
+    func tag(_ tag: Int) -> Self {
+        base.tag = tag
+        return self
+    }
+    
+    @discardableResult
+    func frame(_ frame: CGRect) -> Self {
+        base.frame = frame
+        return self
+    }
+    
+    @discardableResult
+    func bounds(_ bounds: CGRect) -> Self {
+        base.bounds = bounds
+        return self
+    }
+    
+    @discardableResult
+    func center(_ center: CGPoint) -> Self {
+        base.center = center
+        return self
+    }
+    
+    @discardableResult
+    func transform(_ transform: CGAffineTransform) -> Self {
+        base.transform = transform
+        return self
+    }
+    
+    @available(iOS 13.0, *)
+    @discardableResult
+    func transform3D(_ transform3D: CATransform3D) -> Self {
+        base.transform3D = transform3D
+        return self
+    }
+    
+    @discardableResult
+    func contentScaleFactor(_ contentScaleFactor: CGFloat) -> Self {
+        base.contentScaleFactor = contentScaleFactor
+        return self
+    }
+
+    @discardableResult
+    func clipsToBounds(_ clipsToBounds: Bool) -> Self {
+        base.clipsToBounds = clipsToBounds
+        return self
+    }
+
+    @discardableResult
+    func backgroundColor(_ color: UIColor?) -> Self {
+        base.backgroundColor = color
+        return self
+    }
+
+    @discardableResult
+    func alpha(_ alpha: CGFloat) -> Self {
+        base.alpha = alpha
+        return self
+    }
+
+    @discardableResult
+    func isOpaque(_ isOpaque: Bool) -> Self {
+        base.isOpaque = isOpaque
+        return self
+    }
+    
+    @discardableResult
+    func semanticContentAttribute(_ semanticContentAttribute:UISemanticContentAttribute) -> Self {
+        base.semanticContentAttribute = semanticContentAttribute
+        return self
+    }
+
+    @discardableResult
+    func clearsContextBeforeDrawing(_ clearsContextBeforeDrawing: Bool) -> Self {
+        base.clearsContextBeforeDrawing = clearsContextBeforeDrawing
+        return self
+    }
+    
+    @discardableResult
+    func isHidden(_ isHidden: Bool) -> Self {
+        base.isHidden = isHidden
+        return self
+    }
+
+    @discardableResult
+    func contentMode(_ contentMode: UIView.ContentMode) -> Self {
+        base.contentMode = contentMode
+        return self
+    }
+    
+    @discardableResult
+    func mask(_ mask: UIView?) -> Self {
+        base.mask = mask
+        return self
+    }
+    
+    @discardableResult
+    func tintColor(_ tintColor: UIColor) -> Self {
+        base.tintColor = tintColor
+        return self
+    }
+    
+    @discardableResult
+    func tintAdjustmentMode(_ tintAdjustmentMode: UIView.TintAdjustmentMode) -> Self {
+        base.tintAdjustmentMode = tintAdjustmentMode
+        return self
+    }
+    
+    @available(iOS 14.0, *)
+    @discardableResult
+    func focusGroupIdentifier(_ focusGroupIdentifier:String?) -> Self {
+        base.focusGroupIdentifier = focusGroupIdentifier
+        return self
+    }
+
+    @available(iOS 15.0, *)
+    @discardableResult
+    func focusGroupPriority(_ focusGroupPriority:UIFocusGroupPriority) -> Self {
+        base.focusGroupPriority = focusGroupPriority
+        return self
+    }
+    
+    @available(iOS 15.0, *)
+    @discardableResult
+    func focusEffect(_ focusEffect:UIFocusEffect) -> Self {
+        base.focusEffect = focusEffect
+        return self
+    }
+    
+    @discardableResult
+    func contentHugging(_ priority: UILayoutPriority, for axis: NSLayoutConstraint.Axis) -> Self {
+        base.setContentHuggingPriority(priority, for: axis)
+        return self
+    }
+    
+    @discardableResult
+    func contentCompressionResistance(_ priority: UILayoutPriority, for axis: NSLayoutConstraint.Axis) -> Self {
+        base.setContentCompressionResistancePriority(priority, for: axis)
+        return self
+    }
+}
+
+public extension WPSpace where Base: UIView{
+    
+    @discardableResult
+    func borderWidth(_ borderWidth:CGFloat) -> Self {
+        base.layer.borderWidth = borderWidth
+        return self
+    }
+    
+    @discardableResult
+    func borderColor(_ borderColor:UIColor?) -> Self {
+        base.layer.borderColor = borderColor?.cgColor
+        return self
+    }
+    
+    /// layer的透明度
+    @discardableResult
+    func opacity(_ opacity:Float) -> Self {
+        base.layer.opacity = opacity
+        return self
+    }
+    
+    @discardableResult
+    func cornerRadius(_ cornerRadius:CGFloat)->Self{
+        base.layer.cornerRadius = cornerRadius
+        return self
+    }
+    
+    @discardableResult
+    func shadowColor(_ shadowColor:UIColor?) -> Self {
+        base.layer.shadowColor = shadowColor?.cgColor
+        return self
+    }
+    
+    @discardableResult
+    func masksToBounds(_ masksToBounds:Bool) -> Self {
+        base.layer.masksToBounds = masksToBounds
+        return self
+    }
+    
+    @discardableResult
+    func shadowOpacity(_ shadowOpacity:Float) -> Self {
+        base.layer.shadowOpacity = shadowOpacity
+        return self
+    }
+    
+    @discardableResult
+    func shadowOffset(_ shadowOffset:CGSize) -> Self {
+        base.layer.shadowOffset = shadowOffset
+        return self
+    }
+    
+    @discardableResult
+    func shadowRadius(_ shadowRadius:CGFloat) -> Self{
+        base.layer.shadowRadius = shadowRadius
+        return self
+    }
+    
+    @discardableResult
+    func shadowPath(_ shadowPath:CGPath?) ->Self{
+        base.layer.shadowPath = shadowPath
+        return self
+    }
+    
+    @discardableResult
+    func layoutWidth(_ width:CGFloat,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.width.equalTo(width).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutLayoutGreaterThanOrEqualWidth(_ width:CGFloat,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.width.greaterThanOrEqualTo(width).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutLessThanOrEqualToWidth(_ width:CGFloat,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.width.lessThanOrEqualTo(width).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutHeight(_ height:CGFloat,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.height.equalTo(height).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutGreaterThanOrEqualToHeight(_ height:CGFloat,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(height).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutLessThanOrEqualToHeight(_ height:CGFloat,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.height.lessThanOrEqualTo(height).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutSize(_ size:CGSize,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.size.equalTo(size).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutGreaterThanOrEqualToSize(_ size:CGSize,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.size.greaterThanOrEqualTo(size).priority(priority)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func layoutLessThanOrEqualToSize(_ size:CGSize,priority:ConstraintPriority = .required) ->Self{
+        base.snp.makeConstraints { make in
+            make.size.lessThanOrEqualTo(size).priority(priority)
+        }
+        return self
     }
 }

@@ -187,6 +187,10 @@ extension WPTableViewDelegate: UITableViewDelegate {
         let group = dataSource.groups.wp_get(of: indexPath.section)
         let item = group?.items.wp_get(of: indexPath.row)
         
+        if item?.swipeActionsConfiguration != nil {
+            return item?.swipeActionsConfiguration
+        }
+
         if item?.didCommitEditBlock != nil{
             return .init(actions: [.init(style: .destructive, title: "删除", handler: { action, view, actionBlock in
                 if let item,let group{
@@ -200,12 +204,13 @@ extension WPTableViewDelegate: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         let dataSource = tableView.wp.dataSource
         let item = dataSource.groups.wp_get(of: indexPath.section)?.items.wp_get(of: indexPath.row)
+        
         if dataSource.editingStyleForRowAt != nil {
             return dataSource.editingStyleForRowAt!(tableView, indexPath)
-        } else if item != nil {
-            return item!.editingStyle
-        } else {
-            return .none
         }
+        if item != nil {
+            return item!.editingStyle
+        }
+        return .none
     }
 }

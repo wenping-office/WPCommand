@@ -16,6 +16,18 @@ public struct WPSpace<Base> {
     public init(_ base: Base) {
         self.base = base
     }
+    
+    /// 实体
+    @discardableResult
+    public func value() -> Base {
+        return base
+    }
+    
+    // 标记
+    @discardableResult
+    public func mark(_ string:String?) -> Self {
+        return self
+    }
 }
 
 /// 命名空间协议

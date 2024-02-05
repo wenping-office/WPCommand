@@ -104,7 +104,7 @@ public extension Array {
     /// 安全移除一个元素
     /// - Parameter index: 索引
     mutating func wp_remove(at index: Int) {
-        if count > index - 1, index >= 0 {
+        if index.wp.locationIn(.init(0, count)){
             remove(at: index)
         }
     }
@@ -126,11 +126,10 @@ public extension Array {
     /// - Parameter index: 所有
     /// - Returns: 元素
     func wp_get(of index: Int)->Element? {
-        if index <= count - 1, index >= 0 {
+        if index.wp.locationIn(.init(0, count)){
             return self[index]
-        } else {
-            return nil
         }
+        return nil
     }
     
     /// 交换元素

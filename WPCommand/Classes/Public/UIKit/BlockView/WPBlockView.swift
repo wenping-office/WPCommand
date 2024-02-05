@@ -8,7 +8,6 @@
 import UIKit
 
 public extension WPBlockView {
-    
     struct Item {
         public init() {}
         /// 标题
@@ -28,39 +27,84 @@ public extension WPBlockView {
 
 /// 静态视图 常用布局label封装
 open class WPBlockView: WPBaseView {
-
     /// 标题
-    public let titleLabel = UILabel()
+    public let titleLabel = UILabel().wp.textColor(.black).value()
+    
     /// 标题图片
     public let titleImageView = UIImageView()
-    /// 左边视图
-    public lazy var leftStackView = UIStackView(arrangedSubviews: [titleImageView, titleLabel])
     
+    /// 左边视图
+    public lazy var leftStackView = UIStackView.wp
+        .views([titleImageView, titleLabel])
+        .alignment(.center)
+        .spacing(6)
+        .value()
+
     /// 描述
-    public let desribeLabel = UILabel()
+    public let desribeLabel = UILabel().wp
+        .font(.systemFont(ofSize: 14))
+        .textColor(.black)
+        .numberOfLines(0)
+        .textAlignment(.right)
+        .value()
+
     /// 子描述
-    public let subDesribeLabel = UILabel()
+    public let subDesribeLabel = UILabel().wp
+        .font(.systemFont(ofSize: 12))
+        .textColor(.black)
+        .numberOfLines(0)
+        .textAlignment(.right)
+        .value()
+    
     /// 描述图片
     public let desribeImageView = UIImageView()
+    
     /// 右边视图
-    public lazy var rightTopView = UIStackView(arrangedSubviews: [desribeLabel,desribeImageView])
+    public lazy var rightTopView = UIStackView.wp
+        .views([desribeLabel, desribeImageView])
+        .spacing(4)
+        .alignment(.center)
+        .value()
+
     /// 占位图
-    public let placeholderDesribeImageView = WPPaddingView(UIImageView(),padding: .zero,priority: .required)
+    public let placeholderDesribeImageView = UIImageView().wp
+        .isHidden(true)
+        .padding(.zero, priority: .required)
     
     /// 右边子描述视图
-    public lazy var rightBottomView = UIStackView(arrangedSubviews: [subDesribeLabel, placeholderDesribeImageView])
+    public lazy var rightBottomView = UIStackView.wp
+        .views([subDesribeLabel, placeholderDesribeImageView])
+        .spacing(4)
+        .alignment(.center)
+        .value()
     
     /// 右边视图
-    public lazy var rightStackView = UIStackView(arrangedSubviews: [rightTopView, rightBottomView])
+    public lazy var rightStackView = UIStackView.wp
+        .views([rightTopView, rightBottomView])
+        .spacing(4)
+        .axis(.vertical)
+        .alignment(.trailing)
+        .value()
     
     /// 顶部视图
-    public lazy var topStackView = UIStackView(arrangedSubviews: [leftStackView, rightStackView])
+    public lazy var topStackView = UIStackView.wp
+        .views([leftStackView, rightStackView])
+        .spacing(10)
+        .alignment(.top)
+        .value()
     
     /// 底部视图
-    public let bottomLabel = UILabel()
-    
+    public let bottomLabel = UILabel().wp
+        .font(.systemFont(ofSize: 12))
+        .textColor(.black)
+        .numberOfLines(0)
+        .value()
+
     /// 内容视图
-    public lazy var contentStackView = UIStackView(arrangedSubviews: [topStackView, bottomLabel])
+    public lazy var contentStackView = UIStackView.wp
+        .views([topStackView, bottomLabel])
+        .axis(.vertical)
+        .spacing(4).value()
     
     /// 数据模型
     public var item: Item = .init() {
@@ -93,10 +137,10 @@ open class WPBlockView: WPBaseView {
         rightStackView.isHidden = rightStackView.wp.subViewsAllHidden
         topStackView.isHidden = topStackView.wp.subViewsAllHidden
          
-        if desribeLabel.isHidden{
+        if desribeLabel.isHidden {
             titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
             titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        }else{
+        } else {
             titleLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
             titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         }
@@ -104,41 +148,6 @@ open class WPBlockView: WPBaseView {
 
     override open func initSubView() {
         super.initSubView()
-        
-        titleLabel.textColor = .black
-        leftStackView.alignment = .center
-        leftStackView.spacing = 6
-
-        desribeLabel.font = .systemFont(ofSize: 14)
-        desribeLabel.textColor = .black
-        desribeLabel.numberOfLines = 0
-        desribeLabel.textAlignment = .right
-        
-        subDesribeLabel.font = .systemFont(ofSize: 12)
-        subDesribeLabel.textColor = .black
-        subDesribeLabel.numberOfLines = 0
-        subDesribeLabel.textAlignment = .right
-        placeholderDesribeImageView.target.isHidden = true
-
-        rightTopView.spacing = 4
-        rightTopView.alignment = .center
-        
-        rightBottomView.spacing = 4
-        rightBottomView.alignment = .center
-        
-        topStackView.spacing = 10
-        topStackView.alignment = .top
-
-        rightStackView.spacing = 4
-        rightStackView.axis = .vertical
-        rightStackView.alignment = .trailing
-        
-        contentStackView.axis = .vertical
-        contentStackView.spacing = 4
-        
-        bottomLabel.font = .systemFont(ofSize: 12)
-        bottomLabel.textColor = .black
-        bottomLabel.numberOfLines = 0
         
         addSubview(contentStackView)
         

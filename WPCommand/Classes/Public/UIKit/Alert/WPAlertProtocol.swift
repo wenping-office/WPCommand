@@ -25,10 +25,8 @@ public protocol WPAlertProtocol: UIView {
     func maskInfo()->WPAlertManager.Mask
     /// 弹窗等级 等级越小越靠前弹出
     func alertLevel()->UInt
-    /// 点击了蒙版
+    /// 点击了蒙层
     func touchMask()
-    /// 动画显示中禁止targeView响应事件 默认true
-    func animationEnableTargetViewEvent() -> Bool
 }
 
 
@@ -74,7 +72,7 @@ public extension WPAlertProtocol {
                      hidden: false)
     }
 
-    /// 点击了蒙版
+    /// 点击了蒙层
     func touchMask() {}
 
     /// 弹窗度状态更新
@@ -92,9 +90,6 @@ public extension WPAlertProtocol {
             return WPRunTime.set(self, newValue, withUnsafePointer(to: &AlertStateHandlerPointer, {$0}), .OBJC_ASSOCIATION_COPY)
         }
     }
-    
-    /// 动画中禁止targeView响应事件 默认true
-    func animationEnableTargetViewEvent() -> Bool { return true }
 }
 
 public extension WPSpace where Base : WPAlertProtocol{

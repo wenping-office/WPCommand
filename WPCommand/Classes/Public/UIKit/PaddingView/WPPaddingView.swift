@@ -39,7 +39,8 @@ public class WPPaddingView<T: UIView>: WPBaseView {
         self.target = target
         super.init(frame: .zero)
         addSubview(target)
-        customLayout(target)
+        weak var wTarget = target
+        customLayout(wTarget!)
     }
 }
 
