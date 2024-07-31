@@ -22,11 +22,11 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
   # 项目主页
-  s.homepage         = 'https://github.com/MyNameWp/WPCommand'
+  s.homepage         = 'https://github.com/wenping-office/WPCommand'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { '文平' => '850500722@qq.com' }
-  s.source           = { :git => 'https://github.com/MyNameWp/WPCommand.git', :tag => s.version.to_s }
+  s.author           = { '文平' => 'wenping.office@foxmail.com' }
+  s.source           = { :git => 'https://github.com/wenping-office/WPCommand.git', :tag => s.version.to_s }
   s.swift_version='5.0'
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   # 最低支持的系统版本

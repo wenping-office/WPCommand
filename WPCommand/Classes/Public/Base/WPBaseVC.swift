@@ -75,8 +75,11 @@ open class WPBaseVC: UIViewController {
     ///   - animated: 动画
     ///   - complete: 回调
     open func popoToRootViewController(animated: Bool = true,complete:((UIViewController?)->Void)?=nil){
-        
-        if navigationController?.presentingViewController != nil{
+        if presentingViewController != nil{
+            dismiss(animated: true) {
+                UIViewController.wp.current?.navigationController?.wp.popToRootViewController(animated: animated,completion: complete)
+            }
+        }else if navigationController?.presentingViewController != nil{
             dismiss(animated: true) {
                 UIViewController.wp.current?.navigationController?.wp.popToRootViewController(animated: animated,completion: complete)
             }
@@ -90,7 +93,12 @@ open class WPBaseVC: UIViewController {
     ///   - animated: 是否动画
     ///   - complete: 回调
     open func popoViewController(_ animated:Bool = true,complete:((UIViewController?)->Void)?=nil){
-        if navigationController?.presentingViewController != nil{
+        
+        if presentingViewController != nil{
+            dismiss(animated: animated) {
+                complete?(UIViewController.wp.current)
+            }
+        }else if navigationController?.presentingViewController != nil{
             dismiss(animated: animated) {
                 complete?(nil)
             }

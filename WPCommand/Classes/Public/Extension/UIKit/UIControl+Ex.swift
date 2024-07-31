@@ -8,31 +8,38 @@
 import UIKit
 
 public extension WPSpace where Base: UIControl {
+    
+    @discardableResult
     func isEnabled(_ isEnabled: Bool) -> Self {
         base.isEnabled = isEnabled
         return self
     }
     
+    @discardableResult
     func isSelected(_ isSelected: Bool) -> Self {
         base.isSelected = isSelected
         return self
     }
     
+    @discardableResult
     func isHighlighted(_ isHighlighted: Bool) -> Self {
         base.isHighlighted = isHighlighted
         return self
     }
     
+    @discardableResult
     func contentVerticalAlignment(_ contentVerticalAlignment: UIControl.ContentVerticalAlignment) -> Self {
         base.contentVerticalAlignment = contentVerticalAlignment
         return self
     }
     
+    @discardableResult
     func contentHorizontalAlignment(_ contentHorizontalAlignment: UIControl.ContentHorizontalAlignment) -> Self {
         base.contentHorizontalAlignment = contentHorizontalAlignment
         return self
     }
     
+    @discardableResult
     func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) -> Self {
         base.addTarget(target, action: action, for: controlEvents)
         return self

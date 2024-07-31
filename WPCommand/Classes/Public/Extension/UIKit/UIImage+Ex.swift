@@ -29,6 +29,68 @@ public extension WPSpace where Base: UIImage {
 
         return image as? Base
     }
+    
+    /// 比例缩放图片
+    /// - Parameter scale: 缩放值
+    /// - Returns: 缩放后的图片
+    func scale(_ scale: CGFloat) -> UIImage?{
+        let size = CGSize(width: base.size.width * scale, height: base.size.height * scale)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        base.draw(in: CGRect(origin: .zero, size: size))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
+    }
+    
+    /// 按宽度缩放
+    /// - Parameter width: 最大宽度
+    /// - Returns: 结果
+    func scale(width:CGFloat) -> UIImage? {
+        let scale = width / base.size.width
+        let size = CGSize(width: base.size.width * scale, height: base.size.height * scale)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        base.draw(in: CGRect(origin: .zero, size: size))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
+    }
+    
+    /// 按高度比例缩放
+    /// - Parameter height: 最大高度
+    /// - Returns: 结果
+    func scale(height:CGFloat) -> UIImage? {
+        let scale = height / base.size.height
+        let size = CGSize(width: base.size.width * scale, height: base.size.height * scale)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        base.draw(in: CGRect(origin: .zero, size: size))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
+    }
+    
+    /// 按照尺寸拉伸
+    /// - Parameter size: 新尺寸
+    /// - Returns: 结果
+    func scale(size:CGSize) -> UIImage? {
+        let scaleH = size.height / base.size.height
+        let scaleW = size.width / base.size.width
+        let size = CGSize(width: base.size.width * scaleW, height: base.size.height * scaleH)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        base.draw(in: CGRect(origin: .zero, size: size))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
+    }
+    
+    
+    /// 范围拉伸图片
+    /// - Parameters:
+    ///   - insets: 不被拉伸的边距
+    ///   - mode: 拉伸模式
+    /// - Returns: 结果
+    func resizable(_ insets:UIEdgeInsets,mode:UIImage.ResizingMode = .stretch) -> UIImage {
+        return base.resizableImage(withCapInsets: insets, resizingMode: mode)
+    }
 }
 
 public extension WPSpace where Base: UIImage{

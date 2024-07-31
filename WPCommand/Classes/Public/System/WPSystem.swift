@@ -191,6 +191,16 @@ public extension WPSystem {
             return UIScreen.main.bounds.size
         }
         
+        /// 屏幕宽
+        public var maxWidth:CGFloat{
+            return size.width
+        }
+        
+        /// 屏幕高
+        public var maxHeight:CGFloat{
+            return size.height
+        }
+        
         /// 是否是刘海屏
         public var isFull : Bool{
             if #available(iOS 11, *) {

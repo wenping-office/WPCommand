@@ -10,7 +10,7 @@ private var AlertTargetViewPointer = "WPAlertProtocolTargetViewPointer"
 private var AlertStatePointer = "WPAlertStatePointer"
 private var AlertStateHandlerPointer = "AlertStateHandlerPointer"
 
-/// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出、可使用WPAlertManager动态修改alert高度或者offset，可搭配WPSystem.KeyBoard适配键盘
+/// 弹窗协议都是可选实现,实现协议后由WPAlertManager弹出、可使用WPAlertManager动态修改alert高度或者offset，可搭配WPSystem.KeyBoard适配键盘，可使用frame固定布局或layout布局、如使用frame布局，需要初始时设置frame.size
 public protocol WPAlertProtocol: UIView {
     
     /// 当前弹窗状态

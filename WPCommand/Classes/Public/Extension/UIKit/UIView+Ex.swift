@@ -762,7 +762,7 @@ public extension WPSpace where Base: UIView{
     }
     
     @discardableResult
-    func layoutLayoutGreaterThanOrEqualWidth(_ width:CGFloat,priority:ConstraintPriority = .required) ->Self{
+    func layoutGreaterThanOrEqualWidth(_ width:CGFloat,priority:ConstraintPriority = .required) ->Self{
         base.snp.makeConstraints { make in
             make.width.greaterThanOrEqualTo(width).priority(priority)
         }

@@ -12,13 +12,41 @@ import RxSwift
 private var wp_inputNumberdisposeBagPointer = "wp_inputNumberdisposeBagPointer"
 
 /// 输入协议
-public protocol WPInputAble:NSObject{
+public protocol WPInputAble:NSObject{}
+extension UITextField:WPInputAble{}
+extension UITextView:WPInputAble{}
 
-    var rxText: ControlProperty<String?> { get }
+extension WPInputAble{
+    func rxText() -> ControlProperty<String?>{
+        if self is UITextField{
+            return (self as! UITextField).rx.text
+        } else if self is UITextView{
+            return (self as! UITextView).rx.text
+        }
+        return UITextView().rx.text
+    }
     
-    var inputComplete:Observable<String?>{ get }
+    func inputComplete() -> Observable<String?>{
+        if self is UITextField{
+            return (self as! UITextField).rx.controlEvent(.editingDidEnd).map {[weak self] _ in
+                return (self as! UITextField).text
+            }
+        } else if self is UITextView{
+            return (self as! UITextView).rx.didEndEditing.map { [weak self] _ in
+                return (self as! UITextView).text
+            }
+        }
+        return .just(nil)
+    }
     
-    var markedTextRange: UITextRange? { get }
+    func markedTextRange() -> UITextRange?{
+        if self is UITextField{
+            return (self as! UITextField).markedTextRange
+        } else if self is UITextView{
+            return (self as! UITextView).markedTextRange
+        }
+        return nil
+    }
 }
 
 extension WPInputAble{
@@ -38,32 +66,6 @@ extension WPInputAble{
     }
 }
 
-extension UITextField:WPInputAble{
-    
-    public var inputComplete: RxSwift.Observable<String?> {
-        return rx.controlEvent(.editingDidEnd).map {[weak self] _ in
-            return self?.text
-        }
-    }
-    
-    public var rxText: RxCocoa.ControlProperty<String?> {
-        return rx.text
-    }
-}
-
-extension UITextView:WPInputAble{
-    public var rxText: RxCocoa.ControlProperty<String?> {
-        return rx.text
-    }
-    
-    public var inputComplete: RxSwift.Observable<String?> {
-        return rx.didEndEditing.map { [weak self] _ in
-            return self?.text
-        }
-    }
-}
-
-
 public extension WPSpace where Base: WPInputAble {
     
     /// 最大字符输入限制
@@ -76,7 +78,7 @@ public extension WPSpace where Base: WPInputAble {
                   _ mode:InputMode = .filter()) -> Self {
         base.wp_inputNumberDisposeBag = DisposeBag()
         
-        base.rxText.map({ str in
+        base.rxText().map({ str in
             var newStr = str
             switch mode {
             case .input(let keys):
@@ -96,11 +98,11 @@ public extension WPSpace where Base: WPInputAble {
                     }
                 }
             }
-            if base.markedTextRange == nil {
+            if base.markedTextRange() == nil {
                 return newStr?.wp.subString(of: .init(0, count))
             }
             return str
-        }).bind(to: base.rxText).disposed(by: base.wp_inputNumberDisposeBag)
+        }).bind(to: base.rxText()).disposed(by: base.wp_inputNumberDisposeBag)
         return self
     }
     
@@ -120,7 +122,7 @@ public extension WPSpace where Base: WPInputAble {
         let isMax = maxValue != nil
         var last:String?
 
-        base.rxText.map({ str in
+        base.rxText().map({ str in
             let regex = "^\\-?([1-9]\\d*|0)(\\.\\d{0,\(minNumCount)})?$"
             let res =  NSPredicate(format:"SELF MATCHES %@", regex).evaluate(with: str)
             var newStr = str?.wp.filter("-")
@@ -163,10 +165,10 @@ public extension WPSpace where Base: WPInputAble {
 
             return last
 
-        }).bind(to: base.rxText).disposed(by: base.wp_inputNumberDisposeBag)
+        }).bind(to: base.rxText()).disposed(by: base.wp_inputNumberDisposeBag)
 
         
-        base.inputComplete.flatMap { str in
+        base.inputComplete().flatMap { str in
             let point = str?.wp.of(".")
             let isLast = (str?.count ?? 0) - 1 == point?.location ?? 0
             if point?.location ?? 0 >= 1 && isLast && minNumCount > 0{
@@ -183,7 +185,7 @@ public extension WPSpace where Base: WPInputAble {
             }
 
             return Observable<String?>.empty()
-        }.bind(to: base.rxText).disposed(by: base.wp_inputNumberDisposeBag)
+        }.bind(to: base.rxText()).disposed(by: base.wp_inputNumberDisposeBag)
 
         return self
     }

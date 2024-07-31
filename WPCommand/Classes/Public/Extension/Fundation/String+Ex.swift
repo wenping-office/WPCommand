@@ -418,6 +418,13 @@ public extension WPSpace where Base == String{
         }
         return str.appending(")")
     }
+
+    /// 转换成js方法
+    /// - Parameter dataStr: 传递参数 如果多个 可【拼接】
+    /// - Returns: js代码字符串
+    func jsFunc(_ dataStr:String) -> String {
+        return "\(base)('\(dataStr)')"
+    }
     
     
     /// 转换成json

@@ -242,7 +242,11 @@ public class WPAlertManager {
         alert.stateDidUpdate(state: .remove)
         alert.stateHandler?(.remove)
         
-        current = alerts.first
+        
+        let keepAlerts = alerts.wp_elmts(of: { $0.isInterruptInset })
+        let normalAlerts = alerts.wp_elmts(of: { !$0.isInterruptInset})
+        let allAlerts = keepAlerts + normalAlerts
+        current = allAlerts.first
     }
     
     /// 移除所有弹窗
@@ -253,6 +257,8 @@ public class WPAlertManager {
             item.state = .remove
         }
         alerts = []
+        
+        target = nil
     }
 
     /// 添加一组弹窗会清除现有的弹窗
@@ -276,7 +282,13 @@ public class WPAlertManager {
         let alertItem: Item = .init(alert: alert, level: level)
         alertItem.target = alert.targetView
         
-        alerts.insert(alertItem, at: 0)
+        switch option {
+        case .add:
+            alerts.append(alertItem)
+        case .insert(_):
+            alerts.insert(alertItem, at: 0)
+        }
+
         alertItem.state = .cooling
 
         if current == nil {
@@ -549,20 +561,36 @@ extension WPAlertManager {
     /// 执行动画
     private func animation(_ type:AnimationType,
                            duration:TimeInterval,
+                           checkTranslatesAuto:Bool = false,
                            animation:@escaping ()->Void,
                            completion:@escaping(Bool)->Void){
+        
+        let translatesAutoresizingMaskIntoConstraints = current?.alert.translatesAutoresizingMaskIntoConstraints
+        var isChange = false
+        
+        if translatesAutoresizingMaskIntoConstraints == false && checkTranslatesAuto{
+            current?.alert.translatesAutoresizingMaskIntoConstraints = true
+            isChange = true
+        }
+
         switch type {
         case .default:
             UIView.animate(withDuration: duration, animations: {
                 animation()
-            }, completion: {resualt in
+            }, completion: {[weak self] resualt in
                 completion(resualt)
+                if isChange && checkTranslatesAuto{
+                    self?.current?.alert.translatesAutoresizingMaskIntoConstraints = false
+                }
             })
         case .bounces(let damping, let velocity, let options):
             UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: damping, initialSpringVelocity: velocity, options: options, animations: {
                 animation()
-            }, completion: { resualt in
+            }, completion: {[weak self] resualt in
                 completion(resualt)
+                if isChange && checkTranslatesAuto{
+                    self?.current?.alert.translatesAutoresizingMaskIntoConstraints = false
+                }
             })
         }
     }
@@ -633,7 +661,7 @@ extension WPAlertManager {
             }
             
             animation(item.alert.alertInfo().animationType,
-                      duration: duration) {[weak self] in
+                      duration: duration, checkTranslatesAuto: !isShow) {[weak self] in
                 self?.animateActuator(item,
                                       isShow: isShow,
                                       layoutOption: layoutOption)
@@ -875,9 +903,6 @@ class WPAlertManagerMask: UIView {
         super.init(frame: .zero)
 
         addSubview(contentView)
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         contentView.rx.controlEvent(.touchUpInside).subscribe(onNext: {
             action?()
         }).disposed(by: wp.disposeBag)
@@ -886,5 +911,10 @@ class WPAlertManagerMask: UIView {
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        contentView.frame = bounds
     }
 }

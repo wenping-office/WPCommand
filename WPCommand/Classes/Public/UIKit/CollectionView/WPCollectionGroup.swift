@@ -19,7 +19,7 @@ open class WPCollectionGroup: NSObject {
     public var groupEdgeInsets = UIEdgeInsets.zero
     /// 每一组item间距
     public var minimumInteritemSpacing: CGFloat = 0.0
-    /// 每一组item间距
+    /// 每一组item间距 如果为0正好Cell宽度为collection宽度整数时可能会有显示问题
     public var minimumLineSpacing: CGFloat = 0.0
     /// 每一组headerSize
     public var headerSize = CGSize.zero

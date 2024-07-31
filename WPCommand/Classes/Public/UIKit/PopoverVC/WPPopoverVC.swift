@@ -45,11 +45,21 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
 
     var contentEdge:UIEdgeInsets = .zero{
         didSet{
-            contentView.snp.makeConstraints { make in
-                make.top.equalTo(finalEdge.top)
-                make.left.equalTo(finalEdge.left)
-                make.right.equalTo(-finalEdge.right)
-                make.bottom.equalTo(-finalEdge.bottom)
+            
+            if let customView = customView{
+                customView.snp.makeConstraints { make in
+                    make.top.equalTo(finalEdge.top)
+                    make.left.equalTo(finalEdge.left)
+                    make.right.equalTo(-finalEdge.right)
+                    make.bottom.equalTo(-finalEdge.bottom)
+                }
+            }else{
+                contentView.snp.makeConstraints { make in
+                    make.top.equalTo(finalEdge.top)
+                    make.left.equalTo(finalEdge.left)
+                    make.right.equalTo(-finalEdge.right)
+                    make.bottom.equalTo(-finalEdge.bottom)
+                }
             }
         }
     }
@@ -57,7 +67,6 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
     var finalEdge:UIEdgeInsets{
         return UIEdgeInsets.init(top: contentEdge.top + arrowEdge.top, left: contentEdge.left + arrowEdge.left, bottom: contentEdge.bottom + arrowEdge.bottom, right: contentEdge.right + arrowEdge.right)
     }
-    
     
     var arrowEdge:UIEdgeInsets {
         switch popoverPresentationController?.permittedArrowDirections ?? .any {
@@ -76,22 +85,22 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
     
     /// 显示一个弹出选择框
     /// - Parameters:
-    ///   - view: 目标view
+    ///   - targetView: 目标view
     ///   - items: 选项
     ///   - custom: 自定义
     ///   - arrowDirections: 箭头方向
     ///   - margin: 边距
     ///   - exceedingly: 如果弹不出来的异常
     ///   - passthroughViews: 支持交互的视图
-    public class func show(in view:UIView,
+    public class func show(in targetView:UIView,
                            items:[Item],
                            arrowDirections:UIPopoverArrowDirection = .up,
                            margin:UIEdgeInsets = .init(5),
                            passthroughViews:[UIView] = [],
                            exceedingly:(()->Void)? = nil,
                            custom:((WPPopoverVC)->Void)?=nil) {
-        let vc = WPPopoverVC()
-        vc.popoverPresentationController?.sourceView = view
+        let vc = WPPopoverVC(customView: nil)
+        vc.popoverPresentationController?.sourceView = targetView
         vc.popoverPresentationController?.delegate = vc
         vc.popoverPresentationController?.permittedArrowDirections = arrowDirections
         vc.popoverPresentationController?.popoverLayoutMargins = margin
@@ -101,7 +110,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
         let popoSize:CGSize = .init(width: 128, height: items.count * 45 + Int(vc.arrowEdge.top))
         vc.preferredContentSize = popoSize
 
-        if WPPopoverVC.checkPadding(arrowDirections: arrowDirections,sorceRect: view.wp.frameInMainWidow, popoSize: popoSize,margin: margin){
+        if WPPopoverVC.checkPadding(arrowDirections: arrowDirections,sorceRect: targetView.wp.frameInMainWidow, popoSize: popoSize,margin: margin){
             exceedingly?()
         }
         custom?(vc)
@@ -126,7 +135,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
     
     /// 显示一个toast
     /// - Parameters:
-    ///   - view: 目标视图
+    ///   - targetView: 目标视图
     ///   - text: 文本
     ///   - maxWidth: 最大宽度
     ///   - arrowDirections: 箭头方向
@@ -134,7 +143,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
     ///   - margin: 边距
     ///   - passthroughViews: 支持交互的视图
     ///   - exceedingly: rack小于弹窗执行
-    public class func show(in view:UIView,
+    public class func show(in targetView:UIView,
                            text:NSAttributedString?,
                            maxWidth:CGFloat = 200,
                            arrowDirections:UIPopoverArrowDirection = .up,
@@ -142,8 +151,8 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
                            passthroughViews:[UIView] = [],
                            exceedingly:(()->Void)? = nil,
                            custom:((WPPopoverVC)->Void)?=nil) {
-        let vc = WPPopoverVC()
-        vc.popoverPresentationController?.sourceView = view
+        let vc = WPPopoverVC(customView: nil)
+        vc.popoverPresentationController?.sourceView = targetView
         vc.popoverPresentationController?.delegate = vc
         vc.popoverPresentationController?.permittedArrowDirections = arrowDirections
         vc.popoverPresentationController?.popoverLayoutMargins = margin
@@ -158,7 +167,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
         let popoSize:CGSize = .init(width: maxWidth + vc.finalEdge.left + vc.finalEdge.right, height: height + vc.finalEdge.top + vc.finalEdge.bottom)
         vc.preferredContentSize = popoSize
 
-        if WPPopoverVC.checkPadding(arrowDirections: arrowDirections,sorceRect: view.wp.frameInMainWidow, popoSize: popoSize,margin: margin){
+        if WPPopoverVC.checkPadding(arrowDirections: arrowDirections,sorceRect: targetView.wp.frameInMainWidow, popoSize: popoSize,margin: margin){
             exceedingly?()
         }
 
@@ -178,21 +187,67 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
         }
     }
     
-    let contentView = UIStackView().wp.spacing(0.5).axis(.vertical).distribution(.fillEqually).backgroundColor(.wp.initWith("#F5F5F5")).value()
-    
-    public override func viewDidLoad() {
-        super.viewDidLoad()
+    /// 显示一个toast
+    /// - Parameters:
+    ///   - targetView: 目标视图
+    ///   - arrowDirections: 箭头方向
+    ///   - custom: 自定义
+    ///   - margin: 边距
+    ///   - passthroughViews: 支持交互的视图
+    ///   - exceedingly: rack小于弹窗执行
+    ///   - mainView: 自定义视图
+    ///   - mainSize: 自定义视图大小
+    public class func show(in targetView:UIView,
+                           mainView:UIView,
+                           mainSize:CGSize,
+                           arrowDirections:UIPopoverArrowDirection = .up,
+                           margin:UIEdgeInsets = .init(5),
+                           passthroughViews:[UIView] = [],
+                           exceedingly:(()->Void)? = nil,
+                           custom:((WPPopoverVC)->Void)?=nil) {
+        let vc = WPPopoverVC(customView: mainView)
+        vc.popoverPresentationController?.sourceView = targetView
+        vc.popoverPresentationController?.delegate = vc
+        vc.popoverPresentationController?.permittedArrowDirections = arrowDirections
+        vc.popoverPresentationController?.popoverLayoutMargins = margin
+        vc.popoverPresentationController?.passthroughViews = passthroughViews
+        if arrowDirections == .any {
+            vc.contentEdge = .zero
+        }else{
+            vc.contentEdge = .init(10)
+        }
+
+        let popoSize:CGSize = .init(width: mainSize.width + vc.finalEdge.left + vc.finalEdge.right, height: mainSize.height + vc.finalEdge.top + vc.finalEdge.bottom)
+        vc.preferredContentSize = popoSize
+
+        if WPPopoverVC.checkPadding(arrowDirections: arrowDirections,sorceRect: targetView.wp.frameInMainWidow, popoSize: popoSize,margin: margin){
+            exceedingly?()
+        }
+        custom?(vc)
         
-        view.addSubview(contentView)
+        UIViewController.wp.current?.present(vc, animated: true)
     }
     
-    init(){
+    let contentView = UIStackView().wp.spacing(0.5).axis(.vertical).distribution(.fillEqually).backgroundColor(.wp.initWith("#F5F5F5")).value()
+    
+    let customView:UIView?
+
+    public init(customView:UIView?) {
+        self.customView = customView
         super.init(nibName: nil, bundle: nil)
+        
+        if let customView = customView{
+            view.addSubview(customView)
+        }else{
+            view.addSubview(contentView)
+        }
+        
         view.backgroundColor = .wp.initWith(76, 76, 76, 1)
         modalPresentationStyle = .popover
 //        popoverPresentationController?.popoverBackgroundViewClass = PopoverBackgroundView.self
+
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

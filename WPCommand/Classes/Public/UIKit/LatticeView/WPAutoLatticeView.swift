@@ -26,8 +26,8 @@ public class WPAutoLatticeView: UIView {
 
     /// 所有内容视图 包括占位view
     public var allViews: [UIView] {
-        var newViews = views
-        let placeCount = col - views.count % col
+        var newViews = views.wp_elmts(of: {!$0.isHidden})
+        let placeCount = col - newViews.count % col
 
         if placeCount == col {
             return newViews

@@ -37,6 +37,18 @@ public extension WPSpace where Base == String.SubSequence{
     }
 }
 
+public extension WPSpace where Base == UIImage{
+    
+    /// 可变富文本
+    func attributed(_ cgRect:CGRect = .zero) -> WPSpace<NSMutableAttributedString> {
+        var newRect = cgRect
+        if cgRect == .zero{
+            newRect = .init(origin: .zero, size: base.size)
+        }
+        return "".wp.attributed.image(base, bounds: newRect, at: 0)
+    }
+}
+
 public extension WPSpace where Base == String{
     /// 可变富文本
     var attributed: WPSpace<NSMutableAttributedString> {
