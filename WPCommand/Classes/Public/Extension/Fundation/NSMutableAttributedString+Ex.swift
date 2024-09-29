@@ -92,6 +92,20 @@ public extension WPSpace where Base: NSMutableAttributedString {
         attachment.bounds=bounds
         return self.attachment(attachment, at: index)
     }
+    
+    /// 咋末尾添加一张图片
+    /// - Parameters:
+    ///   - image: 图片
+    ///   - bounds: 图片的bounds
+    /// - Returns: 结果
+    func lastImage(_ image: UIImage,
+               bounds: CGRect) -> Self
+    {
+        let attachment=NSTextAttachment()
+        attachment.image=image
+        attachment.bounds=bounds
+        return self.attachment(attachment, at: base.length)
+    }
 
     /// 数字部分单独设置字体
     /// - Parameters:

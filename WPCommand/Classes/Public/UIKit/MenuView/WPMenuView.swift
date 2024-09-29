@@ -624,6 +624,8 @@ public class WPMenuView: WPBaseView {
 public extension WPMenuView {
     /// 选中一个item
     func selected(_ index: Int) {
+        contentView.bodyView.collectionView.reloadData()
+        contentView.navView.collectionView.reloadData()
         contentView.navView.didSelected?(index)
         setChildView(offset: 1, with: index)
     }

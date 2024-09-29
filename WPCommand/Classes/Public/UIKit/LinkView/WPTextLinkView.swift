@@ -49,7 +49,7 @@ public class WPTextLinkView: WPBaseView {
     var links: [(link: Link, domain: String)] = []
 
     public func add(link: Link) {
-        let domani = String.wp.random(length: 10) + "://"
+        let domani = "h\(String.wp.random(length: 10))://"
         links.append((link, domani))
 
         reset()
@@ -125,7 +125,7 @@ public extension WPTextLinkView {
         }
     }
 }
-
+ 
 extension WPTextLinkView: UITextViewDelegate {
     public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         let obj = links.wp_elmt { obj in
