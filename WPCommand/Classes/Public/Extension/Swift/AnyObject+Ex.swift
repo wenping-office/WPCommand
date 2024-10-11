@@ -15,6 +15,27 @@ public extension WPSpace where Base : AnyObject {
         let str = Unmanaged<AnyObject>.passRetained(base).toOpaque()
         return String(describing: str)
     }
+    
+    
+    /// 自定义
+    /// - Parameter make: block
+    /// - Returns: 语法糖
+    @discardableResult
+    func `do`(_ make:(Base)->Void) -> Self {
+        weak var weakBase = base
+        if let newBase = weakBase{
+            make(newBase)
+        }
+        return self
+    }
+    
+    /// 自定义
+    /// - Parameter make: block
+    /// - Returns: 对象实体
+    @discardableResult
+    func make(_ make:(Base)->Void) -> Base {
+        return self.do(make).value()
+    }
 }
 
 public extension WPSpace where Base == Int {

@@ -45,6 +45,9 @@ public class WPTextLinkView: WPBaseView {
             linkTextView.linkTextAttributes = [.foregroundColor: linkColor]
         }
     }
+    
+    /// 自定义属性
+    public var customBlock:((_ space:WPSpace<NSMutableAttributedString>?)->WPSpace<NSMutableAttributedString>)?
 
     var links: [(link: Link, domain: String)] = []
 
@@ -63,6 +66,9 @@ public class WPTextLinkView: WPBaseView {
             str = str?.lineSpacing(lineSpacing)
             str = str?.font(font)
             str = str?.foregroundColor(textColor)
+            if let custom = customBlock{
+                str = custom(str)
+            }
         }
 
         linkTextView.attributedText = str?.value()

@@ -71,7 +71,7 @@ public extension WPSpace where Base: WPInputAble {
     /// 最大字符输入限制
     /// - Parameters:
     ///   - count: 长度
-    ///   - mode: 输入模式 当是input 时可填正则表达式
+    ///   - mode: 输入模式
     /// - Returns: 语法糖
     @discardableResult
     func maxCount(_ count:Int,
