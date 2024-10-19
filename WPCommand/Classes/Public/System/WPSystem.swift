@@ -7,7 +7,6 @@
 //
 
 import AVFoundation
-import CoreLocation
 import CoreMotion
 import CoreTelephony
 import Photos
@@ -319,8 +318,6 @@ public extension WPSystem {
     }
 }
 
-var locationManager = CLLocationManager()
-
 public extension WPSystem {
     /// 打开系统设置页面
     static func pushSystemController() {
@@ -377,39 +374,39 @@ public extension WPSystem {
     /// - Parameters:
     ///   - open: 开启时执行的任务
     ///   - close: 关闭时执行任务
-    static func isOpenLocationAutoTask(open: (()->Void)? = nil, close: (()->Void)? = nil) {
-        
-        let authStatus = CLLocationManager.authorizationStatus()
-//        let resault = (authStatus != .restricted && authStatus != .denied)
-        
-        func requestLocation(){
-            
-            locationManager.requestWhenInUseAuthorization()
-
-            locationManager.wp.delegate.didChangeAuthorizationBlock = { _, state in
-                locationManager.wp.disposeBag = DisposeBag()
-                if state == .notDetermined { return }
-                WPGCD.main_Async {
-                    if state == .authorizedAlways || state == .authorizedWhenInUse {
-                        open?()
-                    } else {
-                        close?()
-                    }
-                }
-                locationManager.wp.delegate.didChangeAuthorizationBlock = nil
-            }
-        }
-
-        switch authStatus {
-        case .notDetermined:
-            requestLocation()
-        case .restricted,.denied:
-            close?()
-        default:
-            open?()
-        }
-
-    }
+//    static func isOpenLocationAutoTask(open: (()->Void)? = nil, close: (()->Void)? = nil) {
+//        
+//        let authStatus = CLLocationManager.authorizationStatus()
+////        let resault = (authStatus != .restricted && authStatus != .denied)
+//        
+//        func requestLocation(){
+//            
+//            locationManager.requestWhenInUseAuthorization()
+//
+//            locationManager.wp.delegate.didChangeAuthorizationBlock = { _, state in
+//                locationManager.wp.disposeBag = DisposeBag()
+//                if state == .notDetermined { return }
+//                WPGCD.main_Async {
+//                    if state == .authorizedAlways || state == .authorizedWhenInUse {
+//                        open?()
+//                    } else {
+//                        close?()
+//                    }
+//                }
+//                locationManager.wp.delegate.didChangeAuthorizationBlock = nil
+//            }
+//        }
+//
+//        switch authStatus {
+//        case .notDetermined:
+//            requestLocation()
+//        case .restricted,.denied:
+//            close?()
+//        default:
+//            open?()
+//        }
+//
+//    }
     
     /// 检测是否开启相册权限
     /// - Parameters:
