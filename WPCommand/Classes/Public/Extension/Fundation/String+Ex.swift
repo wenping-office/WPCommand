@@ -53,6 +53,21 @@ public extension WPSpace where Base == String {
         return predicate.evaluate(with: base)
     }
     
+    /// 是否包含数字
+    var isOfNumber: Bool {
+        return base.range(of: "[0-9]", options: .regularExpression) != nil
+    }
+    
+    /// 是否包含字母大小写
+    var isOfA_z: Bool {
+        return base.range(of: "[A-z]", options: .regularExpression) != nil
+    }
+    
+    /// 是否包含字符
+    var isOfSymbol: Bool {
+        return base.range(of: "[(?=.*[\\p{P}\\p{S}])]", options: .regularExpression) != nil
+    }
+    
     /// 是否是电话
     var isMobile: Bool {
         let predicate = NSPredicate(format: "SELF MATCHES %@", "^1(3[0-9]|4[579]|5[0-35-9]|6[2567]|7[0-35-8]|8[0-9]|9[189])\\d{8}$")
@@ -171,6 +186,44 @@ public extension WPSpace where Base == String {
        return res
     }
     
+    /// 根据扩展名获取MineType 未实现
+    func mimeType()->String{
+//        import MobileCoreServices
+//        if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
+//                                                           base as NSString,
+//                                                           nil)?.takeRetainedValue()
+//        {
+//            if let mimetype = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?
+//                .takeRetainedValue()
+//            {
+//                return mimetype as String
+//            }
+//        }
+//        // 未知文件资源类型，可传万能类型application/octet-stream，服务器会自动解析文件类型
+//        return "application/octet-stream"
+        return ""
+    }
+    
+    /// 整数位字体和小数位字体设置
+    /// - Parameters:
+    ///   - intFont: 整数位字体
+    ///   - intColor: 整数位颜色
+    ///   - doubleFont: 小数位字体
+    ///   - doubleColor: 小数位颜色
+    /// - Returns: 结果
+    func color(intFont:UIFont,
+                intColor:UIColor,
+                doubleFont:UIFont,
+                doubleColor:UIColor) -> NSAttributedString {
+        if isContent("."){
+            let range = of(".")
+            let intStr = subString(of: .init(0, range.location))
+            let doubleStr = subString(of: .init(range.location,base.count - range.location))
+            return intStr.wp.attributed.font(intFont).foregroundColor(intColor).append(doubleStr.wp.attributed.font(doubleFont).foregroundColor(doubleColor)).value()
+        }else{
+            return attributed.font(intFont).foregroundColor(intColor).value()
+        }
+    }
 
 }
 
@@ -212,63 +265,6 @@ public extension WPSpace where Base == String{
         }
         return false
     }
-    
-    /// 获取视频第一帧
-    /*
-    static func splitVideoFileUrlFps(splitFileUrl: URL, fps: Float, splitCompleteClosure: @escaping (Bool, [UIImage]) -> Void) {
-
-        var splitImages = [UIImage]()
-        let optDict = NSDictionary(object: NSNumber(value: false), forKey: AVURLAssetPreferPreciseDurationAndTimingKey as NSCopying)
-        let urlAsset = AVURLAsset(url: splitFileUrl, options: optDict as? [String: Any])
-
-        let cmTime = urlAsset.duration
-        let durationSeconds: Float64 = CMTimeGetSeconds(cmTime) //视频总秒数
-
-        var times = [NSValue]()
-        let totalFrames: Float64 = durationSeconds * Float64(fps) //获取视频的总帧数
-        var timeFrame: CMTime
-
-        for i in 0...Int(totalFrames) {
-            timeFrame = CMTimeMake(value: Int64(i), timescale: Int32(fps)) //第i帧， 帧率
-            let timeValue = NSValue(time: timeFrame)
-
-            times.append(timeValue)
-        }
-
-        let imgGenerator = AVAssetImageGenerator(asset: urlAsset)
-        imgGenerator.requestedTimeToleranceBefore = CMTime.zero //防止时间出现偏差
-        imgGenerator.requestedTimeToleranceAfter = CMTime.zero
-        imgGenerator.appliesPreferredTrackTransform = true //不知道是什么属性，不写true视频帧图方向不对
-
-        let timesCount = times.count
-
-        //获取每一帧的图片
-        imgGenerator.generateCGImagesAsynchronously(forTimes: times) { (requestedTime, image, actualTime, result, error) in
-
-            //times有多少次body就循环多少次。。。
-
-            var isSuccess = false
-            switch (result) {
-            case AVAssetImageGenerator.Result.cancelled:
-                print("cancelled------")
-
-            case AVAssetImageGenerator.Result.failed:
-                print("failed++++++")
-
-            case AVAssetImageGenerator.Result.succeeded:
-                let framImg = UIImage(cgImage: image!)
-                splitImages.append(framImg)
-
-                if (Int(requestedTime.value) == (timesCount - 1)) { //最后一帧时 回调赋值
-                    isSuccess = true
-                    splitCompleteClosure(isSuccess, splitImages)
-                    print("completed")
-                }
-            }
-        }
-    }*/
-
-
 }
 
 public extension WPSpace where Base == String{
@@ -444,6 +440,15 @@ public extension WPSpace where Base == String{
         }
         return []
     }
+    
+    /// 根据正则表达式筛选字符串
+    /// - Parameter regex: 正则
+    /// - Returns: 结果
+    func matches(in regex:String) -> [NSTextCheckingResult] {
+        let regex = try? NSRegularExpression(pattern: regex)
+        let range = NSRange(location: 0, length: base.count)
+        return regex?.matches(in: base, range: range) ?? []
+    }
 }
 
 public extension WPSpace where Base == String {
@@ -459,25 +464,6 @@ public extension WPSpace where Base == String {
         dateFormatter.timeZone = timeZone
         dateFormatter.dateFormat = format
         return dateFormatter.date(from: base)
-    }
-    
-    /// 秒转 00:00:00
-    /// - Parameter time: 秒级时间戳
-    static func hourMin(second: Int64) -> String {
-        let allTime = Int64(second)
-        var hours = 0
-        var minutes = 0
-        var seconds = 0
-        var hoursText = ""
-        var minutesText = ""
-        var secondsText = ""
-        hours = Int(allTime / 3600)
-        hoursText = hours > 9 ? "\(hours)" : "0\(hours)"
-        minutes = Int(allTime % 3600 / 60)
-        minutesText = minutes > 9 ? "\(minutes)" : "0\(minutes)"
-        seconds = Int(allTime % 3600 % 60)
-        secondsText = seconds > 9 ? "\(seconds)" : "0\(seconds)"
-        return "\(hoursText):\(minutesText):\(secondsText)"
     }
 
     /// 生成随机数字+字母字符串

@@ -10,6 +10,11 @@ import Photos
 import UIKit
 
 public extension WPSpace where Base: UIImage {
+    /// 图片类型
+    var type:String{
+        return base.wp_typeStr()
+    }
+
     /// 填充颜色
     /// - Parameter color: 颜色
     /// - Returns: 结果
@@ -90,6 +95,22 @@ public extension WPSpace where Base: UIImage {
     /// - Returns: 结果
     func resizable(_ insets:UIEdgeInsets,mode:UIImage.ResizingMode = .stretch) -> UIImage {
         return base.resizableImage(withCapInsets: insets, resizingMode: mode)
+    }
+    
+    /// 获取圆角图片
+    /// - Parameter radius: 圆角
+    /// - Returns: 结果
+    func corners(_ radius:CGFloat) -> UIImage? {
+        let imageView = UIImageView(image: base)
+        let layer = imageView.layer
+        layer.masksToBounds = true
+        layer.cornerRadius = radius
+
+        UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, false, 0.0)
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        let roundedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return roundedImage
     }
 }
 

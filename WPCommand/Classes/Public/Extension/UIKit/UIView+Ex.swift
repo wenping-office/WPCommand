@@ -11,6 +11,41 @@ import RxSwift
 import SnapKit
 import UIKit
 
+private var wp_isDeleteAutoBackgroundsPointer = "wp_isDeleteAutoBackgroundsBag"
+private var wp_isDeleteAutoRadiusPointer = "wp_isRemoveAutoRadiusBag"
+
+fileprivate extension UIView {
+    /// 是否删除背景色标级
+    var wp_isRemoveAutoBackgroundsBag: DisposeBag {
+        set {
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &wp_isDeleteAutoBackgroundsPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            guard let disposeBag: DisposeBag = WPRunTime.get(self, withUnsafePointer(to: &wp_isDeleteAutoBackgroundsPointer, {$0})) else {
+                let bag = DisposeBag()
+                self.wp_isRemoveAutoBackgroundsBag = bag
+                return bag
+            }
+            return disposeBag
+        }
+    }
+    
+    /// 是否删除自动圆角
+    var wp_isRemoveAutoRadiusBag: DisposeBag {
+        set {
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &wp_isDeleteAutoRadiusPointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            guard let disposeBag: DisposeBag = WPRunTime.get(self, withUnsafePointer(to: &wp_isDeleteAutoRadiusPointer, {$0})) else {
+                let bag = DisposeBag()
+                self.wp_isRemoveAutoRadiusBag = bag
+                return bag
+            }
+            return disposeBag
+        }
+    }
+}
+
 public extension WPSpace where Base: UIView {
     /// 从xib加载
     static func initXibName(_ xibName: String,_ config:((Base)->Void)? = nil) -> Base? {
@@ -151,6 +186,127 @@ public extension WPSpace where Base: UIView {
         notes.wp_repeat(retain: .fist, path: \.wp.memoryAddress)
         return notes
     }
+    
+    ///获取当前视图相对 屏幕的frame
+    /// - Returns: 相对屏幕的rect
+    func convertFrameToScreen() -> CGRect {
+        if let keyWindow = UIApplication.shared.keyWindow, let newBounds = base.superview?.convert(base.frame, to: keyWindow) {
+            return newBounds
+        }
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        
+        var view: UIView = base
+        
+        while ((view.superview as? UIWindow) == nil) {
+            x += view.frame.origin.x
+            y += view.frame.origin.y
+            
+            guard let father = view.superview else {
+                break
+            }
+            view = father
+            if view.isKind(of: UIScrollView.self) {
+                x -= (view as! UIScrollView).contentOffset.x
+                y -= (view as! UIScrollView).contentOffset.y
+            }
+        }
+        return CGRect(x: x, y: y, width: base.frame.size.width, height: base.frame.size.height)
+    }
+}
+
+
+public extension WPSpace where Base: UIView {
+    
+    /// 布局方法调用后
+    var layoutSubViewsMethod: ControlEvent<Void> {
+        let source = base.rx.methodInvoked(#selector(Base.layoutSubviews)).map { _ in }
+        return ControlEvent(events: source)
+    }
+    
+    /// 选择性圆角
+    /// - Parameters:
+    ///   - corners: 圆角点
+    ///   - radius: 圆角
+    /// - Returns: 语法糖
+    @discardableResult
+    func autoRadius(_ corners: [UIRectCorner], radius: CGFloat) -> Self {
+        weak var v = base
+        _ = v?.wp.corner(corners, radius: radius)
+        layoutSubViewsMethod.map({ _ in
+            return base.frame.size
+        }).distinctUntilChanged().bind(onNext: { _ in
+            v?.wp.corner(corners, radius: radius)
+        }).disposed(by: base.wp_isRemoveAutoRadiusBag)
+        return self
+    }
+    
+    /// 移除自动圆角
+    @discardableResult
+    func removeAutoRadius()->Self{
+        base.wp_isRemoveAutoRadiusBag = DisposeBag()
+        base.layer.mask = nil
+        return self
+    }
+    
+    
+    /// 毛玻璃效果
+    /// - Parameters:
+    ///   - style: 样式
+    ///   - isInset: 是否插入到底层
+    /// - Returns: 结果
+    @discardableResult
+    func blurEffect(_ style:UIBlurEffect.Style = .light,isInset:Bool = true) -> Self {
+        let view = base.subviews.wp_elmt(of: { $0.isKind(of: UIVisualEffectView.self)})
+        if view != nil{
+            return self
+        }
+        func create()->UIVisualEffectView{
+            let blurEffect = UIBlurEffect(style: style)
+            let blurEffectView = UIVisualEffectView(frame: base.bounds)
+            blurEffectView.effect = blurEffect
+            return blurEffectView
+        }
+        
+        let blurEffectView = create()
+        if isInset{
+            base.insertSubview(blurEffectView, at: 0)
+        }else{
+            base.addSubview(blurEffectView)
+        }
+        blurEffectView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        return self
+    }
+    
+    /// 背景渐变色
+    /// - Parameters:
+    ///   - point: 开始点
+    ///   - colors: 结束点
+    /// - Returns: 颜色
+    @discardableResult
+    func autoBackgroundColors(_ startPoint: CGPoint, _ endPoint: CGPoint,_ colors:[UIColor]) -> Self {
+        weak var v = base
+        v?.wp.backgroundColors(startPoint, endPoint, colors)
+        layoutSubViewsMethod.map({
+            return base.frame.size
+        }).distinctUntilChanged().bind(onNext: { _ in
+            v?.wp.backgroundColors(startPoint, endPoint, colors)
+        }).disposed(by: base.wp_isRemoveAutoBackgroundsBag)
+        return self
+    }
+    
+    /// 移除渐变色背景 如果不准可以延迟再次执行
+    @discardableResult
+    func removeBackgroundColors() -> Self {
+        base.wp_isRemoveAutoBackgroundsBag = DisposeBag()
+        for layer in base.layer.sublayers ?? [] {
+            if layer.isKind(of: CAGradientLayer.self) && layer.name == "WPGradientLayerTag" {
+                layer.removeFromSuperlayer()
+                break
+            }
+        }
+        return self
+    }
 }
 
 public extension WPSpace where Base: UIView {
@@ -223,25 +379,35 @@ public extension WPSpace where Base: UIView {
     
     /// 设置渐变背景色，需在设置frame或约束后调用
     @discardableResult
-    func backgroundColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [CGColor]) -> CAGradientLayer {
-        let layer = CAGradientLayer()
-        let sKey = "c-p-p"
-        layer.name = sKey
-        layer.frame = bounds
-        layer.colors = colors
-        layer.endPoint = endPoint
-        layer.startPoint = startPoint
-        layer.cornerRadius = base.layer.cornerRadius
-        for oldLayer in base.layer.sublayers ?? [] {
-            if oldLayer.name == sKey {
-                base.layer.replaceSublayer(oldLayer, with: layer)
-                return layer
+    func backgroundColors(_ startPoint: CGPoint, _ endPoint: CGPoint, _ colors: [UIColor]) -> CAGradientLayer {
+        var cgColors:[Any] = []
+        for color in colors {
+            cgColors.append(color.cgColor)
+        }
+
+        for layer in base.layer.sublayers ?? [] {
+            if layer.isKind(of: CAGradientLayer.self) && layer.name == "WPGradientLayerTag" {
+                layer.frame = self.bounds
+                let tempLayer = layer as! CAGradientLayer
+                tempLayer.colors = cgColors
+                base.layer.insertSublayer(tempLayer, at: 0)
+                return tempLayer
             }
         }
-        base.layer.insertSublayer(layer, at: 0)
-        return layer
+        
+        let gradient = CAGradientLayer()
+        gradient.name = "WPGradientLayerTag"
+        gradient.colors = cgColors
+        gradient.startPoint = startPoint
+        gradient.endPoint = endPoint
+        gradient.frame = base.bounds
+        gradient.cornerRadius = base.layer.cornerRadius
+        base.backgroundColor = UIColor.clear
+        gradient.actions = ["frame": NSNull(),"position": NSNull(),"bounds": NSNull()]
+        base.layer.insertSublayer(gradient, at: 0)
+        return gradient
     }
-    
+
     /// 子视图随机色
     func subViewRandomColor() {
         base.subviews.forEach { subView in

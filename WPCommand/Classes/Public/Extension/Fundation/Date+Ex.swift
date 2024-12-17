@@ -127,6 +127,47 @@ public extension WPSpace where Base == Date{
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: base)
     }
+    
+    
+    /// 获取当月日历
+    /// - Returns: 当月日历
+    /// - Parameter beginWeekday: 从哪天开始计算默认周一
+    func months(beginWeekday:Int = 1) -> [Date] {
+        var beginWeekday = beginWeekday
+        if beginWeekday < 0 || beginWeekday > 6{
+            beginWeekday = 0
+        }
+
+        var dates = [Date]()
+        for index in 0..<base.wp.dayInMonth {
+            if let date = "\(base.wp.year)年\(base.wp.month)月\(index+1)日".wp.date("yyyy年MM月dd日"){
+                dates.append(date)
+            }
+        }
+        
+        if let firstDate = dates.first{
+            var weekday = firstDate.wp.weekday
+            if weekday == 0{
+                weekday = 7
+            }
+            
+            if weekday > 0{
+                for index in 0..<weekday-1 { // 补齐前面的天数
+                    dates.insert(firstDate.wp.offSet(day: -(index+1)), at: 0)
+                }
+            }
+        }
+        
+        if let lastDate = dates.last{
+            let weekDay = lastDate.wp.weekday // 补齐后面的天数
+            if weekDay != 0 {
+                for index in 0..<7-weekDay {
+                    dates.append(lastDate.wp.offSet(day: index+1))
+                }
+            }
+        }
+        return dates
+    }
 }
 
 public extension WPSpace where Base == Date{

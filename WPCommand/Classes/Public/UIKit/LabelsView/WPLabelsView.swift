@@ -17,6 +17,14 @@ public protocol WPLabelsViewDelegate : AnyObject{
     func labelsView(didSelectAt index: Int,with itemView:WPLabelsItemView, data:Any)
 }
 
+public extension WPLabelsView{
+    enum Alignment {
+        case left
+        case center
+        case right
+    }
+}
+
 public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
     /// 每一个item的高度
     let itemHight : CGFloat
@@ -55,13 +63,21 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
     public init(itemHeight: CGFloat,
                 estimatedWidth : CGFloat? = nil,
                 spacing:CGFloat = 10,
-                rowSpacing:CGFloat = 10) {
+                rowSpacing:CGFloat = 10,
+                alignment:Alignment = .left) {
         self.itemHight = itemHeight
         self.spacing = spacing
         self.rowSpacing = rowSpacing
         self.estimatedWidth = estimatedWidth
+        self.alignment = alignment
         super.init(frame: .zero)
         isUserInteractionEnabled = true
+    }
+    
+    public var alignment:Alignment{
+        didSet{
+            resetSubItemsFrame()
+        }
     }
 
     /// 设置数据源
@@ -117,25 +133,47 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
             elmt.wp_orgin = .zero
             elmt.isHidden = false
         }
-
+        var rows:[[UIView]] = []
+        var rowArr:[UIView] = []
         for index in 0..<subviews.count {
             let lastX = subviews.wp_get(of: index - 1)?.wp_maxX ?? 0
-
             let view = subviews[index] as! V
             let width = view.labelItemWidth(with: data[index])
-
             if lastX + width + spacing > maxWidth{
                 row = row + 1
                 rowX = 0
             }
-
+            if rowX == 0{
+                rows.append(rowArr)
+                rowArr = []
+            }
+            rowArr.append(view)
             y = row * (itemHight + rowSpacing)
-
             view.wp_orgin = .init(x: rowX, y: y)
-
             rowX = spacing + width + rowX
-
             view.isHidden = (numberOfLines != 0 && Int(row) + 1 > numberOfLines)
+        }
+        
+        rows.append(rowArr)
+        if alignment == .center || alignment == .right{
+            rows.forEach { elmt in
+                var x:CGFloat = 0
+                if alignment == .center{
+                    x = (maxWidth - (elmt.last?.wp_maxX ?? 0)) * 0.5
+                }else if alignment == .right{
+                    x = (maxWidth - (elmt.last?.wp_maxX ?? 0))
+                }
+                for index in 0..<elmt.count {
+                    let v = elmt.wp_get(of: index)
+                    let lastV = elmt.wp_get(of: index - 1)
+                    
+                    if index == 0{
+                        v?.wp_x = x
+                    }else{
+                        v?.wp_x = (lastV?.wp_maxX ?? 0) + spacing
+                    }
+                }
+            }
         }
     }
 

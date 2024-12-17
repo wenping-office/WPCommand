@@ -5,6 +5,8 @@ platform :ios, '12.0'
 target 'WPCommand_Example' do
   pod 'WPCommand', :path => '../'
   pod 'MJRefresh'
+  pod 'Moya'
+  pod 'HandyJSON'
 #  pod 'IQKeyboardManagerSwift'
 
   target 'WPCommand_Tests' do

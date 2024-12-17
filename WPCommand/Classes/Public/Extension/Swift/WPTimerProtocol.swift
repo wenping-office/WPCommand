@@ -143,4 +143,18 @@ public extension WPSpace where Base: WPTimerProtocol {
         }
         return 0
     }
+    
+    ///  秒转计算天时分秒
+    /// - Returns: 结果
+    func times()->(day:Int,
+                   hour:Int,
+                   minute:Int,
+                   second:Int) {
+        let intSecound = Int(second)
+        let days = Int(intSecound/(3600*24))
+        let hours = Int((intSecound - days*24*3600)/3600)
+        let minute = Int((intSecound - days*24*3600-hours*3600)/60)
+        let second = Int((intSecound - days*24*3600-hours*3600) - 60*minute)
+        return (days,hours,minute,second)
+    }
 }

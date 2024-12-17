@@ -37,6 +37,11 @@ public extension WPSpace where Base: NSObject {
             return base.wp_disposeBag
         }
     }
+    
+    /// 对象文件所在bundle
+    static var bundle:Bundle{
+        return Bundle(for: Base.classForCoder())
+    }
 }
 
 

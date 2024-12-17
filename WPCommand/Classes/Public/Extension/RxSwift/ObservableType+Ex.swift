@@ -91,7 +91,7 @@ public extension ObservableType{
             }
         } onSubscribed: {
             onSubscribed?()
-            if callBackTypes.wp_isContent(in: { $0 == .onCompleted }) {
+            if callBackTypes.wp_isContent(in: { $0 == .onSubscribed }) {
                 callBack(nil,nil)
             }
         } onDispose: {
