@@ -132,3 +132,53 @@ public extension WPSpace where Base: UIColor {
         }
     }
 }
+
+
+public extension WPSpace where Base == Array<UIColor>{
+    
+    /// 创建渐变背景图片
+    /// - Parameters:
+    ///   - opaque: 透明度
+    ///   - locations: 渐变位置
+    ///   - size: 大小
+    ///   - borderWidth: 边框
+    ///   - cornerRadius: 圆角
+    ///   - scale: 缩放
+    ///   - startPoint: 开始点
+    ///   - endPoint: 结束点
+    /// - Returns: 结果
+    func image(_ startPoint: CGPoint = .init(x: 0, y: 0.5),
+               _ endPoint: CGPoint = .init(x: 1, y: 0.5),
+               opaque: Bool = true,
+                locations: UnsafePointer<CGFloat>? = nil,
+                size: CGSize = CGSize(width: 10, height: 10),
+                borderWidth: CGFloat = 0,
+                cornerRadius: CGFloat = 0,
+                scale: CGFloat = 1) -> UIImage? {
+
+            let borderWidth = borderWidth
+            var contentSize = size
+            contentSize.width -= borderWidth * 2
+            contentSize.height -= borderWidth * 2
+            UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+            defer {
+                UIGraphicsEndImageContext()
+            }
+            let context = UIGraphicsGetCurrentContext()
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            let colors = base.map { $0.cgColor } as CFArray
+            guard let gradient = CGGradient(colorsSpace: colorSpace, colors: colors, locations: locations) else {
+                return nil
+            }
+
+            if cornerRadius > 0 {
+                UIBezierPath(roundedRect: CGRect(origin: CGPoint(x: borderWidth, y: borderWidth), size: contentSize), cornerRadius: cornerRadius).addClip()
+            }
+
+        context?.drawLinearGradient(gradient, start: .init(x: startPoint.x * size.width, y: startPoint.y * size.height), end: .init(x: endPoint.x * size.width, y: endPoint.y * size.height), options: CGGradientDrawingOptions(rawValue: 0))
+            guard let cgImage = UIGraphicsGetImageFromCurrentImageContext()?.cgImage else {
+                return nil
+            }
+        return UIImage.init(cgImage: cgImage, scale: scale, orientation: .up)
+    }
+}

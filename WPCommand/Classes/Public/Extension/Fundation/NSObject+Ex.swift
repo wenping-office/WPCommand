@@ -7,8 +7,10 @@
 
 import RxSwift
 import UIKit
+import Combine
 
 private var wp_disposeBagPointer = "wp_disposeBag"
+private var wp_cancellablePointer = "wp_cancellable"
 
 public extension NSObject {
     /// 懒加载垃圾袋
@@ -27,6 +29,7 @@ public extension NSObject {
     }
 }
 
+
 public extension WPSpace where Base: NSObject {
     /// 懒加载垃圾袋
     var disposeBag: DisposeBag {
@@ -38,9 +41,38 @@ public extension WPSpace where Base: NSObject {
         }
     }
     
+    /// 懒加载垃圾袋
+    @available(iOS 13.0, *)
+    var cancellabel: Set<AnyCancellable>{
+        set{
+            base.wp_cancellabel = newValue
+        }
+        get{
+            return base.wp_cancellabel
+        }
+    }
+
     /// 对象文件所在bundle
     static var bundle:Bundle{
         return Bundle(for: Base.classForCoder())
+    }
+}
+
+@available(iOS 13.0, *)
+public extension NSObject {
+    /// 懒加载垃圾袋
+    var wp_cancellabel:Set<AnyCancellable>{
+        set {
+            WPRunTime.set(self, newValue, withUnsafePointer(to: &wp_cancellablePointer, {$0}), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            guard let cancellable: Set<AnyCancellable> = WPRunTime.get(self, withUnsafePointer(to: &wp_cancellablePointer, {$0})) else {
+                let bag = Set<AnyCancellable>()
+                self.wp_cancellabel = bag
+                return bag
+            }
+            return cancellable
+        }
     }
 }
 

@@ -111,10 +111,10 @@ extension WPMenuBodyView: UICollectionViewDelegate {
         let item = data[indexPath.row]
         let cell = cell as? WPMenuBodyCell
         
-        if !item.isAddToSuperView {
-            cell?.setBodyView(item.bodyView?.menuBodyView())
-            item.isAddToSuperView = true
-        }
+        cell?.setBodyView(item.bodyView?.menuBodyView())
+//        if !item.isAddToSuperView {
+//            item.isAddToSuperView = true
+//        }
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {

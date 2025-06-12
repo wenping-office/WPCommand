@@ -273,6 +273,19 @@ public extension Array {
     }
 }
 
+
+extension Array where Element: Hashable {
+    
+    /// 对比数组找出两个数组不同的元素
+    /// - Parameter other: 目标数组
+    /// - Returns: 结果
+    func wp_difference(from other: [Element]) -> [Element] {
+        let thisSet = Set(self)
+        let otherSet = Set(other)
+        return Array(thisSet.symmetricDifference(otherSet))
+    }
+}
+
 public extension WPSpace where Base == Array<UIView> {
     /// 水平中心点布局 类似于tabbar的Item效果
     /// - Parameters:

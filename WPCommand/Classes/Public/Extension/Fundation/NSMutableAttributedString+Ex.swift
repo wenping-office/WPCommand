@@ -262,9 +262,9 @@ public extension WPSpace where Base: NSMutableAttributedString {
                         range: NSRange?=nil) -> Self
     {
         if range != nil {
-            base.addAttributes([.underlineStyle: style], range: range!)
+            base.addAttributes([.underlineStyle: style.rawValue], range: range!)
         } else {
-            base.addAttributes([.underlineStyle: style], range: NSMakeRange(0, base.string.count))
+            base.addAttributes([.underlineStyle: style.rawValue], range: NSMakeRange(0, base.string.count))
         }
 
         return self
