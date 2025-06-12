@@ -25,7 +25,7 @@ TODO: Add long description of the pod here.
   s.homepage         = 'https://github.com/wenping-office/WPCommand'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { '文平' => 'wenping.office@foxmail.com' }
+  s.author           = { 'Tate' => 'wenping.office@foxmail.com' }
   s.source           = { :git => 'https://github.com/wenping-office/WPCommand.git', :tag => s.version.to_s }
   s.swift_version='5.0'
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
