@@ -182,7 +182,7 @@ public enum SystemFontName:String,CaseIterable{
     case Impact
     case Kailasa
     case Kailasa_Bold = "Kailasa-Bold"
-    case Kefa_Regular = "Kefa-Regular"
+    case Kefa_Regular = fontName.rawValue
     case KhmerSangamMN
     case KohinoorBangla_Light = "KohinoorBangla-Light"
     case KohinoorBangla_Regular = "KohinoorBangla-Regular"
@@ -316,62 +316,62 @@ public protocol WPSystemFont{
 
 extension Int: WPSystemFont {
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension Int8: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension Int16: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension Int32: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension Int64: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension UInt: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension UInt8: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension UInt16: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension UInt32: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension UInt64: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension CGFloat: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 extension Double: WPSystemFont{
     public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: "Kefa-Regular", size: CGFloat(self))
+        return .init(name: fontName.rawValue, size: CGFloat(self))
     }
 }
 
