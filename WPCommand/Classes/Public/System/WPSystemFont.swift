@@ -182,7 +182,7 @@ public enum SystemFontName:String,CaseIterable{
     case Impact
     case Kailasa
     case Kailasa_Bold = "Kailasa-Bold"
-    case Kefa_Regular = fontName.rawValue
+    case Kefa_Regular = "Kefa-Regular"
     case KhmerSangamMN
     case KohinoorBangla_Light = "KohinoorBangla-Light"
     case KohinoorBangla_Regular = "KohinoorBangla-Regular"
