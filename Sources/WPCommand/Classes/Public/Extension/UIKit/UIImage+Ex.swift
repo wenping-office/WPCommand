@@ -10,10 +10,6 @@ import Photos
 import UIKit
 
 public extension WPSpace where Base: UIImage {
-    /// 图片类型
-    var type:String{
-        return base.wp_typeStr()
-    }
 
     /// 填充颜色
     /// - Parameter color: 颜色

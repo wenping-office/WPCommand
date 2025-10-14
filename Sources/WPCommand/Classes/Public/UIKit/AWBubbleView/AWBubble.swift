@@ -231,7 +231,7 @@ public class AWBubble: UIView {
         accessibilityLabel = text
         self.direction = direction
             
-        containerView = UIApplication.wp.current
+        containerView = UIApplication.wp.mainWindow
 
         self.maxWidth = maxWidth
         maxWidthBackUp = maxWidth
@@ -275,7 +275,7 @@ public class AWBubble: UIView {
         self.attributedText = newAttString
         accessibilityLabel = newAttString.string
         self.direction = direction
-        containerView = UIApplication.wp.current
+        containerView = UIApplication.wp.mainWindow
         self.maxWidth = maxWidth
         maxWidthBackUp = maxWidth
         
@@ -300,7 +300,7 @@ public class AWBubble: UIView {
         text = nil
         attributedText = nil
         self.direction = direction
-        containerView = UIApplication.wp.current
+        containerView = UIApplication.wp.mainWindow
         maxWidth = customView.frame.size.width
         self.customView?.removeFromSuperview()
         self.customView = customView

@@ -148,18 +148,6 @@ public extension WPSpace where Base == String {
         return da?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
     }
     
-    /// 过滤表情
-    /// - Returns: 结果
-    var filterEmoji: Base {
-        if base == "➊" || base == "➋" || base == "➌" || base == "➍" || base == "➎" || base == "➏" || base == "➐" || base == "➑" || base == "➒" {
-            return base
-        }
-        let regex = try! NSRegularExpression(pattern: "[^\\u0020-\\u007E\\u00A0-\\u00BE\\u2E80-\\uA4CF\\uF900-\\uFAFF\\uFE30-\\uFE4F\\uFF00-\\uFFEF\\u0080-\\u009F\\u2000-\\u201f\r\n]", options: .caseInsensitive)
-        
-        let modifiedString = regex.stringByReplacingMatches(in: base, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSRange(location: 0, length: base.count), withTemplate: "")
-        return modifiedString
-    }
-    
     /// 过滤空格
     var filterSpace: Base {
         return filter(" ")
@@ -593,5 +581,60 @@ public extension WPSpace where Base == String {
         let str = String(cString: cString!, encoding: Base.Encoding.utf8)
         let strSize = str?.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: dic, context: nil).size
         return strSize?.width ?? 0
+    }
+}
+
+public extension WPSpace where Base == String {
+
+    subscript(safe i: Int) -> Character? {
+        guard i >= 0 && i < base.count else { return nil }
+        let idx = base.index(base.startIndex, offsetBy: i)
+        return base[idx]
+    }
+
+    subscript(safe range: ClosedRange<Int>) -> String {
+        guard !base.isEmpty else { return "" }
+        let lower = max(0, range.lowerBound)
+        let upper = min(base.count - 1, range.upperBound)
+        guard lower <= upper else { return "" }
+        let startIndex = base.index(base.startIndex, offsetBy: lower)
+        let endIndex   = base.index(base.startIndex, offsetBy: upper)
+        return String(base[startIndex...endIndex])
+    }
+
+    subscript(safe range: Range<Int>) -> String {
+        guard !base.isEmpty else { return "" }
+        let lower = max(0, range.lowerBound)
+        let upper = min(base.count, range.upperBound)
+        guard lower < upper else { return "" }
+        let startIndex = base.index(base.startIndex, offsetBy: lower)
+        let endIndex   = base.index(base.startIndex, offsetBy: upper)
+        return String(base[startIndex..<endIndex])
+    }
+
+    subscript(safe range: PartialRangeFrom<Int>) -> String {
+        guard !base.isEmpty else { return "" }
+        let lower = max(0, range.lowerBound)
+        guard lower < base.count else { return "" }
+        let startIndex = base.index(base.startIndex, offsetBy: lower)
+        let endIndex   = base.endIndex
+        return String(base[startIndex..<endIndex])
+    }
+
+    subscript(safe range: PartialRangeThrough<Int>) -> String {
+        guard !base.isEmpty else { return "" }
+        let upper = min(base.count - 1, range.upperBound)
+        let startIndex = base.startIndex
+        let endIndex   = base.index(base.startIndex, offsetBy: upper)
+        return String(base[startIndex...endIndex])
+    }
+
+    subscript(safe range: PartialRangeUpTo<Int>) -> String {
+        guard !base.isEmpty else { return "" }
+        let upper = min(base.count, range.upperBound)
+        guard upper > 0 else { return "" }
+        let startIndex = base.startIndex
+        let endIndex   = base.index(base.startIndex, offsetBy: upper)
+        return String(base[startIndex..<endIndex])
     }
 }

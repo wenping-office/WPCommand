@@ -6,6 +6,7 @@
 //
 
 import Photos
+import UIKit
 
 public extension WPSpace where Base: PHAsset {
     /// 转换成图片data

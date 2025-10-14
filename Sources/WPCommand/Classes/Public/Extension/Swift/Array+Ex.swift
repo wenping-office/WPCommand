@@ -238,6 +238,23 @@ public extension Array {
         return array
     }
     
+    /// 根据条件把相邻元素分组
+    /// - Parameter areEqual: 条件
+    /// - Returns: 结果
+    func wp_group(by areEqual: (Element, Element) -> Bool) -> [[Element]] {
+        var result: [[Element]] = []
+        
+        for item in self {
+            if let lastGroup = result.last, let last = lastGroup.last, areEqual(last, item) {
+                result[result.count - 1].append(item)
+            } else {
+                result.append([item])
+            }
+        }
+        
+        return result
+    }
+    
     /// 递归 注：非交叉递归 如果会交叉那么会死循环，向上递归的时候会做去重
     /// - Parameters:
     ///   - obj: 目标对象

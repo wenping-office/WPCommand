@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E9B73212E9DFC2D0054E5FD /* SegmentedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9B73202E9DFC2D0054E5FD /* SegmentedView.swift */; };
+		5EA7D4CA2E9E2F9500FB490E /* OtherExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D4C92E9E2F9500FB490E /* OtherExtension.swift */; };
+		5EA7D4CC2E9E2FED00FB490E /* DateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D4CB2E9E2FED00FB490E /* DateView.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -54,6 +57,9 @@
 		31F223C466D6825D9D7A498C /* Pods_WPCommand_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPCommand_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50728F6BA5CC1A11D0941E46 /* Pods-WPCommand_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPCommand_Tests.release.xcconfig"; path = "Target Support Files/Pods-WPCommand_Tests/Pods-WPCommand_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		55E2BC62C87BA4C8F1BBCC23 /* Pods-WPCommand_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPCommand_Example.release.xcconfig"; path = "Target Support Files/Pods-WPCommand_Example/Pods-WPCommand_Example.release.xcconfig"; sourceTree = "<group>"; };
+		5E9B73202E9DFC2D0054E5FD /* SegmentedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedView.swift; sourceTree = "<group>"; };
+		5EA7D4C92E9E2F9500FB490E /* OtherExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherExtension.swift; sourceTree = "<group>"; };
+		5EA7D4CB2E9E2FED00FB490E /* DateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* WPCommand_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WPCommand_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -239,6 +245,9 @@
 				7CB96AD42D1164F300ED6CD8 /* ProgressView */,
 				7CCDF8602D04755000C60675 /* PagesView.swift */,
 				7CB96AD72D1165C200ED6CD8 /* GradientLabel.swift */,
+				5E9B73202E9DFC2D0054E5FD /* SegmentedView.swift */,
+				5EA7D4C92E9E2F9500FB490E /* OtherExtension.swift */,
+				5EA7D4CB2E9E2FED00FB490E /* DateView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -467,17 +476,20 @@
 				7CB96AD32D11646000ED6CD8 /* LoginManager.swift in Sources */,
 				7CCDF8412D04391C00C60675 /* LanguageManager.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				5E9B73212E9DFC2D0054E5FD /* SegmentedView.swift in Sources */,
 				7CCDF86D2D04764C00C60675 /* BaseTableView.swift in Sources */,
 				7CCDF86E2D04764C00C60675 /* BaseVC.swift in Sources */,
 				7CCDF86F2D04764C00C60675 /* CircularGroup.swift in Sources */,
 				7CB96AD62D11651000ED6CD8 /* CircularProgressView.swift in Sources */,
 				7CCDF8702D04764C00C60675 /* BaseVM.swift in Sources */,
 				7CCDF8722D04764C00C60675 /* BaseNavVC.swift in Sources */,
+				5EA7D4CA2E9E2F9500FB490E /* OtherExtension.swift in Sources */,
 				7CCDF8742D04764C00C60675 /* BaseView.swift in Sources */,
 				7CCDF8752D04764C00C60675 /* BaseCollectionView.swift in Sources */,
 				7CCDF8772D04764C00C60675 /* BaseTableCell.swift in Sources */,
 				7CCDF8452D043EFF00C60675 /* Other.swift in Sources */,
 				8B7D4A0E26ABF1000075B40F /* TestUIController.swift in Sources */,
+				5EA7D4CC2E9E2FED00FB490E /* DateView.swift in Sources */,
 				7CCDF8432D043AF700C60675 /* ShareManager.swift in Sources */,
 				7CCDF8612D04755000C60675 /* PagesView.swift in Sources */,
 			);
@@ -630,7 +642,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZJ8YFM3RFM;
 				INFOPLIST_FILE = WPCommand/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.WPCommand-Exampl";
@@ -653,7 +665,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZJ8YFM3RFM;
 				INFOPLIST_FILE = WPCommand/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.WPCommand-Exampl";
