@@ -62,7 +62,7 @@ TODO: Add long description of the pod here.
      s.dependency 'RxCocoa'
 
 
-     s.prefix_header_contents = '#import "Bridge.h"'
-     s.prefix_header_contents = '#import "WPDateView.h"'
+    # s.prefix_header_contents = '#import "Bridge.h"'
+    # s.prefix_header_contents = '#import "WPDateView.h"'
      
 end

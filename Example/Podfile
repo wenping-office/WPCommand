@@ -6,9 +6,6 @@ target 'WPCommand_Example' do
   pod 'WPCommand', :path => '../Sources/'
   pod 'MJRefresh'
   pod 'Moya'
-  pod 'HandyJSON'
-#  pod 'IQKeyboardManagerSwift'
-#pod 'WPDebugTool', :path => '../../WPDebugTool'
 
   target 'WPCommand_Tests' do
     inherit! :search_paths
