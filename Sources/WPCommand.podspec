@@ -33,7 +33,7 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '12.0'
   # 源文件地址
   #  s.source_files = 'WPCommand/Classes/**/*'
-  s.source_files = 'WPCommand/Classes/Public/**/*'
+  s.source_files = 'WPCommand/**/*'
     
   # 是否支持arc
   s.requires_arc = true
@@ -48,10 +48,6 @@ TODO: Add long description of the pod here.
   # 依赖系统库
    s.frameworks = 'UIKit',
    'Photos',
-   'AssetsLibrary',
-   'MediaPlayer',
-   'CoreTelephony',
-   'AVFoundation',
    'Combine'
 
   

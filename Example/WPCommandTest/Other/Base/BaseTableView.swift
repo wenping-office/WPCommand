@@ -6,8 +6,7 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
+
 
 open class BaseTableView: UITableView {
     public override init(frame: CGRect, style: UITableView.Style) {
