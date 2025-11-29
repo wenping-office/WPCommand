@@ -10,15 +10,12 @@ import UIKit
 import SnapKit
 import WPCommand
 
-@available(iOS 13.0, *)
 class SegmentedView: BaseView {
     
     let maxWidth:CGFloat
     let itemSpacing:CGFloat
     let animateBlockViewHeight:CGFloat
     let contentPadding:CGFloat
-
-    let backImageView = UIImageView()
 
     let animateBlockView = UIView()
     
@@ -117,7 +114,6 @@ class SegmentedView: BaseView {
         stackView.spacing = itemSpacing
         stackView.distribution = .fillEqually
 
-        addSubview(backImageView)
         addSubview(animateBlockView)
         addSubview(stackView)
         
@@ -125,10 +121,6 @@ class SegmentedView: BaseView {
     
     override func initSubViewLayout() {
         super.initSubViewLayout()
-        
-        backImageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         
         stackView.snp.makeConstraints { make in
             make.left.top.equalTo(contentPadding)
@@ -144,7 +136,6 @@ class SegmentedView: BaseView {
     }
 }
 
-@available(iOS 13.0, *)
 extension SegmentedView{
     struct Item {
         let title:String

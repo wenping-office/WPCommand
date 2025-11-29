@@ -104,7 +104,7 @@ public extension WPSpace where Base: UIView {
         return width * 0.5
     }
     
-    var wp_midY: CGFloat {
+    var midY: CGFloat {
         return height * 0.5
     }
     
@@ -131,6 +131,13 @@ public extension WPSpace where Base: UIView {
     /// 子视图是否全部隐藏
     var subViewsAllHidden: Bool {
         return !base.subviews.contains(where: { !$0.isHidden})
+    }
+    
+    /// 在目标视图中的坐标
+    /// - Parameter targetView: 目标视图
+    /// - Returns: 结果
+    func frame(in targetView:UIView) -> CGRect {
+        return base.convert(bounds, to: targetView)
     }
     
     ///获取当前视图相对 屏幕的frame
@@ -347,7 +354,7 @@ public extension WPSpace where Base: UIView {
     func showPlaceholder(offSetY: CGFloat = 0,
                          config: @escaping (WPPlaceholderView) -> Void)
     {
-        WPGCD.main_Async {
+        DispatchQueue.main.async {
             let tag = 10086
             var contetnView: UIView?
             // 先查询是否有占位视图
@@ -379,7 +386,7 @@ public extension WPSpace where Base: UIView {
     
     /// 移除占位视图
     func removePlaceholder() {
-        WPGCD.main_Async {
+        DispatchQueue.main.async {
             let tag = 10086
             let contentView = base.subviews.wp.elementFirst(where: { $0.tag == tag})
             contentView?.removeFromSuperview()
@@ -389,7 +396,7 @@ public extension WPSpace where Base: UIView {
     /// 显示加载小菊花
     /// - Parameter show: 是否显示
     func loading(is show: Bool, offSetY: CGFloat = 0) {
-        WPGCD.main_Async {
+        DispatchQueue.main.async {
             let tag = 10087
             let resualt = base.subviews.contains(where: { $0.tag == tag})
             if show, !resualt {
@@ -415,7 +422,7 @@ public extension WPSpace where Base: UIView {
     ///   - str: 内容
     ///   - delaySecond: 延迟时间
     func toast(_ str: NSAttributedString?, _ delaySecond: DispatchTime = .now() + 2, offSetY: CGFloat = 0) {
-        WPGCD.main_Async {
+        DispatchQueue.main.async {
             let toastView = WPToastView()
             toastView.titleL.attributedText = str
             toastView.alpha = 0
@@ -822,6 +829,13 @@ public extension WPSpace where Base: UIView{
         base.snp.makeConstraints { make in
             make.height.equalTo(height).priority(priority)
         }
+        return self
+    }
+    
+    @discardableResult
+    func layoutMargins(_ margins:UIEdgeInsets) ->Self{
+        base.layoutMargins = margins
+       (base as? UIStackView)?.isLayoutMarginsRelativeArrangement = true
         return self
     }
     

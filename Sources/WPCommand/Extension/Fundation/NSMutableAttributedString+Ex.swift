@@ -37,18 +37,6 @@ public extension WPSpace where Base == String.SubSequence{
     }
 }
 
-public extension WPSpace where Base == UIImage{
-    
-    /// 可变富文本
-    func attributed(_ cgRect:CGRect = .zero) -> WPSpace<NSMutableAttributedString> {
-        var newRect = cgRect
-        if cgRect == .zero{
-            newRect = .init(origin: .zero, size: base.size)
-        }
-        return "".wp.attributed.image(base, bounds: newRect, at: 0)
-    }
-}
-
 public extension WPSpace where Base == String{
     /// 可变富文本
     var attributed: WPSpace<NSMutableAttributedString> {
@@ -62,6 +50,19 @@ public extension WPSpace where Base == NSAttributedString{
         return .init(.init(attributedString: base))
     }
 }
+
+public extension WPSpace where Base == UIImage{
+    
+    /// 可变富文本
+    func attributed(_ cgRect:CGRect = .zero) -> WPSpace<NSMutableAttributedString> {
+        var newRect = cgRect
+        if cgRect == .zero{
+            newRect = .init(origin: .zero, size: base.size)
+        }
+        return "".wp.attributed.image(base, bounds: newRect, at: 0)
+    }
+}
+
 
 public extension WPSpace where Base: NSMutableAttributedString {
     /// 快速设置行间距
@@ -127,34 +128,33 @@ public extension WPSpace where Base: NSMutableAttributedString {
     /// 添加一个字符串
     /// - Parameter string: 字符串
     /// - Returns: 结果
-    func append(_ string: String) -> Self {
-        base.append(NSMutableAttributedString(string: string))
+    func append(_ string: String?) -> Self {
+        if let str = string{
+            base.append(NSMutableAttributedString(string: str))
+        }
         return self
     }
 
     /// 添加一个属性字符串
     /// - Parameter string: 属性字符串
     /// - Returns: 结果
-    func append(_ string: NSMutableAttributedString) -> Self {
-        base.append(string)
+    func append(mAttStr: NSMutableAttributedString?) -> Self {
+        if let str = mAttStr{
+            base.append(str)
+        }
         return self
     }
     
     /// 添加一个属性字符串
     /// - Parameter string: 属性字符串
     /// - Returns: 结果
-    func append(_ string: WPSpace<NSMutableAttributedString>) -> Self {
-        base.append(string.base)
+    func append(attStr: NSAttributedString?) -> Self {
+        if let str = attStr{
+            base.append(str)
+        }
         return self
     }
-    
-    /// 添加一个属性字符串
-    /// - Parameter string: 属性字符串
-    /// - Returns: 结果
-    func append(_ string: WPSpace<NSAttributedString>) -> Self {
-        base.append(string.base)
-        return self
-    }
+
     
     /// 获取文本size
     /// - Parameters:
@@ -165,11 +165,11 @@ public extension WPSpace where Base: NSMutableAttributedString {
               options:NSStringDrawingOptions) -> CGSize{
         return  base.string.boundingRect(with: maxSize,
                                          options: options,
-                                         attributes: base.wp.get, context: nil).size
+                                         attributes: base.wp.allAttributes(), context: nil).size
     }
     
     /// 获取富文本全部属性
-    var get: [NSAttributedString.Key : Any] {
+    func allAttributes() -> [NSAttributedString.Key : Any] {
         guard base.string.count > 0 else { return [:] }
         return base.attributes(at: 0, effectiveRange: nil)
     }
@@ -395,7 +395,7 @@ public extension WPSpace where Base: NSMutableAttributedString {
         return self
     }
 
-    /// 以基线为准便宜
+    /// 以基线为准偏移
     /// - Parameters:
     ///   - value: 值
     ///   - range: 范围

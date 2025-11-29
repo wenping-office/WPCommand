@@ -108,6 +108,125 @@ public extension WPSpace where Base: UIImage {
         UIGraphicsEndImageContext()
         return roundedImage
     }
+    
+    /// 旋转图片（度数）
+    /// - Parameters:
+    ///   - degrees: 旋转角度（度）
+    ///   - fit: 是否扩大画布以完整容纳旋转后的图片
+    ///   - scaleFactor: 图片放大比例
+    ///   - backgroundColor: 背景色，nil 表示透明
+    ///   - opaque: renderer 是否不透明
+    /// - Returns: 旋转后的 UIImage
+    func rotated(byDegrees degrees: CGFloat,
+                 fit: Bool = true,
+                 scaleFactor: CGFloat = 1.0,
+                 backgroundColor: UIColor? = nil,
+                 opaque: Bool = false) -> UIImage
+    {
+        /// 归一化角度到 [0, 360)
+        func normalizedDegrees(_ degrees: CGFloat) -> CGFloat {
+            let result = degrees.truncatingRemainder(dividingBy: 360)
+            return result >= 0 ? result : result + 360
+        }
+        
+        let normalized = normalizedDegrees(degrees)
+        let radians = normalized * .pi / 180
+        return rotated(byRadians: radians,
+                       fit: fit,
+                       scaleFactor: scaleFactor,
+                       backgroundColor: backgroundColor,
+                       opaque: opaque)
+    }
+    
+    /// 旋转图片 弧度
+    /// - Parameters:
+    ///   - degrees: 旋转角度（度）
+    ///   - fit: 是否扩大画布以完整容纳旋转后的图片
+    ///   - scaleFactor: 图片放大比例
+    ///   - backgroundColor: 背景色，nil 表示透明
+    ///   - opaque: renderer 是否不透明
+    /// - Returns: 旋转后的 UIImage
+    func rotated(byRadians radians: CGFloat,
+                 fit: Bool = true,
+                 scaleFactor: CGFloat = 1.0,
+                 backgroundColor: UIColor? = nil,
+                 opaque: Bool = false) -> UIImage
+    {
+        // 原始尺寸按 scaleFactor 放大
+        let originalSize = CGSize(width: base.size.width * scaleFactor,
+                                  height: base.size.height * scaleFactor)
+        
+        // 旋转后所需画布大小
+        let rect = CGRect(origin: .zero, size: originalSize)
+        let rotatedRect = rect.applying(CGAffineTransform(rotationAngle: radians))
+        let requiredSize = fit ? CGSize(width: abs(rotatedRect.width),
+                                        height: abs(rotatedRect.height)) : originalSize
+        
+        // 设置 renderer
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = base.scale
+        format.opaque = opaque
+        
+        let renderer = UIGraphicsImageRenderer(size: requiredSize, format: format)
+        return renderer.image { context in
+            let ctx = context.cgContext
+            
+            // 填充背景（可选）
+            if let bg = backgroundColor {
+                ctx.setFillColor(bg.cgColor)
+                ctx.fill(CGRect(origin: .zero, size: requiredSize))
+            }
+            
+            // 移动坐标原点到画布中心
+            ctx.translateBy(x: requiredSize.width / 2, y: requiredSize.height / 2)
+            ctx.rotate(by: radians)
+            
+            // 绘制图片，注意坐标偏移
+            let drawRect = CGRect(x: -originalSize.width / 2,
+                                  y: -originalSize.height / 2,
+                                  width: originalSize.width,
+                                  height: originalSize.height)
+            base.draw(in: drawRect)
+        }
+    }
+    
+    /// 水平翻转（左右翻转）
+    func flippedHorizontally() -> UIImage {
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = base.scale
+        format.opaque = false
+        
+        let renderer = UIGraphicsImageRenderer(size: base.size, format: format)
+        return renderer.image { context in
+            let ctx = context.cgContext
+            
+            // 左右翻转 x 轴
+            ctx.translateBy(x: base.size.width, y: 0)
+            ctx.scaleBy(x: -1, y: 1)
+            
+            // 绘制原图
+            base.draw(in: CGRect(origin: .zero, size: base.size))
+        }
+    }
+    
+    /// 垂直翻转（上下镜像）
+    func flippedVertically() -> UIImage {
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = base.scale
+        format.opaque = false
+        
+        let renderer = UIGraphicsImageRenderer(size: base.size, format: format)
+        return renderer.image { context in
+            let ctx = context.cgContext
+            
+            // 上下翻转 y 轴
+            ctx.translateBy(x: 0, y: base.size.height)
+            ctx.scaleBy(x: 1, y: -1)
+            
+            // 绘制原图
+            base.draw(in: CGRect(origin: .zero, size: base.size))
+        }
+    }
 }
 
 public extension WPSpace where Base: UIImage{
@@ -206,7 +325,7 @@ public extension WPSpace where Base: UIImage {
                     let request = PHAssetCollectionChangeRequest(for: collection)
                     request?.addAssets(arr as NSFastEnumeration)
                 } completionHandler: { isSuccess, error in
-                    WPGCD.main_Async {
+                    DispatchQueue.main.async {
                         complete?(isSuccess, asset, error)
                     }
                 }

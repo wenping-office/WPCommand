@@ -100,7 +100,7 @@ class CircularProgressView: BaseView {
                     progress = 0.0
                     self.timeBag = DisposeBag()
                     
-                    WPGCD.main_asyncAfter(.now() + 0.2, task: {[weak self] in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {[weak self] in
                         self?.start()
                     })
                 }

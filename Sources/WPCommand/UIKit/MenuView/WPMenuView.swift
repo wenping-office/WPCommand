@@ -229,8 +229,8 @@ public extension WPMenuView{
                 contentView.selectRow(at: IndexPath.init(row: 0, section: 0), animated: animated, scrollPosition: position)
             }
         }
-        WPGCD.main_asyncAfter(.now() + 0.2, task: {[weak self] in
-            self?.contentView.isUserInteractionEnabled = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+            self.contentView.isUserInteractionEnabled = true
         })
     }
     

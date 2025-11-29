@@ -148,13 +148,26 @@ public extension WPSpace where Base == String {
             let range = of(".")
             let intStr = base.wp[safe: 0..<range.location]
             let doubleStr = base.wp[safe: range.location..<base.count - range.location]
-            return intStr.wp.attributed.font(intFont).foregroundColor(intColor).append(doubleStr.wp.attributed.font(doubleFont).foregroundColor(doubleColor)).value()
+            return intStr.wp.attributed.font(intFont).foregroundColor(intColor).append(mAttStr:doubleStr.wp.attributed.font(doubleFont).foregroundColor(doubleColor).value()).value()
         }else{
             return attributed.font(intFont).foregroundColor(intColor).value()
         }
     }
-
 }
+
+public extension WPSpace where Base == String{
+    
+    /// 加载本地多语言
+    /// - Parameters:
+    ///   - comment: 评论
+    ///   - arguments: 参数
+    /// - Returns: 多语言String
+    func localized(comment: String = "", _ arguments: CVarArg...) -> String {
+        let format = NSLocalizedString(base, comment: comment)
+        return String(format: format, arguments: arguments)
+    }
+}
+
 
 public extension WPSpace where Base == String{
     /// base64字符串转图片
@@ -354,7 +367,7 @@ public extension WPSpace where Base == String {
     ///   - timeZone: 时区 默认UTC
     /// - Returns: 日期
     func date(_ format: String,
-              timeZone: TimeZone? = .init(identifier: "UTC")) -> Date?
+              timeZone: TimeZone? = nil) -> Date?
     {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = timeZone
@@ -433,7 +446,7 @@ public extension WPSpace where Base == String {
         return base.range(of: other, options: options) != nil
     }
     
-    /// 根据正则表达法筛选符合的子
+    /// 根据正则表达法筛选符合的
     /// - Parameters:
     ///   - regex: 正则
     ///   - options: 忽略大小写           `.caseInsensitive`

@@ -48,7 +48,7 @@ public extension WPSpace where Base: PHAssetCollection {
             identifier = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: title).placeholderForCreatedAssetCollection.localIdentifier
         }, completionHandler: { _, error in
             collection = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [identifier], options: nil).firstObject
-            WPGCD.main_Async {
+            DispatchQueue.main.async {
                 if collection != nil {
                     success(collection!, identifier)
                 } else {

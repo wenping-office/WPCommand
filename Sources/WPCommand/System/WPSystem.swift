@@ -269,95 +269,6 @@ public extension WPSystem {
 }
 
 public extension WPSystem {
-    /// 打开系统设置页面
-    static func pushSystemController() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else {
-            return
-        }
-        
-        if #available(iOS 10.0, *) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        } else {
-            UIApplication.shared.openURL(url)
-        }
-    }
-    
-    /// 拨打电话
-    /// - Parameters:
-    ///   - phone: 电话
-    ///   - failed: 拨打失败
-    static func call(phone: String?,
-                     failed: (()->Void)? = nil) {
-        
-        let newPhone = phone ?? ""
-
-        let phoneStr = "tel://\(newPhone.wp.filterSpace)"
-        if let phoneURL = URL(string: phoneStr), UIApplication.shared.canOpenURL(phoneURL),newPhone.count > 0 {
-            UIApplication.shared.open(phoneURL,completionHandler: { res in
-                if(!res){
-                    failed?()
-                }
-            })
-        } else {
-            failed?()
-        }
-    }
-    
-    /// 判断是否开启定位权限
-    /// - Parameters:
-    ///   - open: 开启
-    ///   - close: 关闭
-    /// - Returns: 是否开启
-    @discardableResult
-    static func isOpenLocation(open: (()->Void)? = nil, close: (()->Void)? = nil)->Bool {
-        let authStatus = CLLocationManager.authorizationStatus()
-        let resault = (authStatus != .restricted && authStatus != .denied)
-        if resault {
-            open?()
-        } else {
-            close?()
-        }
-        return resault
-    }
-    
-    /// 检测是否开启定位权限、如果没有开启权限请求授权并且继续执行闭包任务
-    /// - Parameters:
-    ///   - open: 开启时执行的任务
-    ///   - close: 关闭时执行任务
-//    static func isOpenLocationAutoTask(open: (()->Void)? = nil, close: (()->Void)? = nil) {
-//        
-//        let authStatus = CLLocationManager.authorizationStatus()
-////        let resault = (authStatus != .restricted && authStatus != .denied)
-//        
-//        func requestLocation(){
-//            
-//            locationManager.requestWhenInUseAuthorization()
-//
-//            locationManager.wp.delegate.didChangeAuthorizationBlock = { _, state in
-//                locationManager.wp.disposeBag = DisposeBag()
-//                if state == .notDetermined { return }
-//                WPGCD.main_Async {
-//                    if state == .authorizedAlways || state == .authorizedWhenInUse {
-//                        open?()
-//                    } else {
-//                        close?()
-//                    }
-//                }
-//                locationManager.wp.delegate.didChangeAuthorizationBlock = nil
-//            }
-//        }
-//
-//        switch authStatus {
-//        case .notDetermined:
-//            requestLocation()
-//        case .restricted,.denied:
-//            close?()
-//        default:
-//            open?()
-//        }
-//
-//    }
-    
     /// 检测是否开启相册权限
     /// - Parameters:
     ///   - open: 开启
@@ -371,7 +282,7 @@ public extension WPSystem {
         if authStatus == .notDetermined {
             if #available(iOS 14, *) {
                 PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
-                    WPGCD.main_Async {
+                    DispatchQueue.main.async {
                         if status == .authorized || status == .limited {
                             open?()
                         } else {
@@ -381,7 +292,7 @@ public extension WPSystem {
                 }
             } else {
                 PHPhotoLibrary.requestAuthorization { status in
-                    WPGCD.main_Async {
+                    DispatchQueue.main.async {
                         if status == .authorized {
                             open?()
                         } else {
@@ -415,7 +326,7 @@ public extension WPSystem {
             open?()
         } else if authStatus == .notDetermined {
             AVCaptureDevice.requestAccess(for: .video, completionHandler: { granted in
-                WPGCD.main_Async {
+                DispatchQueue.main.async {
                     if granted {
                         open?()
                         
@@ -429,41 +340,5 @@ public extension WPSystem {
         }
         return resault
     }
-    
-//    /// 是否打开网络
-//    /// - Parameters:
-//    ///   - open: 打开
-//    ///   - close: 关闭
-//    @discardableResult
-//    static func isOpenNet(open: (()->Void)? = nil, close: (()->Void)? = nil)->Bool {
-//        let mainThreeOpen = {
-//            WPGCD.main_Async {
-//                open?()
-//            }
-//        }
-//        
-//        let mainThreeClose = {
-//            WPGCD.main_Async {
-//                close?()
-//            }
-//        }
-//        
-//        let cellularData = CTCellularData()
-//        cellularData.cellularDataRestrictionDidUpdateNotifier = { state in
-//            if state == CTCellularDataRestrictedState.restrictedStateUnknown || state == CTCellularDataRestrictedState.notRestricted {
-//                mainThreeClose()
-//            } else {
-//                mainThreeOpen()
-//            }
-//        }
-//        let state = cellularData.restrictedState
-//        
-//        if state == CTCellularDataRestrictedState.restrictedStateUnknown || state == CTCellularDataRestrictedState.notRestricted {
-//            mainThreeClose()
-//            return false
-//        } else {
-//            mainThreeOpen()
-//            return true
-//        }
-//    }
+
 }

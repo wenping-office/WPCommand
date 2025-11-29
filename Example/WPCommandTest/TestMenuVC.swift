@@ -85,7 +85,7 @@ class TestMenuVC: WPBaseVC, WPMenuViewDataSource {
 
         
         menuView.tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
-            WPGCD.main_asyncAfter(.now() + 1.5, task: {[weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {[weak self] in
                 self?.menuView.tableView.mj_header?.endRefreshing()
             })
         })
@@ -147,7 +147,7 @@ class TestMenuVC2: WPBaseVC,WPMenuBodyViewProtocol,UITableViewDelegate, UITableV
         tableView.backgroundColor = .wp.random
         
         tableView.mj_header = MJRefreshNormalHeader.init(refreshingBlock: {
-            WPGCD.main_asyncAfter(.now() + 3, task: {[weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {[weak self] in
                 self?.tableView.mj_header?.endRefreshing()
             })
         })

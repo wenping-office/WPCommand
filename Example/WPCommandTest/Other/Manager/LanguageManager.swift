@@ -39,6 +39,12 @@ extension String {
         }
         return newStr as String
     }
+    
+    // 带注释的本地化替换
+    func localized(comment: String = "", _ arguments: CVarArg...) -> String {
+        let format = NSLocalizedString(self, comment: comment)
+        return String(format: format, arguments: arguments)
+    }
 }
 
 extension Notification.Name{

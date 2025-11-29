@@ -18,7 +18,7 @@ public extension WPSpace where Base: PHAsset {
     {
         let imageManager = PHImageManager.default()
         imageManager.requestImageData(for: base, options: option) { data, str, orientation, info in
-            WPGCD.main_Async {
+            DispatchQueue.main.async {
                 resultHandler(data, str, orientation, info)
             }
         }
@@ -37,7 +37,8 @@ public extension WPSpace where Base: PHAsset {
     {
         let imageManager = PHImageManager.default()
         imageManager.requestImage(for: base, targetSize: size, contentMode: contentMode, options: option) { img, info in
-            WPGCD.main_Async {
+            
+            DispatchQueue.main.async {
                 resultHandler(img, info)
             }
         }
@@ -67,7 +68,7 @@ public extension WPSpace where Base: PHAsset {
                           complete: @escaping (UIImage?, [AnyHashable: Any]?)->Void)
     {
         image(in: size, contentMode: contentModel, option: nil) { img, info in
-            WPGCD.main_Async {
+            DispatchQueue.main.async {
                 complete(img, info)
             }
         }
@@ -79,7 +80,7 @@ public extension WPSpace where Base: PHAsset {
         PHPhotoLibrary.shared().performChanges {
             PHAssetChangeRequest.deleteAssets([base] as NSFastEnumeration)
         } completionHandler: { success, error in
-            WPGCD.main_Async {
+            DispatchQueue.main.async {
                 complete(success, error)
             }
         }

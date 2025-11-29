@@ -99,7 +99,7 @@ open class BaseVC: WPBaseVC {
             }
             label.superview?.layoutIfNeeded()
         },completion: { _ in
-            WPGCD.main_asyncAfter(.now() + 1.4, task: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4, execute: {
                 UIView.animate(withDuration: 0.3, animations: {
                     label.alpha = 0
                 },completion: { _ in

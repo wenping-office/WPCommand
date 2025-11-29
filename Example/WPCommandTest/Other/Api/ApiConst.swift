@@ -37,12 +37,13 @@ public extension Dictionary {
     ///   - value: 要设置的值（可选，如果是 nil 则移除 key）
     ///   - key: 字典 key
     @discardableResult
-    mutating func setSafe(_ value: Value?, forKey key: Key) -> Self {
+    func setSafe(_ value: Value?, forKey key: Key) -> Self {
+        var new = self
         if let value = value {
-            self[key] = value
+            new[key] = value
         } else {
-            self.removeValue(forKey: key)
+            new.removeValue(forKey: key)
         }
-        return self
+        return new
     }
 }

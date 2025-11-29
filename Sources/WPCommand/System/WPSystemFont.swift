@@ -6,6 +6,23 @@
 //
 
 import UIKit
+
+public extension BinaryFloatingPoint{
+    /// 获取系统字体font
+    /// - Parameter fontName: 系统名称
+    func font(_ fontName:SystemFontName) -> UIFont{
+        return .init(name: fontName.rawValue, size: CGFloat(self)) ?? .systemFont(ofSize: CGFloat(self))
+    }
+}
+
+public extension BinaryInteger{
+    /// 获取系统字体font
+    /// - Parameter fontName: 系统名称
+    func font(_ fontName:SystemFontName) -> UIFont{
+        return .init(name: fontName.rawValue, size: CGFloat(self)) ?? .systemFont(ofSize: CGFloat(self))
+    }
+}
+
 public enum SystemFontName:String,CaseIterable{
     case AcademyEngravedLetPlain
     case AlNile
@@ -309,75 +326,3 @@ public enum SystemFontName:String,CaseIterable{
     case Zapfino
 }
 
-
-public protocol WPSystemFont{
-    func font(_ fontName:SystemFontName) -> UIFont?
-}
-
-extension Int: WPSystemFont {
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension Int8: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension Int16: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension Int32: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension Int64: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension UInt: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension UInt8: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension UInt16: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension UInt32: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension UInt64: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension CGFloat: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-extension Double: WPSystemFont{
-    public func font(_ fontName: SystemFontName) -> UIFont? {
-        return .init(name: fontName.rawValue, size: CGFloat(self))
-    }
-}
-
-
-extension WPSpace where Base == WPSystemFont{
-    func font(_ fontName:SystemFontName) -> UIFont {
-        return base.font(fontName) ?? .systemFont(ofSize: 10)
-    }
-}
