@@ -76,25 +76,25 @@ class ExploreVideoListVC: BaseVC {
     
     override func bindViewModel() {
 
-        // 加载完下一页 刷新cell
-        listSotre.publisher.pageData.filter({ !$0.isEmpty})
-            .delay(for: .seconds(0.2), scheduler: DispatchQueue.main)
-            .sink(receiveValue: {[weak self] value in
-            guard let self else { return }
-                let currentCount = collectionView.numberOfItems(inSection: 0)
-                if currentCount == self.listSotre.data.count { return }
-                
-                let startIndex = self.listSotre.data.count - value.count
-                let endIndex = self.listSotre.data.count - 1
-                if startIndex != endIndex && startIndex != 0{
-                    let indexPaths = (startIndex...endIndex).map { IndexPath(item: $0, section: 0) }
-                    
-                    collectionView.performBatchUpdates({
-                        self.collectionView.insertItems(at: indexPaths)
-                    })
-                }
-                
-            }).store(in: &wp.cancellables.set)
+//        // 加载完下一页 刷新cell
+//        listSotre.publisher.pageData.filter({ !$0.isEmpty})
+//            .delay(for: .seconds(0.2), scheduler: DispatchQueue.main)
+//            .sink(receiveValue: {[weak self] value in
+//            guard let self else { return }
+//                let currentCount = collectionView.numberOfItems(inSection: 0)
+//                if currentCount == self.listSotre.data.count { return }
+//                
+//                let startIndex = self.listSotre.data.count - value.count
+//                let endIndex = self.listSotre.data.count - 1
+//                if startIndex != endIndex && startIndex != 0{
+//                    let indexPaths = (startIndex...endIndex).map { IndexPath(item: $0, section: 0) }
+//                    
+//                    collectionView.performBatchUpdates({
+//                        self.collectionView.insertItems(at: indexPaths)
+//                    })
+//                }
+//                
+//            }).store(in: &wp.cancellables.set)
     }
     
     override func observeSubViewEvent() {

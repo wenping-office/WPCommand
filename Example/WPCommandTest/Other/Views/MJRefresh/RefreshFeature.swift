@@ -165,8 +165,8 @@ struct RefreshFeature<T:RefreshFeatureDataSource> {
                     await send(.resetLoadCount(letState.loadCount + 1))
                     
                     // 解析结果
-                    switch resualt {
-                    case .success(let model):
+//                    switch resualt {
+//                    case .success(let model):
 //                        // 如果是首页直接替换data
 //                        if direction == .header {
 //                            await send(.resetData(model.pageList()))
@@ -215,9 +215,9 @@ struct RefreshFeature<T:RefreshFeatureDataSource> {
 //                        if loadType == .searchExplore && model.pageList().isEmpty && (letState.page.page == 1 || letState.lastId == "0"){
 //                            await send(.loadRecommand)
 //                        }
-                    case .failure(let error):
-                        await send(.loadFailure(error))
-                    }
+//                    case .failure(let error):
+//                        await send(.loadFailure(error))
+//                    }
                 }
             case .endRefresh(let direction):
                 state.isShowLoading = false
