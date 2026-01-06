@@ -130,11 +130,7 @@ public extension BaseVC{
         public let rightView = UIStackView()
         
         public let lineView = UIView().wp.isHidden(true).do { view in
-            if #available(iOS 13.0, *) {
-                view.backgroundColor = .separator
-            } else {
-                view.backgroundColor = .black
-            }
+            view.backgroundColor = .separator
         }.value()
         
         public let backgroundImageView = UIImageView()

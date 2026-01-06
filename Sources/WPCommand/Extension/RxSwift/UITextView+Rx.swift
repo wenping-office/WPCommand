@@ -11,7 +11,7 @@ import RxSwift
 public extension WPSpace where Base: UITextView {
     @discardableResult
     func placeholder(_ placeholder:String?,
-                     padding:UIEdgeInsets = .init(8, 0, 8, 0),
+                     padding:UIEdgeInsets = .init(top: 8, left: 0, bottom: 8, right: 0),
                      config:((UILabel)->Void)? = nil) -> Self {
         
         let tag = -1999888

@@ -8,7 +8,6 @@
 import RxSwift
 import Combine
 
-@available(iOS 13.0, *)
 public extension ObservableType {
     /// 转换为 Combine 的 Publisher（忽略错误）
     func asPublisher() -> AnyPublisher<Element, Never> {

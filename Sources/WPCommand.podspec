@@ -30,7 +30,7 @@ TODO: Add long description of the pod here.
   s.swift_version='5.0'
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   # 最低支持的系统版本
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '13.0'
   # 源文件地址
   #  s.source_files = 'WPCommand/Classes/**/*'
   s.source_files = 'WPCommand/**/*'

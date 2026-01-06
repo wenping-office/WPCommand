@@ -46,7 +46,6 @@ public struct WPRxBehavior<Value> {
     }
 }
 
-@available(iOS 13.0, *)
 /// CombineCurrentValueSubject 策略
 @propertyWrapper
 public struct WPBehavior<Value> {
@@ -113,7 +112,6 @@ public struct WPRxPreference<Value: Codable & WPSpaceProtocol> {
 }
 
 
-@available(iOS 13.0, *)
 /// UserDefault 缓存策略
 @propertyWrapper
 public struct WPPreference<Value: Codable & WPSpaceProtocol> {
@@ -264,7 +262,6 @@ public struct WPRxSecurePreference<Value: Codable & WPSpaceProtocol> {
 }
 
 /// Keychain 缓存策略
-@available(iOS 13.0, *)
 @propertyWrapper
 public struct WPSecurePreference<Value: Codable> {
 

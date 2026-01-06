@@ -136,7 +136,7 @@ public extension Array {
     ///   - newElement: 要替换的新元素
     /// - Returns: 是否成功替换
     @discardableResult
-    mutating func replaceLast(where condition: (Element) -> Bool, with newElement: Element) -> Bool {
+    mutating func wp_replaceLast(where condition: (Element) -> Bool, with newElement: Element) -> Bool {
         if let lastIdx = indices.reversed().first(where: { condition(self[$0]) }) {
             replaceSubrange(lastIdx...lastIdx, with: CollectionOfOne(newElement))
             return true

@@ -41,8 +41,8 @@ public extension WPSpace where Base: UIView {
     /// 快速创建内边距
     /// - Parameter customLayout: 自定义布局
     /// - Returns: 结果
-    func padding(customLayout: @escaping ((Base) -> Void)) -> WPPaddingView<Base> {
-        return WPPaddingView(base, customLayout: customLayout)
+    func padding(custom: @escaping ((Base) -> Void)) -> WPPaddingView<Base> {
+        return WPPaddingView(base, custom: custom)
     }
 }
 
@@ -143,7 +143,8 @@ public extension WPSpace where Base: UIView {
     ///获取当前视图相对 屏幕的frame
     /// - Returns: 相对屏幕的rect
     func convertFrameToScreen() -> CGRect {
-        if let keyWindow = UIApplication.shared.keyWindow, let newBounds = base.superview?.convert(base.frame, to: keyWindow) {
+        if let keyWindow = UIApplication.wp.keyWindow,
+           let newBounds = base.superview?.convert(base.frame, to: keyWindow) {
             return newBounds
         }
         var x: CGFloat = 0
@@ -179,6 +180,83 @@ public extension WPSpace where Base: UIView {
         
         base.removeConstraints(base.constraints)
     }
+    
+    /// 固定宽度，计算 Auto Layout 后的高度
+    /// - Parameter maxWidth: 最大宽度
+    /// - Returns: 结果
+    func layoutMaxWidthMinSize(maxWidth: CGFloat? = nil) -> CGSize {
+
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(base)
+
+        base.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            base.topAnchor.constraint(equalTo: container.topAnchor),
+            base.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            base.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            base.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+
+        if let maxWidth {
+            container.widthAnchor
+                .constraint(equalToConstant: maxWidth)
+                .isActive = true
+        }
+
+        let targetSize = CGSize(
+            width: maxWidth ?? UIView.layoutFittingCompressedSize.width,
+            height: UIView.layoutFittingCompressedSize.height
+        )
+
+        let size = container.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: maxWidth != nil ? .required : .fittingSizeLevel,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+
+        return size
+    }
+    
+    /// 固定高度，计算 Auto Layout 后的宽度
+    /// - Parameter maxHeight: 最大高度
+    /// - Returns: 结果
+    func layoutMaxHeightMinSize(maxHeight: CGFloat? = nil) -> CGSize {
+
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(base)
+
+        base.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            base.topAnchor.constraint(equalTo: container.topAnchor),
+            base.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            base.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            base.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+
+        if let maxHeight {
+            container.heightAnchor
+                .constraint(equalToConstant: maxHeight)
+                .isActive = true
+        }
+
+        let targetSize = CGSize(
+            width: UIView.layoutFittingCompressedSize.width,
+            height: maxHeight ?? UIView.layoutFittingCompressedSize.height
+        )
+
+        let size = container.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .fittingSizeLevel,
+            verticalFittingPriority: maxHeight != nil ? .required : .fittingSizeLevel
+        )
+
+        return size
+    }
+
+
 }
 
 
@@ -203,29 +281,6 @@ public extension WPSpace where Base: UIView {
                                         constant: constant)
         base.addConstraint(layout)
         return layout
-    }
-    
-    /// 选择性圆角处理，需要设置frame后调用，如果是约束需要layout后调用才能生效
-    /// - Parameters:
-    ///   - corners: 原角点
-    ///   - radius: 圆角弧度
-    ///   - force: 是否强制 true的话在自身宽高都等于0的时候会调用一次layoutIfNeed
-    func corner(_ corners: [UIRectCorner], radius: CGFloat, force: Bool = false) {
-        if corners.count <= 0 { return }
-        
-        if force, bounds.size == .zero {
-            base.layoutIfNeeded()
-        }
-        
-        let maskPath = UIBezierPath.wp.corner(corners, radius: radius, in: bounds)
-        
-        var maskLayer = base.layer.mask
-        if base.layer.mask == nil {
-            maskLayer = CAShapeLayer()
-        }
-        maskLayer!.frame = bounds
-        (maskLayer as? CAShapeLayer)?.path = maskPath.cgPath
-        base.layer.mask = maskLayer
     }
     
     /// 设置边框
@@ -624,7 +679,6 @@ public extension WPSpace where Base: UIView {
         return self
     }
     
-    @available(iOS 13.0, *)
     @discardableResult
     func transform3D(_ transform3D: CATransform3D) -> Self {
         base.transform3D = transform3D

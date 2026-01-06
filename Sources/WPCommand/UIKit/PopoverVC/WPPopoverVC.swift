@@ -71,15 +71,15 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
     var arrowEdge:UIEdgeInsets {
         switch popoverPresentationController?.permittedArrowDirections ?? .any {
         case .up:
-            return .init(12, 0, 0, 0)
+            return .init(top: 12, left: 0, bottom: 0, right: 0)
         case .left:
-            return .init(0, 12, 0, 0)
+            return .init(top: 0, left: 12, bottom: 0, right: 0)
         case .down:
-            return .init(0, 0, 12, 0)
+            return .init(top: 0, left: 0, bottom: 12, right: 0)
         case .right:
-            return .init(0, 0, 0, 12)
+            return .init(top: 0, left: 0, bottom: 0, right: 12)
         default:
-            return .init(12)
+            return .init(top: 12, left: 12, bottom: 12, right: 12)
         }
     }
     
@@ -95,7 +95,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
     public class func show(in targetView:UIView,
                            items:[Item],
                            arrowDirections:UIPopoverArrowDirection = .up,
-                           margin:UIEdgeInsets = .init(5),
+                           margin:UIEdgeInsets = .init(top: 5, left: 5, bottom: 5, right: 5),
                            passthroughViews:[UIView] = [],
                            exceedingly:(()->Void)? = nil,
                            custom:((WPPopoverVC)->Void)?=nil) {
@@ -105,7 +105,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
         vc.popoverPresentationController?.permittedArrowDirections = arrowDirections
         vc.popoverPresentationController?.popoverLayoutMargins = margin
         
-        vc.contentEdge = .init(0, 10, 0, 10)
+        vc.contentEdge = .init(top: 0, left: 10, bottom: 0, right: 10)
         
         let popoSize:CGSize = .init(width: 128, height: items.count * 45 + Int(vc.arrowEdge.top))
         vc.preferredContentSize = popoSize
@@ -147,7 +147,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
                            text:NSAttributedString?,
                            maxWidth:CGFloat = 200,
                            arrowDirections:UIPopoverArrowDirection = .up,
-                           margin:UIEdgeInsets = .init(5),
+                           margin:UIEdgeInsets = .init(top: 5, left: 5, bottom: 5, right: 5),
                            passthroughViews:[UIView] = [],
                            exceedingly:(()->Void)? = nil,
                            custom:((WPPopoverVC)->Void)?=nil) {
@@ -160,7 +160,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
         if arrowDirections == .any {
             vc.contentEdge = .zero
         }else{
-            vc.contentEdge = .init(10)
+            vc.contentEdge = .init(top: 10, left: 10, bottom: 10, right: 10)
         }
         
         let height = (text?.wp.height(maxWidth: maxWidth - vc.contentEdge.left - vc.contentEdge.right) ?? 0) + 1
@@ -201,7 +201,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
                            mainView:UIView,
                            mainSize:CGSize,
                            arrowDirections:UIPopoverArrowDirection = .up,
-                           margin:UIEdgeInsets = .init(5),
+                           margin:UIEdgeInsets = .init(top: 5, left: 5, bottom: 5, right: 5),
                            passthroughViews:[UIView] = [],
                            exceedingly:(()->Void)? = nil,
                            custom:((WPPopoverVC)->Void)?=nil) {
@@ -214,7 +214,7 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
         if arrowDirections == .any {
             vc.contentEdge = .zero
         }else{
-            vc.contentEdge = .init(10)
+            vc.contentEdge = .init(top: 10, left: 10, bottom: 10, right: 10)
         }
 
         let popoSize:CGSize = .init(width: mainSize.width + vc.finalEdge.left + vc.finalEdge.right, height: mainSize.height + vc.finalEdge.top + vc.finalEdge.bottom)

@@ -111,7 +111,6 @@ public extension WPSpace where Base: UITextView {
         return self
     }
     
-    @available(iOS 13.0, *)
     @discardableResult
     func usesStandardTextScaling(_ usesStandardTextScaling:Bool) -> Self {
         base.usesStandardTextScaling = usesStandardTextScaling

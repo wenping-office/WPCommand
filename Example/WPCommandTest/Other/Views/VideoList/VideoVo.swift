@@ -7,33 +7,32 @@
 //
 
 import UIKit
+import KTVHTTPCache
 
-extension Array:RefreshFeatureDataSource where Element == VideoVo{
+extension Array:ListStoreSource where Element == VideoVo{
     func pageList() -> [Element] {
         return self
     }
     
     typealias Data = Element
-    
-    func isPage() -> Bool {
-        return false
-    }
-    
-    func maxCount() -> Int {
-        return count
-    }
-    
     func lastIdString() -> String {
         return "0"
     }
-    
-    
 }
 
 struct VideoVo:Codable,Equatable {
     let id:Int
     let url:URL
     
+    var proxyVideoUrl:URL{
+        return KTVHTTPCache.proxyURL(withOriginalURL: url)
+    }
+    
+    /// 是否是垂直视频
+    func itVerticalMedia()->Bool{
+        return true
+    }
+
     init() {
         let array = [
             "https://cdn.pixabay.com/video/2022/07/24/125314-733046618_large.mp4",

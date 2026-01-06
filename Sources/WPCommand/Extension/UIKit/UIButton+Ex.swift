@@ -58,7 +58,6 @@ public extension WPSpace where Base: UIButton {
         return self
     }
     
-    @available(iOS 13.0, *)
     @discardableResult
     func preferredSymbolConfiguration(_ preferredSymbolConfiguration:UIImage.SymbolConfiguration?,_ state: UIControl.State) -> Self {
         base.setPreferredSymbolConfiguration(preferredSymbolConfiguration, forImageIn: state)

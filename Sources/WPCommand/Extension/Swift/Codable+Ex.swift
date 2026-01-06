@@ -20,20 +20,20 @@ public extension WPSpace where Base : Encodable {
     func toJSONString(pretty: Bool = false) -> String? {
         let encoder = JSONEncoder()
         if pretty {
-            if #available(iOS 13.0, *) {
-                encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes]
-            } else {
-                // Fallback on earlier versions
-            }
+            encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes]
         }
         guard let data = toData() else { return nil }
         return String(data: data, encoding: .utf8)
     }
 
     /// 转换成json
-    func toJson()-> [String: Any] {
-        guard let data = try? JSONEncoder().encode( base) else { return [:] }
-        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] } ?? [:]
+    func toJson()-> [String: Any]? {
+        if let data = base as? Data{
+            return try? JSONSerialization.jsonObject(with: data) as? [String:Any]
+        }else{
+            guard let data = try? JSONEncoder().encode( base) else { return [:] }
+            return try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String:Any]
+        }
     }
 }
 

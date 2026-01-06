@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		5E0F55F02E9F36A600338D70 /* DateBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0F55EF2E9F36A600338D70 /* DateBarView.swift */; };
 		5E0F55F22E9F39A500338D70 /* ZoomingImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0F55F12E9F39A500338D70 /* ZoomingImageView.swift */; };
+		5E34238B2EFA3D2D0009760D /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E34238A2EFA3D2D0009760D /* Api.swift */; };
+		5E34238D2EFA3E520009760D /* UserCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E34238C2EFA3E520009760D /* UserCenter.swift */; };
 		5E8C736F2ECF1B9B00BD35D6 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8C736E2ECF1B9B00BD35D6 /* VideoPlayerManager.swift */; };
 		5E8C73712ECF1BC900BD35D6 /* VideoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8C73702ECF1BC900BD35D6 /* VideoCell.swift */; };
 		5E8C73732ECF1C5200BD35D6 /* VideoVo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E8C73722ECF1C5200BD35D6 /* VideoVo.swift */; };
@@ -34,24 +36,21 @@
 		5EA7D5712E9E3DE500FB490E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5652E9E3DE500FB490E /* ViewController.swift */; };
 		5EA7D5722E9E3DE500FB490E /* BaseTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5442E9E3DE500FB490E /* BaseTableView.swift */; };
 		5EA7D5742E9E3DE500FB490E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5582E9E3DE500FB490E /* AppDelegate.swift */; };
-		5EA7D5762E9E3DE500FB490E /* TestMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5622E9E3DE500FB490E /* TestMenuVC.swift */; };
 		5EA7D5772E9E3DE500FB490E /* DateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D54C2E9E3DE500FB490E /* DateView.swift */; };
 		5EA7D5782E9E3DE500FB490E /* ShareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5562E9E3DE500FB490E /* ShareManager.swift */; };
 		5EA7D57B2E9E3DE500FB490E /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D54A2E9E3DE500FB490E /* CircularProgressView.swift */; };
 		5EA7D57C2E9E3DE500FB490E /* PagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D54F2E9E3DE500FB490E /* PagesView.swift */; };
 		5EA7D57D2E9E3DE500FB490E /* BaseCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5412E9E3DE500FB490E /* BaseCollectionView.swift */; };
-		5EA7D57E2E9E3DE500FB490E /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5522E9E3DE500FB490E /* Api.swift */; };
-		5EA7D5802E9E3DE500FB490E /* CircularGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5482E9E3DE500FB490E /* CircularGroup.swift */; };
 		5EA7D5812E9E3DE500FB490E /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7D5452E9E3DE500FB490E /* BaseVC.swift */; };
 		5EA7D5822E9E3DE500FB490E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5EA7D5592E9E3DE500FB490E /* Images.xcassets */; };
 		5EA7D5832E9E3DE500FB490E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5EA7D55C2E9E3DE500FB490E /* LaunchScreen.xib */; };
 		5EA7D5842E9E3DE500FB490E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5EA7D55E2E9E3DE500FB490E /* Main.storyboard */; };
-		5EDC76192EB499EF006216D5 /* Combine+AnyPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDC76182EB499EF006216D5 /* Combine+AnyPublisher.swift */; };
+		5ED2279C2F0C9C0700015DD3 /* ListStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED2279B2F0C9C0700015DD3 /* ListStore.swift */; };
 		5EDC7A1D2EB4B83B006216D5 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 5EDC7A1C2EB4B83B006216D5 /* ComposableArchitecture */; };
 		5EFBEBA62EA0DE0200C2F427 /* ApiConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFBEBA52EA0DE0200C2F427 /* ApiConst.swift */; };
 		5EFCCEBB2EAB543500E93B84 /* UIView+Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEBA2EAB543500E93B84 /* UIView+Gradient.swift */; };
 		5EFCCEBE2EAB548800E93B84 /* JXSegmentedView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEBD2EAB548800E93B84 /* JXSegmentedView+Extension.swift */; };
-		5EFCCEC12EAB54C400E93B84 /* AlertProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEC02EAB54C400E93B84 /* AlertProtocol.swift */; };
+		5EFCCEC12EAB54C400E93B84 /* Alertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEC02EAB54C400E93B84 /* Alertable.swift */; };
 		5EFCCEC42EAB559700E93B84 /* GradientRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEC32EAB559700E93B84 /* GradientRingView.swift */; };
 		5EFCCEC82EAB562900E93B84 /* RefreshFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEC72EAB562900E93B84 /* RefreshFeature.swift */; };
 		C9BAF466A13D325589B9E101 /* Pods_WPCommand_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F223C466D6825D9D7A498C /* Pods_WPCommand_Example.framework */; };
@@ -64,6 +63,8 @@
 		55E2BC62C87BA4C8F1BBCC23 /* Pods-WPCommand_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPCommand_Example.release.xcconfig"; path = "Target Support Files/Pods-WPCommand_Example/Pods-WPCommand_Example.release.xcconfig"; sourceTree = "<group>"; };
 		5E0F55EF2E9F36A600338D70 /* DateBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateBarView.swift; sourceTree = "<group>"; };
 		5E0F55F12E9F39A500338D70 /* ZoomingImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomingImageView.swift; sourceTree = "<group>"; };
+		5E34238A2EFA3D2D0009760D /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		5E34238C2EFA3E520009760D /* UserCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCenter.swift; sourceTree = "<group>"; };
 		5E8C736E2ECF1B9B00BD35D6 /* VideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerManager.swift; sourceTree = "<group>"; };
 		5E8C73702ECF1BC900BD35D6 /* VideoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCell.swift; sourceTree = "<group>"; };
 		5E8C73722ECF1C5200BD35D6 /* VideoVo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoVo.swift; sourceTree = "<group>"; };
@@ -80,13 +81,11 @@
 		5EA7D5432E9E3DE500FB490E /* BaseTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableCell.swift; sourceTree = "<group>"; };
 		5EA7D5442E9E3DE500FB490E /* BaseTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableView.swift; sourceTree = "<group>"; };
 		5EA7D5452E9E3DE500FB490E /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
-		5EA7D5482E9E3DE500FB490E /* CircularGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularGroup.swift; sourceTree = "<group>"; };
 		5EA7D54A2E9E3DE500FB490E /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		5EA7D54C2E9E3DE500FB490E /* DateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateView.swift; sourceTree = "<group>"; };
 		5EA7D54D2E9E3DE500FB490E /* GradientLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientLabel.swift; sourceTree = "<group>"; };
 		5EA7D54F2E9E3DE500FB490E /* PagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagesView.swift; sourceTree = "<group>"; };
 		5EA7D5502E9E3DE500FB490E /* SegmentedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedView.swift; sourceTree = "<group>"; };
-		5EA7D5522E9E3DE500FB490E /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		5EA7D5532E9E3DE500FB490E /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 		5EA7D5542E9E3DE500FB490E /* LoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManager.swift; sourceTree = "<group>"; };
 		5EA7D5552E9E3DE500FB490E /* Other.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Other.swift; sourceTree = "<group>"; };
@@ -96,15 +95,14 @@
 		5EA7D55A2E9E3DE500FB490E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5EA7D55B2E9E3DE500FB490E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		5EA7D55D2E9E3DE500FB490E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		5EA7D5622E9E3DE500FB490E /* TestMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMenuVC.swift; sourceTree = "<group>"; };
 		5EA7D5652E9E3DE500FB490E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5EA7D5862E9E3F2500FB490E /* WPCommand.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = WPCommand.podspec; path = ../Sources/WPCommand.podspec; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		5EDC76182EB499EF006216D5 /* Combine+AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Combine+AnyPublisher.swift"; sourceTree = "<group>"; };
+		5ED2279B2F0C9C0700015DD3 /* ListStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListStore.swift; sourceTree = "<group>"; };
 		5EDC761A2EB49E24006216D5 /* Test.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Test.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		5EFBEBA52EA0DE0200C2F427 /* ApiConst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiConst.swift; sourceTree = "<group>"; };
 		5EFCCEBA2EAB543500E93B84 /* UIView+Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Gradient.swift"; sourceTree = "<group>"; };
 		5EFCCEBD2EAB548800E93B84 /* JXSegmentedView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JXSegmentedView+Extension.swift"; sourceTree = "<group>"; };
-		5EFCCEC02EAB54C400E93B84 /* AlertProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertProtocol.swift; sourceTree = "<group>"; };
+		5EFCCEC02EAB54C400E93B84 /* Alertable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alertable.swift; sourceTree = "<group>"; };
 		5EFCCEC32EAB559700E93B84 /* GradientRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientRingView.swift; sourceTree = "<group>"; };
 		5EFCCEC72EAB562900E93B84 /* RefreshFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshFeature.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* WPCommand_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WPCommand_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,7 +170,6 @@
 				5EA7D5432E9E3DE500FB490E /* BaseTableCell.swift */,
 				5EA7D5442E9E3DE500FB490E /* BaseTableView.swift */,
 				5EA7D5452E9E3DE500FB490E /* BaseVC.swift */,
-				5EA7D5482E9E3DE500FB490E /* CircularGroup.swift */,
 				5E8C73762ECF1E2300BD35D6 /* BaseView.swift */,
 			);
 			path = Base;
@@ -226,7 +223,6 @@
 				5EA7D55A2E9E3DE500FB490E /* Info.plist */,
 				5EA7D55C2E9E3DE500FB490E /* LaunchScreen.xib */,
 				5EA7D55E2E9E3DE500FB490E /* Main.storyboard */,
-				5EA7D5622E9E3DE500FB490E /* TestMenuVC.swift */,
 				5EA7D5652E9E3DE500FB490E /* ViewController.swift */,
 				5EDC761A2EB49E24006216D5 /* Test.playground */,
 			);
@@ -288,8 +284,9 @@
 		5EFBEBA92EA0E32D00C2F427 /* Api */ = {
 			isa = PBXGroup;
 			children = (
-				5EA7D5522E9E3DE500FB490E /* Api.swift */,
 				5EFBEBA52EA0DE0200C2F427 /* ApiConst.swift */,
+				5E34238A2EFA3D2D0009760D /* Api.swift */,
+				5E34238C2EFA3E520009760D /* UserCenter.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -299,7 +296,6 @@
 			children = (
 				5EFCCEBA2EAB543500E93B84 /* UIView+Gradient.swift */,
 				5EFCCEBD2EAB548800E93B84 /* JXSegmentedView+Extension.swift */,
-				5EDC76182EB499EF006216D5 /* Combine+AnyPublisher.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -307,7 +303,7 @@
 		5EFCCEBF2EAB54A900E93B84 /* Alert */ = {
 			isa = PBXGroup;
 			children = (
-				5EFCCEC02EAB54C400E93B84 /* AlertProtocol.swift */,
+				5EFCCEC02EAB54C400E93B84 /* Alertable.swift */,
 			);
 			path = Alert;
 			sourceTree = "<group>";
@@ -325,6 +321,7 @@
 			children = (
 				5EFCCEC72EAB562900E93B84 /* RefreshFeature.swift */,
 				5E8C73952ECF3BF900BD35D6 /* RefreshTrailer.swift */,
+				5ED2279B2F0C9C0700015DD3 /* ListStore.swift */,
 			);
 			path = MJRefresh;
 			sourceTree = "<group>";
@@ -455,6 +452,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WPCommand_Example/Pods-WPCommand_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/CombineExt/CombineExt.framework",
 				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
 				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
@@ -466,6 +464,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CombineExt.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
@@ -511,24 +510,24 @@
 				5EA7D5682E9E3DE500FB490E /* BaseNavVC.swift in Sources */,
 				5E0F55F02E9F36A600338D70 /* DateBarView.swift in Sources */,
 				5EFCCEBE2EAB548800E93B84 /* JXSegmentedView+Extension.swift in Sources */,
-				5EFCCEC12EAB54C400E93B84 /* AlertProtocol.swift in Sources */,
+				5EFCCEC12EAB54C400E93B84 /* Alertable.swift in Sources */,
 				5EA7D5692E9E3DE500FB490E /* LanguageManager.swift in Sources */,
 				5E8C73712ECF1BC900BD35D6 /* VideoCell.swift in Sources */,
 				5EA7D56A2E9E3DE500FB490E /* BaseTableCell.swift in Sources */,
 				5E8C73942ECF36B200BD35D6 /* ZoomingImageViewTwo.swift in Sources */,
 				5EA7D56B2E9E3DE500FB490E /* LoginManager.swift in Sources */,
-				5EDC76192EB499EF006216D5 /* Combine+AnyPublisher.swift in Sources */,
 				5E8C73772ECF1E2300BD35D6 /* BaseView.swift in Sources */,
+				5ED2279C2F0C9C0700015DD3 /* ListStore.swift in Sources */,
 				5EFCCEBB2EAB543500E93B84 /* UIView+Gradient.swift in Sources */,
 				5EA7D56D2E9E3DE500FB490E /* GradientLabel.swift in Sources */,
 				5E0F55F22E9F39A500338D70 /* ZoomingImageView.swift in Sources */,
+				5E34238B2EFA3D2D0009760D /* Api.swift in Sources */,
 				5EA7D56E2E9E3DE500FB490E /* SegmentedView.swift in Sources */,
 				5EA7D56F2E9E3DE500FB490E /* Other.swift in Sources */,
 				5EA7D5712E9E3DE500FB490E /* ViewController.swift in Sources */,
 				5EA7D5722E9E3DE500FB490E /* BaseTableView.swift in Sources */,
 				5E8C738E2ECF345000BD35D6 /* PictureEditView.swift in Sources */,
 				5EA7D5742E9E3DE500FB490E /* AppDelegate.swift in Sources */,
-				5EA7D5762E9E3DE500FB490E /* TestMenuVC.swift in Sources */,
 				5EA7D5772E9E3DE500FB490E /* DateView.swift in Sources */,
 				5E8C73882ECF2DBF00BD35D6 /* VideoVC.swift in Sources */,
 				5E8C73732ECF1C5200BD35D6 /* VideoVo.swift in Sources */,
@@ -539,10 +538,9 @@
 				5E8C736F2ECF1B9B00BD35D6 /* VideoPlayerManager.swift in Sources */,
 				5E8C73752ECF1D9800BD35D6 /* KTVHTTPCacheManager.swift in Sources */,
 				5EA7D57D2E9E3DE500FB490E /* BaseCollectionView.swift in Sources */,
-				5EA7D57E2E9E3DE500FB490E /* Api.swift in Sources */,
 				5EFCCEC82EAB562900E93B84 /* RefreshFeature.swift in Sources */,
 				5E8C73962ECF3BF900BD35D6 /* RefreshTrailer.swift in Sources */,
-				5EA7D5802E9E3DE500FB490E /* CircularGroup.swift in Sources */,
+				5E34238D2EFA3E520009760D /* UserCenter.swift in Sources */,
 				5E8C73922ECF34F100BD35D6 /* PictureEditOptionView.swift in Sources */,
 				5EA7D5812E9E3DE500FB490E /* BaseVC.swift in Sources */,
 				5EFCCEC42EAB559700E93B84 /* GradientRingView.swift in Sources */,
@@ -718,6 +716,7 @@
 					"-framework",
 					"\"WPCommand\"",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.WPCommand-Exampl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -774,6 +773,7 @@
 					"-framework",
 					"\"WPCommand\"",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.WPCommand-Exampl";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -483,6 +483,16 @@ extension AWBubble {
     }
 }
 
+extension UIEdgeInsets{
+    var horizontal: CGFloat {
+        return self.left + self.right
+    }
+    
+    var vertical: CGFloat {
+        return self.top + self.bottom
+    }
+}
+
 extension AWBubble {
     /// 设置垂直方向的弹出提示，返回气泡的位置 和 气泡箭头的位置
     internal func setupVertically() -> (CGRect, CGPoint) {
@@ -493,10 +503,7 @@ extension AWBubble {
         let width: CGFloat = textBounds.width + edgeInsets.horizontal + borderWidth * 2
         let height: CGFloat = textBounds.height + edgeInsets.vertical + arrowSize.height + borderWidth * 2
         frame.size = CGSize(width: width, height: height)
-                
-        
 
-        
         // 2. 计算气泡的x值
         var x: CGFloat = 0
         

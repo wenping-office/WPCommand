@@ -8,10 +8,6 @@
 import UIKit
 import WPCommand
 
-open class BaseTableItem: WPTableItem{
-    public var contentEdge = UIEdgeInsets.init(top: 5, left: 10, bottom: 5, right: 10)
-}
-
 open class BaseTableCell: WPBaseTableViewCell {
 
     // 背景视图
@@ -30,18 +26,6 @@ open class BaseTableCell: WPBaseTableViewCell {
         contentBackgroundView.snp.makeConstraints { make in
             make.left.right.equalToSuperview().offset(0)
             make.top.bottom.equalToSuperview().offset(0)
-        }
-    }
-    
-    open override func didSetItem(item: WPTableItem) {
-        
-        if let newItem = item as? BaseTableItem{
-            contentBackgroundView.snp.updateConstraints { make in
-                make.left.equalToSuperview().offset(newItem.contentEdge.left)
-                make.right.equalToSuperview().offset(-newItem.contentEdge.right)
-                make.top.equalToSuperview().offset(newItem.contentEdge.top)
-                make.bottom.equalToSuperview().offset(-newItem.contentEdge.bottom)
-            }
         }
     }
 }

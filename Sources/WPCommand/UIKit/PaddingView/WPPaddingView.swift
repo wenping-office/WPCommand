@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 /// 边距视图
-public class WPPaddingView<T: UIView>: WPBaseView {
+public class WPPaddingView<T: UIView>: UIView {
     /// 目标视图
     public let target: T
     
@@ -21,7 +21,7 @@ public class WPPaddingView<T: UIView>: WPBaseView {
     public convenience init(_ target: T,
                 padding: UIEdgeInsets = .zero,
                 priority:ConstraintPriority = .required) {
-        self.init(target, customLayout: { view in
+        self.init(target, custom: { view in
             view.snp.makeConstraints { make in
                 make.left.equalToSuperview().offset(padding.left).priority(priority)
                 make.right.equalToSuperview().offset(-padding.right).priority(priority)
@@ -35,12 +35,16 @@ public class WPPaddingView<T: UIView>: WPBaseView {
     /// - Parameters:
     ///   - target: 目标视图
     ///   - customLayout: 自定义布局
-    public init(_ target: T,customLayout:((T)->Void)) {
+    public init(_ target: T,custom:((T)->Void)) {
         self.target = target
         super.init(frame: .zero)
         addSubview(target)
         weak var wTarget = target
-        customLayout(wTarget!)
+        custom(wTarget!)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

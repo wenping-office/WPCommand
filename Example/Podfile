@@ -6,4 +6,5 @@ target 'WPCommand_Example' do
   pod 'WPCommand', :path => '../Sources/'
   pod 'MJRefresh'
   pod 'Moya'
+  pod 'CombineExt','1.8.0'
 end

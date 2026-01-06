@@ -8,7 +8,7 @@
 import RxSwift
 import UIKit
 
-public extension WPAlertManager {
+public extension WPQueueAlertCenter {
     enum Option {
         /// 插入式强制立马弹出 keep == true 插入弹窗消失后弹出被插入的弹窗
         /// keep == false 干掉被插入的弹窗
@@ -24,7 +24,7 @@ public extension WPAlertManager {
     }
 }
 
-public extension WPAlertManager {
+public extension WPQueueAlertCenter {
     struct Alert {
         /// 动画类型
         public let animationType: AnimationType
@@ -145,11 +145,11 @@ public extension WPAlertManager {
 }
 
 /// 可弹出一组弹窗或插入式弹窗，也可自定义一个manager自己管理一组弹窗
-public class WPAlertManager {
+public class WPQueueAlertCenter {
     /// 弹窗
     private class Item {
         /// 弹窗
-        let alert: WPAlertProtocol
+        let alert: WPQueueAlertable
         /// 弹窗等级
         let level: Int
         /// 是否被中断动画并且被插入到当前位置
@@ -173,7 +173,7 @@ public class WPAlertManager {
         /// 状态变化
         var stateChange: ((State)->Void)?
         
-        init(alert: WPAlertProtocol, level: Int) {
+        init(alert: WPQueueAlertable, level: Int) {
             self.alert = alert
             self.level = level
         }
@@ -216,23 +216,23 @@ public class WPAlertManager {
     private var layoutShowBlock: (()->Void)?
 
     /// 单例
-    public static var `default`: WPAlertManager = {
-        let manager = WPAlertManager()
+    public static var `default`: WPQueueAlertCenter = {
+        let manager = WPQueueAlertCenter()
         return manager
     }()
 
     public init() {}
 
     /// 添加一个弹窗
-    public func add(alert: WPAlertProtocol) {
-        alert.tag = WPAlertManager.identification()
+    public func add(alert: WPQueueAlertable) {
+        alert.tag = WPQueueAlertCenter.identification()
         let alertItem: Item = .init(alert: alert, level: Int(alert.alertLevel()))
         alertItem.state = .cooling
         alerts.append(alertItem)
     }
     
     /// 移除一个弹窗
-    public func remove(alert: WPAlertProtocol) {
+    public func remove(alert: WPQueueAlertable) {
         current = nil
         (alert as UIView).wp.removeFromSuperview()
         alerts.wp_filter(exclude: { $0.alert.tag == alert.tag})
@@ -260,7 +260,7 @@ public class WPAlertManager {
     /// 添加一组弹窗会清除现有的弹窗
     /// - Parameter alerts: 弹窗
     @discardableResult
-    public func set(alerts: [WPAlertProtocol])->WPAlertManager {
+    public func set(alerts: [WPQueueAlertable])->WPQueueAlertCenter {
         self.alerts = []
         alerts.forEach { [weak self] elmt in
             self?.add(alert: elmt)
@@ -272,8 +272,8 @@ public class WPAlertManager {
     /// - Parameters:
     ///   - alert: 弹窗
     ///   - option: 选择条件
-    public func show(next alert: WPAlertProtocol, option: Option = .insert(keep: true)) {
-        alert.tag = WPAlertManager.identification()
+    public func show(next alert: WPQueueAlertable, option: Option = .insert(keep: true)) {
+        alert.tag = WPQueueAlertCenter.identification()
         let level = (current?.level ?? 0) - 1
         let alertItem: Item = .init(alert: alert, level: level)
         alertItem.target = alert.targetView
@@ -457,7 +457,7 @@ public class WPAlertManager {
     }
 }
 
-extension WPAlertManager {
+extension WPQueueAlertCenter {
     /// 获取一个唯一标识
     private static func identification()->Int {
         return Int(
@@ -470,7 +470,7 @@ extension WPAlertManager {
     }
     
     /// 添加一个蒙层
-    private func addMask(info: WPAlertManager.Mask) {
+    private func addMask(info: WPQueueAlertCenter.Mask) {
         let resualt = targetView.subviews.contains(where: { $0.isKind(of: WPAlertManagerMask.self)})
 
         // 如果没有蒙层 那么添加一个
@@ -882,7 +882,7 @@ class WPAlertManagerMask: UIView {
     /// 蒙板视图
     let contentView = UIButton()
     /// 蒙板info
-    var maskInfo: WPAlertManager.Mask {
+    var maskInfo: WPQueueAlertCenter.Mask {
         didSet {
             contentView.backgroundColor = maskInfo.color
             contentView.isUserInteractionEnabled = !maskInfo.enabled
@@ -890,7 +890,7 @@ class WPAlertManagerMask: UIView {
         }
     }
     
-    init(maskInfo: WPAlertManager.Mask, action: (()->Void)?) {
+    init(maskInfo: WPQueueAlertCenter.Mask, action: (()->Void)?) {
         self.maskInfo = maskInfo
         super.init(frame: .zero)
 

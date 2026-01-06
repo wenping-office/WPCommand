@@ -35,7 +35,6 @@ protocol DateBarViewCell:UICollectionViewCell {
 }
 
 /// 滚动的日期选择视图
-@available(iOS 13.0, *)
 class DateBarView<Cell:DateBarViewCell>: BaseView,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
 
     private let layout = UICollectionViewFlowLayout()

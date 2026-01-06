@@ -34,7 +34,7 @@ struct AlertInfo {
     }
 }
 
-protocol AlertProtocol: UIView {
+protocol Alertable: UIView {
     func alertMaskInfo() -> AlertMaskInfo
     func alertInfo() -> AlertInfo
 
@@ -44,7 +44,7 @@ protocol AlertProtocol: UIView {
 }
 
 
-extension AlertProtocol {
+extension Alertable {
     
     func alertMaskInfo() -> AlertMaskInfo {
         return .init()
@@ -56,7 +56,7 @@ extension AlertProtocol {
     func touchAlertMask(){}
 }
 
-extension AlertProtocol {
+extension Alertable {
     
     private var backgroundMaskView: UIView {
         get {

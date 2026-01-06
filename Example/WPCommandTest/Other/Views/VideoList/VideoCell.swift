@@ -9,10 +9,12 @@
 import UIKit
 import WPCommand
 
-class VideoCell: WPBaseTableViewCell {
+class VideoCell: WPBaseCollectionViewCell {
     lazy var videoView = UIView()
     lazy var coverImageView = UIImageView()
     var loadingView = UIActivityIndicatorView()
+    
+    var videoVo:VideoVo!
     
     override func initSubView() {
 
@@ -48,10 +50,11 @@ class VideoCell: WPBaseTableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        if VideoPlayerManager.shared.currentCell === self {
-            print("释放上一个资源")
-            VideoPlayerManager.shared.releaseCurrentPlayer()
-        }
+        // 测试代码
+//        if VideoPlayerManager.shared.cell === self {
+//            print("释放上一个资源")
+//            VideoPlayerManager.shared.releaseLayer()
+//        }
         coverImageView.isHidden = false
         loadingView.isHidden = false
         wp.cancellables.set.removeAll()

@@ -53,7 +53,6 @@ public extension WPSpace where Base: UIImageView{
     }
     
     @discardableResult
-    @available(iOS 13.0, *)
     func preferredSymbolConfiguration(_ preferredSymbolConfiguration:UIImage.SymbolConfiguration?) -> Self {
         base.preferredSymbolConfiguration = preferredSymbolConfiguration
         return self

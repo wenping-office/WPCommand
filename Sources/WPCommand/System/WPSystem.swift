@@ -11,6 +11,7 @@ import Photos
 import RxCocoa
 import RxSwift
 import UIKit
+import Combine
 
 open class WPSystem: NSObject {
     /// 键盘相关
@@ -26,65 +27,43 @@ open class WPSystem: NSObject {
 public extension WPSystem {
     /// 键盘
     struct KeyBoard {
-        /// 键盘将要显示通知
-        public var willShow: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
-        }
-        
-        /// 键盘已经显示通知
-        public var didShow: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIResponder.keyboardDidShowNotification)
-        }
-        
-        /// 键盘将要收回通知
-        public var willHide: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
-        }
-        
-        /// 键盘已经收回通知
-        public var didHide: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification)
-        }
-        
-        /// 键盘高度改变通知
-        public var willChangeFrame: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification)
-        }
-        
-        /// 键盘高度已经改变通知
-        public var didChangeFrame: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIResponder.keyboardDidChangeFrameNotification)
-        }
-        
-        /// 获取目标视图与键盘顶部的Y轴差值 0 键盘收回 正数代表被键盘覆盖的差值 负数代表没有被键盘覆盖的差值
+        /// 获取目标视图与键盘顶部的Y轴差值 0 键盘收回 正数代表没有被键盘覆盖的差值 负数代表被键盘覆盖的差值
         /// - Parameters:
         ///   - veiw: 目标视图
         /// - Returns: 观察者
-        public func offsetY(in view: UIView)->Observable<CGFloat> {
-              weak var weakView = view
-              var targetFrame: CGRect = view.wp.frameInMainWidow
-           return Observable.merge(WPSystem.keyboard.willShow.map({ value in
-                if targetFrame == .zero {
-                    targetFrame = weakView?.wp.frameInMainWidow ?? .zero
+        public static func offsetY(in view:UIView) -> AnyPublisher<Double,Never>{
+            return NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification).merge(with: NotificationCenter.default.publisher(for: UIApplication.keyboardDidChangeFrameNotification)).map { notification in
+                guard let userInfo = notification.userInfo,
+                      let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {
+                    return 0.0
                 }
-                let keyBoardEnd = (value.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero
-                return -(targetFrame.maxY - keyBoardEnd.minY)
-            }),WPSystem.keyboard.willHide.map({ _ in
-                return 0
-            }))
+                return frameValue.cgRectValue.minY
+            }.merge(with: NotificationCenter.default.publisher(for: UIApplication.keyboardDidHideNotification).map({ _ in return 0.0})).scan((CGRect.zero,CGFloat(0)), { value, keyboardHeight in
+                var newValue = value
+                if newValue.0.size == .zero{
+                    let frame = view.convert(view.bounds, to: UIApplication.wp.keyWindow!)
+                    newValue.0 = frame
+                }
+                newValue.1 = keyboardHeight
+                return newValue
+            }).map({ value in
+                if value.1 <= 0{
+                    return 0
+                }else{
+                    return -(value.0.maxY - value.1)
+                }
+            }).removeDuplicates().eraseToAnyPublisher()
         }
         
-        /// 高度变化
-        public func height(debounceTime:Int = 100)->Observable<(height:CGFloat,duration:CGFloat)>{
-            return Observable.merge(Observable.merge(WPSystem.keyboard.willChangeFrame,WPSystem.keyboard.willShow).map { not in
-                let endHeight = ((not.userInfo?["UIKeyboardFrameEndUserInfoKey"] as? CGRect) ?? .zero).height
-                let duration =  (not.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as? CGFloat) ?? 0
-                
-                return (endHeight,duration)
-            },WPSystem.keyboard.willHide.map({ not in
-                let duration =  (not.userInfo?["UIKeyboardAnimationDurationUserInfoKey"] as? CGFloat) ?? 0
-                return (0,duration)
-            })).debounce(.milliseconds(debounceTime), scheduler: MainScheduler.instance)
+        /// 键盘高度
+        public func height()->AnyPublisher<Double,Never>{
+            return NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification).merge(with: NotificationCenter.default.publisher(for: UIApplication.keyboardDidChangeFrameNotification)).map { notification in
+                guard let userInfo = notification.userInfo,
+                      let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {
+                    return 0.0
+                }
+                return frameValue.cgRectValue.minY
+            }.merge(with: NotificationCenter.default.publisher(for: UIApplication.keyboardDidHideNotification).map({ _ in return 0.0})).eraseToAnyPublisher()
         }
     }
     
