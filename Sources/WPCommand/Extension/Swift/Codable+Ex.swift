@@ -102,6 +102,41 @@ public extension WPSpace where Base : Decodable {
 }
 
 extension KeyedDecodingContainer: WPSpaceProtocol {}
+extension KeyedDecodingContainer {
+    func decode<T>(
+        _ type: WPDecode<T>.Type,
+        forKey key: Key
+    ) throws -> WPDecode<T> {
+        return try decodeIfPresent(type, forKey: key) ?? WPDecode<T>()
+    }
+}
+
+extension KeyedDecodingContainer {
+    func decode<T>(
+        _ type: WPDecodeArray<T>.Type,
+        forKey key: Key
+    ) throws -> WPDecodeArray<T> {
+        return try decodeIfPresent(type, forKey: key) ?? WPDecodeArray<T>()
+    }
+}
+
+extension KeyedDecodingContainer {
+    func decode<T>(
+        _ type: WPDecodeEnum<T>.Type,
+        forKey key: Key
+    ) throws -> WPDecodeEnum<T> {
+        return try decodeIfPresent(type, forKey: key) ?? WPDecodeEnum<T>()
+    }
+}
+
+extension KeyedDecodingContainer {
+    func decode<T>(
+        _ type: WPDecodeEnumArray<T>.Type,
+        forKey key: Key
+    ) throws -> WPDecodeEnumArray<T> {
+        return try decodeIfPresent(type, forKey: key) ?? WPDecodeEnumArray<T>()
+    }
+}
 
 fileprivate func wp_convert<T>(_ value: Any) -> T? {
     switch T.self {
@@ -192,6 +227,8 @@ public extension WPSpace where Base: KeyedDecodingContainerProtocol {
 public struct WPDecode<T: Codable>: Codable {
     public var wrappedValue: T?
 
+    public init(){}
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
@@ -214,6 +251,8 @@ public struct WPDecode<T: Codable>: Codable {
 @propertyWrapper
 public struct WPDecodeArray<T: Codable>: Codable {
     public var wrappedValue: [T]?
+
+    public init(){}
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -238,6 +277,8 @@ public struct WPDecodeArray<T: Codable>: Codable {
 public struct WPDecodeEnum<T:Codable>: Codable where T: RawRepresentable, T.RawValue: Codable {
 
     public var wrappedValue: T?
+
+    public init(){}
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -266,6 +307,9 @@ public struct WPDecodeEnum<T:Codable>: Codable where T: RawRepresentable, T.RawV
 @propertyWrapper
 public struct WPDecodeEnumArray<T>: Codable where T: RawRepresentable, T.RawValue: Encodable {
     public var wrappedValue: [T]?
+    
+    public init(){}
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 

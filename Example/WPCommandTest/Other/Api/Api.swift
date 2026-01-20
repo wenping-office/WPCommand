@@ -89,45 +89,6 @@ extension Api{
     }
 }
 
-
-
-extension Publisher {
-    
-    func asApiResult<T>() -> AnyPublisher<ApiResult<T>, Never>
-    where Output == ApiVo<T>, Failure == ApiError<T> {
-        return map { vo in
-                ApiResult.success(model: vo)
-            }
-            .catch { error in
-                Just(ApiResult.error(error: error))
-            }
-            .eraseToAnyPublisher()
-    }
-    
-    func unwrapApiResult<T>() -> AnyPublisher<T, ApiError<T>>
-    where Output == ApiResult<T>, Failure == Never {
-        return flatMap { result -> AnyPublisher<T, ApiError<T>> in
-                switch result {
-                case .success(let model):
-                    guard let data = model.data else {
-                        return Fail(error: ApiError<T>.emptyData)
-                            .eraseToAnyPublisher()
-                    }
-
-                    return Just(data)
-                        .setFailureType(to: ApiError<T>.self)
-                        .eraseToAnyPublisher()
-                    
-                case .error(let error):
-                    return Fail(error: error)
-                        .eraseToAnyPublisher()
-                }
-            }
-            .eraseToAnyPublisher()
-    }
-
-}
-
 extension Api{
     func rxRequest<T:Decodable>(_ model:T.Type) -> Single<ApiResult<T>> {
         let observe = Single<ApiResult<T>>.create { ob in
@@ -187,3 +148,96 @@ extension PrimitiveSequence where Trait == SingleTrait {
         }
     }
 }
+
+
+
+import Alamofire
+import UniformTypeIdentifiers
+extension Api{
+
+   static func download(from url: URL,
+                        fileName: String = Date().timeIntervalSince1970.description,
+                        progress: ((Double) -> Void)? = nil) -> AnyPublisher<URL,Error> {
+       return .create { ob in
+          let request = download(from: url, fileName: fileName,progress: progress ,completion: { res in
+              switch res {
+              case .success(let url):
+                  ob.send(url)
+              case .failure(let error):
+                  ob.send(completion: .failure(error))
+              }
+           })
+           return AnyCancellable{
+               request.cancel()
+           }
+       }
+    }
+
+   fileprivate static func download(
+        from url: URL,
+        fileName: String,
+        directory: FileManager.SearchPathDirectory = .cachesDirectory,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping (Result<URL, Error>) -> Void) -> DownloadRequest {
+
+        let destination: DownloadRequest.Destination = { _, response in
+
+            let baseURL = FileManager.default
+                .urls(for: directory, in: .userDomainMask)
+                .first!
+
+            // 1️⃣ 优先用服务器建议的文件名扩展
+            let suggestedExt = response.suggestedFilename?
+                .split(separator: ".")
+                .last
+                .map(String.init)
+
+            // 2️⃣ 再用 MIME 推断
+            let mimeExt: String? = {
+                guard let mime = response.mimeType else { return nil }
+                if #available(iOS 14.0, *) {
+                    return UTType(mimeType: mime)?.preferredFilenameExtension
+                }
+                return nil
+            }()
+
+            let ext = suggestedExt ?? mimeExt ?? "dat"
+
+            let fileURL = baseURL
+                .appendingPathComponent(fileName)
+                .appendingPathExtension(ext)
+
+            return (
+                fileURL,
+                [.removePreviousFile, .createIntermediateDirectories]
+            )
+        }
+
+        let request = AF.download(url, to: destination)
+
+        request.downloadProgress { p in
+            progress?(p.fractionCompleted)
+        }
+
+        request.response { response in
+            if let error = response.error {
+                completion(.failure(error))
+                return
+            }
+
+            guard let fileURL = response.fileURL else {
+                completion(.failure(NSError(
+                    domain: "DownloadTool",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Missing file URL"]
+                )))
+                return
+            }
+
+            completion(.success(fileURL))
+        }
+
+        return request
+    }
+}
+

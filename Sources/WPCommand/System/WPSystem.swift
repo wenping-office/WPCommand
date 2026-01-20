@@ -31,7 +31,7 @@ public extension WPSystem {
         /// - Parameters:
         ///   - veiw: 目标视图
         /// - Returns: 观察者
-        public static func offsetY(in view:UIView) -> AnyPublisher<Double,Never>{
+        public func offsetY(in view:UIView) -> AnyPublisher<Double,Never>{
             return NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification).merge(with: NotificationCenter.default.publisher(for: UIApplication.keyboardDidChangeFrameNotification)).map { notification in
                 guard let userInfo = notification.userInfo,
                       let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {

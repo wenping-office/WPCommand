@@ -165,20 +165,6 @@ public extension WPSpace where Base: RangeReplaceableCollection,Base.Index == In
         guard actualIndex >= 0 && actualIndex < base.count else { return nil }
         return base[actualIndex]
     }
-    
-    /// 查找第一个符合条件的元素
-    /// - Parameter condition: 判断条件
-    /// - Returns: 元素
-    func elementFirst(where condition: (Base.Element) -> Bool) -> Base.Element? {
-        base.filter { condition($0) }.first
-    }
-    
-    /// 查找最后一个个符合条件的元素
-    /// - Parameter condition: 判断条件
-    /// - Returns: 元素
-    func elementLast(where condition: (Base.Element) -> Bool) -> Base.Element? {
-        base.filter { condition($0) }.reversed().first
-    }
 
     /// 查找所有符合条件的元素
     /// - Parameter condition: 判断条件

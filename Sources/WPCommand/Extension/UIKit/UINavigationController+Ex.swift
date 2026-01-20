@@ -16,7 +16,7 @@ public extension WPSpace where Base: UINavigationController {
     func pop<T: UIViewController>(to type: T.Type,
                                   animated:Bool = true,
                                   completion: ((T)->Void?)? = nil) {
-        let targetControl = base.viewControllers.wp.elementFirst(where: { $0.isKind(of: type)})
+        let targetControl = base.viewControllers.first(where: { $0.isKind(of: type)})
         guard
             let control = targetControl
         else { return }

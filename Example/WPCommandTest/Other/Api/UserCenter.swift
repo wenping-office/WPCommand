@@ -42,7 +42,7 @@ class UserCenter {
 
             Task{ @MainActor in
                 do{
-                    let _ = try await login().asAwait()
+                    let _ = try await login().toAwait()
                     window.rootViewController = UIViewController()
                 }catch{
                     loginVC.label.text = "登录失败"

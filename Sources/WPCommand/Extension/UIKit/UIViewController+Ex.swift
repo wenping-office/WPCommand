@@ -64,8 +64,7 @@ public extension WPSpace where Base: UIViewController {
                     return rootVC(vc: childViewController)
                 }
             }
-            weak var weakVC = vc
-            return  weakVC
+            return  vc
         }
         return rootVC(vc: UIApplication.wp.keyWindow?.rootViewController)
     }

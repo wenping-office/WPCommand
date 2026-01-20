@@ -60,6 +60,34 @@ public extension Publisher {
     }
 }
 
+public enum PublisherResult<Value, Failure: Error> {
+    case success(Value)
+    case failure(Failure)
+}
+
+@available(iOS 14.0, *)
+public extension Publisher{
+    
+    /// 合并结果
+    func asResult() -> AnyPublisher<PublisherResult<Output, Failure>, Never> {
+        map { .success($0) }
+            .catch { Just(.failure($0)) }
+            .eraseToAnyPublisher()
+    }
+
+    /// 解包结果
+    func unwrapResult<T, E>() -> AnyPublisher<T, E>
+    where Output == PublisherResult<T, E>, Failure == Never {
+        flatMap { result -> AnyPublisher<T, E> in
+            switch result {
+            case .success(let value):
+                return .just(value).eraseToAnyPublisher()
+            case .failure(let error):
+                return .fail(with: error).eraseToAnyPublisher()
+            }
+        }.eraseToAnyPublisher()
+    }
+}
 
 public extension Publisher {
     /// 弱引用
@@ -112,7 +140,7 @@ public extension Publisher {
         }
     }
     
-    func asAwait() async throws -> Output {
+    func toAwait() async throws -> Output {
         try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
             cancellable = self.first()

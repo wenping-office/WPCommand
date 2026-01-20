@@ -20,8 +20,6 @@ enum ApiError<T:Codable>:Error{
     /// 转模型错误
     case mapModel(data:Data)
     
-    case emptyData
-    
     var localizedDescription:String{
         switch self {
         case .unkown(let error):
@@ -32,8 +30,6 @@ enum ApiError<T:Codable>:Error{
             return "Model conversion error"
         case .bussiness(let model):
             return model.message ?? ""
-        case .emptyData:
-            return "empty data"
         }
     }
 }

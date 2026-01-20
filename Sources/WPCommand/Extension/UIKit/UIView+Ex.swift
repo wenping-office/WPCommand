@@ -443,7 +443,7 @@ public extension WPSpace where Base: UIView {
     func removePlaceholder() {
         DispatchQueue.main.async {
             let tag = 10086
-            let contentView = base.subviews.wp.elementFirst(where: { $0.tag == tag})
+            let contentView = base.subviews.first(where: { $0.tag == tag})
             contentView?.removeFromSuperview()
         }
     }
@@ -466,7 +466,7 @@ public extension WPSpace where Base: UIView {
                 }
                 
             } else if !show, resualt {
-                let subLoding = base.subviews.wp.elementFirst(where: { $0.tag == tag})
+                let subLoding = base.subviews.first(where: { $0.tag == tag})
                 subLoding?.removeFromSuperview()
             }
         }

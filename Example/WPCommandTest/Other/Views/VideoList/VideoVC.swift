@@ -116,7 +116,7 @@ class VideoVC: BaseVC,UICollectionViewDelegate {
     }
 
     override func initSubView() {
-        listView.isPagingEnabled = true
+        listView.decelerationRate = .fast
         listView.register(VideoCell.self, forCellWithReuseIdentifier: "VideoCell")
         listView.backgroundColor = .clear
         listView.translatesAutoresizingMaskIntoConstraints = false
@@ -152,8 +152,46 @@ class VideoVC: BaseVC,UICollectionViewDelegate {
         })
     }
     
+    func scrollViewWillEndDragging(
+        _ scrollView: UIScrollView,
+        withVelocity velocity: CGPoint,
+        targetContentOffset: UnsafeMutablePointer<CGPoint>
+    ) {
+        let pageHeight = scrollView.bounds.height
+        guard pageHeight > 0 else { return }
+
+        let currentY = scrollView.contentOffset.y
+
+        let page: CGFloat
+        if abs(velocity.y) > 0.2 {
+            // 有明显速度：直接按方向翻页
+            page = velocity.y > 0
+                ? floor(currentY / pageHeight) + 1
+                : ceil(currentY / pageHeight) - 1
+        } else {
+            // 慢拖：就近吸附
+            page = round(currentY / pageHeight)
+        }
+        targetContentOffset.pointee.y = max(0, page * pageHeight)
+    }
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let index = Int(listView.contentOffset.y / listView.bounds.height)
+        handleScrollEnd(scrollView)
+    }
+
+    func scrollViewDidEndDragging(
+        _ scrollView: UIScrollView,
+        willDecelerate decelerate: Bool) {
+        if !decelerate {
+            handleScrollEnd(scrollView)
+        }
+    }
+    
+    private func handleScrollEnd(_ scrollView: UIScrollView) {
+        let pageHeight = scrollView.bounds.height
+        guard pageHeight > 0 else { return }
+
+        let index = Int(round(scrollView.contentOffset.y / pageHeight))
         playVideo(index)
     }
     

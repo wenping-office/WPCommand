@@ -115,7 +115,7 @@ class ListStore<T:ListStoreSource> {
 //            request = Api.templateLikes(page: page.page, pageSize: page.size).request(T.self)
 //        }
 
-        return request.asApiResult().handleEvents(receiveOutput: {[weak self] res in
+        return request.asResult().handleEvents(receiveOutput: {[weak self] res in
             guard let self else { return }
             
             switch res {
@@ -134,7 +134,7 @@ class ListStore<T:ListStoreSource> {
                 self.lastId = model.data?.lastIdString() ?? "0"
                 
                 self.state = .endRefresh(isFirst: self.loadCount == 1, res: .success(model: model), hasMoreData: model.data?.pageList().isEmpty ?? true, direction: direction, isEmpty: datas.isEmpty)
-            case .error(let error):
+            case .failure(let error):
                 self.state = .endRefresh(isFirst: self.loadCount == 1, res: .error(error: error), hasMoreData: true, direction: direction, isEmpty: datas.isEmpty)
             }
       
@@ -143,13 +143,13 @@ class ListStore<T:ListStoreSource> {
     
     func loadAction(_ direction:Data.Direction){
         Task{
-            try? await load(direction).asAwait()
+            try? await load(direction).toAwait()
         }
     }
 
     func retry(){
         Task{
-            try? await load(currentDirection).asAwait()
+            try? await load(currentDirection).toAwait()
         }
     }
 

@@ -15,7 +15,7 @@ public extension WPSpace where Base: UITextView {
                      config:((UILabel)->Void)? = nil) -> Self {
         
         let tag = -1999888
-        let placeView = base.subviews.wp.elementFirst(where: { $0.tag == tag})
+        let placeView = base.subviews.first(where: { $0.tag == tag})
 
         placeView?.removeFromSuperview()
         if placeholder == nil {

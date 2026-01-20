@@ -34,7 +34,8 @@ public extension WPSpace where Base: UIView {
     /// - Returns: 结果
     @discardableResult
     func blurEffect(_ style:UIBlurEffect.Style = .light,isInset:Bool = true) -> Self {
-        let view = base.subviews.wp.elementFirst(where: { $0.isKind(of: UIVisualEffectView.self)})
+
+        let view = base.subviews.first(where: { $0.isKind(of: UIVisualEffectView.self)})
         if view != nil{
             return self
         }
