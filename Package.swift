@@ -5,7 +5,7 @@ let package = Package(
     name: "WPCommand",
     defaultLocalization: "zh",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v13)
     ],
     products: [
         .library(
