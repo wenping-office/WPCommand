@@ -8,6 +8,7 @@
 import RxSwift
 import RxCocoa
 import Combine
+import Foundation
 
 public enum UserDefaultsSuite {
     case standard

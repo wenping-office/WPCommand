@@ -104,6 +104,20 @@ public extension Publisher {
             .mapError { $0 as! Failure } // 自动适配 Failure 类型
             .eraseToAnyPublisher()
     }
+    
+    /// create
+    /// - Parameter block: 提供一个 closure 手动触发 promise
+    /// - Returns: AnyPublisher<Output, Failure>
+    static func create(_ block: @escaping (@escaping (Result<Output, Failure>) -> Void) -> Void) -> AnyPublisher<Output, Failure> {
+        Deferred {
+            Future { promise in
+                block { result in
+                    promise(result)
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
 
     /// 发出值
     static func just(_ value: Output) -> AnyPublisher<Output, Failure> {
@@ -159,3 +173,37 @@ public extension Publisher {
         }
     }
 }
+
+
+public extension WPSystem{
+    
+   /// 超时回掉 TimeoutError
+   static func withTimeout<T>(
+        seconds: Int,
+        operation: @escaping () async throws -> T
+    ) async throws -> T {
+
+        try await withThrowingTaskGroup(of: T.self) { group in
+
+            // 正常任务
+            group.addTask {
+                try await operation()
+            }
+
+            // timeout 任务
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(seconds) * 1_000_000_000)
+                throw TimeoutError()
+            }
+
+            let result = try await group.next()!
+
+            group.cancelAll()
+
+            return result
+        }
+    }
+}
+
+
+public struct TimeoutError: Error {}

@@ -321,3 +321,266 @@ public extension WPSystem {
     }
 
 }
+
+public extension WPSystem{
+    
+    /// 从指定 Localizable.xcstrings 文件获取指定语种的 key-value
+    /// - Parameters:
+    ///   - filePath: Localizable.xcstrings 文件完整路径
+    ///   - languageKey: 指定语种 key，默认 "en"
+    /// - Returns: 字典 [key: value]
+    static func getLocalizableKeys(from filePath: String, languageKey: String = "en") -> [String: String] {
+        var result: [String: String] = [:]
+        let fileManager = FileManager.default
+        
+        guard fileManager.fileExists(atPath: filePath) else {
+            print("❌ 文件不存在: \(filePath)")
+            return result
+        }
+        
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+            guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                  let strings = json["strings"] as? [String: Any] else {
+                print("❌ 文件结构不合法")
+                return result
+            }
+            
+            for (key, value) in strings {
+                guard let dict = value as? [String: Any],
+                      let localizations = dict["localizations"] as? [String: Any],
+                      let langDict = localizations[languageKey] as? [String: Any],
+                      let stringUnit = langDict["stringUnit"] as? [String: Any],
+                      let stringValue = stringUnit["value"] as? String else {
+                    continue
+                }
+                result[key] = stringValue
+            }
+            
+            print("✅ 已解析文件: \(filePath)")
+            print("   共 \(result.count) 个 key")
+            
+        } catch {
+            print("❌ 解析失败: \(error)")
+        }
+        
+        return result
+    }
+
+    /// 将翻译合并到 Localizable.xcstrings 文件（支持新增和替换）
+    /// - Parameters:
+    ///   - translations: 翻译字典 [key: value]
+    ///   - language: 语言代码，如 "ar", "zh-Hant", "es" 等
+    ///   - filePath: Localizable.xcstrings 文件的路径
+    ///   - overwrite: 是否覆盖已存在的翻译，true=覆盖，false=只添加不存在的
+   static func mergeTranslations(_ translations: [String: String],
+                           forLanguage language: String,
+                           to filePath: String,
+                           overwrite: Bool = true) throws {
+        
+        let url = URL(fileURLWithPath: filePath)
+        
+        // 1. 读取现有文件
+        let data = try Data(contentsOf: url)
+        var json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
+        
+        // 2. 获取或创建 strings 字典
+        var strings = json["strings"] as? [String: Any] ?? [:]
+        
+        var addedCount = 0
+        var replacedCount = 0
+        var skippedCount = 0
+        
+        // 3. 遍历翻译，更新或创建条目
+        for (key, value) in translations {
+            // 获取或创建 key 的条目
+            var keyEntry = strings[key] as? [String: Any] ?? [:]
+            var localizations = keyEntry["localizations"] as? [String: Any] ?? [:]
+            
+            // 检查该语言是否已存在
+            let existingTranslation = localizations[language] != nil
+            
+            if existingTranslation && !overwrite {
+                // 已存在且不允许覆盖，跳过
+                skippedCount += 1
+                continue
+            }
+            
+            // 获取或创建 extractionState（默认为 manual）
+            if keyEntry["extractionState"] == nil {
+                keyEntry["extractionState"] = "manual"
+            }
+            
+            // 创建该语言的翻译
+            let translationEntry: [String: Any] = [
+                "stringUnit": [
+                    "state": "translated",
+                    "value": value
+                ]
+            ]
+            
+            // 添加到 localizations
+            localizations[language] = translationEntry
+            
+            // 更新 keyEntry
+            keyEntry["localizations"] = localizations
+            strings[key] = keyEntry
+            
+            if existingTranslation {
+                replacedCount += 1
+            } else {
+                addedCount += 1
+            }
+        }
+        
+        // 4. 更新 json
+        json["strings"] = strings
+        json["sourceLanguage"] = json["sourceLanguage"] ?? "en"
+        json["version"] = json["version"] ?? "1.0"
+        
+        // 5. 写入文件
+        let outputData = try JSONSerialization.data(withJSONObject: json,
+                                                     options: [.prettyPrinted, .withoutEscapingSlashes])
+        try outputData.write(to: url)
+        
+        print("✅ 合并完成！")
+        print("   📝 新增: \(addedCount) 条")
+        print("   🔄 替换: \(replacedCount) 条")
+        print("   ⏭️ 跳过: \(skippedCount) 条")
+        print("   🌐 目标语言: \(language)")
+    }
+
+    /// 从 JSON 文件读取翻译并合并
+    /// - Parameters:
+    ///   - jsonFilePath: 翻译 JSON 文件路径
+    ///   - language: 目标语言代码
+    ///   - xcstringsPath: Localizable.xcstrings 文件路径
+    ///   - overwrite: 是否覆盖已存在的翻译
+   static func mergeTranslationsFromJSONFile(_ jsonFilePath: String,
+                                       forLanguage language: String,
+                                       to xcstringsPath: String,
+                                       overwrite: Bool = true) throws {
+        
+        let url = URL(fileURLWithPath: jsonFilePath)
+        let data = try Data(contentsOf: url)
+        let translations = try JSONSerialization.jsonObject(with: data) as? [String: String] ?? [:]
+        
+        try mergeTranslations(translations, forLanguage: language, to: xcstringsPath, overwrite: overwrite)
+    }
+    
+    
+    /// 获取一个 Localizable.xcstrings 所在目录下的所有语言 key
+   static func getAllLanguageKeys(path: String) -> [String] {
+        let fileManager = FileManager.default
+        // 获取 Localizable.xcstrings 的目录
+        let dir = (path as NSString).deletingLastPathComponent
+        
+        do {
+            // 遍历目录下所有文件夹
+            let items = try fileManager.contentsOfDirectory(atPath: dir)
+            var languages = [String]()
+            
+            for item in items {
+                // 只处理 .lproj 文件夹
+                if item.hasSuffix(".lproj") {
+                    let langKey = (item as NSString).deletingPathExtension
+                    languages.append(langKey)
+                }
+            }
+            
+            return languages.sorted()
+        } catch {
+            print("读取目录失败: \(error)")
+            return []
+        }
+    }
+    
+    /// 从 Localizable JSON 文件中获取所有语种 key
+    /// - Parameter filePath: JSON 文件路径
+    /// - Returns: 语种 key 数组
+    static func getAllLanguageKeys(filePath: String) -> [String] {
+        let fileManager = FileManager.default
+        guard fileManager.fileExists(atPath: filePath) else {
+            print("❌ 文件不存在: \(filePath)")
+            return []
+        }
+        
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+            guard let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                  let stringsDict = jsonObject["strings"] as? [String: Any] else {
+                print("❌ JSON 结构不合法")
+                return []
+            }
+            
+            var languageSet = Set<String>()
+            
+            // 遍历每个 strings key
+            for (_, stringEntry) in stringsDict {
+                if let entryDict = stringEntry as? [String: Any],
+                   let localizations = entryDict["localizations"] as? [String: Any] {
+                    // 将 localizations key 添加到集合
+                    for langKey in localizations.keys {
+                        languageSet.insert(langKey)
+                    }
+                }
+            }
+            
+            // 返回排序后的数组
+            return Array(languageSet).sorted()
+            
+        } catch {
+            print("❌ 解析 JSON 失败: \(error)")
+            return []
+        }
+    }
+    
+    /// 删除指定语种的内容
+    /// - Parameters:
+    ///   - filePath: JSON 文件路径
+    ///   - languageKey: 要删除的语种，例如 "zh-Hans"
+    func deleteLanguage(filePath: String, languageKey: String) {
+        let fileManager = FileManager.default
+        guard fileManager.fileExists(atPath: filePath) else {
+            print("❌ 文件不存在: \(filePath)")
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+            guard var jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                  var stringsDict = jsonObject["strings"] as? [String: Any] else {
+                print("❌ JSON 结构不合法")
+                return
+            }
+            
+            var modified = false
+            
+            // 遍历每个 strings key
+            for (stringKey, stringEntry) in stringsDict {
+                if var entryDict = stringEntry as? [String: Any],
+                   var localizations = entryDict["localizations"] as? [String: Any] {
+                    if localizations.removeValue(forKey: languageKey) != nil {
+                        entryDict["localizations"] = localizations
+                        stringsDict[stringKey] = entryDict
+                        modified = true
+                        print("✅ 已删除 \(languageKey) 在 key '\(stringKey)' 下的翻译")
+                    }
+                }
+            }
+            
+            if modified {
+                jsonObject["strings"] = stringsDict
+                // 写回文件
+                let newData = try JSONSerialization.data(withJSONObject: jsonObject, options: [.prettyPrinted, .sortedKeys])
+                try newData.write(to: URL(fileURLWithPath: filePath))
+                print("✅ 已更新文件: \(filePath)")
+            } else {
+                print("⚠️ 没有找到语种 \(languageKey)")
+            }
+            
+        } catch {
+            print("❌ 操作失败: \(error)")
+        }
+    }
+}

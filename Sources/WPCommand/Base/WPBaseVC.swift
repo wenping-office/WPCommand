@@ -92,19 +92,35 @@ open class WPBaseVC: UIViewController {
     /// - Parameters:
     ///   - animated: 是否动画
     ///   - complete: 回调
-    open func popoViewController(_ animated:Bool = true,complete:((UIViewController?)->Void)?=nil){
-        
-        if presentingViewController != nil{
+    open func popoViewController(
+        _ animated: Bool = true,
+        complete: ((UIViewController?) -> Void)? = nil
+    ) {
+
+        if let nav = navigationController {
+            if nav.viewControllers.count > 1 {
+                nav.wp.pop(animated: animated, completion: complete)
+                return
+            }
+            if nav.presentingViewController != nil {
+
+                nav.dismiss(animated: animated) {
+                    complete?(UIViewController.wp.current)
+                }
+                return
+            }
+
+            complete?(UIViewController.wp.current)
+            return
+        }
+
+        if presentingViewController != nil {
             dismiss(animated: animated) {
                 complete?(UIViewController.wp.current)
             }
-        }else if navigationController?.presentingViewController != nil{
-            dismiss(animated: animated) {
-                complete?(nil)
-            }
-        }else{
-            navigationController?.wp.pop(animated: animated,completion: complete)
+            return
         }
+        complete?(UIViewController.wp.current)
     }
 
     override open func viewDidLoad() {
