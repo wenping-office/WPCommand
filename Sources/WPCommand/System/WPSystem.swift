@@ -108,7 +108,18 @@ public extension WPSystem {
         /// 安全内边距
         public var safeArea : UIEdgeInsets{
             if #available(iOS 11.0, *) {
-                return UIApplication.shared.delegate!.window??.safeAreaInsets ?? .zero
+                if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                    return window.safeAreaInsets
+                }
+                
+                if let window = UIApplication.shared.windows.first {
+                    return window.safeAreaInsets
+                }
+                if let window = UIApplication.shared.delegate?.window as? UIWindow {
+                    return window.safeAreaInsets
+                }
+                
+                return .zero
             } else {
                 return .zero
             }

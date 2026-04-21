@@ -193,20 +193,32 @@ extension UIScrollView{
 
     func headerPublisher() -> AnyPublisher<Void,Never> {
         let ob = PassthroughSubject<Void,Never>()
-        
-//        bindHeadRefreshHandler({
-//            ob.send(())
-//        }, themeColor: #colorLiteral(red: 1, green: 0.7250000238, blue: 0.00800000038, alpha: 1), refreshStyle: .replicatorArc)
+        let header = MJRefreshNormalHeader(refreshingBlock: {
+            ob.send(())
+        })
+//        header.stateLabel?.isHidden = true
+        header.lastUpdatedTimeLabel?.isHidden = true
+        header.stateLabel?.textColor = .white
+        header.setTitle("刷新完成", for: .idle)
+        header.setTitle("加载中...", for: .refreshing)
+        header.setTitle("刷新", for: .pulling)
 
+        mj_header = header
         return ob.eraseToAnyPublisher()
     }
     
     func footerPublisher() -> AnyPublisher<Void,Never> {
         let ob = PassthroughSubject<Void,Never>()
-//        bindFootRefreshHandler({
-//            ob.send(())
-//        }, themeColor: #colorLiteral(red: 1, green: 0.7250000238, blue: 0.00800000038, alpha: 1), refreshStyle: .replicatorArc)
-
+        
+        let footer = MJRefreshBackNormalFooter(refreshingBlock: {
+            ob.send(())
+        })
+        footer.stateLabel?.textColor = .white
+        footer.setTitle("加载完成", for: .idle)
+        footer.setTitle("加载更多", for: .pulling)
+        footer.setTitle("加载中...", for: .refreshing)
+        footer.setTitle("没有更多了", for: .noMoreData)
+        mj_footer = footer
         return ob.eraseToAnyPublisher()
     }
 }

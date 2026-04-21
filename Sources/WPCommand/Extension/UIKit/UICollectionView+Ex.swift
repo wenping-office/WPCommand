@@ -135,3 +135,51 @@ public extension WPSpace where Base: UICollectionView{
         return self
     }
 }
+
+public extension WPSpace where Base: UICollectionView{
+    enum KindSectionStyle{
+        case Header
+        case Footer
+        
+       fileprivate var kind:String{
+            switch self {
+            case .Header:
+                return UICollectionView.elementKindSectionHeader
+            case .Footer:
+                return UICollectionView.elementKindSectionFooter
+            }
+        }
+    
+    }
+
+    /// 注册 Cell（类名作为 reuseIdentifier）
+    func registerClass<T: UICollectionViewCell>(_ cellType: T.Type) {
+        
+        base.register(cellType, forCellWithReuseIdentifier: String(describing: cellType))
+    }
+    
+    /// 复用 Cell（类名作为 reuseIdentifier）
+    func dequeueReusable<T: UICollectionViewCell>(_ cellType: T.Type, for indexPath: IndexPath) -> T {
+        let identifier = String(describing: cellType)
+        
+        guard let cell = base.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? T else {
+            fatalError("Cell 未注册: \(identifier)")
+        }
+        return cell
+    }
+    
+    /// 注册 HeaderFooter（类名作为 reuseIdentifier）
+    func registerHederOrFooter<T: UICollectionReusableView>(_ viewType: T.Type,_ kind:KindSectionStyle) {
+        base.register(viewType.self, forSupplementaryViewOfKind: kind.kind, withReuseIdentifier: String(describing: viewType))
+    }
+    
+    /// 复用 HeaderFooter（类名作为 reuseIdentifier）
+    func dequeueReusableSupplementaryView<T: UICollectionReusableView>(_ viewType: T.Type,_ kind:KindSectionStyle, for indexPath: IndexPath) -> T {
+        let identifier = String(describing: viewType)
+        
+        guard let cell = base.dequeueReusableSupplementaryView(ofKind: kind.kind, withReuseIdentifier: identifier, for: indexPath) as? T else {
+            fatalError("View 未注册: \(identifier)")
+        }
+        return cell
+    }
+}

@@ -1,30 +1,18 @@
 //
 //  ADCenter.swift
-//  WPCommand
+//  CineMate
 //
-//  Created by tmb on 2026/4/3.
+//  Created by tmb on 2026/3/27.
 //
 
 import UIKit
+/*
 import WPCommand
 import Combine
-
-/*
 import GoogleMobileAds
 import SnapKit
-
-/* 测试ID
-开屏广告    ca-app-pub-3940256099942544/5575463023
-自适应横幅广告    ca-app-pub-3940256099942544/2435281174
-固定尺寸的横幅广告    ca-app-pub-3940256099942544/2934735716
-插页式广告    ca-app-pub-3940256099942544/4411468910
-激励广告    ca-app-pub-3940256099942544/1712485313
-插页式激励广告    ca-app-pub-3940256099942544/6978759866
-原生广告    ca-app-pub-3940256099942544/3986624511
-原生视频广告    ca-app-pub-3940256099942544/2521693316
-*/
-
-
+import CombineExt
+import FBSDKCoreKit
 
 extension ADCenter{
     enum ShowState {
@@ -33,7 +21,12 @@ extension ADCenter{
        case click
        case userDismissed
        case didDismissed
+        /// 已经显示过
+       case alreadyShow
+       case loading
+       case loadSuccess
        case loadError
+       case timeOut
     }
 }
 
@@ -42,61 +35,134 @@ class ADCenter:NSObject {
     static var `default` = ADCenter()
 
     /// 开屏广告
-   static let openAd = AdOpenState()
-
-    /// 插页广告
-    static var interstitialAd = AdInterstitialState()
+    static let openAd = AdOpenState()
 
     /// 初始化广告
     func start(){
+        Settings.shared.isAdvertiserIDCollectionEnabled = true
+        Settings.shared.isAutoLogAppEventsEnabled = true
+        
         MobileAds.shared.start(completionHandler: { status in
-            print(status,"初始化结果")
+            status.adapterStatusesByClassName.forEach { info in
+                print("初始广告平台----\(info.key)\n 广告厂商状态\(info.value)\n")
+            }
         })
     }
 
     /// 原生广告池
     private var nativeAds:[NativeAdState] = []
     
+    /// 插页广告池
+    private var interstitiaAds:[AdInterstitialState] = []
+    
     /// 加载原生广告
-    func loadNativeAd() -> AnyPublisher<NativeAdState.State,Never> {
-        let nativeAd = NativeAdState()
-        nativeAds.append(nativeAd)
-        return nativeAd.load()
+    func loadNativeAd(scene:SceneType) -> AnyPublisher<NativeAdState.State,Never> {
+       if let nativeAd = nativeAds.first(where: { adState in
+            switch adState.state {
+            case .loadSuccess:
+                return true
+            default:
+                return false
+            }
+       }){
+           print("使用原生广告缓存--")
+           nativeAd.scene = scene
+           return nativeAd.$state.handleEvents(receiveOutput: {[weak self] _ in
+               self?.nativeAds.wp_filter(exclude: { $0.id == nativeAd.id})
+           }).eraseToAnyPublisher()
+       }else{
+           let nativeAd = NativeAdState()
+           nativeAd.scene = scene
+           nativeAds.append(nativeAd)
+           return nativeAd.load().handleEvents(receiveOutput: {[weak self] _ in
+               self?.nativeAds.wp_filter(exclude: { $0.id == nativeAd.id})
+           }).eraseToAnyPublisher()
+       }
+    }
+    
+    /// 缓存原生广告
+    func cacheNativeAd(count:Int = 1){
+        for _ in 0..<count {
+            let nativeAd = NativeAdState()
+            nativeAds.append(nativeAd)
+            nativeAd.normalLoad()
+            nativeAd.$state.sink(receiveValue: { state in
+                print("缓存原生广告状态\(state)")
+            }).store(in: &nativeAd.wp.cancellables.set)
+        }
     }
     
     /// 显示插页广告
-    func showInterstitialAd(_ viewController:UIViewController? = nil,timeout:Int = 10) -> AnyPublisher<Void,Never> {
+    func showInterstitialAd(scene:SceneType,
+                            _ viewController:UIViewController? = nil,
+                            willShow:(()->Void)? = nil,
+                            loading:(()->Void)? = nil,
+                            otherState:(()->Void)? = nil,
+                            timeout:Int = 99) -> AnyPublisher<ShowState,Never> {
+//#if Test // 测试代码
+//        return .create { ob in
+//            ob(.success(.userDismissed))
+//        }
+//#elseif Pro
+        
+        var interAd:AdInterstitialState!
+        let cachad = interstitiaAds.first(where: { $0.state == .loadSuccess })
+        if cachad == nil {
+            interAd = AdInterstitialState()
+        }else{
+            interAd = cachad
+            print("使用插页缓存广告")
+        }
 
-       return .create { ob in
-           var didFinish = false
-           // 启动 timeout 逻辑
-           DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(timeout)) {
-               guard !didFinish else { return }
-               didFinish = true
-               ob(.success(()))
-           }
-           
-           Task{
-               do{
-                   try await ADCenter.interstitialAd.load()
-                   // 超时已经触发就不显示广告
-                   guard !didFinish else { return }
-                   didFinish = true
-                   print("加载成功")
-                   ADCenter.interstitialAd.show(viewController: viewController)
-                   ADCenter.interstitialAd.stateAction = { state in
-                       if state == .didDismissed{
-                           ob(.success(()))
-                           
-                       }
-                   }
-               }catch{
-                   print("加载失败")
-                   ob(.success(()))
-               }
-           }
+        
+        if !(interstitiaAds.contains(where: { $0.id == interAd.id })){
+            interstitiaAds.append(interAd)
+        }
+        var didFinsh = false
+        
+        return interAd.$state.prepend(interAd.state).removeDuplicates().flatMap({ output in
+            
+            return AnyPublisher<ADCenter.ShowState,Never>.create { ob in
+                if output == .loading {
+                    // 超时逻辑：只在加载阶段生效
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(timeout)) {
+                        if didFinsh { return }
+                        didFinsh = true
+                        ob(.success(.timeOut))
+                        print("加载插页超时----\(interAd.id)")
+                    }
+                }else if output == .loadSuccess || output == .loadError{
+                    if didFinsh { return }
+                    ob(.success(output))
+                    didFinsh = true
+                }else{
+                    ob(.success(output))
+                }
+                
+                switch output {
+                case .loading:
+                    loading?()
+                case .willShow:
+                    willShow?()
+                default:
+                    otherState?()
+                }
+            }
+        }).handleEvents(receiveOutput: { state in
+            if state == .loadSuccess {
+                interAd.show(scene: scene, viewController: nil)
+            }
+            if state == .didShow {
+                let cachInterAd = AdInterstitialState()
+                self.interstitiaAds.append(cachInterAd)
+//                print("加载缓存广告---")
+//                cachInterAd.$state.sink(receiveValue: { state in
+//                    print("缓存插页广告状态-\(state)----\(cachInterAd.id)")
+//                }).store(in: &interAd.wp.cancellables.set)
+            }
 
-       }
+        }).eraseToAnyPublisher()
+//#endif
     }
 }
 
@@ -115,34 +181,62 @@ extension Publisher where Self.Output == NativeAdState.State {
     }
 }
 
+extension Publisher where Self.Output == ADCenter.ShowState {
+    
+    func success() -> AnyPublisher<ADCenter.ShowState,Failure> {
+        return filter({ state in
+            return state == .loadError || state == .didDismissed || state == .timeOut
+        }).eraseToAnyPublisher()
+    }
+}
+
 
 /// 原生广告
 class NativeAdState: NSObject,NativeAdLoaderDelegate,NativeAdDelegate {
+    let id = UUID()
     func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
         nativeAd.delegate = self
-        stateAction?(.loadSuccess(nativeAd))
+        state = .loadSuccess(nativeAd)
+        nativeAd.paidEventHandler = {[weak self] adValue in
+            guard let self = self else { return }
+            guard let scene = scene else { return }
+            Event.native_revenue(scene, adValue).track()
+        }
     }
     
     enum State {
+       case loading
        case loadError
        case loadSuccess(NativeAd)
-       case loadAllSuccess
+    }
+    
+    func nativeAdDidRecordImpression(_ nativeAd: NativeAd) {
+        guard let scene = scene else { return }
+        Event.native_show(scene).track()
+    }
+    
+    func nativeAdDidRecordClick(_ nativeAd: NativeAd) {
+        guard let scene = scene else { return }
+        Event.native_click(scene).track()
     }
     
     // 原生广告加载失败
     func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: any Error) {
-        stateAction?(.loadError)
+        state = .loadError
     }
     // 原生广告加载完成
     func adLoaderDidFinishLoading(_ adLoader: AdLoader) {
-        stateAction?(.loadAllSuccess)
+
     }
     
     let adLoad:AdLoader!
+    var scene:SceneType?
+    
+    @Published
+    var state:State = .loading
 
-    private var stateAction:((State)->Void)?
-
-    init(rootViewController:UIViewController? = nil,adTypes:[AdLoaderAdType] = [.native]) {
+    init(rootViewController:UIViewController? = nil,
+         adTypes:[AdLoaderAdType] = [.native]) {
         self.adLoad = .init(adUnitID: ADCenterTypeID.naivte.id, rootViewController: rootViewController, adTypes: adTypes, options: nil)
         super.init()
         self.adLoad.delegate = self
@@ -150,173 +244,11 @@ class NativeAdState: NSObject,NativeAdLoaderDelegate,NativeAdDelegate {
   
     func load() -> AnyPublisher<State,Never> {
         adLoad.load(Request())
-        return .create {[weak self] ob in
-            self?.stateAction = { state in
-                ob(.success( state))
-            }
-        }
+        return $state.eraseToAnyPublisher()
     }
     
-}
-
-class NativeBlockView: UIView {
-    enum Style {
-      /// 无横幅
-      case small
-      /// 有横幅
-      case middle
-        
-       func height() -> CGFloat {
-            switch self {
-            case .small:
-                140
-            default:
-                350
-            }
-        }
-    }
-    
-    let style:Style
-    
-    let adView = NativeAdView(frame: .zero)
-    
-    var nativeAd:NativeAd?{
-        didSet{
-            (adView.callToActionView as? UIButton)?.setTitle(nativeAd?.callToAction, for: .normal)
-            (adView.iconView as? UIImageView)?.image = nativeAd?.icon?.image
-            (adView.headlineView as? UILabel)?.text = nativeAd?.headline
-            (adView.bodyView as? UILabel)?.text = nativeAd?.body
-            adView.nativeAd = nativeAd;
-        }
-    }
-
-    init(style: Style,nativeAd:NativeAd? = nil) {
-        self.style = style
-        super.init(frame: .zero)
-        
-        adView.translatesAutoresizingMaskIntoConstraints = false
-        adView.backgroundColor = .clear
-//        adView.layer.cornerRadius = 10;
-        adView.clipsToBounds = true
-        adView.mediaView = nil;
-        addSubview(adView)
-        let ctaButton = UIButton(type: .system).wp.isUserInteractionEnabled(false).value()
-        let iconView = UIImageView().wp.isUserInteractionEnabled(false).value()
-        let adTagLabel = UILabel().wp.isUserInteractionEnabled(false).value()
-        let headlineLabel = UILabel().wp.isUserInteractionEnabled(false).value()
-        let bodyLabel = UILabel().wp.isUserInteractionEnabled(false).value()
-        
-        adView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.top.bottom.equalToSuperview()
-        }
-       
-        ctaButton.translatesAutoresizingMaskIntoConstraints = false
-       
-        ctaButton.titleLabel?.font = 17.font()
-        ctaButton.backgroundColor = .main
-        ctaButton.setTitleColor(.white, for: .normal)
-        ctaButton.layer.cornerRadius = 8
-        ctaButton.clipsToBounds = true
-        // 添加到 nativeAdView
-        adView.addSubview(ctaButton)
-        adView.callToActionView = ctaButton
-        
-        // 2. icon + AD + headline + body
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconView.contentMode = .scaleAspectFit
-        iconView.clipsToBounds = true
-        iconView.layer.cornerRadius = 0
-        iconView.backgroundColor = .white
-        adView.addSubview(iconView)
-        adView.iconView = iconView
-        
-        
-        adTagLabel.translatesAutoresizingMaskIntoConstraints = false
-        adTagLabel.text = "AD"
-        adTagLabel.font = 11.font()
-        adTagLabel.textColor = .c55586A
-//        adTagLabel.backgroundColor = UIColor(white: 0.25, alpha: 1)
-        adTagLabel.layer.borderWidth = 1
-        adTagLabel.layer.borderColor = UIColor.c55586A.cgColor
-        adTagLabel.textAlignment = .center
-        adTagLabel.layer.cornerRadius = 2
-        adTagLabel.clipsToBounds = true
-        adView.addSubview(adTagLabel)
-
-        headlineLabel.translatesAutoresizingMaskIntoConstraints = false
-        headlineLabel.font = 17.font(.bold)
-        headlineLabel.textColor = .white
-        
-        headlineLabel.numberOfLines = 1
-        adView.addSubview(headlineLabel)
-        adView.headlineView = headlineLabel
-        
-        bodyLabel.translatesAutoresizingMaskIntoConstraints = false
-        bodyLabel.font = 11.font()
-        bodyLabel.textColor = .c55586A
-        
-        bodyLabel.numberOfLines = 2
-        adView.addSubview(bodyLabel)
-        adView.bodyView = bodyLabel
-        
-        ctaButton.snp.makeConstraints { make in
-            make.top.equalTo(0)
-            make.left.right.equalToSuperview()
-            make.height.equalTo(40)
-        }
-        
-        iconView.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.top.equalTo(ctaButton.snp.bottom).offset(8)
-            make.size.equalTo(CGSize(width: 72, height: 72))
-            
-        }
-        
-        adTagLabel.snp.makeConstraints { make in
-            make.left.equalTo(iconView.snp.right).offset(10)
-            make.top.equalTo(iconView).offset(8)
-            make.size.equalTo(CGSize(width: 24, height: 14))
-        }
-        
-        headlineLabel.snp.makeConstraints { make in
-            make.left.equalTo(adTagLabel.snp.right).offset(6)
-            make.centerY.equalTo(adTagLabel)
-            make.right.equalToSuperview()
-        }
-        
-        bodyLabel.snp.makeConstraints { make in
-            make.left.equalTo(adTagLabel)
-            make.top.equalTo(headlineLabel.snp.bottom).offset(4)
-            make.right.equalToSuperview().offset(-10)
-        }
-        
-        switch style {
-        case .small:
-            iconView.snp.makeConstraints { make in
-                make.bottom.equalToSuperview().offset(0)
-            }
-        case .middle:
-            let mediaView = MediaView()
-            mediaView.translatesAutoresizingMaskIntoConstraints = false
-            mediaView.contentMode = .scaleAspectFit
-            adView.addSubview(mediaView)
-            adView.mediaView = mediaView
-            mediaView.snp.makeConstraints { make in
-                make.left.equalToSuperview()
-                make.right.equalToSuperview()
-                make.top.equalTo(bodyLabel.snp.bottom).offset(12)
-                make.height.equalTo(130)
-                make.bottom.equalToSuperview()
-            }
-        }
-         
-        
-    }
-
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func normalLoad(){
+        adLoad.load(Request())
     }
     
 }
@@ -329,8 +261,13 @@ class AdOpenState:NSObject,FullScreenContentDelegate {
     var isLoadingAd:Bool = false
     /// 广告是否已显示
     var isShowingAd:Bool = false
+    
     var loadTime:Date? = nil
+    
     let timeoutInterval:TimeInterval = 14400
+
+    /// 广告场景
+    var scene:SceneType?
 
     var stateAction:((ADCenter.ShowState)->Void)?
     
@@ -347,19 +284,18 @@ class AdOpenState:NSObject,FullScreenContentDelegate {
 
     override init() {}
     
-    func ad(_ ad: any FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: any Error) {
-        stateAction?(.loadError)
-    }
-    
     func adDidRecordImpression(_ ad: FullScreenPresentingAd) {
       print("App open ad recorded an impression.")
         stateAction?(.didShow)
-        
+        guard let scene = scene else { return }
+        Event.appOpen_show(scene).track()
     }
 
     func adDidRecordClick(_ ad: FullScreenPresentingAd) {
       print("App open ad recorded a click.")
         stateAction?(.click)
+        guard let scene = scene else { return }
+        Event.appOpen_click(scene).track()
     }
 
     func adWillDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
@@ -385,12 +321,19 @@ class AdOpenState:NSObject,FullScreenContentDelegate {
             let appOpenAd = try await AppOpenAd.load(
                 with: ADCenterTypeID.open.id, request: Request())
             appOpenAd.fullScreenContentDelegate = self
-
+            appOpenAd.paidEventHandler = {[weak self] advalue in
+                guard let self = self else { return }
+                guard let scene = self.scene else {
+                    return
+                }
+                Event.appOpen_revenue(scene, advalue).track()
+            }
             loadTime = Date()
             self.appOpenAd = appOpenAd
             isLoadingAd = false
         } catch {
             print("开屏广告加载失败: \(error.localizedDescription)")
+            stateAction?(.loadError)
             appOpenAd = nil
             loadTime = nil
             isLoadingAd = false
@@ -399,7 +342,8 @@ class AdOpenState:NSObject,FullScreenContentDelegate {
         
     }
     
-    func show() {
+    func show(scene:SceneType) {
+        self.scene = scene
         if isShowingAd {
           return print("App open ad is already showing.")
         }
@@ -421,82 +365,73 @@ class AdOpenState:NSObject,FullScreenContentDelegate {
 }
 
 class AdInterstitialState: NSObject, FullScreenContentDelegate {
+    let id = UUID()
 
-    
     var interstitial: InterstitialAd?
-    /// 是否正在加载广告
-    var isLoadingAd:Bool = false
-    /// 是否已经显示过广告
-    var isShowingAd:Bool = false
+    var isShowingAd = false
+    /// 广告场景
+    var scene:SceneType?
     
-    var stateAction:((ADCenter.ShowState)->Void)?
-    
-    func ad(_ ad: any FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: any Error) {
-        stateAction?(.loadError)
-        print("加载失败------")
-    }
+    @Published var state = ADCenter.ShowState.loading
     
     func adDidRecordImpression(_ ad: FullScreenPresentingAd) {
-      print("App open ad recorded an impression.")
-        stateAction?(.didShow)
+        guard let scene = scene else {
+            return
+        }
+
+        state = .didShow
+        Event.inter_show(scene).track()
     }
 
     func adDidRecordClick(_ ad: FullScreenPresentingAd) {
-      print("App open ad recorded a click.")
-        stateAction?(.click)
+        state = .click
+        guard let scene = scene else {
+            return
+        }
+        Event.inter_click(scene).track()
     }
 
     func adWillDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
-      print("App open ad will be dismissed.")
-        stateAction?(.userDismissed)
+        state = .userDismissed
     }
 
     func adWillPresentFullScreenContent(_ ad: FullScreenPresentingAd) {
-      print("App open ad will be presented.")
-        stateAction?(.willShow)
+        state = .willShow
     }
 
     func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
-      print("App open ad was dismissed.")
-        stateAction?(.didDismissed)
-        interstitial = nil
-        isShowingAd = false
+        state = .didDismissed
     }
     
-    func load() async throws {
-        isLoadingAd = true
-        print("开始加载插页")
+   override init() {
+       super.init()
+        Task{
+           try? await load()
+        }
+    }
+
+    private func load() async throws {
         do {
             let interstitial = try await InterstitialAd.load(
                 with: ADCenterTypeID.interstitial.id, request: Request())
             interstitial.fullScreenContentDelegate = self
             self.interstitial = interstitial
-            isLoadingAd = false
+            state = .loadSuccess
+
+            interstitial.paidEventHandler = {[weak self] adValue in
+                guard let self = self else { return }
+                guard let scene = self.scene else { return }
+                Event.inter_revenue(scene, adValue).track()
+            }
           } catch {
-              print("插页广告加载失败: \(error.localizedDescription)")
-              interstitial = nil
-              isLoadingAd = false
+              state = .loadError
               throw error
           }
-
-        
     }
     
-    func show(viewController:UIViewController?) {
-        if isShowingAd {
-          return print("App open ad is already showing.广告已经显示过")
-        }
-
-        if let interstitial {
-            interstitial.present(from: viewController)
-            isShowingAd = true
-            
-            Task{
-               try await load()
-            }
-        }
+    func show(scene:SceneType, viewController:UIViewController?) {
+        self.scene = scene
+        interstitial?.present(from: viewController)
     }
 }
-
-
 */

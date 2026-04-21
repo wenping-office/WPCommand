@@ -60,6 +60,18 @@ public extension Publisher {
     }
 }
 
+
+public extension Publisher {
+    var wp: WPSpace<Self> {
+        WPSpace(self)
+    }
+
+    static var wp: WPSpace<Self>.Type {
+        WPSpace<Self>.self
+    }
+
+}
+
 public enum PublisherResult<Value, Failure: Error> {
     case success(Value)
     case failure(Failure)
@@ -81,34 +93,19 @@ public extension Publisher{
         flatMap { result -> AnyPublisher<T, E> in
             switch result {
             case .success(let value):
-                return .just(value).eraseToAnyPublisher()
+                return .wp.just(value).eraseToAnyPublisher()
             case .failure(let error):
-                return .fail(with: error).eraseToAnyPublisher()
+                return .wp.fail(with: error).eraseToAnyPublisher()
             }
         }.eraseToAnyPublisher()
     }
 }
 
-public extension Publisher {
-    /// 弱引用
-    /// - Parameter object: 弱引用对象
-    /// - Returns: 输出 (弱对象, 上游值)，自动适配上游 Failure 类型
-    func withWeak<Object: AnyObject>(
-        _ object: Object
-    ) -> AnyPublisher<(Object, Output), Failure> {
-        self
-            .tryCompactMap { [weak object] value -> (Object, Output)? in
-                guard let obj = object else { return nil }
-                return (obj, value)
-            }
-            .mapError { $0 as! Failure } // 自动适配 Failure 类型
-            .eraseToAnyPublisher()
-    }
-    
+public extension WPSpace where Base: Publisher{
     /// create
     /// - Parameter block: 提供一个 closure 手动触发 promise
-    /// - Returns: AnyPublisher<Output, Failure>
-    static func create(_ block: @escaping (@escaping (Result<Output, Failure>) -> Void) -> Void) -> AnyPublisher<Output, Failure> {
+    /// - Returns: 发出一次值后失效
+    static func future(_ block: @escaping (@escaping (Result<Base.Output, Base.Failure>) -> Void) -> Void) -> AnyPublisher<Base.Output, Base.Failure> {
         Deferred {
             Future { promise in
                 block { result in
@@ -118,31 +115,58 @@ public extension Publisher {
         }
         .eraseToAnyPublisher()
     }
-
+    
+    /// 创建一个可持续发值的PassthroughSubject
+    static func create(
+        _ block: @escaping (PassthroughSubject<Base.Output, Base.Failure>) -> Void
+    ) -> AnyPublisher<Base.Output, Base.Failure> {
+        Deferred {
+            let subject = PassthroughSubject<Base.Output, Base.Failure>()
+            block(subject)
+            return subject
+        }
+        .eraseToAnyPublisher()
+    }
+    
     /// 发出值
-    static func just(_ value: Output) -> AnyPublisher<Output, Failure> {
+    static func just(_ value: Base.Output) -> AnyPublisher<Base.Output, Base.Failure> {
         Just(value)
-            .setFailureType(to: Failure.self)
+            .setFailureType(to: Base.Failure.self)
             .eraseToAnyPublisher()
     }
     
     /// 空订阅
-    static func empty() -> AnyPublisher<Output, Failure> {
+    static func empty() -> AnyPublisher<Base.Output, Base.Failure> {
         Empty(completeImmediately: false)
-            .setFailureType(to: Failure.self)
+            .setFailureType(to: Base.Failure.self)
             .eraseToAnyPublisher()
     }
     
     /// 发出错误
-    static func fail(with error: Failure) -> AnyPublisher<Output, Failure> {
+    static func fail(with error: Base.Failure) -> AnyPublisher<Base.Output, Base.Failure> {
         Fail(error: error)
             .eraseToAnyPublisher()
     }
     
-    func asFuture() -> Future<Output, Failure> {
+    /// 弱引用
+    /// - Parameter object: 弱引用对象
+    /// - Returns: 输出 (弱对象, 上游值)，自动适配上游 Failure 类型
+    func withWeak<Object: AnyObject>(
+        _ object: Object
+    ) -> AnyPublisher<(Object, Base.Output), Base.Failure> {
+        base
+            .tryCompactMap { [weak object] value -> (Object, Base.Output)? in
+                guard let obj = object else { return nil }
+                return (obj, value)
+            }
+            .mapError { $0 as! Base.Failure } // 自动适配 Failure 类型
+            .eraseToAnyPublisher()
+    }
+    
+    func asFuture() -> Future<Base.Output, Base.Failure> {
         return Future { promise in
             var cancellable: AnyCancellable?
-            cancellable = self.sink { completion in
+            cancellable = base.sink { completion in
                 if case let .failure(error) = completion {
                     promise(.failure(error))
                 }
@@ -154,10 +178,10 @@ public extension Publisher {
         }
     }
     
-    func toAwait() async throws -> Output {
+    func toAwait() async throws -> Base.Output {
         try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
-            cancellable = self.first()
+            cancellable = base.first()
                 .sink(
                     receiveCompletion: { completion in
                         if case let .failure(error) = completion {
@@ -171,6 +195,18 @@ public extension Publisher {
                     }
                 )
         }
+    }
+    
+    /// 闭包形式通知序列执行，源序列成功后才会执行
+    /// 最终只输出源序列的值，不输出内部序列的值
+    /// - Parameter source: 返回新序列的闭包
+    /// - Returns: 只输出源序列值的 Publisher
+    func notice<T>(_ source: @escaping (Base.Output) -> AnyPublisher<T, Never>) -> AnyPublisher<Base.Output, Base.Failure> {
+        return base.handleEvents(receiveOutput: { value in
+            Task{
+                try? await source(value).wp.toAwait()
+            }
+        }).eraseToAnyPublisher()
     }
 }
 
@@ -207,3 +243,62 @@ public extension WPSystem{
 
 
 public struct TimeoutError: Error {}
+
+@available(iOS 14.0, *)
+public extension WPSpace where Base: Publisher{
+    /// 安全重试操作符（固定延迟 + jitter + 次数控制）
+        ///
+        /// 特点：
+        /// - 不使用 Stride 数学运算（避免 Combine 泛型坑）
+        /// - 不使用 magnitude / Double 转换
+        /// - 每次固定 delay（可 jitter）
+        /// - 控制最大重试次数
+        /// - 每次失败可回调 onRetry
+        func retryWithDelay<S: Scheduler>(
+            maxRetries: Int,
+            delay: TimeInterval,
+            jitter: Double = 0,
+            scheduler: S,
+            shouldRetry: @escaping (Base.Failure) -> Bool = { _ in true },
+            onRetry: ((Int, Base.Failure) -> Void)? = nil
+        ) -> AnyPublisher<Base.Output, Base.Failure> {
+            return base.catch { error -> AnyPublisher<Base.Output, Base.Failure> in
+
+                // ❌ 不允许重试
+                guard maxRetries > 0, shouldRetry(error) else {
+                    return Fail(error: error).eraseToAnyPublisher()
+                }
+
+                // 🔔 retry 回调
+                onRetry?(maxRetries, error)
+
+                // 🎲 jitter（防雪崩）
+                let jitterValue: TimeInterval = jitter > 0
+                    ? Double.random(in: -jitter...jitter) * delay
+                    : 0
+
+                let finalDelay = Swift.max(0, delay + jitterValue)
+
+                // ⏳ 延迟后递归
+                return Just(())
+                    .delay(for: .seconds(delay), scheduler: scheduler)
+                    .flatMap { _ in
+                        self.retryWithDelay(
+                            maxRetries: maxRetries - 1,
+                            delay: finalDelay,
+                            jitter: jitter,
+                            scheduler: scheduler,
+                            shouldRetry: shouldRetry,
+                            onRetry: onRetry
+                        )
+                    }
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+        }
+
+}
+
+
+
+
