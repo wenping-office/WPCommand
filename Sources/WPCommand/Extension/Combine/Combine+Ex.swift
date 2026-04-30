@@ -77,6 +77,12 @@ public enum PublisherResult<Value, Failure: Error> {
     case failure(Failure)
 }
 
+public enum PublisherRequestResult<Value, Failure: Error> {
+    case success(Value)
+    case loading
+    case failure(Failure)
+}
+
 @available(iOS 14.0, *)
 public extension Publisher{
     
@@ -98,6 +104,36 @@ public extension Publisher{
                 return .wp.fail(with: error).eraseToAnyPublisher()
             }
         }.eraseToAnyPublisher()
+    }
+    
+    /// 合并结果
+    func asRequest() -> AnyPublisher<PublisherRequestResult<Output, Failure>, Never> {
+        map { .success($0) }
+            .catch { Just(.failure($0)) }
+            .prepend(.loading)
+            .eraseToAnyPublisher()
+    }
+    
+    /// 解包结果
+    func unwrapRequest<T, E>()
+    -> AnyPublisher<PublisherRequestResult<T, E>, E>
+    where Output == PublisherRequestResult<T, E>, Failure == Never {
+        flatMap { result -> AnyPublisher<PublisherRequestResult<T, E>, E> in
+            switch result {
+            case .success(let value):
+                return Just(.success(value))
+                    .setFailureType(to: E.self)
+                    .eraseToAnyPublisher()
+            case .failure(let error):
+                return Fail(error: error)
+                    .eraseToAnyPublisher()
+            case .loading:
+                return Just(.loading)
+                    .setFailureType(to: E.self)
+                    .eraseToAnyPublisher()
+            }
+        }
+        .eraseToAnyPublisher()
     }
 }
 
@@ -300,5 +336,41 @@ public extension WPSpace where Base: Publisher{
 }
 
 
+public protocol WPFutureType {}
+extension Future: WPFutureType {}
 
+public extension WPSpace where Base == WPFutureType.Type {
+
+    /// 任意同步代码 → Future（自动异步化）
+    static func async<Output>(
+        _ work: @escaping () throws -> Output
+    ) -> Future<Output, Error> {
+        Future { promise in
+            DispatchQueue.global().async {
+                do {
+                    let value = try work()
+                    promise(.success(value))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }
+    }
+    
+    /// 任意同步代码 → Future（自动异步化）
+    static func async<Output>(
+        _ work: @escaping () async throws -> Output
+    ) -> Future<Output, Error> {
+        Future { promise in
+            Task {
+                do {
+                    let value = try await work()
+                    promise(.success(value))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }
+    }
+}
 

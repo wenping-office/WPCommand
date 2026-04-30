@@ -337,7 +337,7 @@ public extension WPSystem{
     
     /// 从指定 Localizable.xcstrings 文件获取指定语种的 key-value
     /// - Parameters:
-    ///   - filePath: Localizable.xcstrings 文件完整路径
+    ///   - filePath: Localizable.xcstrings 文件完整路径 模拟器下才能使用
     ///   - languageKey: 指定语种 key，默认 "en"
     /// - Returns: 字典 [key: value]
     static func getLocalizableKeys(from filePath: String, languageKey: String = "en") -> [String: String] {
@@ -480,7 +480,7 @@ public extension WPSystem{
     }
     
     
-    /// 获取一个 Localizable.xcstrings 所在目录下的所有语言 key
+    /// 获取一个 Localizable.xcstrings 所在目录下的所有语言 key 模拟器使用
    static func getAllLanguageKeys(path: String) -> [String] {
         let fileManager = FileManager.default
         // 获取 Localizable.xcstrings 的目录
@@ -506,7 +506,7 @@ public extension WPSystem{
         }
     }
     
-    /// 从 Localizable JSON 文件中获取所有语种 key
+    /// 从 Localizable JSON 文件中获取所有语种 key 模拟器使用
     /// - Parameter filePath: JSON 文件路径
     /// - Returns: 语种 key 数组
     static func getAllLanguageKeys(filePath: String) -> [String] {
@@ -546,11 +546,11 @@ public extension WPSystem{
         }
     }
     
-    /// 删除指定语种的内容
+    /// 删除指定语种的内容 模拟器使用
     /// - Parameters:
     ///   - filePath: JSON 文件路径
     ///   - languageKey: 要删除的语种，例如 "zh-Hans"
-    func deleteLanguage(filePath: String, languageKey: String) {
+    static func deleteLanguage(filePath: String, languageKey: String) {
         let fileManager = FileManager.default
         guard fileManager.fileExists(atPath: filePath) else {
             print("❌ 文件不存在: \(filePath)")
@@ -594,4 +594,65 @@ public extension WPSystem{
             print("❌ 操作失败: \(error)")
         }
     }
+    
+    /// 翻译国际化文件 需要翻译的语言会打印在控制台 必须用模拟器运行 真机照不到path下的文件
+    /// filePath Localizable.xcstrings 文件路径
+    /// optionKeys 需要翻译的key 如有有重复的key 会覆盖
+   static func translation(filePath:String,
+               targetLanguageKey:String,
+               optionKeys:(_ launchKey:String) -> [String:String]) {
+        func formatDict(_ dict: [String: String]) -> String {
+            var result = "[\n"
+            let keys = dict.keys.sorted()
+            for (index, key) in keys.enumerated() {
+                var value = dict[key] ?? ""
+                // 把真实换行替换成 \n
+                value = value
+                    .replacingOccurrences(of: "\n", with: "\\n")
+                    .replacingOccurrences(of: "\r", with: "")
+                
+                result += "\"\(key)\":\"\(value)\""
+                
+                if index != keys.count - 1 {
+                    result += ","
+                }
+                result += "\n"
+            }
+            result += "]"
+            return result
+        }
+        
+        func printSwitchTemplate(keys: [String]) {
+            let sortedKeys = keys.sorted()
+            print("switch key {")
+            for key in sortedKeys {
+                if key != targetLanguageKey {
+                    print("""
+                    case "\(key)":
+                        return [:]
+                    """)
+                }
+            }
+            print("""
+                default:
+                    return [:]
+                }
+                """)
+        }
+        
+        let keys = WPSystem.getAllLanguageKeys(filePath:filePath)
+        let targetValues = WPSystem.getLocalizableKeys(from: filePath, languageKey: targetLanguageKey)
+        print("所支持的keys\(keys)\n\n\n")
+        print("需要翻译的语言\n\n\(printSwitchTemplate(keys: keys))")
+        print("目标kyes\n\n\n\(formatDict(targetValues))\n\n\n")
+        
+        
+        keys.forEach { key in
+            if key != targetLanguageKey {
+                let values = optionKeys(key)
+                try? WPSystem.mergeTranslations(values, forLanguage: key, to: filePath, overwrite: true)
+            }
+        }
+    }
 }
+
