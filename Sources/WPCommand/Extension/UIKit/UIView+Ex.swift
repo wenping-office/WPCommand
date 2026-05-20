@@ -184,79 +184,26 @@ public extension WPSpace where Base: UIView {
     /// 固定宽度，计算 Auto Layout 后的高度
     /// - Parameter maxWidth: 最大宽度
     /// - Returns: 结果
-    func layoutMaxWidthMinSize(maxWidth: CGFloat? = nil) -> CGSize {
-
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(base)
-
-        base.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            base.topAnchor.constraint(equalTo: container.topAnchor),
-            base.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            base.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            base.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-        ])
-
-        if let maxWidth {
-            container.widthAnchor
-                .constraint(equalToConstant: maxWidth)
-                .isActive = true
-        }
-
-        let targetSize = CGSize(
-            width: maxWidth ?? UIView.layoutFittingCompressedSize.width,
-            height: UIView.layoutFittingCompressedSize.height
-        )
-
-        let size = container.systemLayoutSizeFitting(
-            targetSize,
-            withHorizontalFittingPriority: maxWidth != nil ? .required : .fittingSizeLevel,
+    func layoutMaxWidthMinSize(maxWidth: CGFloat = .infinity) -> CGSize {
+        let size = base.systemLayoutSizeFitting(
+            CGSize(width: maxWidth, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required ,
             verticalFittingPriority: .fittingSizeLevel
         )
-
         return size
     }
     
     /// 固定高度，计算 Auto Layout 后的宽度
     /// - Parameter maxHeight: 最大高度
     /// - Returns: 结果
-    func layoutMaxHeightMinSize(maxHeight: CGFloat? = nil) -> CGSize {
-
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(base)
-
-        base.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            base.topAnchor.constraint(equalTo: container.topAnchor),
-            base.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            base.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            base.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-        ])
-
-        if let maxHeight {
-            container.heightAnchor
-                .constraint(equalToConstant: maxHeight)
-                .isActive = true
-        }
-
-        let targetSize = CGSize(
-            width: UIView.layoutFittingCompressedSize.width,
-            height: maxHeight ?? UIView.layoutFittingCompressedSize.height
-        )
-
-        let size = container.systemLayoutSizeFitting(
-            targetSize,
+    func layoutMaxHeightMinSize(maxHeight: CGFloat = .infinity) -> CGSize {
+        let size = base.systemLayoutSizeFitting(
+            CGSize(width: UIView.layoutFittingCompressedSize.width, height: maxHeight),
             withHorizontalFittingPriority: .fittingSizeLevel,
-            verticalFittingPriority: maxHeight != nil ? .required : .fittingSizeLevel
+            verticalFittingPriority: .required
         )
-
         return size
     }
-
-
 }
 
 
