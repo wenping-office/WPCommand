@@ -33,7 +33,7 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '13.0'
   # 源文件地址
   #  s.source_files = 'WPCommand/Classes/**/*'
-  s.source_files = 'WPCommand/**/*'
+  s.source_files = 'WPCommand/Sources/**/*'
     
   # 是否支持arc
   s.requires_arc = true
