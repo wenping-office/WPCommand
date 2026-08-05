@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import RxSwift
+//import RxSwift
 
 /// 弹出选择框
 public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDelegate {
@@ -124,12 +124,14 @@ public class WPPopoverVC: UIViewController, UIPopoverPresentationControllerDeleg
             view.topStackView.alignment = .center
             view.backgroundColor = .wp.initWith(76, 76, 76, 1)
             view.reset()
-            view.wp.tapGesture.throttle(.milliseconds(500), scheduler: MainScheduler.instance).bind(onNext: { _ in
+            
+            let tap = UITapGestureRecognizer(action: { _ in
                 vc.dismiss(animated: true,completion: {
                     item.action?()
                 })
-            }).disposed(by: view.wp.disposeBag)
-            vc.contentView.addArrangedSubview(view)
+            })
+            view.isUserInteractionEnabled = true
+            view.addGestureRecognizer(tap)
         }
     }
     
@@ -343,7 +345,7 @@ public extension WPBlockView {
 }
 
 /// 静态视图 常用布局label封装
-open class WPBlockView: WPBaseView {
+open class WPBlockView: UIView {
     /// 标题
     public let titleLabel = UILabel().wp.textColor(.black).value()
     
@@ -463,9 +465,8 @@ open class WPBlockView: WPBaseView {
         }
     }
 
-    override open func initSubView() {
-        super.initSubView()
-        
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
         addSubview(contentStackView)
         
         subDesribeLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -482,13 +483,14 @@ open class WPBlockView: WPBaseView {
                 
         bottomLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         bottomLabel.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-    }
-    
-    override open func initSubViewLayout() {
-        super.initSubViewLayout()
+        
         contentStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+    
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

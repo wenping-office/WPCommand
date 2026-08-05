@@ -29,7 +29,7 @@ public extension WPLabelsView{
     }
 }
 
-public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
+public class WPLabelsView<V:WPLabelsItemView>: UIView {
     /// 每一个item的高度
     let itemHight : CGFloat
     /// 最多展示几行
@@ -81,6 +81,10 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
         isUserInteractionEnabled = true
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public var alignment:Alignment{
         didSet{
             resetSubItemsFrame()
@@ -98,12 +102,13 @@ public class WPLabelsView<V:WPLabelsItemView>: WPBaseView {
             let subView = V.init(frame: .zero).wp.isUserInteractionEnabled(true).value()
             subView.frame = .init(x: 0, y: 0, width: subView.labelItemWidth(with: elmt), height: itemHight)
             addSubview(subView)
-            let tap = UITapGestureRecognizer()
-            subView.addGestureRecognizer(tap)
-            tap.rx.event.subscribe(onNext: {[weak self] _ in
+            let tap = UITapGestureRecognizer(action: {[weak self] _ in
                 self?.delegate?.labelsView(didSelectAt: index, with: subView, data: elmt)
                 self?.didSelected?(subView, elmt)
-            }).disposed(by: subView.wp.disposeBag)
+            })
+            subView.isUserInteractionEnabled = true
+            subView.addGestureRecognizer(tap)
+        
         }
         layoutIfNeeded()
     }

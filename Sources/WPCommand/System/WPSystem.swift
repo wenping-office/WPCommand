@@ -8,8 +8,8 @@
 
 import CoreMotion
 import Photos
-import RxCocoa
-import RxSwift
+//import RxCocoa
+//import RxSwift
 import UIKit
 import Combine
 
@@ -70,35 +70,33 @@ public extension WPSystem {
     /// app相关
     struct Appliaction {
         /// 将要进入前台
-        public var willEnterForeground: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+        public var willEnterForeground: NotificationCenter.Publisher {
+            return NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
         }
         
         /// 已经激活app
-        public var didBecomeActive: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIApplication.didBecomeActiveNotification)
+        public var didBecomeActive: NotificationCenter.Publisher {
+            return NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
         }
         
         /// 将要挂起
-        public var willResignActive: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIApplication.willResignActiveNotification)
+        public var willResignActive: NotificationCenter.Publisher {
+            return NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)
         }
         
         /// 已经进入后台
-        public var didEnterBackground: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
+        public var didEnterBackground: NotificationCenter.Publisher {
+            return NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
         }
         
         /// 将被杀死
-        public var willTerminate: Observable<Notification> {
-            return NotificationCenter.default.rx.notification(UIApplication.willTerminateNotification)
+        public var willTerminate: NotificationCenter.Publisher{
+            return NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)
         }
     }
     
     /// 屏幕相关
     struct Screen {
-        /// 自定义相关
-        public var custom = Custom()
         /// 系统相关
         public var system = System()
         /// 导航栏高度
@@ -198,139 +196,13 @@ public extension WPSystem {
         /// 系统屏幕相关
         public struct System {
             /// 屏幕方向
-            public var orientation: Observable<UIDeviceOrientation> {
-                return NotificationCenter.default.rx.notification(UIDevice.orientationDidChangeNotification).map { _ in
-                    UIDevice.current.orientation
-                }
-            }
-        }
-        
-        /// 自定义屏幕相关
-        public struct Custom {
-            /// 灵敏度
-            public var sensitivity: Double = 0.77
-            /// 刷新间隔
-            public var updateInterval: TimeInterval = 3
-            /// 当前设备方向
-            public let orientation: BehaviorRelay<UIDeviceOrientation> = .init(value: .portrait)
-            /// 运动管理器
-            private let motionManager = CMMotionManager()
-            /// 开始捕捉重力方向
-            public func openCatch() {
-                /// 设置重力感应刷新时间间隔
-                motionManager.gyroUpdateInterval = updateInterval
-                if motionManager.isDeviceMotionAvailable {
-                    // 开始实时获取数据
-                    let queue = OperationQueue.current
-                    
-                    motionManager.startDeviceMotionUpdates(to: queue!) { motion, _ in
-                        guard
-                            let x = motion?.gravity.x,
-                            let y = motion?.gravity.y
-                        else { return }
-                        
-                        if fabs(y) >= fabs(x) { // 竖屏
-                            if y < sensitivity { // 正
-                                if orientation.value == .portrait { return }
-                                orientation.accept(.portrait)
-                            } else if y > -sensitivity { // 反
-                                if orientation.value == .portraitUpsideDown { return }
-                                orientation.accept(.portraitUpsideDown)
-                            }
-                        } else { // 横屏
-                            if x < -sensitivity { // 左
-                                if orientation.value == .landscapeLeft { return }
-                                orientation.accept(.landscapeLeft)
-                            } else if x > sensitivity { // 右
-                                if orientation.value == .landscapeRight { return }
-                                orientation.accept(.landscapeRight)
-                            }
-                        }
-                    }
-                }
-            }
-            
-            /// 结束捕捉重力方向
-            public func closeCatch() {
-                motionManager.stopDeviceMotionUpdates()
+            public var orientation: AnyPublisher<UIDeviceOrientation,Never> {
+                return NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification).map { _ in
+                    return UIDevice.current.orientation
+                }.eraseToAnyPublisher()
             }
         }
     }
-}
-
-public extension WPSystem {
-    /// 检测是否开启相册权限
-    /// - Parameters:
-    ///   - open: 开启
-    ///   - close: 关闭
-    /// - Returns: 是否开启
-    @discardableResult
-    static func isOpenAlbum(open: (()->Void)? = nil, close: (()->Void)? = nil)->Bool {
-        let authStatus = PHPhotoLibrary.authorizationStatus()
-        let resault = (authStatus != .restricted && authStatus != .denied)
-        
-        if authStatus == .notDetermined {
-            if #available(iOS 14, *) {
-                PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
-                    DispatchQueue.main.async {
-                        if status == .authorized || status == .limited {
-                            open?()
-                        } else {
-                            close?()
-                        }
-                    }
-                }
-            } else {
-                PHPhotoLibrary.requestAuthorization { status in
-                    DispatchQueue.main.async {
-                        if status == .authorized {
-                            open?()
-                        } else {
-                            close?()
-                        }
-                    }
-                }
-            }
-        } else {
-            if resault {
-                open?()
-            } else {
-                close?()
-            }
-        }
-        return resault
-    }
-    
-    /// 判断是否有打开相机权限
-    /// - Parameters:
-    ///   - open: 打开
-    ///   - close: 关闭
-    /// - Returns: 结果
-    @discardableResult
-    static func isOpenCamera(open: (()->Void)? = nil, close: (()->Void)? = nil)->Bool {
-        let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
-        
-        let resault = (authStatus == .authorized)
-        
-        if resault {
-            open?()
-        } else if authStatus == .notDetermined {
-            AVCaptureDevice.requestAccess(for: .video, completionHandler: { granted in
-                DispatchQueue.main.async {
-                    if granted {
-                        open?()
-                        
-                    } else {
-                        close?()
-                    }
-                }
-            })
-        } else {
-            close?()
-        }
-        return resault
-    }
-
 }
 
 public extension WPSystem{

@@ -6,8 +6,10 @@
 //
 
 import UIKit
+/*
 import RxCocoa
 import RxSwift
+*/
 
 private var wp_highlightMaskProtocolPointer = "wp_highlightMaskProtocolPointer"
 
@@ -106,31 +108,34 @@ public extension WPHighlightMaskProtocol {
         let centerView = highlightCenterView()
 
         let centerTapGesture = UITapGestureRecognizer()
-        let topTapGesture = UITapGestureRecognizer()
-        let bottomTapGesture = UITapGestureRecognizer()
-        let leftTapGesture = UITapGestureRecognizer()
-        let rightTapGesture = UITapGestureRecognizer()
+        let topTapGesture = UITapGestureRecognizer(action: {  gesture in
+            topView.highlighMaskTouch(tapGesture: gesture, targetView: topView)
+            touch?(topView)
+        })
+        let bottomTapGesture = UITapGestureRecognizer(action: {  gesture in
+            bottomView.highlighMaskTouch(tapGesture: gesture, targetView: bottomView)
+            touch?(bottomView)
+        })
+        let leftTapGesture = UITapGestureRecognizer(action: {  gesture in
+            leftView.highlighMaskTouch(tapGesture: gesture, targetView: leftView)
+            touch?(leftView)
+        })
+        let rightTapGesture = UITapGestureRecognizer(action: {  gesture in
+            rightView.highlighMaskTouch(tapGesture: gesture, targetView: rightView)
+            touch?(rightView)
+        })
+        
+        topView.isUserInteractionEnabled = true
+        bottomView.isUserInteractionEnabled = true
+        leftView.isUserInteractionEnabled = true
+        rightView.isUserInteractionEnabled = true
+        centerView.isUserInteractionEnabled = true
+        
         topView.addGestureRecognizer(topTapGesture)
         bottomView.addGestureRecognizer(bottomTapGesture)
         leftView.addGestureRecognizer(leftTapGesture)
         rightView.addGestureRecognizer(rightTapGesture)
         centerView.addGestureRecognizer(centerTapGesture)
-        topTapGesture.rx.event.bind(onNext: { gesture in
-            topView.highlighMaskTouch(tapGesture: gesture, targetView: topView)
-            touch?(topView)
-        }).disposed(by: (topView as UIView).wp.disposeBag)
-        bottomTapGesture.rx.event.bind(onNext: { gesture in
-            bottomView.highlighMaskTouch(tapGesture: gesture, targetView: bottomView)
-            touch?(bottomView)
-        }).disposed(by: (topView as UIView).wp.disposeBag)
-        leftTapGesture.rx.event.bind(onNext: { gesture in
-            leftView.highlighMaskTouch(tapGesture: gesture, targetView: leftView)
-            touch?(leftView)
-        }).disposed(by: (topView as UIView).wp.disposeBag)
-        rightTapGesture.rx.event.bind(onNext: { gesture in
-            rightView.highlighMaskTouch(tapGesture: gesture, targetView: rightView)
-            touch?(rightView)
-        }).disposed(by: (topView as UIView).wp.disposeBag)
 
         topView.backgroundColor = color
         bottomView.backgroundColor = color

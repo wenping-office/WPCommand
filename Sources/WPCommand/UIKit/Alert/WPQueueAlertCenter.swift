@@ -5,7 +5,7 @@
 //  Created by WenPing on 2021/8/2.
 //
 
-import RxSwift
+//import RxSwift
 import UIKit
 
 public extension WPQueueAlertCenter {
@@ -880,7 +880,7 @@ extension WPQueueAlertCenter {
 /// 蒙层视图
 class WPAlertManagerMask: UIView {
     /// 蒙板视图
-    let contentView = UIButton()
+    let contentView = UIView()
     /// 蒙板info
     var maskInfo: WPQueueAlertCenter.Mask {
         didSet {
@@ -895,9 +895,12 @@ class WPAlertManagerMask: UIView {
         super.init(frame: .zero)
 
         addSubview(contentView)
-        contentView.rx.controlEvent(.touchUpInside).subscribe(onNext: {
+        
+        let tap = UITapGestureRecognizer(action: { _ in
             action?()
-        }).disposed(by: wp.disposeBag)
+        })
+
+        contentView.addGestureRecognizer(tap)
     }
     
     @available(*, unavailable)

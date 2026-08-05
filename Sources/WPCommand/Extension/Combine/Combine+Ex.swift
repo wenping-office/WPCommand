@@ -8,7 +8,6 @@
 import Combine
 import ObjectiveC
 import Foundation
-import RxSwift
 
 private var wp_cancellablePointer = "wp_cancellables"
 
@@ -35,6 +34,7 @@ public extension WPSpace where Base : NSObject{
     }
 }
 
+/*
 public extension Publisher {
     /// 转换为 RxSwift 的 Observable
     func asObservable() -> Observable<Output> {
@@ -59,7 +59,7 @@ public extension Publisher {
         }
     }
 }
-
+*/
 
 public extension Publisher {
     var wp: WPSpace<Self> {

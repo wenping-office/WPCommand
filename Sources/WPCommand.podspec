@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WPCommand'
-  s.version          = '0.6.3'
+  s.version          = '1.0.0'
   # 介绍
   s.summary          = '队列Alert、日历视图、支持嵌套TableView的PagingView、轻量级面包屑视图、自适应LatticeView、富文本语法糖、View属性语法糖、各类常用Extension等基础类库'
 
@@ -54,8 +54,8 @@ TODO: Add long description of the pod here.
     # 第三方依赖库
      s.dependency 'SnapKit'
      #RxSwift系列
-     s.dependency 'RxSwift'
-     s.dependency 'RxCocoa'
+     # s.dependency 'RxSwift'
+     # s.dependency 'RxCocoa'
 
 
     # s.prefix_header_contents = '#import "Bridge.h"'

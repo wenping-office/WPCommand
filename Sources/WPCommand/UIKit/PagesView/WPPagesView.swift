@@ -8,7 +8,7 @@
 import UIKit
 
 /// 分页标签
-open class WPPagesView<pageView:UIView>: WPBaseView {
+open class WPPagesView<pageView:UIView>: UIView {
 
     public let stackView = UIStackView()
     
@@ -80,6 +80,10 @@ open class WPPagesView<pageView:UIView>: WPBaseView {
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     /// 选中一个page
