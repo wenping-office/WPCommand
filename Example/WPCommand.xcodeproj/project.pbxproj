@@ -53,6 +53,22 @@
 		5EFCCEC12EAB54C400E93B84 /* Alertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEC02EAB54C400E93B84 /* Alertable.swift */; };
 		5EFCCEC42EAB559700E93B84 /* GradientRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEC32EAB559700E93B84 /* GradientRingView.swift */; };
 		5EFCCEC82EAB562900E93B84 /* RefreshFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCCEC72EAB562900E93B84 /* RefreshFeature.swift */; };
+		96160B073022EC460065D09C /* GoogleCastProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160B003022EC460065D09C /* GoogleCastProvider.swift */; };
+		96160B083022EC460065D09C /* AirPlayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AFA3022EC460065D09C /* AirPlayProvider.swift */; };
+		96160B093022EC460065D09C /* SOAPControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AFD3022EC460065D09C /* SOAPControl.swift */; };
+		96160B0A3022EC460065D09C /* CastDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF33022EC460065D09C /* CastDevice.swift */; };
+		96160B0B3022EC460065D09C /* PlaybackState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF63022EC460065D09C /* PlaybackState.swift */; };
+		96160B0C3022EC460065D09C /* CastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF43022EC460065D09C /* CastManager.swift */; };
+		96160B0D3022EC460065D09C /* RokuEcpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160B033022EC460065D09C /* RokuEcpClient.swift */; };
+		96160B0E3022EC460065D09C /* AirPlayDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF93022EC460065D09C /* AirPlayDiscovery.swift */; };
+		96160B0F3022EC460065D09C /* SSDPDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AFE3022EC460065D09C /* SSDPDiscovery.swift */; };
+		96160B103022EC460065D09C /* RawCastClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160B013022EC460065D09C /* RawCastClient.swift */; };
+		96160B113022EC460065D09C /* CastMpdKTVProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF23022EC460065D09C /* CastMpdKTVProxy.swift */; };
+		96160B123022EC460065D09C /* RokuEcpProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160B043022EC460065D09C /* RokuEcpProvider.swift */; };
+		96160B133022EC460065D09C /* DlnAProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AFC3022EC460065D09C /* DlnAProvider.swift */; };
+		96160B143022EC460065D09C /* CastProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF53022EC460065D09C /* CastProvider.swift */; };
+		96160B153022EC460065D09C /* AirPlayClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF83022EC460065D09C /* AirPlayClient.swift */; };
+		961662003019D32900AEB70A /* FilmRollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961661FF3019D32900AEB70A /* FilmRollView.swift */; };
 		C9BAF466A13D325589B9E101 /* Pods_WPCommand_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F223C466D6825D9D7A498C /* Pods_WPCommand_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -107,6 +123,22 @@
 		5EFCCEC72EAB562900E93B84 /* RefreshFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshFeature.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* WPCommand_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WPCommand_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		749E4C7E416D20EDA45BF3F3 /* Pods-WPCommand_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPCommand_Example.debug.xcconfig"; path = "Target Support Files/Pods-WPCommand_Example/Pods-WPCommand_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		96160AF23022EC460065D09C /* CastMpdKTVProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastMpdKTVProxy.swift; sourceTree = "<group>"; };
+		96160AF33022EC460065D09C /* CastDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastDevice.swift; sourceTree = "<group>"; };
+		96160AF43022EC460065D09C /* CastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastManager.swift; sourceTree = "<group>"; };
+		96160AF53022EC460065D09C /* CastProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastProvider.swift; sourceTree = "<group>"; };
+		96160AF63022EC460065D09C /* PlaybackState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackState.swift; sourceTree = "<group>"; };
+		96160AF83022EC460065D09C /* AirPlayClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirPlayClient.swift; sourceTree = "<group>"; };
+		96160AF93022EC460065D09C /* AirPlayDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirPlayDiscovery.swift; sourceTree = "<group>"; };
+		96160AFA3022EC460065D09C /* AirPlayProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirPlayProvider.swift; sourceTree = "<group>"; };
+		96160AFC3022EC460065D09C /* DlnAProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DlnAProvider.swift; sourceTree = "<group>"; };
+		96160AFD3022EC460065D09C /* SOAPControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPControl.swift; sourceTree = "<group>"; };
+		96160AFE3022EC460065D09C /* SSDPDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSDPDiscovery.swift; sourceTree = "<group>"; };
+		96160B003022EC460065D09C /* GoogleCastProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCastProvider.swift; sourceTree = "<group>"; };
+		96160B013022EC460065D09C /* RawCastClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawCastClient.swift; sourceTree = "<group>"; };
+		96160B033022EC460065D09C /* RokuEcpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RokuEcpClient.swift; sourceTree = "<group>"; };
+		96160B043022EC460065D09C /* RokuEcpProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RokuEcpProvider.swift; sourceTree = "<group>"; };
+		961661FF3019D32900AEB70A /* FilmRollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmRollView.swift; sourceTree = "<group>"; };
 		C58DB079722391B159D224D6 /* Pods_WPCommand_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPCommand_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A9D6D80C37C160174B9E7F /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		FBF56F91F792AB3195396600 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -197,6 +229,7 @@
 				5EFBEBA02EA0D72C00C2F427 /* Segmented */,
 				5EFBEB9F2EA0D71000C2F427 /* Date */,
 				5EA7D54B2E9E3DE500FB490E /* Progress */,
+				961661FF3019D32900AEB70A /* FilmRollView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -204,6 +237,7 @@
 		5EA7D5572E9E3DE500FB490E /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				96160AF13022EBEC0065D09C /* Cast */,
 				5EFCCEBC2EAB543A00E93B84 /* Extension */,
 				5EFBEBA92EA0E32D00C2F427 /* Api */,
 				5EFBEBA42EA0D76E00C2F427 /* Manager */,
@@ -353,6 +387,76 @@
 				FBF56F91F792AB3195396600 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		96160AF13022EBEC0065D09C /* Cast */ = {
+			isa = PBXGroup;
+			children = (
+				96160AF23022EC460065D09C /* CastMpdKTVProxy.swift */,
+				96160AF73022EC460065D09C /* CastManager */,
+				96160B063022EC460065D09C /* Providers */,
+			);
+			path = Cast;
+			sourceTree = "<group>";
+		};
+		96160AF73022EC460065D09C /* CastManager */ = {
+			isa = PBXGroup;
+			children = (
+				96160AF33022EC460065D09C /* CastDevice.swift */,
+				96160AF43022EC460065D09C /* CastManager.swift */,
+				96160AF53022EC460065D09C /* CastProvider.swift */,
+				96160AF63022EC460065D09C /* PlaybackState.swift */,
+			);
+			path = CastManager;
+			sourceTree = "<group>";
+		};
+		96160AFB3022EC460065D09C /* AirPlay */ = {
+			isa = PBXGroup;
+			children = (
+				96160AF83022EC460065D09C /* AirPlayClient.swift */,
+				96160AF93022EC460065D09C /* AirPlayDiscovery.swift */,
+				96160AFA3022EC460065D09C /* AirPlayProvider.swift */,
+			);
+			path = AirPlay;
+			sourceTree = "<group>";
+		};
+		96160AFF3022EC460065D09C /* DLNA */ = {
+			isa = PBXGroup;
+			children = (
+				96160AFC3022EC460065D09C /* DlnAProvider.swift */,
+				96160AFD3022EC460065D09C /* SOAPControl.swift */,
+				96160AFE3022EC460065D09C /* SSDPDiscovery.swift */,
+			);
+			path = DLNA;
+			sourceTree = "<group>";
+		};
+		96160B023022EC460065D09C /* GoogleCast */ = {
+			isa = PBXGroup;
+			children = (
+				96160B003022EC460065D09C /* GoogleCastProvider.swift */,
+				96160B013022EC460065D09C /* RawCastClient.swift */,
+			);
+			path = GoogleCast;
+			sourceTree = "<group>";
+		};
+		96160B053022EC460065D09C /* Roku */ = {
+			isa = PBXGroup;
+			children = (
+				96160B033022EC460065D09C /* RokuEcpClient.swift */,
+				96160B043022EC460065D09C /* RokuEcpProvider.swift */,
+			);
+			path = Roku;
+			sourceTree = "<group>";
+		};
+		96160B063022EC460065D09C /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				96160AFB3022EC460065D09C /* AirPlay */,
+				96160AFF3022EC460065D09C /* DLNA */,
+				96160B023022EC460065D09C /* GoogleCast */,
+				96160B053022EC460065D09C /* Roku */,
+			);
+			path = Providers;
 			sourceTree = "<group>";
 		};
 		BA24EACA7E3215F7DCBFBD1A /* Frameworks */ = {
@@ -521,6 +625,21 @@
 				5E0F55F22E9F39A500338D70 /* ZoomingImageView.swift in Sources */,
 				5E34238B2EFA3D2D0009760D /* Api.swift in Sources */,
 				5EA7D56E2E9E3DE500FB490E /* SegmentedView.swift in Sources */,
+				96160B073022EC460065D09C /* GoogleCastProvider.swift in Sources */,
+				96160B083022EC460065D09C /* AirPlayProvider.swift in Sources */,
+				96160B093022EC460065D09C /* SOAPControl.swift in Sources */,
+				96160B0A3022EC460065D09C /* CastDevice.swift in Sources */,
+				96160B0B3022EC460065D09C /* PlaybackState.swift in Sources */,
+				96160B0C3022EC460065D09C /* CastManager.swift in Sources */,
+				96160B0D3022EC460065D09C /* RokuEcpClient.swift in Sources */,
+				96160B0E3022EC460065D09C /* AirPlayDiscovery.swift in Sources */,
+				96160B0F3022EC460065D09C /* SSDPDiscovery.swift in Sources */,
+				96160B103022EC460065D09C /* RawCastClient.swift in Sources */,
+				96160B113022EC460065D09C /* CastMpdKTVProxy.swift in Sources */,
+				96160B123022EC460065D09C /* RokuEcpProvider.swift in Sources */,
+				96160B133022EC460065D09C /* DlnAProvider.swift in Sources */,
+				96160B143022EC460065D09C /* CastProvider.swift in Sources */,
+				96160B153022EC460065D09C /* AirPlayClient.swift in Sources */,
 				5EA7D56F2E9E3DE500FB490E /* Other.swift in Sources */,
 				5EA7D5712E9E3DE500FB490E /* ViewController.swift in Sources */,
 				5EA7D5722E9E3DE500FB490E /* BaseTableView.swift in Sources */,
@@ -529,6 +648,7 @@
 				5EA7D5772E9E3DE500FB490E /* DateView.swift in Sources */,
 				5E8C73882ECF2DBF00BD35D6 /* VideoVC.swift in Sources */,
 				5E8C73732ECF1C5200BD35D6 /* VideoVo.swift in Sources */,
+				961662003019D32900AEB70A /* FilmRollView.swift in Sources */,
 				5EA7D5782E9E3DE500FB490E /* ShareManager.swift in Sources */,
 				5EA7D57B2E9E3DE500FB490E /* CircularProgressView.swift in Sources */,
 				5E8C73902ECF34AF00BD35D6 /* PictureEditImageView.swift in Sources */,

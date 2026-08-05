@@ -72,3 +72,4 @@ extension UInt32: WPSpaceProtocol {}
 extension UInt64: WPSpaceProtocol {}
 extension CGFloat: WPSpaceProtocol {}
 extension Double: WPSpaceProtocol {}
+extension Optional: @retroactive WPSpaceProtocol where Wrapped: WPSpaceProtocol {}
