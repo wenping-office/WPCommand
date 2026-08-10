@@ -103,7 +103,7 @@ public extension WPSpace where Base : Decodable {
 
 extension KeyedDecodingContainer: WPSpaceProtocol {}
 extension KeyedDecodingContainer {
-    func decode<T>(
+   public func decode<T>(
         _ type: WPDecode<T>.Type,
         forKey key: Key
     ) throws -> WPDecode<T> {
@@ -112,7 +112,7 @@ extension KeyedDecodingContainer {
 }
 
 extension KeyedDecodingContainer {
-    func decode<T>(
+    public func decode<T>(
         _ type: WPDecodeArray<T>.Type,
         forKey key: Key
     ) throws -> WPDecodeArray<T> {
@@ -121,7 +121,7 @@ extension KeyedDecodingContainer {
 }
 
 extension KeyedDecodingContainer {
-    func decode<T>(
+    public func decode<T>(
         _ type: WPDecodeEnum<T>.Type,
         forKey key: Key
     ) throws -> WPDecodeEnum<T> {
@@ -130,7 +130,7 @@ extension KeyedDecodingContainer {
 }
 
 extension KeyedDecodingContainer {
-    func decode<T>(
+    public func decode<T>(
         _ type: WPDecodeEnumArray<T>.Type,
         forKey key: Key
     ) throws -> WPDecodeEnumArray<T> {
