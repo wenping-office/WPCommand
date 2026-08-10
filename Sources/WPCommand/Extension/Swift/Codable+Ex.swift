@@ -103,29 +103,39 @@ public extension WPSpace where Base : Decodable {
 
 extension KeyedDecodingContainer: WPSpaceProtocol {}
 extension KeyedDecodingContainer {
-   public func decode<T>(
+   public func decode<T: Codable>(
         _ type: WPDecode<T>.Type,
         forKey key: Key
     ) throws -> WPDecode<T> {
-        return try decodeIfPresent(type, forKey: key) ?? WPDecode<T>()
+        guard contains(key), (try? decodeNil(forKey: key)) == false else {
+            return WPDecode<T>()
+        }
+        return (try? decodeIfPresent(type, forKey: key)) ?? WPDecode<T>()
     }
 }
 
 extension KeyedDecodingContainer {
-    public func decode<T>(
+    public func decode<T: Codable>(
         _ type: WPDecodeArray<T>.Type,
         forKey key: Key
     ) throws -> WPDecodeArray<T> {
-        return try decodeIfPresent(type, forKey: key) ?? WPDecodeArray<T>()
+        guard contains(key), (try? decodeNil(forKey: key)) == false else {
+            return WPDecodeArray<T>()
+        }
+        return (try? decodeIfPresent(type, forKey: key)) ?? WPDecodeArray<T>()
     }
 }
 
 extension KeyedDecodingContainer {
+    
     public func decode<T>(
         _ type: WPDecodeEnum<T>.Type,
         forKey key: Key
-    ) throws -> WPDecodeEnum<T> {
-        return try decodeIfPresent(type, forKey: key) ?? WPDecodeEnum<T>()
+    ) throws -> WPDecodeEnum<T> where T: Codable & RawRepresentable, T.RawValue: Codable {
+        guard contains(key), (try? decodeNil(forKey: key)) == false else {
+            return WPDecodeEnum<T>()
+        }
+        return (try? decodeIfPresent(type, forKey: key)) ?? WPDecodeEnum<T>()
     }
 }
 
@@ -133,8 +143,11 @@ extension KeyedDecodingContainer {
     public func decode<T>(
         _ type: WPDecodeEnumArray<T>.Type,
         forKey key: Key
-    ) throws -> WPDecodeEnumArray<T> {
-        return try decodeIfPresent(type, forKey: key) ?? WPDecodeEnumArray<T>()
+    ) throws -> WPDecodeEnumArray<T> where T: RawRepresentable, T.RawValue: Encodable {
+        guard contains(key), (try? decodeNil(forKey: key)) == false else {
+            return WPDecodeEnumArray<T>()
+        }
+        return (try? decodeIfPresent(type, forKey: key)) ?? WPDecodeEnumArray<T>()
     }
 }
 
