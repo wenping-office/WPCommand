@@ -51,6 +51,7 @@ public extension WPSpaceProtocol {
     }
 }
 
+extension Bool: WPSpaceProtocol{}
 extension NSObject: WPSpaceProtocol {}
 extension String: WPSpaceProtocol {}
 extension String.SubSequence: WPSpaceProtocol {}

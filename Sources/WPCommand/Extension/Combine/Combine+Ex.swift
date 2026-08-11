@@ -343,7 +343,7 @@ public extension WPSpace where Base == WPFutureType.Type {
 
     /// 任意同步代码 → Future（自动异步化）
     static func async<Output>(
-        _ work: @escaping () throws -> Output
+        _ work: @escaping () -> Output
     ) -> Future<Output, Error> {
         Future { promise in
             DispatchQueue.global().async {
@@ -359,7 +359,7 @@ public extension WPSpace where Base == WPFutureType.Type {
     
     /// 任意同步代码 → Future（自动异步化）
     static func async<Output>(
-        _ work: @escaping () async throws -> Output
+        _ work: @escaping () async -> Output
     ) -> Future<Output, Error> {
         Future { promise in
             Task {
