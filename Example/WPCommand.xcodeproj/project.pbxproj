@@ -69,6 +69,8 @@
 		96160B143022EC460065D09C /* CastProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF53022EC460065D09C /* CastProvider.swift */; };
 		96160B153022EC460065D09C /* AirPlayClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96160AF83022EC460065D09C /* AirPlayClient.swift */; };
 		961662003019D32900AEB70A /* FilmRollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961661FF3019D32900AEB70A /* FilmRollView.swift */; };
+		961D1CF8304AA5040025E641 /* StickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961D1CF7304AA5040025E641 /* StickerManager.swift */; };
+		961D1CFA304AA5450025E641 /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961D1CF9304AA5450025E641 /* Sections.swift */; };
 		C9BAF466A13D325589B9E101 /* Pods_WPCommand_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F223C466D6825D9D7A498C /* Pods_WPCommand_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -139,6 +141,8 @@
 		96160B033022EC460065D09C /* RokuEcpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RokuEcpClient.swift; sourceTree = "<group>"; };
 		96160B043022EC460065D09C /* RokuEcpProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RokuEcpProvider.swift; sourceTree = "<group>"; };
 		961661FF3019D32900AEB70A /* FilmRollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmRollView.swift; sourceTree = "<group>"; };
+		961D1CF7304AA5040025E641 /* StickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerManager.swift; sourceTree = "<group>"; };
+		961D1CF9304AA5450025E641 /* Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sections.swift; sourceTree = "<group>"; };
 		C58DB079722391B159D224D6 /* Pods_WPCommand_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPCommand_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7A9D6D80C37C160174B9E7F /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		FBF56F91F792AB3195396600 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -244,6 +248,7 @@
 				5EA7D5492E9E3DE500FB490E /* Base */,
 				5EA7D5512E9E3DE500FB490E /* Views */,
 				5EA7D5552E9E3DE500FB490E /* Other.swift */,
+				961D1CF9304AA5450025E641 /* Sections.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -311,6 +316,7 @@
 				5EA7D5542E9E3DE500FB490E /* LoginManager.swift */,
 				5EA7D5532E9E3DE500FB490E /* LanguageManager.swift */,
 				5E8C73742ECF1D9800BD35D6 /* KTVHTTPCacheManager.swift */,
+				961D1CF7304AA5040025E641 /* StickerManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -610,6 +616,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5EA7D5682E9E3DE500FB490E /* BaseNavVC.swift in Sources */,
+				961D1CFA304AA5450025E641 /* Sections.swift in Sources */,
 				5E0F55F02E9F36A600338D70 /* DateBarView.swift in Sources */,
 				5EFCCEBE2EAB548800E93B84 /* JXSegmentedView+Extension.swift in Sources */,
 				5EFCCEC12EAB54C400E93B84 /* Alertable.swift in Sources */,
@@ -627,6 +634,7 @@
 				5EA7D56E2E9E3DE500FB490E /* SegmentedView.swift in Sources */,
 				96160B073022EC460065D09C /* GoogleCastProvider.swift in Sources */,
 				96160B083022EC460065D09C /* AirPlayProvider.swift in Sources */,
+				961D1CF8304AA5040025E641 /* StickerManager.swift in Sources */,
 				96160B093022EC460065D09C /* SOAPControl.swift in Sources */,
 				96160B0A3022EC460065D09C /* CastDevice.swift in Sources */,
 				96160B0B3022EC460065D09C /* PlaybackState.swift in Sources */,
