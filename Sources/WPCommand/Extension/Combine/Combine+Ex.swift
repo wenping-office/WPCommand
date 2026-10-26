@@ -83,6 +83,32 @@ public enum PublisherRequestResult<Value, Failure: Error> {
     case failure(Failure)
 }
 
+public extension Publisher {
+    
+    func cache<T, E: Error>(
+        _ value: T?
+    ) -> AnyPublisher<PublisherResult<T, E>, Failure>
+    where Output == PublisherResult<T, E> {
+        guard let value else {
+            return eraseToAnyPublisher()
+        }
+
+        return prepend(.success(value))
+            .eraseToAnyPublisher()
+    }
+    
+    func cache<T, E: Error>(
+        _ value: T?
+    ) -> AnyPublisher<PublisherRequestResult<T, E>, Failure>
+    where Output == PublisherRequestResult<T, E> {
+        guard let value else {
+            return eraseToAnyPublisher()
+        }
+        return prepend(.success(value))
+            .eraseToAnyPublisher()
+    }
+}
+
 @available(iOS 14.0, *)
 public extension Publisher{
     

@@ -64,8 +64,6 @@ nonisolated enum SectionLayout: Sendable {
     case verticalPairCarousel(groupWidth: CGFloat, groupHeight: CGFloat, itemSpacing: CGFloat)
     case banner(height: CGFloat)
     case fixedGrid(columns: Int, height: CGFloat, spacing: CGFloat)
-    /// 固定列数，并根据 Item 宽高比自动计算高度的纵向网格。
-    case fixedAspectGrid(columns: Int, aspectRatio: CGFloat, spacing: CGFloat)
 }
 
 nonisolated struct Section<ID: Hashable & Sendable>: Hashable, @unchecked Sendable {
@@ -155,30 +153,6 @@ nonisolated struct Section<ID: Hashable & Sendable>: Hashable, @unchecked Sendab
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height)), subitem: item, count: count)
             group.interItemSpacing = .fixed(spacing)
             section = .init(group: group)
-        case .fixedAspectGrid(let columns, let aspectRatio, let spacing):
-            let count = max(columns, 1)
-            let availableWidth = environment.container.effectiveContentSize.width
-                - insets.leading
-                - insets.trailing
-                - CGFloat(count - 1) * spacing
-            let itemWidth = availableWidth / CGFloat(count)
-            let itemHeight = itemWidth * aspectRatio
-            let item = NSCollectionLayoutItem(
-                layoutSize: .init(
-                    widthDimension: .absolute(itemWidth),
-                    heightDimension: .fractionalHeight(1)
-                )
-            )
-            let group = NSCollectionLayoutGroup.horizontal(
-                layoutSize: .init(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .absolute(itemHeight)
-                ),
-                subitem: item,
-                count: count
-            )
-            group.interItemSpacing = .fixed(spacing)
-            section = .init(group: group)
         }
 
         section.interGroupSpacing = interGroupSpacing
@@ -241,62 +215,35 @@ private nonisolated extension SectionScrollingBehavior {
     }
 }
 
-@MainActor
-extension UICollectionView {
-    static func source<SectionID: Hashable & Sendable,ItemIdentifier:Hashable & Sendable>(
-        _ collectionView: UICollectionView,
-        sections: [Section<SectionID>],
-        cellProvider: @escaping UICollectionViewDiffableDataSource<Section<SectionID>, ItemIdentifier>.CellProvider
-    ) -> UICollectionViewDiffableDataSource<Section<SectionID>, ItemIdentifier> {
-        collectionView.registerSupplementaryViews(for: sections)
-        let source = UICollectionViewDiffableDataSource<Section<SectionID>, ItemIdentifier>(
-            collectionView: collectionView,
-            cellProvider: cellProvider
-        )
-        source.supplementaryViewProvider = { [weak source] collectionView, kind, indexPath in
-            guard let section = source?.sectionIdentifier(for: indexPath.section),
-                  let supplementary = section.supplementaryViews.first(where: { $0.elementKind == kind }) else { return nil }
-            let identifier = String(describing: supplementary.viewClass)
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath)
-            supplementary.configure(view, section)
-            return view
-        }
-        return source
-    }
-    
-    static func normalSource<SectionID: Hashable & Sendable,ItemIdentifier:Hashable & Sendable>(
-        _ collectionView: UICollectionView,
-        cellProvider: @escaping UICollectionViewDiffableDataSource<Section<SectionID>, ItemIdentifier>.CellProvider
-    ) -> UICollectionViewDiffableDataSource<Section<SectionID>, ItemIdentifier> {
-        let source = UICollectionViewDiffableDataSource<Section<SectionID>, ItemIdentifier>(
-            collectionView: collectionView,
-            cellProvider: cellProvider
-        )
-        source.supplementaryViewProvider = { [weak source] collectionView, kind, indexPath in
-            guard let section = source?.sectionIdentifier(for: indexPath.section),
-                  let supplementary = section.supplementaryViews.first(where: { $0.elementKind == kind }) else { return nil }
-            let identifier = String(describing: supplementary.viewClass)
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath)
-            supplementary.configure(view, section)
-            return view
-        }
-        return source
-    }
 
-    private func registerSupplementaryViews<SectionID>(for sections: [Section<SectionID>]) where SectionID: Hashable & Sendable {
-        for section in sections {
-            for supplementary in section.supplementaryViews {
-                register(supplementary.viewClass, forSupplementaryViewOfKind: supplementary.elementKind, withReuseIdentifier: String(describing: supplementary.viewClass))
-            }
+@MainActor
+extension UICollectionViewDiffableDataSource {
+    static func source<SectionID: Hashable & Sendable,ItemData>(
+        _ collectionView: UICollectionView,
+        cellProvider: @escaping UICollectionViewDiffableDataSource<Section<SectionID>, ItemData>.CellProvider
+    ) -> UICollectionViewDiffableDataSource<Section<SectionID>, ItemData> {
+        let source = UICollectionViewDiffableDataSource<Section<SectionID>, ItemData>(
+            collectionView: collectionView,
+            cellProvider: cellProvider
+        )
+        source.supplementaryViewProvider = { [weak source] collectionView, kind, indexPath in
+            guard let section = source?.sectionIdentifier(for: indexPath.section),
+                  let supplementary = section.supplementaryViews.first(where: { $0.elementKind == kind }) else { return nil }
+            let identifier = String(describing: supplementary.viewClass)
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath)
+            supplementary.configure(view, section)
+            return view
         }
+        return source
     }
+}
+extension UICollectionView {
 
     func didSelectItemFilter<SectionID, ItemIdentifier>(
         _ source: UICollectionViewDiffableDataSource<Section<SectionID>, ItemIdentifier>,
         where isIncluded: @escaping (ItemIdentifier) -> Bool = { _ in true }
     ) -> AnyPublisher<(section: Section<SectionID>, item: ItemIdentifier, indexPath: IndexPath), Never>
     where SectionID: Hashable & Sendable, ItemIdentifier: Hashable & Sendable {
-
         return didSelectItemPublisher
             .compactMap { indexPath in
                 guard let section = source.sectionIdentifier(for: indexPath.section),
@@ -311,3 +258,20 @@ extension UICollectionView {
     }
 }
 
+nonisolated struct Item:Equatable,Hashable,Sendable {
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    enum Key {
+       case homeBtnCard
+    }
+
+    let key:Key
+    let id = UUID()
+
+    init(_ key: Key) {
+        self.key = key
+    }
+}
